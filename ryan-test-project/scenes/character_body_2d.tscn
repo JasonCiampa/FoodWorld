@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3 uid="uid://5otkxrdvirtw"]
+
+[ext_resource type="Texture2D" uid="uid://b3gs8yiwfbrad" path="res://images/player/player_spritesheet.png" id="1_kh4p4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otf5l"]
+atlas = ExtResource("1_kh4p4")
+region = Rect2(0, 44, 17, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_34qyd"]
+atlas = ExtResource("1_kh4p4")
+region = Rect2(17, 44, 17, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tw38v"]
+atlas = ExtResource("1_kh4p4")
+region = Rect2(34, 44, 17, 22)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuwqv"]
+atlas = ExtResource("1_kh4p4")
+region = Rect2(51, 44, 17, 22)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2x7sx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_otf5l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_34qyd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tw38v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuwqv")
+}],
+"loop": true,
+"name": &"walking",
+"speed": 6.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fxmkg"]
+radius = 5.0
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -10)
+sprite_frames = SubResource("SpriteFrames_2x7sx")
+animation = &"walking"
+autoplay = "walking"
+frame = 3
+frame_progress = 0.566951
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, -6)
+shape = SubResource("CircleShape2D_fxmkg")
