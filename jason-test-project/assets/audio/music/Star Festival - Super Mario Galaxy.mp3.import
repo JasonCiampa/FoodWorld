@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://circohfr7vevr"
+path="res://.godot/imported/Star Festival - Super Mario Galaxy.mp3-9de4dc17e77035c55da6b0d3db862f4c.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/music/Star Festival - Super Mario Galaxy.mp3"
+dest_files=["res://.godot/imported/Star Festival - Super Mario Galaxy.mp3-9de4dc17e77035c55da6b0d3db862f4c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

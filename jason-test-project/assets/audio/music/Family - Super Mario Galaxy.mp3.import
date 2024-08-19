@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bqrvmvtpn5gww"
+path="res://.godot/imported/Family - Super Mario Galaxy.mp3-0de4697963f86d2d2328973a804e1ef0.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/music/Family - Super Mario Galaxy.mp3"
+dest_files=["res://.godot/imported/Family - Super Mario Galaxy.mp3-0de4697963f86d2d2328973a804e1ef0.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

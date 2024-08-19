@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bj03wbarqokil"
+path="res://.godot/imported/King Kaliente - Super Mario Galaxy.mp3-d84c608b4b6ec197196736741ea95544.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/music/King Kaliente - Super Mario Galaxy.mp3"
+dest_files=["res://.godot/imported/King Kaliente - Super Mario Galaxy.mp3-d84c608b4b6ec197196736741ea95544.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
