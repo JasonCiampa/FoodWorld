@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bdxrptorqan12"]
+
+[ext_resource type="AudioStream" uid="uid://circohfr7vevr" path="res://assets/audio/music/Star Festival - Super Mario Galaxy.mp3" id="1_0dngn"]
+
+[node name="Music" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_0dngn")
+autoplay = true
+bus = &"Music"
