@@ -2,14 +2,16 @@ extends CharacterBody2D
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Animations #
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
-@onready var dodge_timer: Timer = $"Dodge Timer"
-@onready var dodge_cooldown_timer: Timer = $"Dodge Cooldown Timer"
+# Timers #
+@onready var dodge_timer: Timer = $"Timers/Dodge Timer"
+@onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
+@onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
+@onready var timer: Timer = $Timers/Timer
 
-@onready var stamina_regen_delay_timer: Timer = $"Stamina Regen Delay Timer"
-
-@onready var timer: Timer = $"Timer"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,12 +39,12 @@ enum StaminaUse { SPRINT = 15, DODGE = 30 }
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Health #
-var health_current : int
+var health_current: int
 var health_max: int
 
 # XP #
-var xp_current : int
-var xp_max : int
+var xp_current: int
+var xp_max: int
 
 # Stamina #
 var stamina_previous: float = 0
@@ -52,10 +54,11 @@ var stamina_regen_rate: float = 25
 var stamina_decreasing: bool = false
 var stamina_increasing: bool = false
 var stamina_regen_delay_active: bool = false
+var stamina_just_ran_out: bool = false
 
 # Speed #
-var speed_normal: int = 75
-var speed_sprinting: int = 300
+var speed_normal: int = 60
+var speed_sprinting: int = 125
 var speed_dodging: int = 200
 var speed_current: int = speed_normal
 
@@ -92,10 +95,10 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	update_movement_direction()
-	update_movement_animation()
-	update_stamina(delta)
-	#update_fight_style()
+	#update_movement_direction()
+	#update_movement_animation()
+	#update_stamina(delta)
+	update_fight_style()
 
 
 
@@ -147,13 +150,23 @@ func update_movement_animation():
 		sprite.flip_h = true
 	
 	# Determine the correct animation speed based on whether or not the Player is sprinting currently
-	if is_sprinting:
-		sprite.speed_scale = 1.5
+	if stamina_current > 0:
+		if Input.is_action_just_pressed("sprint"):
+			animation_player.play("start_sprinting")
+			sprite.speed_scale = 1.5
+		elif Input.is_action_just_released("sprint"):
+			animation_player.play("stop_sprinting")
+			sprite.speed_scale = 1
+			
+		if Input.is_action_just_pressed("dodge") and (not dodge_timer.is_stopped()):
+			sprite.play("dodge")
+			animation_player.play("dodge")
 	else:
-		sprite.speed_scale = 1
+		if stamina_just_ran_out:
+			animation_player.play("stop_sprinting")
+			sprite.speed_scale = 1
 		
-	if not dodge_timer.is_stopped():
-		sprite.play("dodge")
+		
 
 
 
@@ -191,26 +204,37 @@ func update_movement_velocity():
 		
 		# Check if the Player is not currently moving in any direction
 		if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
+			
+			# Determine if the Player is facing either the left or right, and then have them dodge in that direction from an idle position
 			if sprite.animation == "idle_sideways":
-				velocity.x = calculate_velocity(direction_previous_horizontal)
-			else:
-				velocity.y = calculate_velocity(direction_previous_vertical)	
+				print("Sideways")
+				if sprite.flip_h:
+					velocity.x = calculate_velocity(Direction.LEFT)
+				else:
+					velocity.x = calculate_velocity(Direction.RIGHT)
+			if sprite.animation == "idle_front":
+				velocity.y = calculate_velocity(Direction.DOWN)
+			elif sprite.animation == "idle_back":
+				velocity.y = calculate_velocity(Direction.UP)
+				
+			return
 	else:
 		is_dodging = false	
 	
 	# Determine if the Player is moving both vertically and horizontally
 	if (direction_current_horizontal != Direction.IDLE) and (direction_current_vertical != Direction.IDLE):
 		# Reduce the velocity by half on each axis so the Player doesn't move at double speed
-		velocity.x = 0.01 * calculate_velocity(direction_current_horizontal)
-		velocity.y = 0.01 * calculate_velocity(direction_current_vertical)
+		velocity.x = calculate_velocity(direction_current_horizontal)
+		velocity.y = calculate_velocity(direction_current_vertical)
+		return
 
-	# Update the player's horizontal velocity based on the user's input
+	# Determine if the Player is moving horizontally
 	if direction_current_horizontal != Direction.IDLE:
 		velocity.x = calculate_velocity(direction_current_horizontal)
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed_current)
 		
-	# Update the player's vertical velocity based on the user's input
+	# Determine if the Player is moving vertically, then adjust their velocity on the y-axis accordingly
 	if direction_current_vertical != Direction.IDLE:
 		velocity.y = calculate_velocity(direction_current_vertical)	
 	else:
@@ -248,7 +272,7 @@ func update_fight_style():
 func update_stamina(delta):
 	# Intialize Stamina to NOT be decreasing
 	stamina_decreasing = false
-	
+	stamina_just_ran_out = false
 	
 	# Trigger Stamina Decrease and Reset Regeneration Delay Timer if the Player isn't out of stamina and is either sprinting, dodging, or both
 	if stamina_current > 0:
@@ -281,6 +305,7 @@ func update_stamina(delta):
 		stamina_increasing = false
 	elif stamina_current < 0:
 		stamina_current = 0
+		stamina_just_ran_out = true
 	
 
 	# Trigger Stamina Regeneration Delay if the Player doesn't have max stamina, if the regen timer is inactive, and if at least one of the following is true: Player ran out of stamina, Player not using stamina
