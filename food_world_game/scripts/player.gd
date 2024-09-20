@@ -7,6 +7,10 @@ extends CharacterBody2D
 @onready var dodge_timer: Timer = $"Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Dodge Cooldown Timer"
 
+@onready var stamina_regen_delay_timer: Timer = $"Stamina Regen Delay Timer"
+
+@onready var timer: Timer = $"Timer"
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -20,6 +24,9 @@ enum Direction { IDLE = 0, UP = -1, DOWN = 1,  LEFT = -1, RIGHT = 1 }
 
 # Fighting Styles #
 enum FightStyle { SOLO, BUDDY1, BUDDY2, BUDDY_FUSION }
+
+# Stamina Usages #
+enum StaminaUse { SPRINT = 15, DODGE = 30 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -38,30 +45,37 @@ var xp_current : int
 var xp_max : int
 
 # Stamina #
-var stamina_current : int = 100
-var stamina_max : int
-var stamina_regen_rate : int
+var stamina_previous: float = 0
+var stamina_current: float = 100
+var stamina_max: float = 100
+var stamina_regen_rate: float = 25
+var stamina_decreasing: bool = false
+var stamina_increasing: bool = false
+var stamina_regen_delay_active: bool = false
 
 # Speed #
-var speed_current: int = 100
-var speed_normal : int = 100
-var speed_sprinting : int = 150
-var speed_dodging : int = 300
+var speed_normal: int = 75
+var speed_sprinting: int = 300
+var speed_dodging: int = 200
+var speed_current: int = speed_normal
 
 # Previous Frame Movement Direction #
-var direction_previous_horizontal = 0
-var direction_previous_vertical = 0
+var direction_previous_horizontal: float = 0
+var direction_previous_vertical: float = 0
 
 # Current Frame Movement Direction #
-var direction_current_horizontal = 0
-var direction_current_vertical = 0
+var direction_current_horizontal: float = 0
+var direction_current_vertical: float = 0
 
 # Sprinting #
-var is_sprinting : bool
+var is_sprinting: bool
+
+# Dodging #
+var is_dodging: bool
 
 # Fighting #
-var fight_style_previous : FightStyle = FightStyle.SOLO
-var fight_style_current : FightStyle = FightStyle.SOLO
+var fight_style_previous: FightStyle = FightStyle.SOLO
+var fight_style_current: FightStyle = FightStyle.SOLO
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -80,12 +94,13 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	update_movement_direction()
 	update_movement_animation()
+	update_stamina(delta)
 	#update_fight_style()
 
 
 
 # Called every frame. Updates the Player's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	# Movement Updates #
 	update_movement_velocity()
 	move_and_slide()
@@ -164,10 +179,11 @@ func update_movement_velocity():
 		is_sprinting = false
 		speed_current = speed_normal
 		
-	# Determine whether or not the Player is dodging
-	if Input.is_action_just_pressed("dodge") and stamina_current > 10 and dodge_cooldown_timer.is_stopped():
+	# Determine whether or not the Player is triggering a dodge
+	if Input.is_action_just_pressed("dodge") and stamina_current > 0 and dodge_cooldown_timer.is_stopped():
 		dodge_cooldown_timer.start()
 		dodge_timer.start()
+		is_dodging = true
 		
 	# Determine whether or not the Player is currently dodging
 	if not dodge_timer.is_stopped():
@@ -179,12 +195,14 @@ func update_movement_velocity():
 				velocity.x = calculate_velocity(direction_previous_horizontal)
 			else:
 				velocity.y = calculate_velocity(direction_previous_vertical)	
+	else:
+		is_dodging = false	
 	
 	# Determine if the Player is moving both vertically and horizontally
 	if (direction_current_horizontal != Direction.IDLE) and (direction_current_vertical != Direction.IDLE):
 		# Reduce the velocity by half on each axis so the Player doesn't move at double speed
-		velocity.x = 0.5 * calculate_velocity(direction_current_horizontal)
-		velocity.y = 0.5 * calculate_velocity(direction_current_vertical)
+		velocity.x = 0.01 * calculate_velocity(direction_current_horizontal)
+		velocity.y = 0.01 * calculate_velocity(direction_current_vertical)
 
 	# Update the player's horizontal velocity based on the user's input
 	if direction_current_horizontal != Direction.IDLE:
@@ -197,7 +215,6 @@ func update_movement_velocity():
 		velocity.y = calculate_velocity(direction_current_vertical)	
 	else:
 		velocity.y = move_toward(velocity.y, 0, speed_current)
-
 
 
 
@@ -224,6 +241,63 @@ func update_fight_style():
 		if fight_style_previous == fight_style_current:
 			fight_style_current = FightStyle.SOLO
 			sprite.play("fighting_solo")
+
+
+
+# Updates the Player's stamina based on their input
+func update_stamina(delta):
+	# Intialize Stamina to NOT be decreasing
+	stamina_decreasing = false
+	
+	
+	# Trigger Stamina Decrease and Reset Regeneration Delay Timer if the Player isn't out of stamina and is either sprinting, dodging, or both
+	if stamina_current > 0:
+		if is_sprinting and Input.is_action_pressed("move"):
+			stamina_decreasing = true
+			stamina_current -= StaminaUse.SPRINT * delta
+			stamina_regen_delay_timer.stop()
+		if is_dodging:
+			stamina_decreasing = true
+			stamina_current -= StaminaUse.DODGE * delta
+			stamina_regen_delay_timer.stop()
+			
+			
+	# Trigger Stamina Increase if the Regeneration Delay Timer has finished and if the Player didn't use any stamina during the delay
+	if (stamina_regen_delay_timer.time_left == 0) and (stamina_previous == stamina_current):
+		stamina_increasing = true
+		stamina_previous = 0
+		
+		
+	# Replenish Stamina if the Player isn't using any
+	if stamina_increasing and (not stamina_decreasing):
+		stamina_current += stamina_regen_rate * delta
+	else:
+		stamina_increasing = false
+		
+		
+	# Reset Stamina to be in-bounds if it exceeds the lower or upper limit
+	if stamina_current > stamina_max:
+		stamina_current = stamina_max
+		stamina_increasing = false
+	elif stamina_current < 0:
+		stamina_current = 0
+	
+
+	# Trigger Stamina Regeneration Delay if the Player doesn't have max stamina, if the regen timer is inactive, and if at least one of the following is true: Player ran out of stamina, Player not using stamina
+	if (stamina_current < stamina_max) and (stamina_regen_delay_timer.time_left == 0) and (stamina_current <= 0 or (stamina_decreasing == false and stamina_increasing == false)):
+		stamina_regen_delay_timer.start()
+		stamina_previous = stamina_current
+	
+	## DEBUG #
+	if timer.time_left == 0:
+		timer.start()
+		print("Current: " + str(stamina_current))
+		#print("Increasing: " + str(stamina_increasing))
+		#print("Decreasing: " + str(stamina_decreasing))
+		#print("Previous: " + str(stamina_previous))
+		#print("Time Left: " + str(stamina_regen_delay_timer.time_left))
+		#print(" ")
+		#print(" ")
 
 
 

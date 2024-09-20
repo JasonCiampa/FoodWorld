@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
 
 [sub_resource type="Animation" id="Animation_s5i67"]
-resource_name = "sprinting"
+resource_name = "player_sprinting"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -20,7 +20,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_uh8r5"]
 _data = {
-"sprinting": SubResource("Animation_s5i67")
+"player_sprinting": SubResource("Animation_s5i67")
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5tqxi"]
@@ -206,7 +206,7 @@ animations = [{
 script = ExtResource("1_2axk5")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(3.5, 3.5)
+zoom = Vector2(2.5, 2.5)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -226,12 +226,4 @@ one_shot = true
 
 [node name="Dodge Cooldown Timer" type="Timer" parent="."]
 wait_time = 3.0
-one_shot = true
-
-[node name="Stamina Regen Delay Timer" type="Timer" parent="."]
-wait_time = 2.0
-one_shot = true
-
-[node name="Timer" type="Timer" parent="."]
-wait_time = 0.1
 one_shot = true

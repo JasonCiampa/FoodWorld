@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/player.tscn" id="1_ksjva"]
-[ext_resource type="Texture2D" uid="uid://0fj6uf3u5afs" path="res://images/floor_tiles/grass-tile.png" id="2_wjypt"]
+[ext_resource type="Texture2D" uid="uid://le84ebpxm4t3" path="res://images/floor_tiles/grass-tile.png" id="2_wjypt"]
 
 [sub_resource type="GDScript" id="GDScript_wmkqu"]
 script/source = "extends Node2D
