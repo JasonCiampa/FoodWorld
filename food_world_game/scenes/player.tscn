@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=28 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -120,6 +120,10 @@ region = Rect2(0, 44, 17, 22)
 atlas = ExtResource("2_08uiw")
 region = Rect2(17, 44, 17, 22)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_hxks3"]
+atlas = ExtResource("2_08uiw")
+region = Rect2(17, 0, 17, 22)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_lsikw"]
 atlas = ExtResource("2_08uiw")
 region = Rect2(34, 0, 17, 22)
@@ -221,6 +225,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_hxks3")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_lsikw")
 }, {
 "duration": 1.0,
@@ -254,6 +266,7 @@ animations = [{
 }]
 
 [node name="Player" type="CharacterBody2D"]
+z_index = 1
 script = ExtResource("1_2axk5")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -269,7 +282,7 @@ shape = SubResource("RectangleShape2D_5tqxi")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"idle_back"
+animation = &"jump"
 
 [node name="Timers" type="Node" parent="."]
 
