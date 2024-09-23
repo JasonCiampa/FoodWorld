@@ -112,17 +112,17 @@ func _process(delta: float) -> void:
 	update_stamina(delta)
 	#update_fight_style()
 	
-		# DEBUG #
+	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
-		print("Position X: " + str(position.x))
-		print("Position Y: " + str(position.y))
-		print(" ")
+		#print("Position X: " + str(position.x))
+		#print("Position Y: " + str(position.y))
+		#print(" ")
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")
 		print("Current Stamina: " + str(stamina_current))
-		print("Previous Stamina: " + str(stamina_previous))
+		#print("Previous Stamina: " + str(stamina_previous))
 		print(" ")
 		#print("Increasing: " + str(stamina_increasing))
 		#print("Decreasing: " + str(stamina_decreasing))
@@ -134,7 +134,6 @@ func _process(delta: float) -> void:
 
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:
-	# Movement Updates #
 	update_movement_velocity(delta)
 	move_and_slide()
 
@@ -159,6 +158,7 @@ func update_movement_animation():
 	if is_jumping:
 		sprite.play("jump")
 	
+	
 	# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
 	elif (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
 		if (direction_previous_horizontal == Direction.IDLE):
@@ -168,7 +168,8 @@ func update_movement_animation():
 				sprite.play("idle_back")
 		elif (direction_previous_horizontal == Direction.LEFT) or (direction_previous_horizontal == Direction.RIGHT):
 			sprite.play("idle_sideways")
-			
+	
+	
 	# Determine which direction the Player is moving, then play the correct animated based on the direction they're pursuing
 	elif (direction_current_vertical == Direction.UP):
 		sprite.play("run_upward")
@@ -177,11 +178,12 @@ func update_movement_animation():
 	else:
 		sprite.play("run_sideways")
 		
-	# Determine which direction the Player is facing, then flip the sprite horizontally depending on if the Player is facing left or right
-	if direction_current_horizontal == Direction.RIGHT:
-		sprite.flip_h = false
-	elif direction_current_horizontal == Direction.LEFT:
-		sprite.flip_h = true
+		# Determine which direction the Player is facing, then flip the sprite horizontally depending on if the Player is facing left or right
+		if direction_current_horizontal == Direction.RIGHT:
+			sprite.flip_h = false
+		elif direction_current_horizontal == Direction.LEFT:
+			sprite.flip_h = true
+	
 	
 	# Determine if the Player has stamina, then determine if they're performing any actions, then set the correct animation and animation speed based on the Player's action
 	if stamina_current > 0:
@@ -191,7 +193,7 @@ func update_movement_animation():
 		elif Input.is_action_just_released("sprint"):
 			animation_player.play("stop_sprinting")
 			sprite.speed_scale = 1
-			
+		
 		if Input.is_action_just_pressed("dodge") and (not dodge_timer.is_stopped()):
 			sprite.play("dodge")
 			
@@ -200,10 +202,13 @@ func update_movement_animation():
 				animation_player.play("dodge_sprinting")
 			else:
 				animation_player.play("dodge")
-	else:
-		if stamina_just_ran_out:
+	
+	# Determine if the Player has run out of stamina this frame
+	if stamina_just_ran_out:
+		if Input.is_action_pressed("sprint"):
 			animation_player.play("stop_sprinting")
 			sprite.speed_scale = 1
+			stamina_just_ran_out = false
 
 
 
@@ -223,43 +228,32 @@ func update_movement_direction():
 # Updates the Player's velocity based on their speed and the direction they're currently moving in
 func update_movement_velocity(delta):
 	
-	# Determine whether or not the Player is starting a jump, then begin the jump by applying upward velocity
-	if Input.is_action_just_pressed("jump") and is_jumping == false and stamina_current > 0:
-		is_jumping = true
-		jump_start_height = position.y
-		velocity.y = 0
-		velocity.y -= jump_velocity
-
-
-	# Determine if the Player is currently jumping, then adjust their y-position by gravity
-	if is_jumping:
-		velocity.y += gravity * delta
+	# Determine if the Player currently has stamina
+	if stamina_current > 0:
 		
-		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and adjust their current y-position to the y-position they initiated the jump from
-		if position.y > jump_start_height:
-			is_jumping = false
-			position.y = jump_start_height
+		# Determine whether or not the Player is starting a jump, then begin the jump by applying upward velocity
+		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
+			is_jumping = true
+			jump_start_height = position.y
 			velocity.y = 0
-
-
-	# Determine whether or not the Player is sprinting, then adjust their speed
-	if Input.is_action_pressed("sprint") and stamina_current > 0:
-		is_sprinting = true
-		speed_current = speed_sprinting
-	else:
-		is_sprinting = false
-		speed_current = speed_normal
-
-
-	# Determine whether or not the Player is jumping
-	if is_jumping == false:
+			velocity.y -= jump_velocity
+		
+		
+		# Determine whether or not the Player is sprinting, then adjust their speed
+		if Input.is_action_pressed("sprint"):
+			is_sprinting = true
+			speed_current = speed_sprinting
+		else:
+			is_sprinting = false
+			speed_current = speed_normal
+		
 		
 		# Determine whether or not the Player is starting a dodge, then begin the dodge and it's cooldown by starting their timers
-		if Input.is_action_just_pressed("dodge") and stamina_current > 0 and dodge_cooldown_timer.is_stopped():
+		if Input.is_action_just_pressed("dodge") and stamina_current > 0 and dodge_cooldown_timer.is_stopped() and (not is_jumping):
 			dodge_cooldown_timer.start()
 			dodge_timer.start()
 			is_dodging = true
-			
+		
 		# Determine whether or not the Player is currently dodging, then adjust their speed
 		if not dodge_timer.is_stopped():
 			speed_current = speed_dodging
@@ -273,17 +267,33 @@ func update_movement_velocity(delta):
 						velocity.x = calculate_velocity(Direction.LEFT)
 					else:
 						velocity.x = calculate_velocity(Direction.RIGHT)
-						
+				
 				# Determine if the Player is facing forward or backward, then have them dodge in that direction from an idle position
 				if sprite.animation == "idle_front":
 					velocity.y = calculate_velocity(Direction.DOWN)
 				elif sprite.animation == "idle_back":
 					velocity.y = calculate_velocity(Direction.UP)
-					
+				
 				return
 		else:
 			is_dodging = false
-
+	else:
+		speed_current = speed_normal
+		is_sprinting = false
+		is_dodging = false
+	
+	
+	# Determine if the Player is currently jumping, then adjust their y-position by gravity
+	if is_jumping:
+		velocity.y += gravity * delta
+		
+		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and adjust their current y-position to the y-position they initiated the jump from
+		if position.y > jump_start_height:
+			is_jumping = false
+			position.y = jump_start_height
+			velocity.y = 0
+	
+	
 	# Determine if the Player is moving both vertically and horizontally
 	if (direction_current_horizontal != Direction.IDLE) and (direction_current_vertical != Direction.IDLE):
 		# Reduce the velocity by half on each axis so the Player doesn't move at double speed
@@ -292,15 +302,15 @@ func update_movement_velocity(delta):
 		# Determine if the Player is NOT jumping, then adjust the y-velocity
 		if not is_jumping:
 			velocity.y = calculate_velocity(direction_current_vertical)
-			
+		
 		return
-
+	
 	# Determine if the Player is moving horizontally, then adjust the x-velocity
 	if direction_current_horizontal != Direction.IDLE:
 		velocity.x = calculate_velocity(direction_current_horizontal)
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed_current)
-
+	
 	# Determine if the Player isn't jumping, then determine if the player is moving vertically, then adjust the y-velocity
 	if is_jumping == false:
 		if direction_current_vertical != Direction.IDLE:
@@ -312,7 +322,7 @@ func update_movement_velocity(delta):
 
 # Updates the Player's current fight style based on their key presses
 func update_fight_style():
-
+	
 	# Determine if the Player updated their fight style
 	if Input.is_action_just_pressed("update_fight_style"):
 		# Store the current fight style as the previous one since the fight style has been updated
@@ -328,7 +338,7 @@ func update_fight_style():
 		elif Input.is_action_just_pressed("equip_buddy_fusion"):
 			fight_style_current = FightStyle.BUDDY_FUSION
 			sprite.play("fighting_buddy_fusion")
-	
+		
 		# Determine if the Player is selecting the solo fight style, then set the selection as the current fight style
 		if fight_style_previous == fight_style_current:
 			fight_style_current = FightStyle.SOLO
@@ -338,40 +348,42 @@ func update_fight_style():
 
 # Updates the Player's stamina based on their input
 func update_stamina(delta):
+	
 	# Intialize Stamina to NOT be decreasing
 	stamina_decreasing = false
-	stamina_just_ran_out = false
 	
-	# Trigger Stamina Decrease and Reset Regeneration Delay Timer if the Player isn't out of stamina and is either sprinting, dodging, or both
+	# Determine if the Player currently has stamina, then trigger stamina decrease and reset regeneration delay timer if the player is either sprinting, dodging, or both
 	if stamina_current > 0:
 		if is_sprinting and Input.is_action_pressed("move"):
 			stamina_decreasing = true
 			stamina_current -= StaminaUse.SPRINT * delta
 			stamina_regen_delay_timer.stop()
+		
 		if is_dodging:
 			stamina_decreasing = true
 			stamina_current -= StaminaUse.DODGE * delta
 			stamina_regen_delay_timer.stop()
-		if is_jumping:
+		
+		elif is_jumping:
 			stamina_decreasing = true
 			stamina_current -= StaminaUse.JUMP * delta
 			stamina_regen_delay_timer.stop()
-			
-			
+	
+	
 	# Determine if the Player didn't use any stamina during the delay and if the regeneration delay timer has finished, then set the Player's stamina to be increasing
 	if (stamina_regen_delay_timer.time_left == 0) and (stamina_previous == stamina_current):
 		stamina_increasing = true
 		stamina_previous = 0
-		
-		
-	# Determine if the Player isn't using any stamina, then replenish Stamina
+	
+	
+	# Determine if the Player isn't using any stamina, then replenish stamina
 	if stamina_increasing and (not stamina_decreasing):
 		stamina_current += stamina_regen_rate * delta
 	else:
 		stamina_increasing = false
-		
-		
-	# Determine if stamina exceeds the lower or upper limit, then reset Stamina to be in-bounds
+	
+	
+	# Determine if stamina exceeds the lower or upper limit, then reset stamina to be in-bounds
 	if stamina_current > stamina_max:
 		stamina_current = stamina_max
 		stamina_increasing = false
@@ -379,7 +391,7 @@ func update_stamina(delta):
 		stamina_current = 0
 		stamina_just_ran_out = true
 	
-
+	
 	# Determine if the Player doesn't have max stamina, if the regen timer is inactive, and if at least one of the following is true: Player ran out of stamina, Player not using stamina, then trigger stamina regeneration delay
 	if (stamina_current < stamina_max) and (stamina_regen_delay_timer.time_left == 0) and (stamina_current <= 0 or (stamina_decreasing == false and stamina_increasing == false)):
 		stamina_regen_delay_timer.start()
