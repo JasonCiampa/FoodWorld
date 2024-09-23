@@ -65,8 +65,8 @@ var stamina_just_ran_out: bool = false
 
 # Speed #
 var speed_normal: int = 60
-var speed_sprinting: int = 300  #125
-var speed_dodging: int = 200
+var speed_sprinting: int = 125
+var speed_dodging: int = 350
 var speed_current: int = speed_normal
 
 # Previous Frame Movement Direction #
@@ -109,7 +109,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	update_movement_direction()
 	update_movement_animation()
-	#update_stamina(delta)
+	update_stamina(delta)
 	#update_fight_style()
 	
 		# DEBUG #
@@ -121,9 +121,9 @@ func _process(delta: float) -> void:
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")
-		#print("Current Stamina: " + str(stamina_current))
-		#print("Previous Stamina: " + str(stamina_previous))
-		#print(" ")
+		print("Current Stamina: " + str(stamina_current))
+		print("Previous Stamina: " + str(stamina_previous))
+		print(" ")
 		#print("Increasing: " + str(stamina_increasing))
 		#print("Decreasing: " + str(stamina_decreasing))
 		#print("Stamina Regen Delay: " + str(stamina_regen_delay_timer.time_left))
@@ -194,7 +194,12 @@ func update_movement_animation():
 			
 		if Input.is_action_just_pressed("dodge") and (not dodge_timer.is_stopped()):
 			sprite.play("dodge")
-			animation_player.play("dodge")
+			
+			# Determine if the player is sprinting while they trigger the dodge, then play the sprinting-dodge animation
+			if is_sprinting:
+				animation_player.play("dodge_sprinting")
+			else:
+				animation_player.play("dodge")
 	else:
 		if stamina_just_ran_out:
 			animation_player.play("stop_sprinting")
@@ -224,24 +229,18 @@ func update_movement_velocity(delta):
 		jump_start_height = position.y
 		velocity.y = 0
 		velocity.y -= jump_velocity
-		
-		
-	
+
+
 	# Determine if the Player is currently jumping, then adjust their y-position by gravity
 	if is_jumping:
 		velocity.y += gravity * delta
 		
-		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then adjust their y-position
+		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and adjust their current y-position to the y-position they initiated the jump from
 		if position.y > jump_start_height:
 			is_jumping = false
 			position.y = jump_start_height
 			velocity.y = 0
-			
-			
-			
-			
 
-	
 
 	# Determine whether or not the Player is sprinting, then adjust their speed
 	if Input.is_action_pressed("sprint") and stamina_current > 0:
@@ -284,7 +283,7 @@ func update_movement_velocity(delta):
 				return
 		else:
 			is_dodging = false
-			
+
 	# Determine if the Player is moving both vertically and horizontally
 	if (direction_current_horizontal != Direction.IDLE) and (direction_current_vertical != Direction.IDLE):
 		# Reduce the velocity by half on each axis so the Player doesn't move at double speed
@@ -295,17 +294,17 @@ func update_movement_velocity(delta):
 			velocity.y = calculate_velocity(direction_current_vertical)
 			
 		return
-		
+
 	# Determine if the Player is moving horizontally, then adjust the x-velocity
 	if direction_current_horizontal != Direction.IDLE:
 		velocity.x = calculate_velocity(direction_current_horizontal)
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed_current)
-		
-	# Determine if the Player isn't jumping, then determine if the player isn't moving vertically, then adjust the y-velocity
+
+	# Determine if the Player isn't jumping, then determine if the player is moving vertically, then adjust the y-velocity
 	if is_jumping == false:
 		if direction_current_vertical != Direction.IDLE:
-			velocity.y = calculate_velocity(direction_current_vertical)	
+			velocity.y = calculate_velocity(direction_current_vertical)
 		else:
 			velocity.y = move_toward(velocity.y, 0, speed_current)
 
