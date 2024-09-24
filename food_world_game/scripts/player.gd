@@ -1,3 +1,5 @@
+class_name Player
+
 extends CharacterBody2D
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -12,6 +14,24 @@ extends CharacterBody2D
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
 @onready var timer: Timer = $Timers/Timer
 
+# Hitbox #
+@onready var hitbox: Area2D = $Area2D
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+# SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+signal use_ability1_solo
+signal use_ability1_buddy
+signal use_ability1_buddy_fusion
+
+signal use_ability2_solo
+signal use_ability2_buddy
+signal use_ability2_buddy_fusion
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,14 +41,15 @@ extends CharacterBody2D
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Movement Directions #
 enum Direction { IDLE = 0, UP = -1, DOWN = 1,  LEFT = -1, RIGHT = 1 }
 
-# Fighting Styles #
 enum FightStyle { SOLO, BUDDY1, BUDDY2, BUDDY_FUSION }
 
-# Stamina Usages #
-enum StaminaUse { SPRINT = 15, JUMP = 20, DODGE = 30 }
+enum StaminaUse { SPRINT = 15, JUMP = 10, DODGE = 30, PUNCH = 5, KICK = 10}
+
+enum AttackDamage { PUNCH = 10, KICK = 15 }
+
+enum AttackKnockback { PUNCH = 25, KICK = 50}
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -91,6 +112,12 @@ const jump_velocity: int = 250
 # Fighting #
 var fight_style_previous: FightStyle = FightStyle.SOLO
 var fight_style_current: FightStyle = FightStyle.SOLO
+
+# Food Buddies #
+var food_buddy1: FoodBuddy
+var food_buddy2: FoodBuddy
+var food_buddies: Array[FoodBuddy]
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -104,13 +131,15 @@ func _ready() -> void:
 	sprite.play("idle_front")
 
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	process_ability_use()
 	update_movement_direction()
 	update_movement_animation()
 	update_stamina(delta)
-	#update_fight_style()
+	update_fight_style()
+	
+
 	
 	# DEBUG #
 	if timer.time_left == 0:
@@ -128,6 +157,8 @@ func _process(delta: float) -> void:
 		#print("Decreasing: " + str(stamina_decreasing))
 		#print("Stamina Regen Delay: " + str(stamina_regen_delay_timer.time_left))
 		#print(" ")
+		#print("Current Health: " + str(health_current))
+		#print(" ")
 		#print(" ")
 
 
@@ -136,6 +167,8 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	update_movement_velocity(delta)
 	move_and_slide()
+	#check_collide_and_push()
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -148,6 +181,55 @@ func _physics_process(delta: float) -> void:
 # Calculates the Player's current velocity based on their movement input.
 func calculate_velocity(direction):
 	return direction * speed_current
+
+
+
+func process_ability_use():
+	# Determine if the Player left-clicked their mouse to use ability 1, then emit the correct ability 1 signal based on the Player's current fighting style
+	if Input.is_action_just_pressed("ability1"):
+		if fight_style_current == FightStyle.SOLO:
+			use_ability1_solo.emit(self)
+			use_stamina(StaminaUse.PUNCH)
+		
+		elif fight_style_current == FightStyle.BUDDY1:
+			use_ability1_buddy.emit(self)
+		
+		elif fight_style_current == FightStyle.BUDDY2:
+			use_ability1_buddy.emit(food_buddy2)
+		
+		else:
+			use_ability1_buddy_fusion.emit(food_buddy1, food_buddy2)
+	
+	# Determine if the Player right-clicked their mouse to use ability 2, then emit the correct ability 2 signal based on the Player's current fighting style
+	elif Input.is_action_just_pressed("ability2"):
+		if fight_style_current == FightStyle.SOLO:
+			use_ability2_solo.emit(self)
+			use_stamina(StaminaUse.KICK)
+		
+		elif fight_style_current == FightStyle.BUDDY1:
+			use_ability2_buddy.emit(food_buddy1)
+		
+		elif fight_style_current == FightStyle.BUDDY2:
+			use_ability2_buddy.emit(food_buddy2)
+		
+		else:
+			use_ability1_buddy_fusion.emit(food_buddy1, food_buddy2)
+
+
+
+# Checks if the Player collided with a RigidBody2D, and if so, pushes the RigidBody2D with power determined by the Player's current speed
+func check_collide_and_push():
+	
+	# Iterate for the number of collisions that occured after move_and_slide() was called
+	for i in get_slide_collision_count():
+		
+		# Store references for the collision itself and the entity that was collided with
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+		
+		# Determine if the entity who the collision occurred with was a RigidBody2D, then apply the push force
+		if collider is RigidBody2D:
+			collider.apply_central_impulse(-collision.get_normal() * 2)
 
 
 
@@ -197,18 +279,21 @@ func update_movement_animation():
 		if Input.is_action_just_pressed("dodge") and (not dodge_timer.is_stopped()):
 			sprite.play("dodge")
 			
-			# Determine if the player is sprinting while they trigger the dodge, then play the sprinting-dodge animation
+			# Determine if the Player is sprinting while they trigger the dodge, then play the sprinting-dodge animation
 			if is_sprinting:
 				animation_player.play("dodge_sprinting")
 			else:
 				animation_player.play("dodge")
 	
+	
 	# Determine if the Player has run out of stamina this frame
 	if stamina_just_ran_out:
+		
 		if Input.is_action_pressed("sprint"):
 			animation_player.play("stop_sprinting")
 			sprite.speed_scale = 1
-			stamina_just_ran_out = false
+		
+		stamina_just_ran_out = false
 
 
 
@@ -237,12 +322,14 @@ func update_movement_velocity(delta):
 			jump_start_height = position.y
 			velocity.y = 0
 			velocity.y -= jump_velocity
+			use_stamina(StaminaUse.JUMP)
 		
 		
 		# Determine whether or not the Player is sprinting, then adjust their speed
-		if Input.is_action_pressed("sprint"):
+		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
 			is_sprinting = true
 			speed_current = speed_sprinting
+			use_stamina_gradually(StaminaUse.SPRINT, delta)
 		else:
 			is_sprinting = false
 			speed_current = speed_normal
@@ -257,6 +344,7 @@ func update_movement_velocity(delta):
 		# Determine whether or not the Player is currently dodging, then adjust their speed
 		if not dodge_timer.is_stopped():
 			speed_current = speed_dodging
+			use_stamina_gradually(StaminaUse.DODGE, delta)
 			
 			# Determine if the Player is not currently moving in any direction (idle)
 			if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
@@ -311,7 +399,7 @@ func update_movement_velocity(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed_current)
 	
-	# Determine if the Player isn't jumping, then determine if the player is moving vertically, then adjust the y-velocity
+	# Determine if the Player isn't jumping, then determine if the Player is moving vertically, then adjust the y-velocity
 	if is_jumping == false:
 		if direction_current_vertical != Direction.IDLE:
 			velocity.y = calculate_velocity(direction_current_vertical)
@@ -346,28 +434,29 @@ func update_fight_style():
 
 
 
+# Depletes the Player's current stamina by the amount specified by the given stamina use.
+func use_stamina(stamina_use: int):
+	stamina_current -= stamina_use
+	stamina_decreasing = true
+	stamina_increasing = false
+	stamina_regen_delay_timer.stop()
+
+
+
+# Depletes the Player's current stamina gradually over time by the amount specified by the given stamina use.
+func use_stamina_gradually(stamina_use: int, delta: float):
+	stamina_current -= stamina_use * delta
+	stamina_decreasing = true
+	stamina_increasing = false
+	stamina_regen_delay_timer.stop()
+
+
+
 # Updates the Player's stamina based on their input
 func update_stamina(delta):
 	
 	# Intialize Stamina to NOT be decreasing
 	stamina_decreasing = false
-	
-	# Determine if the Player currently has stamina, then trigger stamina decrease and reset regeneration delay timer if the player is either sprinting, dodging, or both
-	if stamina_current > 0:
-		if is_sprinting and Input.is_action_pressed("move"):
-			stamina_decreasing = true
-			stamina_current -= StaminaUse.SPRINT * delta
-			stamina_regen_delay_timer.stop()
-		
-		if is_dodging:
-			stamina_decreasing = true
-			stamina_current -= StaminaUse.DODGE * delta
-			stamina_regen_delay_timer.stop()
-		
-		elif is_jumping:
-			stamina_decreasing = true
-			stamina_current -= StaminaUse.JUMP * delta
-			stamina_regen_delay_timer.stop()
 	
 	
 	# Determine if the Player didn't use any stamina during the delay and if the regeneration delay timer has finished, then set the Player's stamina to be increasing
@@ -399,13 +488,6 @@ func update_stamina(delta):
 
 
 
-
 # Updates a stat chosen by the Player, increments level, resets current xp, refills hp, maybe increase max xp (harder to level up as you progress?)
 func level_up():
-	pass
-
-
-
-# Triggers one of the Player's attacks based on their input (left-click = attack/ability 1, right-click = attack/ability 2, ? = special attack)
-func attack():
 	pass
