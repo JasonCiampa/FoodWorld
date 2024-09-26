@@ -11,6 +11,10 @@ extends RigidBody2D
 # Hitbox #
 @onready var hitbox: Area2D = $Area2D
 
+
+@onready var visible_on_screen_enabler_2d: VisibleOnScreenEnabler2D = $VisibleOnScreenEnabler2D
+@onready var visible_on_screen_notifier_2d: VisibleOnScreenNotifier2D = $VisibleOnScreenNotifier2D
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -67,26 +71,33 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Determines if the Player's attack landed, and if so, reduces health
-func process_player_attack(player_hitbox: Area2D, damage: int):
+func process_attack(attack_hitbox: Area2D, damage: int):
 	
-	# Store a list of all hitboxes that the Player's hitbox has overlapped with
-	var hitboxes = player_hitbox.get_overlapping_areas()
+	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
+	var hitboxes = attack_hitbox.get_overlapping_areas()
 	
-	# Determine if the Enemy's hitbox is in the list of hitboxes that the Player's hitbox overlapped with, then reduce their health
+	# Determine if the Enemy's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
 	if hitbox in hitboxes:
 		health_current -= damage
 		print(health_current)
 
 
 
-# Called everytime the Player uses ability 1 while in the Solo fighting style.
-func _on_player_use_ability_1_solo(player: Player) -> void:
-	process_player_attack(player.hitbox, player.AttackDamage.PUNCH)
+
+
+# Called everytime the Player uses an ability while in the Solo fighting style.
+func _on_player_use_ability_solo(player: Player, ability_number: int) -> void:
+	if ability_number == 1:
+		process_attack(player.hitbox, player.AttackDamage.PUNCH)
+		player.use_stamina(player.StaminaUse.PUNCH)
+	else:
+		process_attack(player.hitbox, player.AttackDamage.KICK)
+		player.use_stamina(player.StaminaUse.KICK)
 
 
 
-# Called everytime the Player uses ability 2 while in the Solo fighting style.
-func _on_player_use_ability_2_solo(player: Player) -> void:
-	process_player_attack(player.hitbox, player.AttackDamage.KICK)
+# Called everytime a Food Buddy uses an ability while in the Solo fighting style.
+func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy) -> void:
+	process_attack(food_buddy.hitbox, food_buddy.AttackDamage.SOLO)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

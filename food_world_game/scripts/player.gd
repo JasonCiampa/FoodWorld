@@ -25,13 +25,13 @@ extends CharacterBody2D
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-signal use_ability1_solo
-signal use_ability1_buddy
-signal use_ability1_buddy_fusion
+signal equip_buddy
+signal equip_buddy_fusion
 
-signal use_ability2_solo
-signal use_ability2_buddy
-signal use_ability2_buddy_fusion
+signal use_ability_solo
+signal use_ability_buddy
+signal use_ability_buddy_fusion
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -184,36 +184,28 @@ func calculate_velocity(direction):
 
 
 
+# Checks if a Player has used one of their abilities and processes their input to determine what signals to send and what values to update
 func process_ability_use():
+	var ability_number: int = 0
+	
 	# Determine if the Player left-clicked their mouse to use ability 1, then emit the correct ability 1 signal based on the Player's current fighting style
 	if Input.is_action_just_pressed("ability1"):
-		if fight_style_current == FightStyle.SOLO:
-			use_ability1_solo.emit(self)
-			use_stamina(StaminaUse.PUNCH)
-		
-		elif fight_style_current == FightStyle.BUDDY1:
-			use_ability1_buddy.emit(self)
-		
-		elif fight_style_current == FightStyle.BUDDY2:
-			use_ability1_buddy.emit(food_buddy2)
-		
-		else:
-			use_ability1_buddy_fusion.emit(food_buddy1, food_buddy2)
-	
-	# Determine if the Player right-clicked their mouse to use ability 2, then emit the correct ability 2 signal based on the Player's current fighting style
+		ability_number = 1
 	elif Input.is_action_just_pressed("ability2"):
-		if fight_style_current == FightStyle.SOLO:
-			use_ability2_solo.emit(self)
-			use_stamina(StaminaUse.KICK)
+		ability_number = 2
 		
+	if ability_number != 0:
+		if fight_style_current == FightStyle.SOLO:
+			use_ability_solo.emit(self, ability_number)
+			
 		elif fight_style_current == FightStyle.BUDDY1:
-			use_ability2_buddy.emit(food_buddy1)
+			use_ability_buddy.emit(food_buddy1, ability_number)
 		
 		elif fight_style_current == FightStyle.BUDDY2:
-			use_ability2_buddy.emit(food_buddy2)
+			use_ability_buddy.emit(food_buddy2, ability_number)
 		
 		else:
-			use_ability1_buddy_fusion.emit(food_buddy1, food_buddy2)
+			use_ability_buddy_fusion.emit(food_buddy1, food_buddy2)
 
 
 
@@ -291,8 +283,8 @@ func update_movement_animation():
 		
 		if Input.is_action_pressed("sprint"):
 			animation_player.play("stop_sprinting")
-			sprite.speed_scale = 1
-		
+			
+		sprite.speed_scale = 1
 		stamina_just_ran_out = false
 
 
@@ -419,12 +411,15 @@ func update_fight_style():
 		# Determine which fight style the Player has now selected, then set the selection as the current fight style
 		if Input.is_action_just_pressed("equip_buddy1"):
 			fight_style_current = FightStyle.BUDDY1
+			equip_buddy.emit(food_buddy1)
 			sprite.play("fighting_buddy1")
 		elif Input.is_action_just_pressed("equip_buddy2"):
 			fight_style_current = FightStyle.BUDDY2
+			equip_buddy.emit(food_buddy2)
 			sprite.play("fighting_buddy2")
 		elif Input.is_action_just_pressed("equip_buddy_fusion"):
 			fight_style_current = FightStyle.BUDDY_FUSION
+			equip_buddy_fusion.emit()
 			sprite.play("fighting_buddy_fusion")
 		
 		# Determine if the Player is selecting the solo fight style, then set the selection as the current fight style
