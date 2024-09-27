@@ -70,7 +70,7 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Determines if the Player's attack landed, and if so, reduces health
+# Determines if an attack has landed and reduces health if it has
 func process_attack(attack_hitbox: Area2D, damage: int):
 	
 	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
@@ -83,21 +83,13 @@ func process_attack(attack_hitbox: Area2D, damage: int):
 
 
 
-
-
 # Called everytime the Player uses an ability while in the Solo fighting style.
-func _on_player_use_ability_solo(player: Player, ability_number: int) -> void:
-	if ability_number == 1:
-		process_attack(player.hitbox, player.AttackDamage.PUNCH)
-		player.use_stamina(player.StaminaUse.PUNCH)
-	else:
-		process_attack(player.hitbox, player.AttackDamage.KICK)
-		player.use_stamina(player.StaminaUse.KICK)
-
+func _on_player_use_ability_solo(attack_hitbox: Area2D, damage_amount: int) -> void:
+	process_attack(attack_hitbox, damage_amount)
 
 
 # Called everytime a Food Buddy uses an ability while in the Solo fighting style.
-func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy) -> void:
-	process_attack(food_buddy.hitbox, food_buddy.AttackDamage.SOLO)
+func _on_food_buddy_use_ability_solo(attack_hitbox: Area2D, damage_amount: int) -> void:
+	process_attack(attack_hitbox, damage_amount)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

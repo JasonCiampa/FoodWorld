@@ -47,9 +47,9 @@ enum FightStyle { SOLO, BUDDY1, BUDDY2, BUDDY_FUSION }
 
 enum StaminaUse { SPRINT = 15, JUMP = 10, DODGE = 30, PUNCH = 5, KICK = 10}
 
-enum AttackDamage { PUNCH = 10, KICK = 15 }
-
 enum AttackKnockback { PUNCH = 25, KICK = 50}
+
+enum Ability { PUNCH = 1, KICK = 2}
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ var inventory_size: int = 12
 var health_current: int
 var health_max: int
 
-# XP #
+# Level and XP #
 var xp_current: int
 var xp_max: int
 
@@ -112,6 +112,7 @@ const jump_velocity: int = 250
 # Fighting #
 var fight_style_previous: FightStyle = FightStyle.SOLO
 var fight_style_current: FightStyle = FightStyle.SOLO
+var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
 # Food Buddies #
 var food_buddy1: FoodBuddy
@@ -138,6 +139,8 @@ func _process(delta: float) -> void:
 	update_movement_animation()
 	update_stamina(delta)
 	update_fight_style()
+	
+	#var jim: FoodBuddy = FoodBuddy.new(FoodBuddy.AbilityType.ATTACK, FoodBuddy.AbilityType.ATTACK)
 	
 
 	
@@ -169,7 +172,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	#check_collide_and_push()
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -188,16 +190,23 @@ func calculate_velocity(direction):
 func process_ability_use():
 	var ability_number: int = 0
 	
-	# Determine if the Player left-clicked their mouse to use ability 1, then emit the correct ability 1 signal based on the Player's current fighting style
+	# Determine if the Player left-clicked (ability 1) or right-clicked (ability 2) their mouse, then store the corresponding ability number in the variable
 	if Input.is_action_just_pressed("ability1"):
 		ability_number = 1
 	elif Input.is_action_just_pressed("ability2"):
 		ability_number = 2
-		
+	
+	# Determine if an ability was used, then trigger the signal that will use the correct ability based on the Player's current fighting style
 	if ability_number != 0:
-		if fight_style_current == FightStyle.SOLO:
-			use_ability_solo.emit(self, ability_number)
+		if fight_style_current == FightStyle.SOLO:			
+			if ability_number == 1:
+				use_ability_solo.emit(hitbox, attack_damage["Punch"])
+				use_stamina(StaminaUse.PUNCH)
+			else:
+				use_ability_solo.emit(hitbox, attack_damage["Kick"])
+				use_stamina(StaminaUse.KICK)
 			
+		
 		elif fight_style_current == FightStyle.BUDDY1:
 			use_ability_buddy.emit(food_buddy1, ability_number)
 		
@@ -244,7 +253,7 @@ func update_movement_animation():
 			sprite.play("idle_sideways")
 	
 	
-	# Determine which direction the Player is moving, then play the correct animated based on the direction they're pursuing
+	# Determine which direction the Player is moving, then play the correct 'running' animation based on the direction they're pursuing
 	elif (direction_current_vertical == Direction.UP):
 		sprite.play("run_upward")
 	elif (direction_current_vertical == Direction.DOWN):
@@ -252,7 +261,7 @@ func update_movement_animation():
 	else:
 		sprite.play("run_sideways")
 		
-		# Determine which direction the Player is facing, then flip the sprite horizontally depending on if the Player is facing left or right
+		# Determine whether the Player is facing left or right, then flip the sprite horizontally based on the direction the Player is facing
 		if direction_current_horizontal == Direction.RIGHT:
 			sprite.flip_h = false
 		elif direction_current_horizontal == Direction.LEFT:
@@ -261,6 +270,7 @@ func update_movement_animation():
 	
 	# Determine if the Player has stamina, then determine if they're performing any actions, then set the correct animation and animation speed based on the Player's action
 	if stamina_current > 0:
+		
 		if Input.is_action_just_pressed("sprint"):
 			animation_player.play("start_sprinting")
 			sprite.speed_scale = 1.5
@@ -278,14 +288,13 @@ func update_movement_animation():
 				animation_player.play("dodge")
 	
 	
-	# Determine if the Player has run out of stamina this frame
+	# Determine if the Player has run out of stamina this frame, then adjust the animations that are being played and their speed
 	if stamina_just_ran_out:
+		sprite.speed_scale = 1
+		stamina_just_ran_out = false
 		
 		if Input.is_action_pressed("sprint"):
 			animation_player.play("stop_sprinting")
-			
-		sprite.speed_scale = 1
-		stamina_just_ran_out = false
 
 
 
@@ -302,13 +311,13 @@ func update_movement_direction():
 
 
 
-# Updates the Player's velocity based on their speed and the direction they're currently moving in
+# Updates the Player's velocity based on their actions, speed, and the direction they're currently moving in
 func update_movement_velocity(delta):
 	
 	# Determine if the Player currently has stamina
 	if stamina_current > 0:
 		
-		# Determine whether or not the Player is starting a jump, then begin the jump by applying upward velocity
+		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			is_jumping = true
 			jump_start_height = position.y
@@ -317,7 +326,7 @@ func update_movement_velocity(delta):
 			use_stamina(StaminaUse.JUMP)
 		
 		
-		# Determine whether or not the Player is sprinting, then adjust their speed
+		# Determine whether or not the Player is sprinting, then trigger the sprinting state
 		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
 			is_sprinting = true
 			speed_current = speed_sprinting
@@ -327,7 +336,7 @@ func update_movement_velocity(delta):
 			speed_current = speed_normal
 		
 		
-		# Determine whether or not the Player is starting a dodge, then begin the dodge and it's cooldown by starting their timers
+		# Determine whether or not the Player is starting a dodge, then trigger the dodge and it's cooldown
 		if Input.is_action_just_pressed("dodge") and stamina_current > 0 and dodge_cooldown_timer.is_stopped() and (not is_jumping):
 			dodge_cooldown_timer.start()
 			dodge_timer.start()
@@ -367,23 +376,12 @@ func update_movement_velocity(delta):
 	if is_jumping:
 		velocity.y += gravity * delta
 		
-		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and adjust their current y-position to the y-position they initiated the jump from
+		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and set their current y-position to the y-position they initiated the jump from
 		if position.y > jump_start_height:
 			is_jumping = false
 			position.y = jump_start_height
 			velocity.y = 0
 	
-	
-	# Determine if the Player is moving both vertically and horizontally
-	if (direction_current_horizontal != Direction.IDLE) and (direction_current_vertical != Direction.IDLE):
-		# Reduce the velocity by half on each axis so the Player doesn't move at double speed
-		velocity.x = calculate_velocity(direction_current_horizontal)
-		
-		# Determine if the Player is NOT jumping, then adjust the y-velocity
-		if not is_jumping:
-			velocity.y = calculate_velocity(direction_current_vertical)
-		
-		return
 	
 	# Determine if the Player is moving horizontally, then adjust the x-velocity
 	if direction_current_horizontal != Direction.IDLE:
@@ -405,10 +403,11 @@ func update_fight_style():
 	
 	# Determine if the Player updated their fight style
 	if Input.is_action_just_pressed("update_fight_style"):
+		
 		# Store the current fight style as the previous one since the fight style has been updated
 		fight_style_previous = fight_style_current
 		
-		# Determine which fight style the Player has now selected, then set the selection as the current fight style
+		# Determine which fight style the Player has now selected, then set the selection as the current fight style, send a signal to any involved Food Buddy, and trigger the correct animation
 		if Input.is_action_just_pressed("equip_buddy1"):
 			fight_style_current = FightStyle.BUDDY1
 			equip_buddy.emit(food_buddy1)
@@ -429,7 +428,7 @@ func update_fight_style():
 
 
 
-# Depletes the Player's current stamina by the amount specified by the given stamina use.
+# Depletes the Player's current stamina instantly by the given stamina use amount.
 func use_stamina(stamina_use: int):
 	stamina_current -= stamina_use
 	stamina_decreasing = true
@@ -438,7 +437,7 @@ func use_stamina(stamina_use: int):
 
 
 
-# Depletes the Player's current stamina gradually over time by the amount specified by the given stamina use.
+# Depletes the Player's current stamina gradually over time by the given stamina use amount.
 func use_stamina_gradually(stamina_use: int, delta: float):
 	stamina_current -= stamina_use * delta
 	stamina_decreasing = true
@@ -453,19 +452,16 @@ func update_stamina(delta):
 	# Intialize Stamina to NOT be decreasing
 	stamina_decreasing = false
 	
-	
 	# Determine if the Player didn't use any stamina during the delay and if the regeneration delay timer has finished, then set the Player's stamina to be increasing
 	if (stamina_regen_delay_timer.time_left == 0) and (stamina_previous == stamina_current):
 		stamina_increasing = true
 		stamina_previous = 0
 	
-	
-	# Determine if the Player isn't using any stamina, then replenish stamina
+	# Determine if the Player is not using any stamina as it regenerates, then replenish stamina
 	if stamina_increasing and (not stamina_decreasing):
 		stamina_current += stamina_regen_rate * delta
 	else:
 		stamina_increasing = false
-	
 	
 	# Determine if stamina exceeds the lower or upper limit, then reset stamina to be in-bounds
 	if stamina_current > stamina_max:
@@ -475,8 +471,7 @@ func update_stamina(delta):
 		stamina_current = 0
 		stamina_just_ran_out = true
 	
-	
-	# Determine if the Player doesn't have max stamina, if the regen timer is inactive, and if at least one of the following is true: Player ran out of stamina, Player not using stamina, then trigger stamina regeneration delay
+	# Determine if the Player doesn't have max stamina, if the regen timer is inactive, and if at least one of the following is true: Player ran out of stamina or Player not using stamina, then trigger stamina regeneration delay
 	if (stamina_current < stamina_max) and (stamina_regen_delay_timer.time_left == 0) and (stamina_current <= 0 or (stamina_decreasing == false and stamina_increasing == false)):
 		stamina_regen_delay_timer.start()
 		stamina_previous = stamina_current
