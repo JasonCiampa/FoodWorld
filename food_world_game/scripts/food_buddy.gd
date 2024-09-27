@@ -39,7 +39,6 @@ enum FightStyle { SOLO, PLAYER, BUDDY_FUSION }
 
 enum AttackDamage { SOLO = 10, ABILITY1 = 0, ABILITY2 = 0}
 
-enum AttackRange { SOLO = 5, ABILITY1 = 0, ABILITY2 = 0}
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -79,7 +78,11 @@ var ability2_damage: int
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func _init(ability_type_1: FoodBuddy.AbilityType, ability_damage_1: int, ability_type_2: FoodBuddy.AbilityType, ability_damage_2: int, base_health: int):
+func _init(solo_damage: int, solo_range: int, 
+		   ability_type_1: FoodBuddy.AbilityType, ability_damage_1: int, ability_range_1: int,
+		   ability_type_2: FoodBuddy.AbilityType, ability_damage_2: int, ability_range_2, 
+		   base_health: int):
+	
 	ability1_type = ability_type_1
 	ability1_damage = ability_damage_1
 	
@@ -112,17 +115,22 @@ func _process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 func use_solo_attack():
+	
+	# Determine if the Food Buddy doesn't have an enemy to target currently
 	if target_enemy == null:
-		var enemies: Array[Node] = get_tree().get_nodes_in_group("Enemy")
+		
+		# Store a list of references to all of the enemies currently loaded into the game, and create an empty list that will hold any enemies on the screen
+		var enemies: Array[Node] = get_tree().get_nodes_in_group("Enemy") # <----- (PERHAPS change this to be enemies that are in the world you're currently in)
 		var enemies_on_screen: Array[Enemy] = []
 		
-		# Iterate over all of the enemies currently in the game (PERHAPS change this to be enemies that are in the world you're currently in)
+		# Iterate over all of the enemies currently loaded in the game
 		for enemy in enemies:
 			
 			# Determine if the enemy is on-screen, then add them to a list of on-screen enemies
 			if enemy.visible_on_screen_notifier_2d.is_on_screen():
 				enemies_on_screen.append(enemy)
 		
+		# Temporarily store the first enemy in the list of on-screen enemies as the target enemy and it's distance from the Food Buddy
 		target_enemy = enemies_on_screen[0]
 		target_enemy_distance = global_position.distance_to(target_enemy.global_position)
 		
@@ -132,16 +140,18 @@ func use_solo_attack():
 			# Calculate and store the distance between the Food Buddy and the enemy
 			var enemy_distance = global_position.distance_to(enemy.global_position)
 			
-			# Determine if the enemy's distance is less than the closest enemy's distance, then set that enemy as the new closest enemy
+			# Determine if the enemy's distance is closer than the target enemy's distance, then set that enemy as the new closest enemy
 			if enemy_distance < target_enemy_distance:
 				target_enemy = enemy
 				target_enemy_distance = enemy_distance
 
 	# Determine if the Food Buddy is in range of the enemy, then launch solo field attack (send signal to enemy) then trigger an attack cooldown
-	if target_enemy_distance <= AttackRange.SOLO:
+	if target_enemy_distance <= 0:
 		use_ability_solo.emit(hitbox, ability_solo_damage)
 	else:
 		pass
+		apply_central_impulse(-target_enemy.linear_velocity)
+
 		# Move closer to enemy
 		
 	# IF THE TARGET ENEMY RUNS OUT OF HEALTH AND IS PURGED, SET TARGET ENEMY TO NULL SO THAT THE FOOD BUDDY WILL BEGIN TARGETING A NEW ENEMY

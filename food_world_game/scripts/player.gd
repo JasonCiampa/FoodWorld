@@ -153,9 +153,9 @@ func _process(delta: float) -> void:
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")
-		print("Current Stamina: " + str(stamina_current))
+		#print("Current Stamina: " + str(stamina_current))
 		#print("Previous Stamina: " + str(stamina_previous))
-		print(" ")
+		#print(" ")
 		#print("Increasing: " + str(stamina_increasing))
 		#print("Decreasing: " + str(stamina_decreasing))
 		#print("Stamina Regen Delay: " + str(stamina_regen_delay_timer.time_left))
@@ -170,7 +170,7 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	update_movement_velocity(delta)
 	move_and_slide()
-	#check_collide_and_push()
+	check_collide_and_push()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -198,7 +198,7 @@ func process_ability_use():
 	
 	# Determine if an ability was used, then trigger the signal that will use the correct ability based on the Player's current fighting style
 	if ability_number != 0:
-		if fight_style_current == FightStyle.SOLO:			
+		if fight_style_current == FightStyle.SOLO:
 			if ability_number == 1:
 				use_ability_solo.emit(hitbox, attack_damage["Punch"])
 				use_stamina(StaminaUse.PUNCH)
@@ -206,7 +206,6 @@ func process_ability_use():
 				use_ability_solo.emit(hitbox, attack_damage["Kick"])
 				use_stamina(StaminaUse.KICK)
 			
-		
 		elif fight_style_current == FightStyle.BUDDY1:
 			use_ability_buddy.emit(food_buddy1, ability_number)
 		
