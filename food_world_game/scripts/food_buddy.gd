@@ -146,7 +146,7 @@ func use_solo_attack():
 				target_enemy_distance = enemy_distance
 
 	# Determine if the Food Buddy is in range of the enemy, then launch solo field attack (send signal to enemy) then trigger an attack cooldown
-	if target_enemy_distance <= AttackRange.SOLO:
+	if target_enemy_distance <= 0:
 		use_ability_solo.emit(hitbox, ability_solo_damage)
 	else:
 		pass
