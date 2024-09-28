@@ -15,10 +15,6 @@ run/main_scene="res://scenes/game.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
-[global_group]
-
-Enemy="All of the enemies that are currently loaded into the game."
-
 [input]
 
 jump={

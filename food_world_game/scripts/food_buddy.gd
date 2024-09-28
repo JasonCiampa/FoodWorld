@@ -78,16 +78,16 @@ var ability2_damage: int
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func _init(solo_damage: int, solo_range: int, 
-		   ability_type_1: FoodBuddy.AbilityType, ability_damage_1: int, ability_range_1: int,
-		   ability_type_2: FoodBuddy.AbilityType, ability_damage_2: int, ability_range_2, 
-		   base_health: int):
-	
-	ability1_type = ability_type_1
-	ability1_damage = ability_damage_1
-	
-	ability2_type = ability_type_2
-	ability2_damage = ability_damage_2
+#func _init(solo_damage: int, solo_range: int, 
+		   #ability_type_1: FoodBuddy.AbilityType, ability_damage_1: int, ability_range_1: int,
+		   #ability_type_2: FoodBuddy.AbilityType, ability_damage_2: int, ability_range_2: int, 
+		   #base_health: int) -> void:
+	#
+	#ability1_type = ability_type_1
+	#ability1_damage = ability_damage_1
+	#
+	#ability2_type = ability_type_2
+	#ability2_damage = ability_damage_2
 
 
 # Called when the node enters the scene tree for the first time.

@@ -1,13 +1,10 @@
 [gd_scene load_steps=9 format=4 uid="uid://cihoalh5h5cik"]
 
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/player.tscn" id="1_ksjva"]
 [ext_resource type="PackedScene" uid="uid://6k636yjpnvdv" path="res://scenes/enemy.tscn" id="2_2d8m7"]
 [ext_resource type="PackedScene" uid="uid://c6y8ls1ofcp2y" path="res://scenes/food_buddy.tscn" id="3_ynord"]
 [ext_resource type="Texture2D" uid="uid://c5r3pi13nkbjj" path="res://images/floor_tiles/tile-spritesheet.png" id="4_cbhjn"]
-
-[sub_resource type="GDScript" id="GDScript_wmkqu"]
-script/source = "extends Node2D
-"
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7xnne"]
 friction = 68.6
@@ -918,25 +915,20 @@ texture = ExtResource("4_cbhjn")
 [sub_resource type="TileSet" id="TileSet_7kurk"]
 sources/0 = SubResource("TileSetAtlasSource_qq3uq")
 
-[node name="Game" type="Node2D" groups=["Enemy"]]
-script = SubResource("GDScript_wmkqu")
+[node name="Game" type="Node2D"]
+script = ExtResource("1_in6cb")
 
-[node name="Player" parent="." groups=["Enemy"] instance=ExtResource("1_ksjva")]
+[node name="Player" parent="." instance=ExtResource("1_ksjva")]
 
-[node name="Enemy" parent="." groups=["Enemy"] instance=ExtResource("2_2d8m7")]
-z_index = 1
+[node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 position = Vector2(129, -109)
 physics_material_override = SubResource("PhysicsMaterial_7xnne")
 
-[node name="Food Buddy" parent="." groups=["Enemy"] instance=ExtResource("3_ynord")]
-position = Vector2(-91, 36)
+[node name="Food Buddy" parent="." instance=ExtResource("3_ynord")]
+position = Vector2(-90, 44)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAD//wIAAAAHAAQAAAD///3/AAAHAAMAAAD//wEAAAAHAAEAAAD//wAAAAAHAAEAAAD/////AAAHAAEAAAD///7/AAAHAAEAAAAAAP3/AAAHAAIAAAABAP3/AAAHAAIAAAACAP3/AAAHAAIAAAADAP3/AAAHAAIAAAAEAP3/AAAHAAIAAAAAAAIAAAAIAAQAAAAAAAEAAAAIAAEAAAAAAAAAAAAIAAEAAAAAAP//AAAIAAEAAAAAAP7/AAAHAAUAAAABAP7/AAAIAAIAAAACAP7/AAAIAAIAAAADAP7/AAAIAAIAAAAEAP7/AAAIAAIAAAABAP//AAAIAAAAAAACAP//AAAIAAAAAAABAAAAAAAIAAAAAAACAAAAAAAIAAAAAAADAP//AAAHAAAAAAADAAAAAAAHAAAAAAAEAP//AAAHAAAAAAAEAAAAAAAHAAAAAAACAAEAAAAHAAAAAAABAAEAAAAHAAAAAAABAAIAAAAHAAAAAAACAAIAAAAHAAAAAAADAAEAAAAIAAAAAAADAAIAAAAIAAAAAAAEAAIAAAAIAAAAAAAEAAEAAAAIAAAAAAD+////AAAIAAAAAAD9////AAAIAAAAAAD9/wAAAAAIAAAAAAD+/wAAAAAIAAAAAAD8/wEAAAAIAAAAAAD8/wIAAAAIAAAAAAD7/wIAAAAIAAAAAAD7/wEAAAAIAAAAAAD+/wEAAAAHAAAAAAD+/wIAAAAHAAAAAAD9/wIAAAAHAAAAAAD9/wEAAAAHAAAAAAD8/wAAAAAHAAAAAAD8////AAAHAAAAAAD7////AAAHAAAAAAD7/wAAAAAHAAAAAAD9//7/AAAHAAAAAAD+//7/AAAHAAAAAAD+//3/AAAHAAAAAAD9//3/AAAHAAAAAAD8//z/AAAHAAAAAAD7//z/AAAHAAAAAAD7//v/AAAHAAAAAAD8//v/AAAHAAAAAAD///z/AAAHAAAAAAD///v/AAAHAAAAAAAAAPv/AAAHAAAAAAAAAPz/AAAHAAAAAAADAPz/AAAHAAAAAAADAPv/AAAHAAAAAAAEAPv/AAAHAAAAAAAEAPz/AAAHAAAAAAABAPz/AAAIAAAAAAABAPv/AAAIAAAAAAACAPv/AAAIAAAAAAACAPz/AAAIAAAAAAD+//v/AAAIAAAAAAD9//v/AAAIAAAAAAD9//z/AAAIAAAAAAD+//z/AAAIAAAAAAD8//3/AAAIAAAAAAD8//7/AAAIAAAAAAD7//7/AAAIAAAAAAD7//3/AAAIAAAAAAA=")
 tile_set = SubResource("TileSet_7kurk")
 
-[connection signal="equip_buddy" from="Player" to="Food Buddy" method="_on_player_equip_buddy"]
-[connection signal="equip_buddy_fusion" from="Player" to="Food Buddy" method="_on_player_equip_buddy_fusion"]
-[connection signal="use_ability_buddy" from="Player" to="Food Buddy" method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_solo" from="Player" to="Enemy" method="_on_player_use_ability_solo"]
-[connection signal="use_ability_solo" from="Food Buddy" to="Enemy" method="_on_food_buddy_use_ability_solo"]

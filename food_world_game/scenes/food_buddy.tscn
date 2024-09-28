@@ -25,6 +25,7 @@ animations = [{
 size = Vector2(34.1, 32.185)
 
 [node name="Food Buddy" type="RigidBody2D"]
+z_index = 1
 gravity_scale = 0.0
 script = ExtResource("1_lus2v")
 
