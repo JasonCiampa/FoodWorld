@@ -1,37 +1,32 @@
-[gd_scene load_steps=7 format=3 uid="uid://c6y8ls1ofcp2y"]
+[gd_scene load_steps=7 format=3 uid="uid://d1etmld8p5rmp"]
 
-[ext_resource type="Script" path="res://scripts/food_buddy.gd" id="1_lus2v"]
-[ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_q4mxd"]
+[ext_resource type="Script" path="res://scripts/food_buddy_sausage.gd" id="1_3hxgn"]
+[ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_yte1n"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlufo"]
 size = Vector2(15, 19)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_0k52c"]
-atlas = ExtResource("2_q4mxd")
-region = Rect2(0, 66, 17, 22)
+[sub_resource type="AtlasTexture" id="AtlasTexture_h6qnx"]
+atlas = ExtResource("2_yte1n")
+region = Rect2(34, 0, 17, 22)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_cd6f1"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_0k52c")
+"texture": SubResource("AtlasTexture_h6qnx")
 }],
 "loop": true,
 "name": &"default",
-"speed": 5.0
-}, {
-"frames": [],
-"loop": true,
-"name": &"new_animation",
 "speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5vwy7"]
 size = Vector2(34.1, 32.185)
 
-[node name="Food Buddy" type="CharacterBody2D" groups=["food_buddies"]]
+[node name="Link the Sausage Link" type="CharacterBody2D" groups=["food_buddies"]]
 z_index = 1
-script = ExtResource("1_lus2v")
+script = ExtResource("1_3hxgn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 0.5)

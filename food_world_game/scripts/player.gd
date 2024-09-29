@@ -129,6 +129,7 @@ var food_buddies: Array[FoodBuddy]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	print("READY PLAYER")
 	sprite.play("idle_front")
 
 
@@ -138,11 +139,7 @@ func _process(delta: float) -> void:
 	update_movement_direction()
 	update_movement_animation()
 	update_stamina(delta)
-	update_fight_style()
-	
-	#var jim: FoodBuddy = FoodBuddy.new(FoodBuddy.AbilityType.ATTACK, FoodBuddy.AbilityType.ATTACK)
-	
-
+	update_fight_style()	
 	
 	# DEBUG #
 	if timer.time_left == 0:
