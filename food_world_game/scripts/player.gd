@@ -32,6 +32,7 @@ signal use_ability_solo
 signal use_ability_buddy
 signal use_ability_buddy_fusion
 
+signal send_instance
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -129,7 +130,7 @@ var food_buddies: Array[FoodBuddy]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	print("READY PLAYER")
+	send_instance.emit(self)
 	sprite.play("idle_front")
 
 

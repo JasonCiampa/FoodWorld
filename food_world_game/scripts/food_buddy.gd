@@ -11,6 +11,8 @@ var animation_player: AnimationPlayer
 # Hitbox #
 var hitbox: Area2D
 
+var player: Player
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -103,7 +105,8 @@ func _process(delta: float) -> void:
 	
 	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state
 	if field_state_current == FieldState.FOLLOW:
-		pass # Have the Food Buddy follow loosely behind the Player
+		move_towards_target(player, 30)
+		 # Have the Food Buddy follow loosely behind the Player
 	
 
 	
@@ -187,6 +190,34 @@ func get_enemies_on_screen() -> Array[Enemy]:
 
 
 
+# Moves the Food Buddy towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
+func move_towards_target(target: Node2D, desired_distance: float) -> float:
+	
+	# Determine the Food Buddy's position compared to the target's, then adjust the Food Buddy's velocity so that they move towards the target 
+	if position.x < target.position.x:
+		velocity.x = speed_current
+	
+	elif position.x > target.position.x:
+		velocity.x = -speed_current
+	
+	if position.y < target.position.y:
+		velocity.y = speed_current
+	
+	elif position.y > target.position.y:
+		velocity.y = -speed_current
+	
+	# Calculate the distance from the Food Buddy to the target
+	var target_distance = position.distance_to(target.position)
+	
+	# Determine if the Food Buddy has approximately reached the desired distance away from the target, then make them stop moving
+	if target_distance <= desired_distance:
+		velocity.x = 0
+		velocity.y = 0
+	
+	# Return the distance from the Food Buddy to the target
+	return target_distance
+
+
 # Determines which enemy in a given list of enemies is closest to the Food Buddy and sets that enemy as the Food Buddy's target
 func target_closest_enemy():
 	
@@ -194,7 +225,7 @@ func target_closest_enemy():
 	var enemies_on_screen: Array[Enemy] = get_enemies_on_screen()
 	
 	if enemies_on_screen.size() == 0:
-		# Follow the Player
+		move_towards_target(player, 30)
 		return
 	
 	# Temporarily store the first enemy in the list of enemies as the target enemy and also store it's distance from the Food Buddy
@@ -227,21 +258,10 @@ func use_solo_attack():
 		velocity.x = 0
 		velocity.y = 0
 		use_ability_solo.emit(hitbox, ability_solo_damage)
-	else:
-		
-		# Move the Food Buddy towards the enemy that is currently being targeted
-		if position.x < target_enemy.position.x:
-			velocity.x = speed_current
-		elif position.x > target_enemy.position.x:
-			velocity.x = -speed_current
-			
-		if position.y < target_enemy.position.y:
-			velocity.y = speed_current
-		elif position.y > target_enemy.position.y:
-			velocity.y = -speed_current
-		
-		# Update the reference to the enemy's distance from the Food Buddy
-		target_enemy_distance = position.distance_to(target_enemy.position)
+
+	if target_enemy != null:
+		print("fart")
+		target_enemy_distance = move_towards_target(target_enemy, 10)
 
 
 
@@ -291,3 +311,7 @@ func _on_enemy_die(enemy: Enemy) -> void:
 		velocity.x = 0
 		velocity.y = 0
 		print("FoodBuddy killed enemy!")
+
+
+func _on_player_send_instance(player_reference: Player) -> void:
+	player = player_reference
