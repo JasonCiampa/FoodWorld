@@ -24,12 +24,11 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u43pv"]
 size = Vector2(34.1, 32.185)
 
-[node name="Enemy" type="RigidBody2D"]
+[node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 z_index = 1
 disable_mode = 1
 collision_layer = 2
 collision_mask = 3
-gravity_scale = 0.0
 script = ExtResource("1_usloy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
