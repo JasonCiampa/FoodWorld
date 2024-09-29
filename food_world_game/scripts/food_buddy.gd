@@ -2,6 +2,7 @@ class_name FoodBuddy
 
 extends CharacterBody2D
 
+
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Animations #
@@ -24,6 +25,12 @@ var player: Player
 signal use_ability_solo
 signal use_ability_player
 signal use_ability_buddy_fusion
+
+signal move_towards_player
+signal move_towards_enemy
+
+signal target_closest_enemy
+signal killed_victim
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -103,12 +110,11 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	update_field_state()
+	
 	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state
 	if field_state_current == FieldState.FOLLOW:
-		move_towards_target(player, 30)
-		 # Have the Food Buddy follow loosely behind the Player
-	
-
+		move_towards_player.emit(self, 30)
 	
 	# Call the custom "update()" function that Food Buddy subclasses will define individually
 	process()
@@ -134,7 +140,7 @@ func _physics_process(delta: float) -> void:
 
 
 
-# MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # A custom ready function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_ready()' function
@@ -167,101 +173,44 @@ func use_ability2():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	pass
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-# Determines which enemies are currently on-screen and returns them in a list
-func get_enemies_on_screen() -> Array[Enemy]:
+
+
+
+# MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Updates the Food Buddy's current field state based on Player input
+func update_field_state():
 	
-	# Store a list of references to all of the enemies currently loaded into the game, and create an empty list that will hold any enemies on the screen
-	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies") # <----- (PERHAPS change this to be enemies that are in the world you're currently in)
-	var enemies_on_screen: Array[Enemy] = []
-	
-	# Iterate over all of the enemies currently loaded in the game
-	for enemy in enemies:
+	# Determine if the Food Buddy's field state was adjusted by the Player, then set the correct field state
+	if Input.is_action_just_pressed("toggle_buddy_field_state"):
+		if field_state_current == FieldState.FOLLOW:
+			field_state_current = FieldState.FIGHT
 		
-		if not use_ability_solo.is_connected(enemy._on_food_buddy_use_ability_solo):
-			use_ability_solo.connect(enemy._on_food_buddy_use_ability_solo)
-		
-		# Determine if the enemy is on-screen, then add them to a list of on-screen enemies
-		if enemy.on_screen_notifier.is_on_screen():
-			enemies_on_screen.append(enemy)
-	
-	return enemies_on_screen
-
-
-
-# Moves the Food Buddy towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(target: Node2D, desired_distance: float) -> float:
-	
-	# Determine the Food Buddy's position compared to the target's, then adjust the Food Buddy's velocity so that they move towards the target 
-	if position.x < target.position.x:
-		velocity.x = speed_current
-	
-	elif position.x > target.position.x:
-		velocity.x = -speed_current
-	
-	if position.y < target.position.y:
-		velocity.y = speed_current
-	
-	elif position.y > target.position.y:
-		velocity.y = -speed_current
-	
-	# Calculate the distance from the Food Buddy to the target
-	var target_distance = position.distance_to(target.position)
-	
-	# Determine if the Food Buddy has approximately reached the desired distance away from the target, then make them stop moving
-	if target_distance <= desired_distance:
-		velocity.x = 0
-		velocity.y = 0
-	
-	# Return the distance from the Food Buddy to the target
-	return target_distance
-
-
-# Determines which enemy in a given list of enemies is closest to the Food Buddy and sets that enemy as the Food Buddy's target
-func target_closest_enemy():
-	
-	# Get a reference to a list of all enemies that are currently on-screen
-	var enemies_on_screen: Array[Enemy] = get_enemies_on_screen()
-	
-	if enemies_on_screen.size() == 0:
-		move_towards_target(player, 30)
-		return
-	
-	# Temporarily store the first enemy in the list of enemies as the target enemy and also store it's distance from the Food Buddy
-	target_enemy = enemies_on_screen[0]
-	target_enemy_distance = position.distance_to(target_enemy.position)
-	
-	# Iterate over all of the enemies in the given list
-	for enemy in enemies_on_screen:
-		
-		# Calculate and store the distance between the Food Buddy and the  enemy
-		var enemy_distance: float = position.distance_to(enemy.position)
-		
-		# Determine if the enemy's distance is closer than the target enemy's distance, then set that enemy as the new closest enemy
-		if enemy_distance < target_enemy_distance:
-			target_enemy = enemy
-			target_enemy_distance = enemy_distance
+		elif field_state_current == FieldState.FIGHT:
+			field_state_current = FieldState.FOLLOW
 
 
 
 # Executes the logic for a Food Buddy's solo attack
 func use_solo_attack():
 
-	# Determine if the Food Buddy doesn't have an enemy to target currently, then target the closest enemy
-	if target_enemy == null:
-		target_closest_enemy()
+	# Determine if the Food Buddy has an enemy to target currently, then move towards them. Otherwise, move the Food Buddy towards the Player and have them look for a new target enemy.
+	if target_enemy != null:
+		move_towards_enemy.emit(self, target_enemy, 10)
+	else:
+		move_towards_player.emit(self, 30)
+		target_closest_enemy.emit(self)
 		return
-
+		
 	# Determine if the Food Buddy is in range of the enemy, then make them stop moving and launch their solo attack
 	if target_enemy_distance <= 10:
 		velocity.x = 0
 		velocity.y = 0
-		use_ability_solo.emit(hitbox, ability_solo_damage)
-
-	if target_enemy != null:
-		print("fart")
-		target_enemy_distance = move_towards_target(target_enemy, 10)
+		use_ability_solo.emit(self, ability_solo_damage)
 
 
 
@@ -303,15 +252,4 @@ func _on_player_use_ability_buddy(food_buddy: FoodBuddy, ability_number: int) ->
 			use_ability_player.emit()
 
 
-
-# Callback function that executes whenever the enemy that the Food Buddy is currently targeting dies
-func _on_enemy_die(enemy: Enemy) -> void:
-	if enemy == target_enemy:
-		target_enemy = null
-		velocity.x = 0
-		velocity.y = 0
-		print("FoodBuddy killed enemy!")
-
-
-func _on_player_send_instance(player_reference: Player) -> void:
-	player = player_reference
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

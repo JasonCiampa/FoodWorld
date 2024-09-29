@@ -928,7 +928,7 @@ tile_map_data = PackedByteArray("AAD//wIAAAAHAAQAAAD///3/AAAHAAMAAAD//wEAAAAHAAE
 tile_set = SubResource("TileSet_7kurk")
 
 [connection signal="die" from="Enemy" to="." method="_on_enemy_die"]
-[connection signal="killed_victim" from="Food Buddy" to="." method="_on_food_buddy_killed_victim"]
+[connection signal="die" from="Enemy" to="Food Buddy" method="_on_enemy_die"]
 [connection signal="move_towards_enemy" from="Food Buddy" to="." method="_on_food_buddy_move_towards_enemy"]
 [connection signal="move_towards_player" from="Food Buddy" to="." method="_on_food_buddy_move_towards_player"]
 [connection signal="target_closest_enemy" from="Food Buddy" to="." method="_on_food_buddy_target_closest_enemy"]

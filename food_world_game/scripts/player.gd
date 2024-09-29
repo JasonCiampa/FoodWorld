@@ -32,7 +32,7 @@ signal use_ability_solo
 signal use_ability_buddy
 signal use_ability_buddy_fusion
 
-signal send_instance
+signal killed_victim
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -130,7 +130,6 @@ var food_buddies: Array[FoodBuddy]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	send_instance.emit(self)
 	sprite.play("idle_front")
 
 
@@ -198,10 +197,10 @@ func process_ability_use():
 	if ability_number != 0:
 		if fight_style_current == FightStyle.SOLO:
 			if ability_number == 1:
-				use_ability_solo.emit(hitbox, attack_damage["Punch"])
+				use_ability_solo.emit(attack_damage["Punch"])
 				use_stamina(StaminaUse.PUNCH)
 			else:
-				use_ability_solo.emit(hitbox, attack_damage["Kick"])
+				use_ability_solo.emit(attack_damage["Kick"])
 				use_stamina(StaminaUse.KICK)
 			
 		elif fight_style_current == FightStyle.BUDDY1:

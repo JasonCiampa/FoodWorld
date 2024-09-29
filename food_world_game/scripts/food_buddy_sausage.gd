@@ -10,16 +10,16 @@ func ready():
 	# Store a reference to a list of all enemies currently loaded into the game
 	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	
-	# Iterate over each enemy in the list of enemies currently loaded into the game
-	for enemy in enemies:
-		
-		# Determine if Link's use_ability_solo signal hasn't been connected to the Enemy's callback function, then connect it
-		if not use_ability_solo.is_connected(enemy._on_food_buddy_use_ability_solo):
-			use_ability_solo.connect(enemy._on_food_buddy_use_ability_solo)
-		
-		# Determine if the enemy's die signal hasn't been connected to Link's callback function, then connect it
-		if not enemy.die.is_connected(_on_enemy_die):
-			enemy.die.connect(_on_enemy_die)
+	## Iterate over each enemy in the list of enemies currently loaded into the game
+	#for enemy in enemies:
+		#
+		## Determine if Link's use_ability_solo signal hasn't been connected to the Enemy's callback function, then connect it
+		#if not use_ability_solo.is_connected(enemy._on_food_buddy_use_ability_solo):
+			#use_ability_solo.connect(enemy._on_food_buddy_use_ability_solo)
+		#
+		## Determine if the enemy's die signal hasn't been connected to Link's callback function, then connect it
+		#if not enemy.die.is_connected(_on_enemy_die):
+			#enemy.die.connect(_on_enemy_die)
 
 
 
