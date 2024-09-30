@@ -12,7 +12,9 @@ var animation_player: AnimationPlayer
 # Hitbox #
 var hitbox: Area2D
 
-var player: Player
+# Inventory #
+var inventory: Array = []
+var inventory_size: int = 12
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,11 +28,13 @@ signal use_ability_solo
 signal use_ability_player
 signal use_ability_buddy_fusion
 
-signal move_towards_player
-signal move_towards_enemy
-
 signal target_closest_enemy
-signal killed_victim
+signal target_player
+
+signal move_towards_target
+
+signal killed_target
+signal die
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +46,7 @@ signal killed_victim
 
 enum AbilityType { ATTACK, TRAVERSAL, PUZZLE, HYBRID }
 
-enum FieldState { FOLLOW, FIGHT }
+enum FieldState { FOLLOW, FIGHT, FORAGE }
 
 enum FightStyle { SOLO, PLAYER, BUDDY_FUSION }
 
@@ -66,9 +70,8 @@ var speed_current: int = speed_normal
 
 # Fighting #
 var fight_style_current: FightStyle
-var target_enemy: Enemy = null
-var target_enemy_distance: float
-var target_enemy_just_died: bool = false
+var target: Node2D = null
+var target_distance: float
 
 # Field State #
 var field_state_current: FieldState
@@ -114,7 +117,8 @@ func _process(delta: float) -> void:
 	
 	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state
 	if field_state_current == FieldState.FOLLOW:
-		move_towards_player.emit(self, 30)
+		target_player.emit(self)
+		move_towards_target.emit(self, target, 30)
 	
 	# Call the custom "update()" function that Food Buddy subclasses will define individually
 	process()
@@ -198,16 +202,17 @@ func update_field_state():
 # Executes the logic for a Food Buddy's solo attack
 func use_solo_attack():
 
-	# Determine if the Food Buddy has an enemy to target currently, then move towards them. Otherwise, move the Food Buddy towards the Player and have them look for a new target enemy.
-	if target_enemy != null:
-		move_towards_enemy.emit(self, target_enemy, 10)
+	# Determine if the Food Buddy has a target Node2D currently, then move towards it. Otherwise, move the Food Buddy towards the Player and have them look for a new target.
+	if target != null:
+		move_towards_target.emit(self, target, 10)
 	else:
-		move_towards_player.emit(self, 30)
+		target_player.emit(self)
+		move_towards_target.emit(self, target, 30)
 		target_closest_enemy.emit(self)
 		return
 		
-	# Determine if the Food Buddy is in range of the enemy, then make them stop moving and launch their solo attack
-	if target_enemy_distance <= 10:
+	# Determine if the Food Buddy is in range of an enemy, then make them stop moving and launch their solo attack
+	if target_distance <= 10 and target is Enemy:
 		velocity.x = 0
 		velocity.y = 0
 		use_ability_solo.emit(self, ability_solo_damage)

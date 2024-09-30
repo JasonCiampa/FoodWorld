@@ -32,7 +32,9 @@ signal use_ability_solo
 signal use_ability_buddy
 signal use_ability_buddy_fusion
 
-signal killed_victim
+signal die
+signal killed_target
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -167,7 +169,7 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	update_movement_velocity(delta)
 	move_and_slide()
-	check_collide_and_push()
+	#check_collide_and_push()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -213,7 +215,7 @@ func process_ability_use():
 			use_ability_buddy_fusion.emit(food_buddy1, food_buddy2)
 
 
-
+# CHECK OUT THIS LINK WHEN IT COMES TIME TO DO MOVEMENT WORK https://forum.godotengine.org/t/what-is-causing-my-collision2d-to-stick-to-each-others/1404
 # Checks if the Player collided with a RigidBody2D, and if so, pushes the RigidBody2D with power determined by the Player's current speed
 func check_collide_and_push():
 	
@@ -225,8 +227,10 @@ func check_collide_and_push():
 		var collider = collision.get_collider()
 		
 		# Determine if the entity who the collision occurred with was a RigidBody2D, then apply the push force
-		if collider is RigidBody2D:
-			collider.apply_central_impulse(-collision.get_normal() * 2)
+		if collider is CharacterBody2D:
+			pass
+			#collider.velocity.x = 50	<-- This works for CharacterBody2Ds
+			#collider.apply_central_impulse(-collision.get_normal() * 2) <-- This works for RigidBody2Ds
 
 
 

@@ -2,9 +2,9 @@ extends Node2D
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-@onready var player: Player = $Player
-@onready var enemy: Enemy = $Enemy
-@onready var food_buddy: FoodBuddy = $"Food Buddy"
+@onready var PLAYER: Player = $Player
+@onready var ENEMY: Enemy = $Enemy
+@onready var FOOD_BUDDY: FoodBuddy = $"Food Buddy"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -58,6 +58,13 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Determines which Food Buddies are currently active with the Player and returns them in a list
+func get_active_food_buddies() -> Array[Node2D]:
+	PLAYER.food_buddy1 = FOOD_BUDDY
+	PLAYER.food_buddy2 = FOOD_BUDDY
+
+	return [PLAYER.food_buddy1, PLAYER.food_buddy2]
 
 # Determines which enemies are currently on-screen and returns them in a list
 func get_enemies_on_screen() -> Array[Node2D]:
@@ -131,20 +138,20 @@ func move_towards_target(subject: Node2D, target: Node2D, desired_distance: floa
 
 
 
-# Determines if an attack has landed and reduces the attacked Node's health if it has. Returns true if the attack landed on that enemy, false if not.
-func process_attack(victim: Node2D, attacker: Node2D, damage: int) -> bool:
+# Determines if an attack has landed on the target and reduces the target's health if it has. Returns true if the attack landed on the target, false if not.
+func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 	
 	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
 	var hitboxes = attacker.hitbox.get_overlapping_areas()
 	
 	# Determine if the attacked Node's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
-	if victim.hitbox in hitboxes:
-		victim.health_current -= damage
+	if target.hitbox in hitboxes:
+		target.health_current -= damage
 		
 		# Determine if the attacked Node has run out of health, then emit their death signal
-		if victim.health_current <= 0:
-			victim.die.emit(victim)
-			attacker.killed_victim.emit(attacker)
+		if target.health_current <= 0:
+			target.die.emit(target)
+			attacker.killed_target.emit(attacker)
 		
 		return true
 	
@@ -168,32 +175,38 @@ func determine_player_location_world() -> World:
 
 # CALLBACK FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
-func _on_enemy_die(enemy: Enemy) -> void:
-	remove_child(enemy)
-	print("Enemy has died!")
 
-
+# PLAYER CALLBACKS # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies
 func _on_player_use_ability_solo(damage: int) -> void:
 	
 	# Iterate over every enemy currently on the screen to check if the Player's attack landed on them, then stop checking if the attack landed because the Player's solo ability can only damage one enemy at a time
 	for enemy in get_enemies_on_screen():
-		if process_attack(enemy, player, damage):
+		if process_attack(enemy, PLAYER, damage):
 			return
 
 
 
-# Callback function that executes whenever the Food Buddy wants to move towards the Player: moves the Food Buddy towards the Player
-func _on_food_buddy_move_towards_player(food_buddy: FoodBuddy, desired_distance: float) -> void:
-	move_towards_target(food_buddy, player, desired_distance)
+# Callback function that executes whenever the Player dies: removes the Player from the SceneTree
+func _on_player_die(player: Player) -> void:
+	remove_child(PLAYER)
+	print("Player has died!")
 
 
+
+
+# FOOD BUDDY CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Callback function that executes whenever the Food Buddy wants to move towards an enemy: moves the Food Buddy towards the given enemy
-func _on_food_buddy_move_towards_enemy(food_buddy: FoodBuddy, target_enemy: Enemy, desired_distance: float) -> void:
-	food_buddy.target_enemy_distance = move_towards_target(food_buddy, target_enemy, desired_distance)
+func _on_food_buddy_move_towards_target(food_buddy: FoodBuddy, target: Node2D, desired_distance: float) -> void:
+	food_buddy.target_distance = move_towards_target(food_buddy, target, desired_distance)
+
+
+
+# Callback function that executes whenever the Food Buddy wants to set the Player as it's target: sets the Player as the target of the Food Buddy
+func _on_food_buddy_target_player(food_buddy: FoodBuddy) -> void:
+	food_buddy.target = PLAYER
 
 
 
@@ -203,11 +216,11 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	var target_closest = select_closest_target(food_buddy, get_enemies_on_screen())
 		
 	if target_closest != null:
-		food_buddy.target_enemy = target_closest
-		food_buddy.target_enemy_distance = food_buddy.position.distance_to(target_closest.position)
+		food_buddy.target = target_closest
+		food_buddy.target_distance = food_buddy.position.distance_to(target_closest.position)
 	else:
-		food_buddy.target_enemy = null
-		food_buddy.target_enemy_distance = 0
+		food_buddy.target = null
+		food_buddy.target_distance = 0
 
 
 
@@ -220,7 +233,62 @@ func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void
 
 
 
-# Callback function that executes whenever the Food Buddy has killed an enemy: sets the Food Buddy's target enemy to null
-func _on_food_buddy_killed_victim(food_buddy: FoodBuddy) -> void:
-	food_buddy.target_enemy = null
+# Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
+func _on_food_buddy_killed_target(food_buddy: FoodBuddy) -> void:
+	food_buddy.target = null
 	# Increase XP for killing an enemy
+
+
+# Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
+func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
+	remove_child(FOOD_BUDDY)
+	print("Food Buddy has died!")
+
+
+# ENEMY CALLBACKS # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
+func _on_enemy_die(enemy: Enemy) -> void:
+	remove_child(enemy)
+	print("Enemy has died!")
+
+
+
+# Callback function that executes whenever the Enemy wants to set the Player as it's target: sets the Player as the target of the Enemy
+func _on_enemy_target_player(enemy: Enemy) -> void:
+	enemy.target = PLAYER
+
+
+
+# Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Enemy
+func _on_enemy_target_closest_food_buddy(enemy: Enemy) -> void:
+	
+	var target_closest = select_closest_target(enemy, get_active_food_buddies())
+		
+	if target_closest != null:
+		enemy.target = target_closest
+		enemy.target_distance = enemy.position.distance_to(target_closest.position)
+	else:
+		enemy.target = null
+		enemy.target_distance = 0
+
+
+
+# Callback function that executes whenever the Enemy wants to move towards an enemy: moves the Enemy towards the given enemy
+func _on_enemy_move_towards_target(enemy: Enemy, target: Node2D, desired_distance: float) -> void:
+	enemy.target_distance = move_towards_target(enemy, target, desired_distance)
+
+
+
+# Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Player and active Food Buddies
+func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
+	process_attack(PLAYER, enemy, damage)
+	process_attack(PLAYER.food_buddy1, enemy, damage)
+	process_attack(PLAYER.food_buddy2, enemy, damage)
+
+
+
+# Callback function that executes whenever the Enemy has killed their target: sets the Enemy's target to null
+func _on_enemy_killed_target(enemy: Enemy) -> void:
+	enemy.target = null
+	enemy.target_distance = 0
