@@ -37,7 +37,8 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
-	pass
+	PLAYER.food_buddy1 = FOOD_BUDDY
+	PLAYER.food_buddy2 = FOOD_BUDDY
 
 
 
@@ -61,10 +62,18 @@ func _physics_process(delta: float) -> void:
 
 # Determines which Food Buddies are currently active with the Player and returns them in a list
 func get_active_food_buddies() -> Array[Node2D]:
-	PLAYER.food_buddy1 = FOOD_BUDDY
-	PLAYER.food_buddy2 = FOOD_BUDDY
+	
+	var active_food_buddies: Array[Node2D] = []
+	
+	if PLAYER.food_buddy1 != null:
+		active_food_buddies.append(PLAYER.food_buddy1)
+	
+	if PLAYER.food_buddy2 != null:
+		active_food_buddies.append(PLAYER.food_buddy2)
 
-	return [PLAYER.food_buddy1, PLAYER.food_buddy2]
+	return active_food_buddies
+
+
 
 # Determines which enemies are currently on-screen and returns them in a list
 func get_enemies_on_screen() -> Array[Node2D]:
@@ -86,9 +95,13 @@ func get_enemies_on_screen() -> Array[Node2D]:
 # Determines which target in a given list of targets is closest to the subject and returns that target (or null if no targets on-screen)
 func select_closest_target(subject: Node2D, targets: Array[Node2D]) -> Node2D:
 	
-	# Determine if there are no targets in the provided list of targets
+	# Determine if there are no targets in the provided list of targets, then return null because there are no targets to choose from
 	if targets.size() == 0:
 		return null
+	
+	# Determine if there are is only one target in the provided list of targets, then return null because it is the only target and therefore the closest
+	if targets.size() == 1:
+		return targets[0]
 		
 	# Temporarily store the first target in the list of targets as the closest target and also store it's distance from the subject
 	var target_closest = targets[0]
@@ -190,7 +203,7 @@ func _on_player_use_ability_solo(damage: int) -> void:
 
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
 func _on_player_die(player: Player) -> void:
-	remove_child(PLAYER)
+	remove_child(player)
 	print("Player has died!")
 
 
@@ -241,7 +254,14 @@ func _on_food_buddy_killed_target(food_buddy: FoodBuddy) -> void:
 
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
 func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
-	remove_child(FOOD_BUDDY)
+	
+	if food_buddy == PLAYER.food_buddy1:
+		PLAYER.food_buddy1 = null
+	
+	if food_buddy == PLAYER.food_buddy2:
+		PLAYER.food_buddy2 = null
+	
+	remove_child(food_buddy)
 	print("Food Buddy has died!")
 
 
@@ -284,7 +304,7 @@ func _on_enemy_move_towards_target(enemy: Enemy, target: Node2D, desired_distanc
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(PLAYER, enemy, damage)
 	process_attack(PLAYER.food_buddy1, enemy, damage)
-	process_attack(PLAYER.food_buddy2, enemy, damage)
+	#process_attack(PLAYER.food_buddy2, enemy, damage)
 
 
 

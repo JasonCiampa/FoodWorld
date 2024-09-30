@@ -203,7 +203,7 @@ func update_field_state():
 func use_solo_attack():
 
 	# Determine if the Food Buddy has a target Node2D currently, then move towards it. Otherwise, move the Food Buddy towards the Player and have them look for a new target.
-	if target != null:
+	if target != null and target is Enemy:
 		move_towards_target.emit(self, target, 10)
 	else:
 		target_player.emit(self)
