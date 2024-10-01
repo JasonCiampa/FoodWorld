@@ -25,8 +25,6 @@ var inventory_size: int = 12
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 signal use_ability_solo
-signal use_ability_player
-signal use_ability_buddy_fusion
 
 signal target_closest_enemy
 signal target_player
@@ -165,6 +163,26 @@ func physics_process(delta: float) -> void:
 
 
 
+# Executes the logic for a Food Buddy's solo attack
+func use_solo_attack():
+
+	# Determine if the Food Buddy has a target Node2D currently, then move towards it. Otherwise, move the Food Buddy towards the Player and have them look for a new target.
+	if target != null and target is Enemy:
+		move_towards_target.emit(self, target, 10)
+	else:
+		target_player.emit(self)
+		move_towards_target.emit(self, target, 30)
+		target_closest_enemy.emit(self)
+		return
+		
+	# Determine if the Food Buddy is in range of an enemy, then make them stop moving and launch their solo attack
+	if target_distance <= 10 and target is Enemy:
+		velocity.x = 0
+		velocity.y = 0
+		use_ability_solo.emit(self, ability_solo_damage)
+
+
+
 # A custom function to execute the Food Buddy's ability 1 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
 func use_ability1():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
@@ -174,6 +192,13 @@ func use_ability1():
 
 # A custom function to execute the Food Buddy's ability 2 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
 func use_ability2():
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	pass
+
+
+
+# A custom function to execute the Food Buddy's special attack that each Food Buddy subclass should personally define.
+func use_special_attack():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	pass
 
@@ -199,26 +224,6 @@ func update_field_state():
 
 
 
-# Executes the logic for a Food Buddy's solo attack
-func use_solo_attack():
-
-	# Determine if the Food Buddy has a target Node2D currently, then move towards it. Otherwise, move the Food Buddy towards the Player and have them look for a new target.
-	if target != null and target is Enemy:
-		move_towards_target.emit(self, target, 10)
-	else:
-		target_player.emit(self)
-		move_towards_target.emit(self, target, 30)
-		target_closest_enemy.emit(self)
-		return
-		
-	# Determine if the Food Buddy is in range of an enemy, then make them stop moving and launch their solo attack
-	if target_distance <= 10 and target is Enemy:
-		velocity.x = 0
-		velocity.y = 0
-		use_ability_solo.emit(self, ability_solo_damage)
-
-
-
 # Callback function that executes whenever the Player equips a Food Buddy: updates the Food Buddy's fight style
 func _on_player_equip_buddy(food_buddy: FoodBuddy) -> void:
 	if self == food_buddy:
@@ -235,26 +240,6 @@ func _on_player_equip_buddy_fusion() -> void:
 		fight_style_current = FightStyle.BUDDY_FUSION
 	else:
 		fight_style_current = FightStyle.SOLO
-
-
-
-# Callback function that executes whenever the Player uses an ability while having a Food Buddy equipped: launches the Food Buddy's ability
-func _on_player_use_ability_buddy(food_buddy: FoodBuddy, ability_number: int) -> void:
-	if self == food_buddy:
-		if ability_number == 1:
-			pass
-			# Use ability 1
-			# if ability isn't an attack or hybrid, don't emit any signal to enemies but launch ability logic (animation is handled in Player)
-			# if ability is an attack emit a new signal to enemy from this food buddy that will handle damage (animation is handled in Player)
-			use_ability1()
-			use_ability_player.emit()
-		else:
-			pass
-			# Use ability 2
-			# if ability isn't an attack or hybrid, don't emit any signal to enemies but launch ability logic (animation is handled in Player)
-			# if ability is an attack emit a new signal to enemy from this food buddy that will handle damage (animation is handled in Player)
-			use_ability2()
-			use_ability_player.emit()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
