@@ -170,7 +170,8 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 	
 	return false
 
-
+func trigger_buddy_fusion_ability(food_buddy_fusion: FoodBuddyFusion):
+	pass
 
 # Determines which world the Player is currently located in
 func determine_player_location_world() -> World:
@@ -186,10 +187,19 @@ func determine_player_location_world() -> World:
 
 
 
-# CALLBACK FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# CALLBACK FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # PLAYER CALLBACKS # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Callback function that executes whenever the Player equips a Food Buddy: updates the Food Buddy's FightStyle
+func _on_player_equip_buddy() -> void:
+	pass # Replace with function body.
+
+
+func _on_player_equip_buddy_fusion() -> void:
+	pass # Replace with function body.
+
 
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies
 func _on_player_use_ability_solo(damage: int) -> void:
@@ -201,6 +211,34 @@ func _on_player_use_ability_solo(damage: int) -> void:
 
 
 
+# Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy: executes the Food Buddy's ability
+func _on_player_use_ability_buddy(food_buddy: FoodBuddy, ability_number: int) -> void:
+	if ability_number == 1:
+		food_buddy.use_ability1()
+	elif ability_number == 2:
+		food_buddy.use_ability2()
+	else:
+		food_buddy.use_special_attack()
+
+
+
+# Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability
+func _on_player_use_ability_buddy_fusion(food_buddy_fusion: FoodBuddyFusion, ability_number: int) -> void:
+	if ability_number == 1:
+		food_buddy_fusion.use_ability1()
+	elif ability_number == 2:
+		food_buddy_fusion.use_ability2()
+	else:
+		food_buddy_fusion.use_special_attack()
+
+
+
+# Callback function that executes whenever the Player has killed their target: sets the Player's target to null
+func _on_player_killed_target() -> void:
+	# Increase XP for killing an enemy
+	pass
+
+
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
 func _on_player_die(player: Player) -> void:
 	remove_child(player)
@@ -208,12 +246,14 @@ func _on_player_die(player: Player) -> void:
 
 
 
-
 # FOOD BUDDY CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Callback function that executes whenever the Food Buddy wants to move towards an enemy: moves the Food Buddy towards the given enemy
-func _on_food_buddy_move_towards_target(food_buddy: FoodBuddy, target: Node2D, desired_distance: float) -> void:
-	food_buddy.target_distance = move_towards_target(food_buddy, target, desired_distance)
+# Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against enemies
+func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void:
+	
+	# Iterate over every enemy currently on the screen to check if the Food Buddy's attack landed on them
+	for enemy in get_enemies_on_screen():
+		process_attack(enemy, food_buddy, damage)
 
 
 
@@ -237,12 +277,9 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 
 
 
-# Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against enemies
-func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void:
-	
-	# Iterate over every enemy currently on the screen to check if the Food Buddy's attack landed on them
-	for enemy in get_enemies_on_screen():
-		process_attack(enemy, food_buddy, damage)
+# Callback function that executes whenever the Food Buddy wants to move towards an enemy: moves the Food Buddy towards the given enemy
+func _on_food_buddy_move_towards_target(food_buddy: FoodBuddy, target: Node2D, desired_distance: float) -> void:
+	food_buddy.target_distance = move_towards_target(food_buddy, target, desired_distance)
 
 
 
@@ -250,6 +287,7 @@ func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void
 func _on_food_buddy_killed_target(food_buddy: FoodBuddy) -> void:
 	food_buddy.target = null
 	# Increase XP for killing an enemy
+
 
 
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
@@ -265,12 +303,14 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 	print("Food Buddy has died!")
 
 
+
 # ENEMY CALLBACKS # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
-func _on_enemy_die(enemy: Enemy) -> void:
-	remove_child(enemy)
-	print("Enemy has died!")
+# Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Player and active Food Buddies
+func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
+	process_attack(PLAYER, enemy, damage)
+	process_attack(PLAYER.food_buddy1, enemy, damage)
+	#process_attack(PLAYER.food_buddy2, enemy, damage)
 
 
 
@@ -300,15 +340,14 @@ func _on_enemy_move_towards_target(enemy: Enemy, target: Node2D, desired_distanc
 
 
 
-# Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Player and active Food Buddies
-func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
-	process_attack(PLAYER, enemy, damage)
-	process_attack(PLAYER.food_buddy1, enemy, damage)
-	#process_attack(PLAYER.food_buddy2, enemy, damage)
-
-
-
 # Callback function that executes whenever the Enemy has killed their target: sets the Enemy's target to null
 func _on_enemy_killed_target(enemy: Enemy) -> void:
 	enemy.target = null
 	enemy.target_distance = 0
+
+
+
+# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
+func _on_enemy_die(enemy: Enemy) -> void:
+	remove_child(enemy)
+	print("Enemy has died!")
