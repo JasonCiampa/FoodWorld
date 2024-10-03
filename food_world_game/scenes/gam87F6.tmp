@@ -918,11 +918,8 @@ script = ExtResource("1_in6cb")
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 position = Vector2(-170, -93)
 
-[node name="Food Buddy_1" parent="." instance=ExtResource("3_ynord")]
+[node name="Food Buddy" parent="." instance=ExtResource("3_ynord")]
 position = Vector2(-1, -41)
-
-[node name="Food Buddy_2" parent="." instance=ExtResource("3_ynord")]
-position = Vector2(-2, -82)
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 
@@ -936,18 +933,12 @@ tile_set = SubResource("TileSet_7kurk")
 [connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_enemy_target_closest_food_buddy"]
 [connection signal="target_player" from="Enemy" to="." method="_on_enemy_target_player"]
 [connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
-[connection signal="die" from="Food Buddy_1" to="." method="_on_food_buddy_die"]
-[connection signal="killed_target" from="Food Buddy_1" to="." method="_on_food_buddy_killed_target"]
-[connection signal="move_towards_target" from="Food Buddy_1" to="." method="_on_food_buddy_move_towards_target"]
-[connection signal="target_closest_enemy" from="Food Buddy_1" to="." method="_on_food_buddy_target_closest_enemy"]
-[connection signal="target_player" from="Food Buddy_1" to="." method="_on_food_buddy_target_player"]
-[connection signal="use_ability_solo" from="Food Buddy_1" to="." method="_on_food_buddy_use_ability_solo"]
-[connection signal="die" from="Food Buddy_2" to="." method="_on_food_buddy_die"]
-[connection signal="killed_target" from="Food Buddy_2" to="." method="_on_food_buddy_killed_target"]
-[connection signal="move_towards_target" from="Food Buddy_2" to="." method="_on_food_buddy_move_towards_target"]
-[connection signal="target_closest_enemy" from="Food Buddy_2" to="." method="_on_food_buddy_target_closest_enemy"]
-[connection signal="target_player" from="Food Buddy_2" to="." method="_on_food_buddy_target_player"]
-[connection signal="use_ability_solo" from="Food Buddy_2" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="die" from="Food Buddy" to="." method="_on_food_buddy_die"]
+[connection signal="killed_target" from="Food Buddy" to="." method="_on_food_buddy_killed_target"]
+[connection signal="move_towards_target" from="Food Buddy" to="." method="_on_food_buddy_move_towards_target"]
+[connection signal="target_closest_enemy" from="Food Buddy" to="." method="_on_food_buddy_target_closest_enemy"]
+[connection signal="target_player" from="Food Buddy" to="." method="_on_food_buddy_target_player"]
+[connection signal="use_ability_solo" from="Food Buddy" to="." method="_on_food_buddy_use_ability_solo"]
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="killed_target" from="Player" to="." method="_on_player_killed_target"]
 [connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]

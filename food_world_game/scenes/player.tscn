@@ -90,7 +90,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_cet75")
 }],
 "loop": true,
-"name": &"fighting_buddy1",
+"name": &"field_state_buddy1",
 "speed": 5.0
 }, {
 "frames": [{
@@ -98,7 +98,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_avgm0")
 }],
 "loop": true,
-"name": &"fighting_buddy2",
+"name": &"field_state_buddy2",
 "speed": 5.0
 }, {
 "frames": [{
@@ -106,7 +106,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_iiqwr")
 }],
 "loop": true,
-"name": &"fighting_buddy_fusion",
+"name": &"field_state_buddy_fusion",
 "speed": 5.0
 }, {
 "frames": [{
@@ -114,7 +114,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_08qrv")
 }],
 "loop": true,
-"name": &"fighting_solo",
+"name": &"field_state_solo",
 "speed": 5.0
 }, {
 "frames": [{
@@ -291,7 +291,7 @@ script = ExtResource("1_2axk5")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"jump"
+animation = &"field_state_solo"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3.5, 3.5)

@@ -1,6 +1,7 @@
-class_name FoodBuddy
-
 extends CharacterBody2D
+
+
+class_name FoodBuddy
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -44,9 +45,16 @@ signal die
 
 enum AbilityType { ATTACK, TRAVERSAL, PUZZLE, HYBRID }
 
-enum FieldState { FOLLOW, FIGHT, FORAGE }
 
-enum FightStyle { SOLO, PLAYER, BUDDY_FUSION }
+enum FieldState 
+{ 
+FOLLOW, # Follow the Player
+FORAGE, # Forage for Berries
+FUSION, # Fusion with another Food Buddy
+SOLO,   # Use solo attack against enemies (not controlled by player) 
+PLAYER  # Use player-based abilities in the field (controlled by player)
+}
+
 
 enum AttackDamage { SOLO = 10, ABILITY1 = 0, ABILITY2 = 0}
 
@@ -66,16 +74,16 @@ var health_max: int
 var speed_normal: int = 50
 var speed_current: int = speed_normal
 
-# Fighting #
-var fight_style_current: FightStyle
+# Field State #
+var field_state_previous: FieldState
+var field_state_current: FieldState
 var target: Node2D = null
 var target_distance: float
 
-# Field State #
-var field_state_current: FieldState
 
 # Abilities #
-var ability_solo_damage: int = 10
+var attack_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
+var attack_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
 
 var ability1_type: AbilityType
 var ability1_damage: int
@@ -102,7 +110,7 @@ func _ready() -> void:
 	hitbox = $Area2D
 	
 	# Set the Food Buddy's current field state to be fighting
-	field_state_current = FieldState.FIGHT
+	field_state_current = FieldState.SOLO
 	
 	# Call the custom "ready()" function that Food Buddy subclasses will define individually
 	ready()
@@ -126,7 +134,7 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	
 	# Determine if the Food Buddy is currently in the fighting field state, then execute their solo attack
-	if field_state_current == FieldState.FIGHT:
+	if field_state_current == FieldState.SOLO:
 		use_solo_attack()
 	
 	# Adjust the Food Buddy's position based on its velocity
@@ -176,16 +184,17 @@ func use_solo_attack():
 		return
 		
 	# Determine if the Food Buddy is in range of an enemy, then make them stop moving and launch their solo attack
-	if target_distance <= 10 and target is Enemy:
+	if target_distance <= 25 and target is Enemy:
 		velocity.x = 0
 		velocity.y = 0
-		use_ability_solo.emit(self, ability_solo_damage)
+		use_ability_solo.emit(self, attack_damage["Solo"])
 
 
 
 # A custom function to execute the Food Buddy's ability 1 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
 func use_ability1():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy's Ability 1 has been triggered!")
 	pass
 
 
@@ -193,6 +202,7 @@ func use_ability1():
 # A custom function to execute the Food Buddy's ability 2 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
 func use_ability2():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy's Ability 2 has been triggered!")
 	pass
 
 
@@ -217,9 +227,9 @@ func update_field_state():
 	# Determine if the Food Buddy's field state was adjusted by the Player, then set the correct field state
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
 		if field_state_current == FieldState.FOLLOW:
-			field_state_current = FieldState.FIGHT
+			field_state_current = FieldState.SOLO
 		
-		elif field_state_current == FieldState.FIGHT:
+		elif field_state_current == FieldState.SOLO:
 			field_state_current = FieldState.FOLLOW
 
 
@@ -227,19 +237,19 @@ func update_field_state():
 # Callback function that executes whenever the Player equips a Food Buddy: updates the Food Buddy's fight style
 func _on_player_equip_buddy(food_buddy: FoodBuddy) -> void:
 	if self == food_buddy:
-		if fight_style_current != FightStyle.PLAYER:
-			fight_style_current = FightStyle.PLAYER
+		if field_state_current != FieldState.PLAYER:
+			field_state_current = FieldState.PLAYER
 		else:
-			fight_style_current = FightStyle.SOLO
+			field_state_current = FieldState.SOLO
 
 
 
 # Callback function that executes whenever the Player equips a Food Buddy: updates the Food Buddy's fight style
 func _on_player_equip_buddy_fusion() -> void:
-	if fight_style_current != FightStyle.BUDDY_FUSION:
-		fight_style_current = FightStyle.BUDDY_FUSION
+	if field_state_current != FieldState.FUSION:
+		field_state_current = FieldState.FUSION
 	else:
-		fight_style_current = FightStyle.SOLO
+		field_state_current = FieldState.SOLO
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

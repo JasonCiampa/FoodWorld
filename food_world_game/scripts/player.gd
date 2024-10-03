@@ -25,8 +25,8 @@ extends CharacterBody2D
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-signal equip_buddy
-signal equip_buddy_fusion
+signal toggle_buddy_equipped
+signal toggle_buddy_fusion_equipped
 
 signal use_ability_solo
 signal use_ability_buddy
@@ -46,7 +46,13 @@ signal killed_target
 
 enum Direction { IDLE = 0, UP = -1, DOWN = 1,  LEFT = -1, RIGHT = 1 }
 
-enum FightStyle { SOLO, BUDDY1, BUDDY2, BUDDY_FUSION }
+enum FieldState 
+{ 
+SOLO,           # No Food Buddies equipped, can only use solo abilities (punch, kick, dropkick)
+BUDDY1,         # Food Buddy 1 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
+BUDDY2,         # Food Buddy 2 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
+FUSION          # Food Buddy Fusion equipped, can use fusion-based abilities (differ dependent on the Food Buddy Fusion)
+}
 
 enum StaminaUse { SPRINT = 15, JUMP = 10, DODGE = 30, PUNCH = 5, KICK = 10}
 
@@ -112,15 +118,12 @@ var is_jumping: bool
 var jump_start_height: float
 const jump_velocity: int = 250
 
-# Fighting #
-var fight_style_previous: FightStyle = FightStyle.SOLO
-var fight_style_current: FightStyle = FightStyle.SOLO
+# Field State #
+var field_state_previous: FieldState = FieldState.SOLO
+var field_state_current: FieldState = FieldState.SOLO
 var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
-# Food Buddies #
-var food_buddy1: FoodBuddy
-var food_buddy2: FoodBuddy
-var food_buddies: Array[FoodBuddy]
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -141,7 +144,7 @@ func _process(delta: float) -> void:
 	update_movement_direction()
 	update_movement_animation()
 	update_stamina(delta)
-	update_fight_style()	
+	update_field_state()	
 	
 	# DEBUG #
 	if timer.time_left == 0:
@@ -195,9 +198,9 @@ func process_ability_use():
 	elif Input.is_action_just_pressed("ability2"):
 		ability_number = 2
 	
-	# Determine if an ability was used, then trigger the signal that will use the correct ability based on the Player's current fighting style
+	# Determine if an ability was used, then trigger the signal that will use the correct ability based on the Player's current FieldState
 	if ability_number != 0:
-		if fight_style_current == FightStyle.SOLO:
+		if field_state_current == FieldState.SOLO:
 			if ability_number == 1:
 				use_ability_solo.emit(attack_damage["Punch"])
 				use_stamina(StaminaUse.PUNCH)
@@ -205,14 +208,14 @@ func process_ability_use():
 				use_ability_solo.emit(attack_damage["Kick"])
 				use_stamina(StaminaUse.KICK)
 			
-		elif fight_style_current == FightStyle.BUDDY1:
-			use_ability_buddy.emit(food_buddy1, ability_number)
+		elif field_state_current == FieldState.BUDDY1:
+			use_ability_buddy.emit(1, ability_number)
 		
-		elif fight_style_current == FightStyle.BUDDY2:
-			use_ability_buddy.emit(food_buddy2, ability_number)
+		elif field_state_current == FieldState.BUDDY2:
+			use_ability_buddy.emit(2, ability_number)
 		
 		else:
-			use_ability_buddy_fusion.emit(food_buddy1, food_buddy2)
+			use_ability_buddy_fusion.emit(ability_number)
 
 
 # CHECK OUT THIS LINK WHEN IT COMES TIME TO DO MOVEMENT WORK https://forum.godotengine.org/t/what-is-causing-my-collision2d-to-stick-to-each-others/1404
@@ -398,33 +401,41 @@ func update_movement_velocity(delta):
 
 
 
-# Updates the Player's current fight style based on their key presses
-func update_fight_style():
+# Updates the Player's current FieldState based on their key presses
+func update_field_state():
 	
-	# Determine if the Player updated their fight style
-	if Input.is_action_just_pressed("update_fight_style"):
+	# Determine if the Player updated their FieldState
+	if Input.is_action_just_pressed("update_field_state"):
 		
-		# Store the current fight style as the previous one since the fight style has been updated
-		fight_style_previous = fight_style_current
+		# Store the current FieldState as the previous one since the FieldState has been updated
+		field_state_previous = field_state_current
 		
-		# Determine which fight style the Player has now selected, then set the selection as the current fight style, send a signal to any involved Food Buddy, and trigger the correct animation
-		if Input.is_action_just_pressed("equip_buddy1"):
-			fight_style_current = FightStyle.BUDDY1
-			equip_buddy.emit(food_buddy1)
-			sprite.play("fighting_buddy1")
-		elif Input.is_action_just_pressed("equip_buddy2"):
-			fight_style_current = FightStyle.BUDDY2
-			equip_buddy.emit(food_buddy2)
-			sprite.play("fighting_buddy2")
-		elif Input.is_action_just_pressed("equip_buddy_fusion"):
-			fight_style_current = FightStyle.BUDDY_FUSION
-			equip_buddy_fusion.emit()
-			sprite.play("fighting_buddy_fusion")
+		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to any involved Food Buddy, and trigger the correct animation
+		if Input.is_action_just_pressed("toggle_buddy1_equipped"):
+			field_state_current = FieldState.BUDDY1
+			toggle_buddy_equipped.emit(1)
+			sprite.play("field_state_buddy1")
+			print("Player's FieldState has been updated to BUDDY1")
+
+		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
+			field_state_current = FieldState.BUDDY2
+			toggle_buddy_equipped.emit(2)
+			sprite.play("field_state_buddy2")
+			print("Player's FieldState has been updated to BUDDY2")
+			
+
+		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
+			field_state_current = FieldState.FUSION
+			toggle_buddy_fusion_equipped.emit()
+			sprite.play("field_state_buddy_fusion")
+			print("Player's FieldState has been updated to FUSION")
+
 		
-		# Determine if the Player is selecting the solo fight style, then set the selection as the current fight style
-		if fight_style_previous == fight_style_current:
-			fight_style_current = FightStyle.SOLO
-			sprite.play("fighting_solo")
+		# Determine if the Player is selecting the solo FieldState, then set the selection as the current FieldState
+		if field_state_previous == field_state_current:
+			field_state_current = FieldState.SOLO
+			sprite.play("field_state_solo")
+			print("Player's FieldState has been updated to SOLO")
 
 
 

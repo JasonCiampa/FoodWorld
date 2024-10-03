@@ -4,7 +4,8 @@ extends Node2D
 
 @onready var PLAYER: Player = $Player
 @onready var ENEMY: Enemy = $Enemy
-@onready var FOOD_BUDDY: FoodBuddy = $"Food Buddy"
+@onready var FOOD_BUDDY_1: FoodBuddy = $"Food Buddy_1"
+@onready var FOOD_BUDDY_2: FoodBuddy = $"Food Buddy_2"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,6 +28,18 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 # Enemies #
 @onready var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 
+
+# Food Buddies #
+
+var food_buddies_active: Array[FoodBuddy]
+var food_buddies_inactive: Array[FoodBuddy]
+var food_buddies_locked: Array[FoodBuddy]
+
+var food_buddy_fusion_active: FoodBuddyFusion
+var food_buddy_fusions_inactive: Array[FoodBuddyFusion]
+var food_buddy_fusions_locked: Array[FoodBuddyFusion]
+
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -37,8 +50,9 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
-	PLAYER.food_buddy1 = FOOD_BUDDY
-	PLAYER.food_buddy2 = FOOD_BUDDY
+	food_buddies_active.append(FOOD_BUDDY_1)
+	food_buddies_active.append(FOOD_BUDDY_2)
+	pass
 
 
 
@@ -60,20 +74,6 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Determines which Food Buddies are currently active with the Player and returns them in a list
-func get_active_food_buddies() -> Array[Node2D]:
-	
-	var active_food_buddies: Array[Node2D] = []
-	
-	if PLAYER.food_buddy1 != null:
-		active_food_buddies.append(PLAYER.food_buddy1)
-	
-	if PLAYER.food_buddy2 != null:
-		active_food_buddies.append(PLAYER.food_buddy2)
-
-	return active_food_buddies
-
-
 
 # Determines which enemies are currently on-screen and returns them in a list
 func get_enemies_on_screen() -> Array[Node2D]:
@@ -93,7 +93,7 @@ func get_enemies_on_screen() -> Array[Node2D]:
 
 
 # Determines which target in a given list of targets is closest to the subject and returns that target (or null if no targets on-screen)
-func select_closest_target(subject: Node2D, targets: Array[Node2D]) -> Node2D:
+func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 	
 	# Determine if there are no targets in the provided list of targets, then return null because there are no targets to choose from
 	if targets.size() == 0:
@@ -170,8 +170,22 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 	
 	return false
 
-func trigger_buddy_fusion_ability(food_buddy_fusion: FoodBuddyFusion):
-	pass
+
+
+# Determines the correct Food Buddy Fusion Node based on the two given Food Buddies
+func equip_food_buddy_fusion() -> FoodBuddyFusion:
+	
+	# Iterate over each Food Buddy Fusion
+	for fusion in food_buddy_fusions_inactive:
+		
+		# Determine if the two currently active Food Buddies match the two Food Buddies of the fusion, then return the fusion
+		if (fusion.food_buddy1 == food_buddies_active[0] and fusion.food_buddy2) == food_buddies_active[1] or (fusion.food_buddy1 == food_buddies_active[1] and fusion.food_buddy2 == food_buddies_active[0]):
+			food_buddy_fusion_active = fusion
+		
+	# Return the currently active Food Buddy Fusion
+	return food_buddy_fusion_active
+
+
 
 # Determines which world the Player is currently located in
 func determine_player_location_world() -> World:
@@ -192,13 +206,64 @@ func determine_player_location_world() -> World:
 
 # PLAYER CALLBACKS # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Callback function that executes whenever the Player equips a Food Buddy: updates the Food Buddy's FightStyle
-func _on_player_equip_buddy() -> void:
-	pass # Replace with function body.
+# Callback function that executes whenever the Player equips or unequips a Food Buddy: finds the buddy that corresponds to the given buddy number and sets its FieldState to PLAYER if being equipped or to its previous FieldState if being unequipped
+func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
+	
+	# Determine if an invalid buddy number was sent through the Player's signal, then return to prevent an error
+	if buddy_number > 2:
+		return
+	
+	# Store a local reference to the Food Buddy whose FieldState should be adjusted so we don't have to access the list multiple times
+	var food_buddy: FoodBuddy = food_buddies_active[buddy_number - 1]
+	
+	
+	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
+	if food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+		food_buddy.field_state_current = food_buddy.field_state_previous
+		food_buddy.field_state_previous = FoodBuddy.FieldState.PLAYER
+	else:
+		# Update the Food Buddy's FieldState variables
+		food_buddy.field_state_previous = food_buddy.field_state_current
+		food_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
+		
+		print("Food Buddy " + str(buddy_number) + "'s FieldState has been updated to PLAYER")
 
 
-func _on_player_equip_buddy_fusion() -> void:
-	pass # Replace with function body.
+
+
+# Callback function that executes whenever the Player equips or unequips a Food Buddy Fusion: reverts the Food Buddies to their previous FieldStates if a Food Buddy Fusion is already active & sets the Food Buddy Fusion to null, or updates the FieldStates of the Food Buddies to FUSION if they are being equipped
+func _on_player_toggle_buddy_fusion_equipped() -> void:
+	
+	# Store local references to the Food Buddies whose FieldStates should be adjusted so we don't have to access the list multiple times
+	var food_buddy1: FoodBuddy = food_buddies_active[0]
+	var food_buddy2: FoodBuddy = food_buddies_active[1]
+	
+	# Determine if a FoodBuddyFusion is already equipped, then unequip it and revert the two Food Buddies back to their previous FieldStates
+	if food_buddy_fusion_active != null:
+		food_buddy1.field_state_current = food_buddy1.field_state_previous
+		food_buddy1.field_state_previous = FoodBuddy.FieldState.FUSION
+		
+		food_buddy2.field_state_current = food_buddy2.field_state_previous
+		food_buddy2.field_state_previous = FoodBuddy.FieldState.FUSION
+		
+		food_buddy_fusion_active = null
+		
+		return
+	
+	
+	# Determine if a valid Food Buddy Fusion for the currently active Food Buddies was found, then update the field states of the Player and Food Buddies
+	if equip_food_buddy_fusion() != null:
+		
+		# Update the Food Buddy's FieldState variables
+		food_buddy1.field_state_previous = food_buddy1.field_state_current
+		food_buddy2.field_state_previous = food_buddy2.field_state_current
+		
+		food_buddy1.field_state_current = FoodBuddy.FieldState.FUSION
+		food_buddy2.field_state_current = FoodBuddy.FieldState.FUSION
+		
+	else:
+		PLAYER.field_state_current = PLAYER.field_state_previous
+
 
 
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies
@@ -212,24 +277,24 @@ func _on_player_use_ability_solo(damage: int) -> void:
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy: executes the Food Buddy's ability
-func _on_player_use_ability_buddy(food_buddy: FoodBuddy, ability_number: int) -> void:
+func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> void:
 	if ability_number == 1:
-		food_buddy.use_ability1()
+		food_buddies_active[buddy_number -1].use_ability1()
 	elif ability_number == 2:
-		food_buddy.use_ability2()
+		food_buddies_active[buddy_number -1].use_ability2()
 	else:
-		food_buddy.use_special_attack()
+		food_buddies_active[buddy_number -1].use_special_attack()
 
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability
-func _on_player_use_ability_buddy_fusion(food_buddy_fusion: FoodBuddyFusion, ability_number: int) -> void:
+func _on_player_use_ability_buddy_fusion(ability_number: int) -> void:
 	if ability_number == 1:
-		food_buddy_fusion.use_ability1()
+		food_buddy_fusion_active.use_ability1()
 	elif ability_number == 2:
-		food_buddy_fusion.use_ability2()
+		food_buddy_fusion_active.use_ability2()
 	else:
-		food_buddy_fusion.use_special_attack()
+		food_buddy_fusion_active.use_special_attack()
 
 
 
@@ -309,9 +374,9 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Player and active Food Buddies
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(PLAYER, enemy, damage)
-	process_attack(PLAYER.food_buddy1, enemy, damage)
+	#process_attack(food_buddies_active[0], enemy, damage)
 	#process_attack(PLAYER.food_buddy2, enemy, damage)
-
+	
 
 
 # Callback function that executes whenever the Enemy wants to set the Player as it's target: sets the Player as the target of the Enemy
@@ -322,8 +387,7 @@ func _on_enemy_target_player(enemy: Enemy) -> void:
 
 # Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Enemy
 func _on_enemy_target_closest_food_buddy(enemy: Enemy) -> void:
-	
-	var target_closest = select_closest_target(enemy, get_active_food_buddies())
+	var target_closest = select_closest_target(enemy, food_buddies_active)
 		
 	if target_closest != null:
 		enemy.target = target_closest
