@@ -118,13 +118,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
 	update_field_state()
-	
-	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state
-	if field_state_current == FieldState.FOLLOW:
-		target_player.emit(self)
-		move_towards_target.emit(self, target, 30)
 	
 	# Call the custom "update()" function that Food Buddy subclasses will define individually
 	process()
