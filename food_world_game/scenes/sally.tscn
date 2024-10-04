@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://com21o63hyb7l"]
+
+[ext_resource type="Script" path="res://scripts/sally.gd" id="1_8jequ"]
+[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="2_3g5j0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k5yvm"]
+size = Vector2(16, 34)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7pd1y"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_3g5j0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tufua"]
+size = Vector2(20, 38)
+
+[node name="Sally" type="CharacterBody2D"]
+script = ExtResource("1_8jequ")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-11, -3)
+shape = SubResource("RectangleShape2D_k5yvm")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(-11, -3)
+sprite_frames = SubResource("SpriteFrames_7pd1y")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-11, -3)
+shape = SubResource("RectangleShape2D_tufua")

@@ -209,24 +209,32 @@ func determine_player_location_world() -> World:
 # Callback function that executes whenever the Player equips or unequips a Food Buddy: finds the buddy that corresponds to the given buddy number and sets its FieldState to PLAYER if being equipped or to its previous FieldState if being unequipped
 func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 	
-	# Determine if an invalid buddy number was sent through the Player's signal, then return to prevent an error
-	if buddy_number > 2:
-		return
+	var food_buddy_selected: FoodBuddy
+	var food_buddy_other: FoodBuddy
 	
-	# Store a local reference to the Food Buddy whose FieldState should be adjusted so we don't have to access the list multiple times
-	var food_buddy: FoodBuddy = food_buddies_active[buddy_number - 1]
+	# Determine which Food Buddy was selected by the Player based on the emitted buddy_number and which Food Buddy wasn't, then store a local reference to each of them so we don't have to access the Food Buddies list multiple times
+	if buddy_number >= 2:
+		food_buddy_selected = food_buddies_active[1]
+		food_buddy_other = food_buddies_active[0]
+	else:
+		food_buddy_selected = food_buddies_active[0]
+		food_buddy_other = food_buddies_active[1]
 	
 	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
-	if food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER:
-		food_buddy.field_state_current = food_buddy.field_state_previous
-		food_buddy.field_state_previous = FoodBuddy.FieldState.PLAYER
+	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
+		food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
+		food_buddy_selected.field_state_previous = FoodBuddy.FieldState.PLAYER
 	else:
-		# Update the Food Buddy's FieldState variables
-		food_buddy.field_state_previous = food_buddy.field_state_current
-		food_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
 		
-		print("Food Buddy " + str(buddy_number) + "'s FieldState has been updated to PLAYER")
+		# Determine if the other Food Buddy that wasn't selected is currently the Player's active Food Buddy, then switch it back to it's previous state because the selected Food Buddy is being equipped shortly and only one can be equipped at once (unless its a Food Buddy Fusion)
+		if food_buddy_other.field_state_current == FoodBuddy.FieldState.PLAYER:
+			food_buddy_other.field_state_current = food_buddy_other.field_state_previous
+			food_buddy_other.field_state_previous = FoodBuddy.FieldState.PLAYER
+
+		# Update the selected Food Buddy's FieldState variables
+		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
+		food_buddy_selected.field_state_current = FoodBuddy.FieldState.PLAYER
 
 
 
