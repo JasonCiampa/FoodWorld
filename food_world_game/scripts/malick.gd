@@ -1,5 +1,6 @@
 extends FoodBuddy
 
+class_name Malick
 
 func ready():
 	speed_normal = 20

@@ -24,8 +24,6 @@ var inventory_size: int = 12
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 signal killed_target
 signal die
 
@@ -46,8 +44,18 @@ signal die
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var food_buddy1
-var food_buddy2
+# Food Buddies #
+var food_buddy1: FoodBuddy
+var food_buddy2: FoodBuddy
+
+# Health #
+var health_current: int
+var health_max: int
+var alive: bool = true
+
+# Level and XP #
+var xp_current: int
+var xp_max: int
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,6 +67,11 @@ var food_buddy2
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# Store references to the Food Buddy's Nodes
+	sprite = $AnimatedSprite2D
+	animation_player  = $AnimationPlayer
+	hitbox = $Area2D
+	
 	ready()
 
 
@@ -74,9 +87,17 @@ func _physics_process(delta: float) -> void:
 	physics_process(delta)
 
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Constructor: called when FoodBuddyFusion is instantiated
-func _init(food_buddy_1: FoodBuddy, food_buddy_2: FoodBuddy):
+
+
+
+
+
+# MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Sets the Food Buddies of this Food Buddy Fusion
+func set_food_buddies(food_buddy_1: FoodBuddy, food_buddy_2: FoodBuddy):
 	food_buddy1 = food_buddy_1
 	food_buddy2 = food_buddy_2
 
@@ -109,6 +130,7 @@ func physics_process(delta: float) -> void:
 # A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define.
 func use_ability1():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy Fusion's Ability 1 has been triggered!")
 	pass
 
 
@@ -116,6 +138,7 @@ func use_ability1():
 # A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define.
 func use_ability2():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy Fusion's Ability 2 has been triggered!")
 	pass
 
 
@@ -123,6 +146,7 @@ func use_ability2():
 # A custom function to execute the Food Buddy Fusion's special attack that each Food Buddy Fusion subclass should personally define.
 func use_special_attack():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy Fusion's Special Attack has been triggered!")
 	pass
 
 

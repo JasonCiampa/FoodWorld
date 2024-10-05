@@ -54,12 +54,14 @@ var health_current: int
 var health_max: int
 var alive: bool = true
 
+# Target #
 var target: Node2D = null
 var target_distance: float
 
 # Abilities #
 var ability1_damage: int = 10
 
+# Speed #
 var speed_normal: int = 50
 var speed_current: int = speed_normal
 
@@ -141,22 +143,19 @@ func use_ability2():
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
 # Executes the logic for a Enemy's solo attack
 func use_solo_attack():
 	
 	# Determine if the Enemy has a target currently, then move towards them. Otherwise, have the Enemy look for a new target.
-	if target != null:
+	if target != null and target.alive:
 		move_towards_target.emit(self, target, 10)
 	else:
 		#target_player.emit(self)
-		#target_closest_food_buddy.emit(self)
+		target_closest_food_buddy.emit(self)
 		return
 		
 	# Determine if the Enemy is in range of the target, then make them stop moving and launch their solo attack
-	if target_distance <= 20:
+	if target_distance <= 30:
 		velocity.x = 0
 		velocity.y = 0
 		use_ability.emit(self, ability1_damage)

@@ -27,7 +27,9 @@ extends CharacterBody2D
 
 signal toggle_buddy_equipped
 signal toggle_buddy_fusion_equipped
-signal toggle_food_buddy_field_state_interface
+signal toggle_field_state_interface
+
+signal revert_buddy_field_state
 
 signal use_ability_solo
 signal use_ability_buddy
@@ -35,7 +37,6 @@ signal use_ability_buddy_fusion
 
 signal die
 signal killed_target
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -74,7 +75,6 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 # Behavior #
 var paused: bool = false
-
 
 # Inventory #
 var inventory: Array = []
@@ -129,8 +129,6 @@ var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -148,7 +146,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	update_field_state()
-
+	
 	if not paused:
 		process_ability_use()
 		update_movement_direction()
@@ -419,37 +417,34 @@ func update_field_state():
 		# Store the current FieldState as the previous one since the FieldState has been updated
 		field_state_previous = field_state_current
 		
-		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to any involved Food Buddy, and trigger the correct animation
+		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to the Game to update the corresponding Food Buddy, and trigger the correct animation
 		if Input.is_action_just_pressed("toggle_buddy1_equipped"):
 			field_state_current = FieldState.BUDDY1
 			toggle_buddy_equipped.emit(1)
 			sprite.play("field_state_buddy1")
 			print("Player's FieldState has been updated to BUDDY1")
-
+		
 		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
 			field_state_current = FieldState.BUDDY2
 			toggle_buddy_equipped.emit(2)
 			sprite.play("field_state_buddy2")
 			print("Player's FieldState has been updated to BUDDY2")
-			
-
+		
 		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
 			field_state_current = FieldState.FUSION
 			toggle_buddy_fusion_equipped.emit()
 			sprite.play("field_state_buddy_fusion")
 			print("Player's FieldState has been updated to FUSION")
-
 		
-		# Determine if the Player is selecting the solo FieldState, then set the selection as the current FieldState
+		# Determine if the Player is selecting the SOLO FieldState, then set the selection as the current FieldState
 		if field_state_previous == field_state_current:
 			field_state_current = FieldState.SOLO
 			sprite.play("field_state_solo")
 			print("Player's FieldState has been updated to SOLO")
 	
-	
-	# Determine if the Player is trying to adjust the Food Buddy's FieldState, then emit the signal to the Game to trigger the FieldState Interface
+	# Determine if the Player is trying to adjust the Food Buddy's FieldState and if they're NOT in the FUSION FieldState, then emit the signal to the Game to trigger the FieldState Interface (can't let Food Buddy Fusion FieldStates to become out of sync, so this menu is disabled until the Player is out of the FUSION FieldState)
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
-		toggle_food_buddy_field_state_interface.emit()
+		toggle_field_state_interface.emit()
 
 
 
