@@ -31,6 +31,8 @@ size = Vector2(34.1, 32.185)
 
 [node name="Food Buddy" type="CharacterBody2D" groups=["food_buddies"]]
 z_index = 1
+collision_layer = 2
+platform_floor_layers = 0
 script = ExtResource("1_lus2v")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -48,3 +50,5 @@ sprite_frames = SubResource("SpriteFrames_cd6f1")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_5vwy7")
+
+[node name="Node" type="Node" parent="."]

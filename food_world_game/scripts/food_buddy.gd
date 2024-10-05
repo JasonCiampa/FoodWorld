@@ -50,9 +50,9 @@ enum FieldState
 { 
 FOLLOW, # Follow the Player
 FORAGE, # Forage for Berries
-FUSION, # Fusion with another Food Buddy
 SOLO,   # Use solo attack against enemies (not controlled by player) 
-PLAYER  # Use player-based abilities in the field (controlled by player)
+PLAYER,  # Use player-based abilities in the field (controlled by player)
+FUSION  # Fusion with another Food Buddy
 }
 
 
@@ -69,6 +69,7 @@ enum AttackDamage { SOLO = 10, ABILITY1 = 0, ABILITY2 = 0}
 # Health #
 var health_current: int
 var health_max: int
+var alive: bool = true
 
 # Speed #
 var speed_normal: int = 50
@@ -118,8 +119,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	update_field_state()
-	
+		
 	# Call the custom "update()" function that Food Buddy subclasses will define individually
 	process()
 
@@ -164,21 +164,22 @@ func physics_process(delta: float) -> void:
 	pass
 
 
-
 # Executes the logic for a Food Buddy's solo attack
 func use_solo_attack():
-
+	
 	# Determine if the Food Buddy has a target Node2D currently, then move towards it. Otherwise, move the Food Buddy towards the Player and have them look for a new target.
-	if target != null and target is Enemy:
+	if target != null and target is Enemy and target.alive:
 		move_towards_target.emit(self, target, 10)
 	else:
 		target_player.emit(self)
-		move_towards_target.emit(self, target, 30)
+		move_towards_target.emit(self, target, 50)
+		
 		target_closest_enemy.emit(self)
+		
 		return
 		
 	# Determine if the Food Buddy is in range of an enemy, then make them stop moving and launch their solo attack
-	if target_distance <= 25 and target is Enemy:
+	if target_distance <= 30 and target is Enemy:
 		velocity.x = 0
 		velocity.y = 0
 		use_ability_solo.emit(self, attack_damage["Solo"])
@@ -218,8 +219,7 @@ func use_special_attack():
 # Updates the Food Buddy's current field state based on Player input
 func update_field_state():
 	
-	# Determine if the Food Buddy's field state was adjusted by the Player, then set the correct field state
-	if Input.is_action_just_pressed("toggle_buddy_field_state"):
+
 		if field_state_current == FieldState.FOLLOW:
 			field_state_current = FieldState.SOLO
 		

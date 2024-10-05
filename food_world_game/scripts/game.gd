@@ -4,8 +4,9 @@ extends Node2D
 
 @onready var PLAYER: Player = $Player
 @onready var ENEMY: Enemy = $Enemy
-@onready var FOOD_BUDDY_1: FoodBuddy = $"Food Buddy_1"
-@onready var FOOD_BUDDY_2: FoodBuddy = $"Food Buddy_2"
+
+@onready var MALICK: FoodBuddy = $Malick
+@onready var SALLY: FoodBuddy = $Sally
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -40,6 +41,12 @@ var food_buddy_fusions_inactive: Array[FoodBuddyFusion]
 var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 
+# Interfaces #
+var field_state_interface_active: bool = false
+var field_state_interface_selected_food_buddy: FoodBuddy
+var field_state_interface_selected_field_state: int
+
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -50,15 +57,45 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
-	food_buddies_active.append(FOOD_BUDDY_1)
-	food_buddies_active.append(FOOD_BUDDY_2)
+	food_buddies_active.append(MALICK)
+	food_buddies_active.append(SALLY)
 	pass
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	
+	if field_state_interface_active:
+		
+		if Input.is_action_just_pressed("move_up"):
+			field_state_interface_selected_food_buddy.field_state_current -= 1
+			
+			if field_state_interface_selected_food_buddy.field_state_current < 0:
+				field_state_interface_selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 2
+			
+			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
+
+
+		elif Input.is_action_just_pressed("move_down"):
+			field_state_interface_selected_food_buddy.field_state_current += 1
+			
+			if field_state_interface_selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 2:
+				field_state_interface_selected_food_buddy.field_state_current = 0
+			
+			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
+		
+		elif Input.is_action_just_pressed("move_left") or Input.is_action_just_pressed("move_right"):
+			if food_buddies_active[0] == field_state_interface_selected_food_buddy:
+				field_state_interface_selected_food_buddy = food_buddies_active[1]
+			else:
+				field_state_interface_selected_food_buddy = food_buddies_active[0]
+			
+			print("\nCurrently Selected: " + str(field_state_interface_selected_food_buddy.name))
+			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
+			print(" ")
+
+
 
 
 
@@ -164,6 +201,7 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 		# Determine if the attacked Node has run out of health, then emit their death signal
 		if target.health_current <= 0:
 			target.die.emit(target)
+			target.alive = false
 			attacker.killed_target.emit(attacker)
 		
 		return true
@@ -274,6 +312,41 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 
 
 
+# Callback function that executes whenever the Player wants to trigger the Food Buddy FieldState updating interface: opens/closes the interface depending on the interface's current state
+func _on_player_toggle_food_buddy_field_state_interface() -> void:
+	
+	if not field_state_interface_active:
+		field_state_interface_selected_food_buddy = food_buddies_active[0]
+
+		print("\nFood Buddy FieldState Interface Opened!\n")
+		print("Press 'W' and 'S' to move through FieldState options")
+		print("Press 'A' and 'D' to move between Food Buddies\n")
+
+		print("Currently Selected: " + str(field_state_interface_selected_food_buddy.name))
+		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
+		
+		field_state_interface_active = true
+		
+		MALICK.process_mode = PROCESS_MODE_DISABLED
+		SALLY.process_mode = PROCESS_MODE_DISABLED
+		ENEMY.process_mode = PROCESS_MODE_DISABLED
+		PLAYER.paused = true
+		
+	else:
+		print("\nFood Buddy FieldState Interface Closed!" +"\n")
+
+		field_state_interface_active = false
+		
+		MALICK.process_mode = PROCESS_MODE_ALWAYS
+		SALLY.process_mode = PROCESS_MODE_ALWAYS
+		ENEMY.process_mode = PROCESS_MODE_ALWAYS
+		PLAYER.paused = false
+
+	
+	
+
+		
+
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies
 func _on_player_use_ability_solo(damage: int) -> void:
 	
@@ -319,7 +392,7 @@ func _on_player_die(player: Player) -> void:
 
 
 
-# FOOD BUDDY CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# FOOD BUDDY CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
 
 # Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against enemies
 func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void:

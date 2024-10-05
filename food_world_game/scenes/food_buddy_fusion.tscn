@@ -25,6 +25,7 @@ animations = [{
 size = Vector2(34.1, 32.185)
 
 [node name="FoodBuddyFusion" type="CharacterBody2D"]
+collision_layer = 4
 script = ExtResource("1_20kvh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

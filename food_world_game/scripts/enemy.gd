@@ -52,6 +52,7 @@ signal killed_target
 # Health #
 var health_current: int
 var health_max: int
+var alive: bool = true
 
 var target: Node2D = null
 var target_distance: float

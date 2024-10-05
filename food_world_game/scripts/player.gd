@@ -27,6 +27,7 @@ extends CharacterBody2D
 
 signal toggle_buddy_equipped
 signal toggle_buddy_fusion_equipped
+signal toggle_food_buddy_field_state_interface
 
 signal use_ability_solo
 signal use_ability_buddy
@@ -71,6 +72,10 @@ enum Ability { PUNCH = 1, KICK = 2}
 # Gravity #
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
+# Behavior #
+var paused: bool = false
+
+
 # Inventory #
 var inventory: Array = []
 var inventory_size: int = 12
@@ -78,6 +83,7 @@ var inventory_size: int = 12
 # Health #
 var health_current: int
 var health_max: int
+var alive: bool = true
 
 # Level and XP #
 var xp_current: int
@@ -135,16 +141,19 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	sprite.play("idle_front")
+	sprite.play("test")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	process_ability_use()
-	update_movement_direction()
-	update_movement_animation()
-	update_stamina(delta)
-	update_field_state()	
+	
+	update_field_state()
+
+	if not paused:
+		process_ability_use()
+		update_movement_direction()
+		update_movement_animation()
+		update_stamina(delta)
 	
 	# DEBUG #
 	if timer.time_left == 0:
@@ -436,6 +445,11 @@ func update_field_state():
 			field_state_current = FieldState.SOLO
 			sprite.play("field_state_solo")
 			print("Player's FieldState has been updated to SOLO")
+	
+	
+	# Determine if the Player is trying to adjust the Food Buddy's FieldState, then emit the signal to the Game to trigger the FieldState Interface
+	if Input.is_action_just_pressed("toggle_buddy_field_state"):
+		toggle_food_buddy_field_state_interface.emit()
 
 
 

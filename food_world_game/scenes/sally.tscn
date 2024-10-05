@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://com21o63hyb7l"]
 
 [ext_resource type="Script" path="res://scripts/sally.gd" id="1_8jequ"]
-[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="2_3g5j0"]
+[ext_resource type="Texture2D" uid="uid://b3p4vw0y6gobx" path="res://images/characters/sally-the-sticky-mozzerela-stick.png" id="2_xocr1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k5yvm"]
 size = Vector2(16, 34)
@@ -10,7 +10,7 @@ size = Vector2(16, 34)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_3g5j0")
+"texture": ExtResource("2_xocr1")
 }],
 "loop": true,
 "name": &"default",
@@ -23,9 +23,11 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tufua"]
-size = Vector2(20, 38)
+size = Vector2(34, 48)
 
 [node name="Sally" type="CharacterBody2D"]
+collision_mask = 0
+platform_floor_layers = 0
 script = ExtResource("1_8jequ")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

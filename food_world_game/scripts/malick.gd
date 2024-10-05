@@ -1,6 +1,11 @@
 extends FoodBuddy
 
 
+func ready():
+	speed_normal = 20
+	speed_current = speed_normal
+
+
 # A custom process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_process()' function
 func process():
 	

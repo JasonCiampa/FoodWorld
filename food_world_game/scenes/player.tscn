@@ -1,7 +1,8 @@
-[gd_scene load_steps=29 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=31 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
+[ext_resource type="Texture2D" uid="uid://dmnlae1ov7bhe" path="res://images/characters/main-character.png" id="3_ndyxs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a1dot"]
 atlas = ExtResource("2_08uiw")
@@ -190,6 +191,14 @@ animations = [{
 "loop": true,
 "name": &"run_upward",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_ndyxs")
+}],
+"loop": true,
+"name": &"test",
+"speed": 5.0
 }]
 
 [sub_resource type="Animation" id="Animation_fm2qe"]
@@ -280,18 +289,22 @@ _data = {
 "stop_sprinting": SubResource("Animation_v26ce")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5mf36"]
+size = Vector2(13, 30)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5tqxi"]
-size = Vector2(13, 20)
+size = Vector2(19, 37)
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 1
 position = Vector2(-4, 2)
-collision_mask = 3
+collision_mask = 0
+platform_floor_layers = 0
 script = ExtResource("1_2axk5")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"dodge"
+animation = &"test"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3.5, 3.5)
@@ -301,12 +314,14 @@ libraries = {
 "": SubResource("AnimationLibrary_uh8r5")
 }
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_5tqxi")
+[node name="Collision Box" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_5mf36")
 
 [node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="Hitbox" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.5, -0.5)
 shape = SubResource("RectangleShape2D_5tqxi")
 
 [node name="Timers" type="Node" parent="."]
