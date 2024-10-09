@@ -403,6 +403,17 @@ func _on_player_toggle_field_state_interface() -> void:
 
 
 
+# Callback function that executes whenever the Player wants to trigger the Dialogue interface: opens/closes the interface depending on the interface's current state
+func _on_player_toggle_dialogue_interface() -> void:
+	
+	# Determine if the Dialogue Interface isn't currently active, then activate it
+	if not field_state_interface_active:
+		pass
+	else:
+		pass
+
+
+
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies
 func _on_player_use_ability_solo(damage: int) -> void:
 	

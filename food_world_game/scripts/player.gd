@@ -27,7 +27,9 @@ extends CharacterBody2D
 
 signal toggle_buddy_equipped
 signal toggle_buddy_fusion_equipped
+
 signal toggle_field_state_interface
+signal toggle_dialogue_interface
 
 signal revert_buddy_field_state
 
