@@ -66,7 +66,6 @@ func _ready() -> void:
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if field_state_interface_active:
@@ -408,7 +407,8 @@ func _on_player_toggle_dialogue_interface() -> void:
 	
 	# Determine if the Dialogue Interface isn't currently active, then activate it
 	if not field_state_interface_active:
-		pass
+		var test : Dialogue = load("res://dialogue.tres")
+		
 	else:
 		pass
 

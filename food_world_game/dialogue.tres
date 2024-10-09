@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://j8s0qhnbxjfq"]
+
+[ext_resource type="Script" path="res://scripts/dialogue.gd" id="1_da0j0"]
+
+[resource]
+script = ExtResource("1_da0j0")
+conversators = {
+"Character Name": [{
+1: "I am Character 1!"
+}, {
+3: "We are both cool Characters!"
+}],
+"Character Name 2": [{
+2: "And I am Character 2!"
+}]
+}

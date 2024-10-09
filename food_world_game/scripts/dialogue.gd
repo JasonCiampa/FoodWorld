@@ -1,5 +1,6 @@
-extends Node2D
+extends Resource
 
+class_name Dialogue
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -35,14 +36,13 @@ extends Node2D
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var conversators: Array[Node2D]
-
-var previous_line: String
+# Tracking State of Dialogue #
 var current_line: String
-var next_line: String
+var current_line_number: int
 
-
-
+# Characters & their lines in this Dialogue #
+# A Dictionary with key-values pairs in the format of String-Dictionary, and the value dictionaries are in the format of int-String
+@export var conversators: Dictionary = {  "Character Name": {1 : "I am Character 1!", 3 : "We are both cool Characters!"},   "Character Name 2": {2 : "And I am Character 2!"} }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -51,6 +51,7 @@ var next_line: String
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 
@@ -63,7 +64,36 @@ var next_line: String
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+func adjust_current_line(forwards: bool = true):
+	
+	# Determine which should be the new line to display: the line that came previously or the line that comes after the current line
+	var line_adjuster: int
+	
+	if forwards:
+		line_adjuster = 1
+	else:
+		line_adjuster = -1
+	
+	
+	# Iterate over each Character name
+	for character in conversators:
+		
+		# Iterate over each line the Character of this current iteration has
+		for line in conversators[character]:
+			
+			# Try to store one of the Character's lines as the new line to be displayed in the Dialogue if any of them are the line that is supposed to come after the current line
+			var new_line: String = line.get(current_line_number + line_adjuster)
+			
+			# Check if the line we stored previously is supposed to be the new line in the Dialogue
+			if new_line != null:
+				current_line = new_line
+				current_line_number += 1
+				
+				return
 
+
+func reverse_dialogue():
+	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
