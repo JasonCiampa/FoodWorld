@@ -942,6 +942,7 @@ tile_set = SubResource("TileSet_7kurk")
 [connection signal="revert_buddy_field_state" from="Player" to="." method="_on_player_revert_buddy_field_state"]
 [connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]
 [connection signal="toggle_buddy_fusion_equipped" from="Player" to="." method="_on_player_toggle_buddy_fusion_equipped"]
+[connection signal="toggle_dialogue_interface" from="Player" to="." method="_on_player_toggle_dialogue_interface"]
 [connection signal="toggle_field_state_interface" from="Player" to="." method="_on_player_toggle_field_state_interface"]
 [connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]
