@@ -64,6 +64,18 @@ func _ready() -> void:
 	
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
+	
+	var txt_file = FileAccess.open("res://testtext.txt", FileAccess.READ)
+	var current_line = txt_file.get_line()
+	var content = txt_file.get_as_text()
+	print(current_line)
+	current_line = txt_file.get_line()
+	print(current_line)
+	current_line = txt_file.get_line()
+	print(current_line)
+	current_line = txt_file.get_line()
+	print(current_line)
+	current_line = txt_file.get_line()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

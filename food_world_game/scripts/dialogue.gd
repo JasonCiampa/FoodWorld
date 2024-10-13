@@ -40,9 +40,26 @@ class_name Dialogue
 var current_line: String
 var current_line_number: int
 
+@export var conversations: Array[Dictionary]
+
 # Characters & their lines in this Dialogue #
 # A Dictionary with key-values pairs in the format of String-Dictionary, and the value dictionaries are in the format of int-String
-@export var conversators: Dictionary = {  "Character Name": {1 : "I am Character 1!", 3 : "We are both cool Characters!"},   "Character Name 2": {2 : "And I am Character 2!"} }
+@export var conversation_current: Dictionary = {  
+	#
+	#"Character Name": 
+		#{
+			#1 : "I am Character 1!", 
+			#3 : "We are both cool Characters!"
+		#},   
+	#
+	#"Character Name 2": 
+		#{
+			#2 : "And I am Character 2!"
+		#} 
+	#
+}
+
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -64,6 +81,7 @@ var current_line_number: int
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Adjusts the current line forwards (to the next line in the dialogue) or backwards (to the previous line in the dialogue)
 func adjust_current_line(forwards: bool = true):
 	
 	# Determine which should be the new line to display: the line that came previously or the line that comes after the current line
@@ -75,25 +93,31 @@ func adjust_current_line(forwards: bool = true):
 		line_adjuster = -1
 	
 	
-	# Iterate over each Character name
-	for character in conversators:
+	# Iterate over each Character involved in the current conversation
+	for character in conversation_current:
 		
-		# Iterate over each line the Character of this current iteration has
-		for line in conversators[character]:
+		# Iterate over each line that the Character of this iteration has in the current conversation
+		for line in conversation_current[character]:
 			
-			# Try to store one of the Character's lines as the new line to be displayed in the Dialogue if any of them are the line that is supposed to come after the current line
+			# Store a reference to the line that should play next if the Character of this iteration has the line. Store 'null' if the Character of this iteration doesn't have the line.
 			var new_line: String = line.get(current_line_number + line_adjuster)
 			
-			# Check if the line we stored previously is supposed to be the new line in the Dialogue
+			# Check if line that should play next was found from the Character of this iteration, then set it to be the new current line
 			if new_line != null:
 				current_line = new_line
-				current_line_number += 1
+				current_line_number += line_adjuster
 				
 				return
 
 
-func reverse_dialogue():
-	pass
+
+
+# Loads and parses data from the given .txt file, stores the data into the 'conversations' array, and then saves a new resource with the same name as the .txt file.
+func create_new_dialogue_resource(file_name: String):
+	var txt_file = FileAccess.open("res://" + file_name, FileAccess.READ)
+	var current_line = txt_file.get_line()
+	var content = txt_file.get_as_text()
+	print(current_line)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

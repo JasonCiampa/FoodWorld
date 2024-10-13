@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_da0j0")
+conversations = Array[Dictionary]([{}])
 conversators = {
 "Character Name": [{
 1: "I am Character 1!"
