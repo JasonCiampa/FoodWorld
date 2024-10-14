@@ -48,6 +48,9 @@ var interface_selected_food_buddy: FoodBuddy
 var interface_unselected_food_buddy: FoodBuddy
 var interface_selected_field_state: int
 
+var dialogue_interface_characters_active
+var dialogue_interface_initiator
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -64,18 +67,7 @@ func _ready() -> void:
 	
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
-	
-	var txt_file = FileAccess.open("res://testtext.txt", FileAccess.READ)
-	var current_line = txt_file.get_line()
-	var content = txt_file.get_as_text()
-	print(current_line)
-	current_line = txt_file.get_line()
-	print(current_line)
-	current_line = txt_file.get_line()
-	print(current_line)
-	current_line = txt_file.get_line()
-	print(current_line)
-	current_line = txt_file.get_line()
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -148,6 +140,12 @@ func process_field_state_interface():
 		print("\nCurrently Selected: " + str(interface_selected_food_buddy.name))
 		print("Current FieldState: " + str(interface_selected_food_buddy.field_state_current))
 
+
+
+# Processes all of the logic involved for the Dialogue Interface
+func process_dialogue_interface():
+	
+	pass
 
 
 # Determines which enemies are currently on-screen and returns them in a list
@@ -415,11 +413,30 @@ func _on_player_toggle_field_state_interface() -> void:
 
 
 # Callback function that executes whenever the Player wants to trigger the Dialogue interface: opens/closes the interface depending on the interface's current state
-func _on_player_toggle_dialogue_interface() -> void:
+func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_initiator: Node2D) -> void:
 	
 	# Determine if the Dialogue Interface isn't currently active, then activate it
 	if not field_state_interface_active:
-		var test : Dialogue = load("res://dialogue.tres")
+		
+		dialogue_interface_characters_active = characters
+		dialogue_interface_initiator = dialogue_initiator
+		
+		var character_names: Array[String] = []
+		
+		for character in characters:
+			character_names.append(character.name)
+		
+		character_names.sort()
+		
+		var file_name: String = "-"
+		
+		for name in character_names:
+			file_name += (name + "-")
+		
+		var resource : Dialogue = load("res://" + file_name + ".tres")
+		
+		
+		field_state_interface_active = true
 		
 	else:
 		pass
