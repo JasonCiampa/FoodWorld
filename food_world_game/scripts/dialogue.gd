@@ -111,13 +111,19 @@ func adjust_current_line(forwards: bool = true):
 
 
 
-
 # Loads and parses data from the given .txt file, stores the data into the 'conversations' array, and then saves a new resource with the same name as the .txt file.
 func create_new_dialogue_resource(file_name: String):
-	var txt_file = FileAccess.open("res://" + file_name, FileAccess.READ)
+	var txt_file = FileAccess.open("res://testtext.txt", FileAccess.READ)
 	var current_line = txt_file.get_line()
 	var content = txt_file.get_as_text()
 	print(current_line)
+	current_line = txt_file.get_line()
+	print(current_line)
+	current_line = txt_file.get_line()
+	print(current_line)
+	current_line = txt_file.get_line()
+	print(current_line)
+	current_line = txt_file.get_line()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
