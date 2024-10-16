@@ -31,25 +31,30 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 # Enemies #
 @onready var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 
+
 # Food Buddies #
 var food_buddies_active: Array[FoodBuddy]
 var food_buddies_inactive: Array[FoodBuddy]
 var food_buddies_locked: Array[FoodBuddy]
+
 
 # Food Fusions # 
 var food_buddy_fusion_active: FoodBuddyFusion
 var food_buddy_fusions_inactive: Array[FoodBuddyFusion]
 var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
-# Interfaces #
+
+# Food Buddy FieldState Interface #
 var field_state_interface_active: bool = false
+var field_state_interface_selected_food_buddy: FoodBuddy
+var field_state_interface_unselected_food_buddy: FoodBuddy
 
-var interface_selected_food_buddy: FoodBuddy
-var interface_unselected_food_buddy: FoodBuddy
-var interface_selected_field_state: int
 
-var dialogue_interface_characters_active
-var dialogue_interface_initiator
+# Dialogue Interface #
+var dialogue_interface_active: bool = false
+var dialogue_interface_characters_active: Array[Node2D]
+var dialogue_interface_initiator: Node2D
+var dialogue_interface_current_dialogue: Dialogue
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -74,6 +79,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if field_state_interface_active:
 		process_field_state_interface()
+	
+	if dialogue_interface_active:
+		process_dialogue_interface()
 
 
 
@@ -96,33 +104,33 @@ func process_field_state_interface():
 	if PLAYER.field_state_current != PLAYER.FieldState.FUSION:
 		
 		# Store a reference to what the FieldState value is before any updates are made
-		var field_state_initial: int = interface_selected_food_buddy.field_state_current
+		var field_state_initial: int = field_state_interface_selected_food_buddy.field_state_current
 		
 		# Determine if the Player has pressed 'W', then decrement the FieldState value by 1
 		if Input.is_action_just_pressed("move_up"):
-			interface_selected_food_buddy.field_state_current -= 1
+			field_state_interface_selected_food_buddy.field_state_current -= 1
 			
 			# Determine if the FieldState value is out of the lower bound, then set it to the last FieldState before Fusion (Fusion can only be set by pressing '3')
-			if interface_selected_food_buddy.field_state_current < 0:
-				interface_selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 2
+			if field_state_interface_selected_food_buddy.field_state_current < 0:
+				field_state_interface_selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 2
 			
-			print("Current FieldState: " + str(interface_selected_food_buddy.field_state_current))
+			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 		
 		
 		# Determine if the Player has pressed 'S', then increment the FieldState value by 1
 		elif Input.is_action_just_pressed("move_down"):
-			interface_selected_food_buddy.field_state_current += 1
+			field_state_interface_selected_food_buddy.field_state_current += 1
 			
 			# Determine if the FieldState value is out of the upper bound (the last FieldState before Fusion), then set it to the first FieldState (Fusion can only be set by pressing '3')
-			if interface_selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 2:
-				interface_selected_food_buddy.field_state_current = 0
+			if field_state_interface_selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 2:
+				field_state_interface_selected_food_buddy.field_state_current = 0
 			
-			print("Current FieldState: " + str(interface_selected_food_buddy.field_state_current))
+			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 		
 		
 		# Determine if the two Food Buddies both have the PLAYER FieldState after the latest adjustment, then revert the latest adjustment because only one Food Buddy can have the PLAYER FieldState at a time
-		if interface_unselected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER and interface_selected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER:
-			interface_selected_food_buddy.field_state_current = field_state_initial
+		if field_state_interface_unselected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER and field_state_interface_selected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+			field_state_interface_selected_food_buddy.field_state_current = field_state_initial
 			print("Reverted FieldState back to " + str(field_state_initial) + ". Only one Food Buddy can have the PLAYER FieldState at once!")
 			return
 		
@@ -130,22 +138,26 @@ func process_field_state_interface():
 	# Determine if the Player has pressed 'A' or 'S', then swap the currently selected Food Buddy
 	if Input.is_action_just_pressed("move_left") or Input.is_action_just_pressed("move_right"):
 		
-		if food_buddies_active[0] == interface_selected_food_buddy:
-			interface_selected_food_buddy = food_buddies_active[1]
-			interface_unselected_food_buddy = food_buddies_active[0]
+		if food_buddies_active[0] == field_state_interface_selected_food_buddy:
+			field_state_interface_selected_food_buddy = food_buddies_active[1]
+			field_state_interface_unselected_food_buddy = food_buddies_active[0]
 		else:
-			interface_selected_food_buddy = food_buddies_active[0]
-			interface_unselected_food_buddy = food_buddies_active[1]
+			field_state_interface_selected_food_buddy = food_buddies_active[0]
+			field_state_interface_unselected_food_buddy = food_buddies_active[1]
 		
-		print("\nCurrently Selected: " + str(interface_selected_food_buddy.name))
-		print("Current FieldState: " + str(interface_selected_food_buddy.field_state_current))
+		print("\nCurrently Selected: " + str(field_state_interface_selected_food_buddy.name))
+		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 
 
 
 # Processes all of the logic involved for the Dialogue Interface
 func process_dialogue_interface():
+	print(dialogue_interface_current_dialogue.current_line)
 	
-	pass
+	if Input.is_action_just_pressed("ability1"):
+		pass
+	elif Input.is_action_just_pressed("ability2"):
+		pass
 
 
 # Determines which enemies are currently on-screen and returns them in a list
@@ -379,15 +391,15 @@ func _on_player_toggle_field_state_interface() -> void:
 	if not field_state_interface_active:
 		
 		# Set Food Buddy 1 as the currently selected Food Buddy in the interface and Food Buddy 2 as the unselected Food Buddy
-		interface_selected_food_buddy = food_buddies_active[0]
-		interface_unselected_food_buddy = food_buddies_active[1]
+		field_state_interface_selected_food_buddy = food_buddies_active[0]
+		field_state_interface_unselected_food_buddy = food_buddies_active[1]
 		
 		print("\nFood Buddy FieldState Interface Opened!\n")
 		print("Press 'W' and 'S' to move through FieldState options")
 		print("Press 'A' and 'D' to move between Food Buddies\n")
 
-		print("Currently Selected: " + str(interface_selected_food_buddy.name))
-		print("Current FieldState: " + str(interface_selected_food_buddy.field_state_current))
+		print("Currently Selected: " + str(field_state_interface_selected_food_buddy.name))
+		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 		
 		# Enable the Food Buddy FieldState Interface
 		field_state_interface_active = true
@@ -418,28 +430,37 @@ func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_in
 	# Determine if the Dialogue Interface isn't currently active, then activate it
 	if not field_state_interface_active:
 		
-		dialogue_interface_characters_active = characters
-		dialogue_interface_initiator = dialogue_initiator
-		
+		# Create an empty Array that will hold Character names
 		var character_names: Array[String] = []
 		
+		# Add each Character's name to the list
 		for character in characters:
 			character_names.append(character.name)
 		
+		# Sort the Array of Character names alphabetically
 		character_names.sort()
 		
+		# Create an empty String that will hold the name of the Dialogue Resource file to load into the Dialogue Interface
 		var file_name: String = "-"
 		
+		# Generate the name of the Dialogue Resource file by formatting each Character's name into the file name
 		for name in character_names:
 			file_name += (name + "-")
 		
-		var resource : Dialogue = load("res://" + file_name + ".tres")
+		# Load in the Dialogue Resource File, then store it into the Dialogue Interface along with the Characters involved and the Character who initiated the Dialogue
+		dialogue_interface_current_dialogue = load("res://" + file_name + ".tres")
+		dialogue_interface_characters_active = characters
+		dialogue_interface_initiator = dialogue_initiator
 		
-		
-		field_state_interface_active = true
+		# Enable the Dialogue Interface
+		dialogue_interface_active = true
 		
 	else:
-		pass
+		# Disable the Dialogue Interface and remove any of it's stored values
+		dialogue_interface_active = false
+		dialogue_interface_current_dialogue = null
+		dialogue_interface_characters_active = []
+		dialogue_interface_initiator = null
 
 
 
