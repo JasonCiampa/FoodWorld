@@ -5,6 +5,7 @@ class_name Malick
 func ready():
 	speed_normal = 20
 	speed_current = speed_normal
+	self.name = "Malick"
 
 
 # A custom process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_process()' function

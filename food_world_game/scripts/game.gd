@@ -55,6 +55,8 @@ var dialogue_interface_active: bool = false
 var dialogue_interface_characters_active: Array[Node2D]
 var dialogue_interface_initiator: Node2D
 var dialogue_interface_current_dialogue: Dialogue
+var dialogue_interface_line_displayed: bool
+var dialogue_interface_current_speaker: Node2D
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -72,6 +74,27 @@ func _ready() -> void:
 	
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
+	
+	# Disable the Dialogue Interface and remove any of it's stored values
+	dialogue_interface_active = true
+	
+	# Load in the current dialogue
+	dialogue_interface_current_dialogue = load("res://dialogue.tres")
+	
+	# Set the current conversation
+	dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Violent Introduction"]
+	dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
+	dialogue_interface_current_dialogue.current_line_number = 1
+	dialogue_interface_characters_active = [PLAYER, MALICK]
+	dialogue_interface_initiator = PLAYER
+	dialogue_interface_line_displayed = false
+	dialogue_interface_current_speaker = PLAYER
+	
+	# Pause all of the characters' processing while the interface is active
+	MALICK.process_mode = PROCESS_MODE_DISABLED
+	SALLY.process_mode = PROCESS_MODE_DISABLED
+	ENEMY.process_mode = PROCESS_MODE_DISABLED
+	PLAYER.paused = true
 
 
 
@@ -152,12 +175,27 @@ func process_field_state_interface():
 
 # Processes all of the logic involved for the Dialogue Interface
 func process_dialogue_interface():
-	print(dialogue_interface_current_dialogue.current_line)
-	
+
+	# Detect if the Player has tried to move backwards or forwards with the Dialogue, then adjust the current line in the Dialogue 
 	if Input.is_action_just_pressed("ability1"):
-		pass
+		if dialogue_interface_current_dialogue.adjust_current_line(false):
+			dialogue_interface_line_displayed = false
+			
 	elif Input.is_action_just_pressed("ability2"):
-		pass
+		if dialogue_interface_current_dialogue.adjust_current_line(true):
+			dialogue_interface_line_displayed = false	
+	
+	# Determine if the current line of Dialogue hasn't been displayed, then display it
+	if not dialogue_interface_line_displayed:
+
+		# Determine which Character is now speaking by matching it to the name that the Dialogue Resource indicates is currently speaking, then store them as the current speaker
+		for character in dialogue_interface_characters_active:
+			if character.name == dialogue_interface_current_dialogue.current_speaker:
+				dialogue_interface_current_speaker = character
+		
+		print("[" + str(dialogue_interface_current_dialogue.current_line_number) + "]  " + dialogue_interface_current_speaker.name + ": " + dialogue_interface_current_dialogue.current_line)
+		
+		dialogue_interface_line_displayed = true
 
 
 # Determines which enemies are currently on-screen and returns them in a list
@@ -452,8 +490,24 @@ func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_in
 		dialogue_interface_characters_active = characters
 		dialogue_interface_initiator = dialogue_initiator
 		
+		dialogue_interface_current_dialogue = load("res://dialogue.tres")
+		dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations[0]["Violent Intro Conversation"]
+		dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
+		dialogue_interface_current_dialogue.current_line_number = 1
+		
+		dialogue_interface_characters_active = [PLAYER, MALICK]
+		dialogue_interface_initiator = PLAYER
+		dialogue_interface_line_displayed = false
+		dialogue_interface_current_speaker = PLAYER
+		
 		# Enable the Dialogue Interface
 		dialogue_interface_active = true
+		
+		# Pause all of the characters' processing while the interface is active
+		MALICK.process_mode = PROCESS_MODE_DISABLED
+		SALLY.process_mode = PROCESS_MODE_DISABLED
+		ENEMY.process_mode = PROCESS_MODE_DISABLED
+		PLAYER.paused = true
 		
 	else:
 		# Disable the Dialogue Interface and remove any of it's stored values
@@ -461,7 +515,12 @@ func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_in
 		dialogue_interface_current_dialogue = null
 		dialogue_interface_characters_active = []
 		dialogue_interface_initiator = null
-
+		
+		# Unpause all of the characters' processing now that the interface is no longer active
+		MALICK.process_mode = PROCESS_MODE_ALWAYS
+		SALLY.process_mode = PROCESS_MODE_ALWAYS
+		ENEMY.process_mode = PROCESS_MODE_ALWAYS
+		PLAYER.paused = false
 
 
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies

@@ -4,14 +4,28 @@
 
 [resource]
 script = ExtResource("1_da0j0")
-conversations = Array[Dictionary]([{}])
-conversators = {
-"Character Name": [{
-1: "I am Character 1!"
-}, {
-3: "We are both cool Characters!"
-}],
-"Character Name 2": [{
-2: "And I am Character 2!"
-}]
+conversations = {
+"Peaceful Introduction": {
+"Player": {
+1: "Hey, I'm the Player.",
+2: "What's your name?",
+4: "Cool"
+},
+"Sally": {
+3: "I'm Sally the Mozzarella Stick.",
+5: "I thought so too."
 }
+},
+"Violent Introduction": {
+"Malick": {
+2: "You? Kill ME?!?",
+3: "DO YOU FORGET I AM MALICK THE VICIOUS?!",
+5: "GAH!! You'll choke on those words as you breathe your final breaths in despair and agony..."
+},
+"Player": {
+1: "I am the Player, and I WILL KILL YOU!!",
+4: "No, I remember all too well you stupid potato."
+}
+}
+}
+conversation_current = {}

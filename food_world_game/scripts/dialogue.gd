@@ -39,8 +39,9 @@ class_name Dialogue
 # Tracking State of Dialogue #
 var current_line: String
 var current_line_number: int
+var current_speaker: String
 
-@export var conversations: Array[Dictionary]
+@export var conversations: Dictionary
 
 # Characters & their lines in this Dialogue #
 # A Dictionary with key-values pairs in the format of String-Dictionary, and the value dictionaries are in the format of int-String
@@ -81,8 +82,8 @@ var current_line_number: int
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Adjusts the current line forwards (to the next line in the dialogue) or backwards (to the previous line in the dialogue)
-func adjust_current_line(forwards: bool = true):
+# Adjusts the current line forwards (to the next line in the dialogue) or backwards (to the previous line in the dialogue). Returns true if the line is adjusted, returns false if not.
+func adjust_current_line(forwards: bool = true) -> bool:
 	
 	# Determine which should be the new line to display: the line that came previously or the line that comes after the current line
 	var line_adjuster: int
@@ -96,19 +97,18 @@ func adjust_current_line(forwards: bool = true):
 	# Iterate over each Character involved in the current conversation
 	for character in conversation_current:
 		
-		# Iterate over each line that the Character of this iteration has in the current conversation
-		for line in conversation_current[character]:
+		# Store a reference to the line that should play next if the Character of this iteration has the line. Store 'null' if the Character of this iteration doesn't have the line.
+		var new_line = conversation_current[character].get(current_line_number + line_adjuster)
+		
+		# Check if line that should play next was found from the Character of this iteration, then set it to be the new current line
+		if new_line != null:
+			current_line = new_line
+			current_line_number += line_adjuster
+			current_speaker = character
 			
-			# Store a reference to the line that should play next if the Character of this iteration has the line. Store 'null' if the Character of this iteration doesn't have the line.
-			var new_line: String = line.get(current_line_number + line_adjuster)
-			
-			# Check if line that should play next was found from the Character of this iteration, then set it to be the new current line
-			if new_line != null:
-				current_line = new_line
-				current_line_number += line_adjuster
-				
-				return
-
+			return true
+	
+	return false
 
 
 # Loads and parses data from the given .txt file, stores the data into the 'conversations' array, and then saves a new resource with the same name as the .txt file.
