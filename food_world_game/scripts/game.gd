@@ -75,20 +75,22 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	# Disable the Dialogue Interface and remove any of it's stored values
-	dialogue_interface_active = true
-	
+	## Disable the Dialogue Interface and remove any of it's stored values
+	#dialogue_interface_active = true
+	#
 	# Load in the current dialogue
 	dialogue_interface_current_dialogue = load("res://dialogue.tres")
+	#
+	## Set the current conversation
+	#dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Violent Introduction"]
+	#dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
+	#dialogue_interface_current_dialogue.current_line_number = 1
+	#dialogue_interface_characters_active = [PLAYER, MALICK]
+	#dialogue_interface_initiator = PLAYER
+	#dialogue_interface_line_displayed = false
+	#dialogue_interface_current_speaker = PLAYER
 	
-	# Set the current conversation
-	dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Violent Introduction"]
-	dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
-	dialogue_interface_current_dialogue.current_line_number = 1
-	dialogue_interface_characters_active = [PLAYER, MALICK]
-	dialogue_interface_initiator = PLAYER
-	dialogue_interface_line_displayed = false
-	dialogue_interface_current_speaker = PLAYER
+	dialogue_interface_current_dialogue.create_and_save_resource("Dan-Link-Player")
 	
 	# Pause all of the characters' processing while the interface is active
 	MALICK.process_mode = PROCESS_MODE_DISABLED
