@@ -1,0 +1,61 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://dx72ru8gfj5h2"]
+
+[ext_resource type="Script" path="res://scripts/dialogue.gd" id="1_xevkb"]
+
+[resource]
+script = ExtResource("1_xevkb")
+conversations = {
+"Candy-Castle-Dungeon-1": {
+"DIALOGUE": {
+7: "char-anim=”Mysterious”_text-delay=18"
+},
+"GAME": {
+6: "game_Sally_position=(Malick.x + 40, Malick.y)_animation=(’roll’, 5)",
+10: "game_Player,Malick_seconds=3_animation=(’head-twist’, 5)"
+},
+"Malick": {
+3: "I can. Those Gummy freaks are ruthless!",
+4: "We can’t stay here, Sir Loin is counting on us.",
+5: "Let’s think of a way to get out of here."
+},
+"Player": {
+1: "Well this sucks.",
+2: "I can’t believe they threw us in this cell!",
+11: "Well this sucks."
+},
+"Sally": {
+8: "A way out of here, *eh*?",
+9: "How cute. Ha!"
+}
+},
+"Candy-Castle-Dungeon-2": {
+"DIALOGUE": {},
+"GAME": {},
+"Malick": {
+3: "Nah, I don’t believe you.",
+4: "We can totally get out of here!",
+6: "I’m Malick the Vicious Roasted Potato."
+},
+"Player": {},
+"Sally": {
+1: "I am Sally the Mozzarella Stick!",
+2: "And you can trust me- we ain’t gettin outta here.",
+5: "Yeah? And who are you to think that?"
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {},
+"GAME": {},
+"Malick": {
+3: "Nah, I don’t believe you.",
+4: "We can totally get out of here!",
+6: "I’m Malick the Vicious Roasted Potato."
+},
+"Player": {},
+"Sally": {
+1: "I am Sally the Mozzarella Stick!",
+2: "And you can trust me- we ain’t gettin outta here.",
+5: "Yeah? And who are you to think that?"
+}
+}

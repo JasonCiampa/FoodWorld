@@ -45,7 +45,8 @@ var character_names: PackedStringArray
 # Tracking State of Dialogue #
 var current_line: String
 var current_line_number: int
-var current_speaker: String
+var current_speaker_name: String
+var furthest_line_reached: int
 
 
 @export var conversations: Dictionary
@@ -109,9 +110,13 @@ func adjust_current_line(forwards: bool = true) -> bool:
 		
 		# Check if line that should play next was found from the Character of this iteration, then set it to be the new current line
 		if new_line != null:
+			
 			current_line = new_line
+			current_speaker_name = character
 			current_line_number += line_adjuster
-			current_speaker = character
+			
+			if current_line_number > furthest_line_reached:
+				furthest_line_reached = current_line_number
 			
 			return true
 	
@@ -126,9 +131,10 @@ func create_and_save_resource(txt_file_name: String):
 	character_names = []
 	current_line = ""
 	current_line_number = 1
-	current_speaker = ""
+	current_speaker_name = ""
 	conversations = {}
 	conversation_current = {}
+	furthest_line_reached = 1
 	
 	
 	# Open the given .txt file
@@ -156,7 +162,7 @@ func create_and_save_resource(txt_file_name: String):
 		
 		# Store the current line as the name of the conversation and create a variable to hold all the data for this conversation
 		var conversation_name = current_line
-		var conversation: Dictionary = {"GAME": {}}
+		var conversation: Dictionary = {"GAME": {}, "DIALOGUE": {}}
 		
 		# Create a key with each Character's name for the conversation and assign it an empty dictionary that will eventually hold their Dialogue
 		for character_name in character_names:
@@ -171,7 +177,7 @@ func create_and_save_resource(txt_file_name: String):
 		
 		# Until there are no more lines of Dialogue left in the conversation or the end of the file has been reached, continue parsing and storing each Character's respective lines into this conversation
 		while not (int(current_line[0]) == 0 or txt_file.eof_reached()):
-			print(current_line)
+
 			# Parse and store the String form of the line number by taking whatever String comes before the '.' in this line of Dialogue
 			var line_number = current_line.get_slice(".", 0)
 			

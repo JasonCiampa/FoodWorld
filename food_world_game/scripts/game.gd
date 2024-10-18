@@ -52,11 +52,20 @@ var field_state_interface_unselected_food_buddy: FoodBuddy
 
 # Dialogue Interface #
 var dialogue_interface_active: bool = false
+var dialogue_interface_sleeping: bool = false
+
 var dialogue_interface_characters_active: Array[Node2D]
 var dialogue_interface_initiator: Node2D
 var dialogue_interface_current_dialogue: Dialogue
 var dialogue_interface_line_displayed: bool
 var dialogue_interface_current_speaker: Node2D
+
+var dialogue_interface_directions: Dictionary = {"GAME": {"Direction": "", "Processing": false}, "DIALOGUE": {"Direction": "", "Processing": false}}
+
+var dialogue_interface_game_direction: String
+var dialogue_interface_dialogue_direction: String
+
+var dialogue_interface_dialogue_moving_forwards: bool
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,22 +84,24 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	## Disable the Dialogue Interface and remove any of it's stored values
-	#dialogue_interface_active = true
-	#
-	# Load in the current dialogue
-	dialogue_interface_current_dialogue = load("res://dialogue.tres")
-	#
-	## Set the current conversation
-	#dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Violent Introduction"]
-	#dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
-	#dialogue_interface_current_dialogue.current_line_number = 1
-	#dialogue_interface_characters_active = [PLAYER, MALICK]
-	#dialogue_interface_initiator = PLAYER
-	#dialogue_interface_line_displayed = false
-	#dialogue_interface_current_speaker = PLAYER
+	# Disable the Dialogue Interface and remove any of it's stored values
+	dialogue_interface_active = true
 	
-	dialogue_interface_current_dialogue.create_and_save_resource("Dan-Link-Player")
+	# Load in the current dialogue
+	dialogue_interface_current_dialogue = load("res://dialogue/Malick-Player-Sally.tres")
+	
+	# Set the current conversation
+	dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Candy-Castle-Dungeon-1"]
+	dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
+	dialogue_interface_current_dialogue.current_line_number = 1
+	dialogue_interface_current_dialogue.furthest_line_reached = 1
+	dialogue_interface_current_dialogue.current_speaker_name = "Player"
+	dialogue_interface_characters_active = [MALICK, PLAYER, SALLY]
+	dialogue_interface_initiator = PLAYER
+	dialogue_interface_line_displayed = false
+	dialogue_interface_current_speaker = PLAYER
+	
+	#dialogue_interface_current_dialogue.create_and_save_resource("Malick-Player-Sally")
 	
 	# Pause all of the characters' processing while the interface is active
 	MALICK.process_mode = PROCESS_MODE_DISABLED
@@ -106,7 +117,7 @@ func _process(delta: float) -> void:
 		process_field_state_interface()
 	
 	if dialogue_interface_active:
-		process_dialogue_interface()
+		process_dialogue_interface(delta)
 
 
 
@@ -174,30 +185,91 @@ func process_field_state_interface():
 		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 
 
+# Puts the Dialogue Interface to sleep so that it will not process Dialogue and Player Input until it wakes
+func dialogue_interface_sleep():
+	
+	# Determine if the Dialogue Interface is not already asleep, then play an animation to put it so sleep
+	if not dialogue_interface_sleeping:
+		pass
+		# Play an animation to hide the Dialogue Interface
+	
+	# Set the interface to be sleeping so it remains active but none of the Dialogue is updated
+	dialogue_interface_sleeping = true
+
+
+
+# Wakes up the Dialogue Interface so that it will begin processing Dialogue and Player Input again
+func dialogue_interface_wake():
+	
+	# Determine if the Dialogue Interface is asleep, then play an animation to wake it
+	if dialogue_interface_sleeping:
+		pass
+		# Play an animation to show the Dialogue Interface
+	
+	# Set the interface to not be sleeping so it starts updating Dialogue again
+	dialogue_interface_sleeping = false
+	
 
 # Processes all of the logic involved for the Dialogue Interface
-func process_dialogue_interface():
+func process_dialogue_interface(delta: float):
+	
+	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
+	if dialogue_interface_directions["GAME"]["Processing"]:
+		# Process Game Direction
+		print("Game Instruction: " + dialogue_interface_directions["GAME"]["Direction"])
+		# If Game Direction is done being processed, set the Game value in the processing dictionary to false and remove the Game Direction from the direction dictionary, and wake up the Dialogue Interface
+		dialogue_interface_directions["GAME"]["Processing"] = false
+		dialogue_interface_directions["GAME"]["Direction"] = ""
+		dialogue_interface_wake()
+		return
+	
+	# Determine if the Dialogue Interface is currently processing a Dialogue Direction from the Dialogue Resource, then continue processing it
+	if dialogue_interface_directions["DIALOGUE"]["Processing"]:
+		# Process Dialogue Direction
+		print("Dialogue Instruction: " + dialogue_interface_directions["DIALOGUE"]["Direction"])
 
-	# Detect if the Player has tried to move backwards or forwards with the Dialogue, then adjust the current line in the Dialogue 
-	if Input.is_action_just_pressed("ability1"):
-		if dialogue_interface_current_dialogue.adjust_current_line(false):
-			dialogue_interface_line_displayed = false
+		# If Dialogue Direction is done being processed, set the Dialogue value in the processing dictionary to false and remove the Dialogue Direction from the direction dictionary
+		dialogue_interface_directions["DIALOGUE"]["Processing"] = false
+		dialogue_interface_directions["DIALOGUE"]["Direction"] = ""
+		return
+	
+	# Determine if the current line of Dialogue is a Game or Dialogue Direction, then set the interface to appropriately handle the direction
+	if dialogue_interface_current_dialogue.current_speaker_name == "GAME" or dialogue_interface_current_dialogue.current_speaker_name == "DIALOGUE":
+		
+		# Determine if the Dialogue is moving forwards, then store the Game Direction, advance the line to the the actual Dialogue, and begin processing the Game Direction
+		if dialogue_interface_dialogue_moving_forwards:
+			dialogue_interface_directions[dialogue_interface_current_dialogue.current_speaker_name]["Direction"] = dialogue_interface_current_dialogue.current_line
+			dialogue_interface_directions[dialogue_interface_current_dialogue.current_speaker_name]["Processing"] = true
+			dialogue_interface_current_dialogue.adjust_current_line(true)
 			
-	elif Input.is_action_just_pressed("ability2"):
-		if dialogue_interface_current_dialogue.adjust_current_line(true):
-			dialogue_interface_line_displayed = false	
+		# The Dialogue is moving backwards which means no Game Directions need to be executed, so adjust the current line backwards
+		else:
+			dialogue_interface_current_dialogue.adjust_current_line(false)
+		
+		# Return so that the new current line can be processed appropriately
+		return
+	
 	
 	# Determine if the current line of Dialogue hasn't been displayed, then display it
 	if not dialogue_interface_line_displayed:
-
-		# Determine which Character is now speaking by matching it to the name that the Dialogue Resource indicates is currently speaking, then store them as the current speaker
-		for character in dialogue_interface_characters_active:
-			if character.name == dialogue_interface_current_dialogue.current_speaker:
-				dialogue_interface_current_speaker = character
 		
-		print("[" + str(dialogue_interface_current_dialogue.current_line_number) + "]  " + dialogue_interface_current_speaker.name + ": " + dialogue_interface_current_dialogue.current_line)
+		# Iterate over characters of String and print them out (like I did in the Pokemon Game)
+		print("[" + str(dialogue_interface_current_dialogue.current_line_number) + "]  " + dialogue_interface_current_dialogue.current_speaker_name + ": " + dialogue_interface_current_dialogue.current_line)
 		
+		# If all of the characters of the current line have been displayed:
 		dialogue_interface_line_displayed = true
+		
+	else:
+		# Detect if the Player has tried to move backwards or forwards with the Dialogue, then adjust the current line in the Dialogue, flag the line to be displayed, and store the current direction of Dialogue
+		if Input.is_action_just_pressed("ability1"):
+			if dialogue_interface_current_dialogue.adjust_current_line(false):
+				dialogue_interface_line_displayed = false
+				dialogue_interface_dialogue_moving_forwards = false
+		
+		elif Input.is_action_just_pressed("ability2"):
+			if dialogue_interface_current_dialogue.adjust_current_line(true):
+				dialogue_interface_line_displayed = false
+				dialogue_interface_dialogue_moving_forwards = true
 
 
 # Determines which enemies are currently on-screen and returns them in a list
