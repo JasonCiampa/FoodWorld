@@ -1,16 +1,16 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://dx72ru8gfj5h2"]
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://dq0w5ahiynmkd"]
 
-[ext_resource type="Script" path="res://scripts/dialogue.gd" id="1_xevkb"]
+[ext_resource type="Script" path="res://scripts/dialogue.gd" id="1_4ks4g"]
 
 [resource]
-script = ExtResource("1_xevkb")
+script = ExtResource("1_4ks4g")
 conversations = {
 "Candy-Castle-Dungeon-1": {
 "DIALOGUE": {
-7: "char-anim=”Mysterious”_text-delay=18"
+7: "char-anim=”Mysterious”_text-delay=18_text-italicize=19,21"
 },
 "GAME": {
-6: "game_Sally_position=(Malick.x + 40, Malick.y)_animation=(’roll’, 5)",
+6: "Sally_position=(Malick.x + 40, Malick.y)_animation=(’roll’, 5)",
 10: "game_Player,Malick_seconds=3_animation=(’head-twist’, 5)"
 },
 "Malick": {
@@ -24,7 +24,7 @@ conversations = {
 11: "Well this sucks."
 },
 "Sally": {
-8: "A way out of here, *eh*?",
+8: "A way out of here, eh?",
 9: "How cute. Ha!"
 }
 },

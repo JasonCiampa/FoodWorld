@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 enemies=""
 food_buddies=""
+food_citizens=""
 
 [input]
 

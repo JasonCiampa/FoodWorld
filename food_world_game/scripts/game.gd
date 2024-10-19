@@ -10,6 +10,9 @@ extends Node2D
 
 @onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/malick_sally.tscn").instantiate()
 
+@onready var food_citizen: FoodCitizen = $"Food Citizen"
+
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -31,6 +34,8 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 # Enemies #
 @onready var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 
+# Food Citizens #
+@onready var food_citizens: Array[Node] = get_tree().get_nodes_in_group("food_citizens")
 
 # Food Buddies #
 var food_buddies_active: Array[FoodBuddy]
@@ -84,40 +89,45 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	# Disable the Dialogue Interface and remove any of it's stored values
-	dialogue_interface_active = true
-	
-	# Load in the current dialogue
-	dialogue_interface_current_dialogue = load("res://dialogue/Malick-Player-Sally.tres")
-	
-	# Set the current conversation
-	dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Candy-Castle-Dungeon-1"]
-	dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
-	dialogue_interface_current_dialogue.current_line_number = 1
-	dialogue_interface_current_dialogue.furthest_line_reached = 1
-	dialogue_interface_current_dialogue.current_speaker_name = "Player"
-	dialogue_interface_characters_active = [MALICK, PLAYER, SALLY]
-	dialogue_interface_initiator = PLAYER
-	dialogue_interface_line_displayed = false
-	dialogue_interface_current_speaker = PLAYER
-	
-	#dialogue_interface_current_dialogue.create_and_save_resource("Malick-Player-Sally")
-	
-	# Pause all of the characters' processing while the interface is active
-	MALICK.process_mode = PROCESS_MODE_DISABLED
-	SALLY.process_mode = PROCESS_MODE_DISABLED
-	ENEMY.process_mode = PROCESS_MODE_DISABLED
-	PLAYER.paused = true
+	## Disable the Dialogue Interface and remove any of it's stored values
+	#dialogue_interface_active = true
+	#
+	### Load in the current dialogue
+	#dialogue_interface_current_dialogue = load("res://dialogue/Malick-Player-Sally.tres")
+	#
+	## Set the current conversation
+	#dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Candy-Castle-Dungeon-1"]
+	#dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
+	#dialogue_interface_current_dialogue.current_line_number = 1
+	#dialogue_interface_current_dialogue.furthest_line_reached = 1
+	#dialogue_interface_current_dialogue.current_speaker_name = "Player"
+	#dialogue_interface_characters_active = [MALICK, PLAYER, SALLY]
+	#dialogue_interface_initiator = PLAYER
+	#dialogue_interface_line_displayed = false
+	#dialogue_interface_current_speaker = PLAYER
+	#
+	##dialogue_interface_current_dialogue.create_and_save_resource("Malick-Player-Sally")
+	#
+	## Pause all of the characters' processing while the interface is active
+	##MALICK.process_mode = PROCESS_MODE_DISABLED
+	##SALLY.process_mode = PROCESS_MODE_DISABLED
+	#ENEMY.process_mode = PROCESS_MODE_DISABLED
+	##PLAYER.paused = true
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if field_state_interface_active:
-		process_field_state_interface()
+	process_overlapping_hitboxes(PLAYER.hitbox)
 	
 	if dialogue_interface_active:
 		process_dialogue_interface(delta)
+		return
+	
+	if field_state_interface_active:
+		process_field_state_interface()
+	
+
 
 
 
@@ -320,7 +330,7 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(subject: Node2D, target: Node2D, desired_distance: float) -> float:
+func move_towards_target(subject: CharacterBody2D, target: Node2D, desired_distance: float) -> float:
 	
 	# Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
 	if subject.position.x < target.position.x:
@@ -367,6 +377,19 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 		return true
 	
 	return false
+
+
+
+# Processes 
+func process_overlapping_hitboxes(character_hitbox: Area2D):
+	
+	# Store a list of all hitboxes that are overlapping with the Character's Hitbox
+	var overlapping_hitboxes = character_hitbox.get_overlapping_areas()
+	
+	# Determine if a Food Citizen's Dialogue Hitbox is overlapping, then enable their "Press 'E' To Interact" label
+	if food_citizen.hitbox_dialogue in overlapping_hitboxes:
+		food_citizen.label_e_to_interact.show()
+		
 
 
 
@@ -642,6 +665,50 @@ func _on_player_die(player: Player) -> void:
 	print("Player has died!")
 
 
+# GENERAL CHARACTER CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+
+
+# Callback function that executes whenever the Food Buddy wants to set the Player as it's target: sets the Player as the target of the Food Buddy
+func _on_character_target_player(character: CharacterBody2D) -> void:
+	character.target = PLAYER
+
+
+
+# Callback function that executes whenever the Food Buddy wants to move towards an enemy: moves the Food Buddy towards the given enemy
+func _on_character_move_towards_target(character: CharacterBody2D, target: Node2D, desired_distance: float) -> void:
+	character.target_distance = move_towards_target(character, target, desired_distance)
+
+
+
+# Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
+func _on_character_killed_target(character: CharacterBody2D) -> void:
+	character.target = null
+	character.target_distance = 0
+	# Increase XP for killing a target
+
+
+
+# Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Enemy
+func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void:
+	
+	# Store a local reference to the result of searching for the closest Food Buddy target
+	var target_closest = select_closest_target(character, food_buddies_active)
+		
+	# Determine if the target exists, then set them as the Enemy's target and update the target distance
+	if target_closest != null:
+		character.target = target_closest
+		character.target_distance = character.position.distance_to(target_closest.position)
+	else:
+		character.target = null
+		character.target_distance = 0
+
+
+# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
+func _on_character_die(character: CharacterBody2D) -> void:
+	print(character.name + " has died!")
+	remove_child(character)
+
+
 
 # FOOD BUDDY CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
 
@@ -651,12 +718,6 @@ func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void
 	# Iterate over every enemy currently on the screen to check if the Food Buddy's attack landed on them
 	for enemy in get_enemies_on_screen():
 		process_attack(enemy, food_buddy, damage)
-
-
-
-# Callback function that executes whenever the Food Buddy wants to set the Player as it's target: sets the Player as the target of the Food Buddy
-func _on_food_buddy_target_player(food_buddy: FoodBuddy) -> void:
-	food_buddy.target = PLAYER
 
 
 
@@ -676,19 +737,6 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 
 
 
-# Callback function that executes whenever the Food Buddy wants to move towards an enemy: moves the Food Buddy towards the given enemy
-func _on_food_buddy_move_towards_target(food_buddy: FoodBuddy, target: Node2D, desired_distance: float) -> void:
-	food_buddy.target_distance = move_towards_target(food_buddy, target, desired_distance)
-
-
-
-# Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
-func _on_food_buddy_killed_target(food_buddy: FoodBuddy) -> void:
-	food_buddy.target = null
-	# Increase XP for killing an enemy
-
-
-
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
 func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 	
@@ -698,10 +746,7 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 	else:
 		food_buddies_active.remove_at(1)
 	
-	# Remove the Food Buddy from the Game's SceneTree
-	remove_child(food_buddy)
-	
-	print("Food Buddy has died!")
+	_on_character_die(food_buddy)
 
 
 
@@ -710,45 +755,3 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
-
-
-
-# Callback function that executes whenever the Enemy wants to set the Player as it's target: sets the Player as the target of the Enemy
-func _on_enemy_target_player(enemy: Enemy) -> void:
-	enemy.target = PLAYER
-
-
-
-# Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Enemy
-func _on_enemy_target_closest_food_buddy(enemy: Enemy) -> void:
-	
-	# Store a local reference to the result of searching for the closest Food Buddy target
-	var target_closest = select_closest_target(enemy, food_buddies_active)
-		
-	# Determine if the target exists, then set them as the Enemy's target and update the target distance
-	if target_closest != null:
-		enemy.target = target_closest
-		enemy.target_distance = enemy.position.distance_to(target_closest.position)
-	else:
-		enemy.target = null
-		enemy.target_distance = 0
-
-
-
-# Callback function that executes whenever the Enemy wants to move towards an enemy: moves the Enemy towards the given enemy
-func _on_enemy_move_towards_target(enemy: Enemy, target: Node2D, desired_distance: float) -> void:
-	enemy.target_distance = move_towards_target(enemy, target, desired_distance)
-
-
-
-# Callback function that executes whenever the Enemy has killed their target: sets the Enemy's target to null
-func _on_enemy_killed_target(enemy: Enemy) -> void:
-	enemy.target = null
-	enemy.target_distance = 0
-
-
-
-# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
-func _on_enemy_die(enemy: Enemy) -> void:
-	remove_child(enemy)
-	print("Enemy has died!")
