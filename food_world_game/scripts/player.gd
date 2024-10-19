@@ -37,6 +37,9 @@ signal use_ability_solo
 signal use_ability_buddy
 signal use_ability_buddy_fusion
 
+signal interact
+signal escape_menu
+
 signal die
 signal killed_target
 
@@ -155,6 +158,12 @@ func _process(delta: float) -> void:
 		update_movement_direction()
 		update_movement_animation()
 		update_stamina(delta)
+		
+		if Input.is_action_just_pressed("interact"):
+			interact.emit()
+	
+	if Input.is_action_just_pressed("escape_menu"):
+		escape_menu.emit()
 	
 	# DEBUG #
 	if timer.time_left == 0:

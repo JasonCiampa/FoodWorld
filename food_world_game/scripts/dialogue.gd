@@ -48,25 +48,11 @@ var current_line_number: int
 var current_speaker_name: String
 var furthest_line_reached: int
 
-
+# All Conversations Between Characters in this Dialogue #
 @export var conversations: Dictionary
 
-# Characters & their lines in this Dialogue #
-# A Dictionary with key-values pairs in the format of String-Dictionary, and the value dictionaries are in the format of int-String
-@export var conversation_current: Dictionary = {  
-	#
-	#"Character Name": 
-		#{
-			#1 : "I am Character 1!", 
-			#3 : "We are both cool Characters!"
-		#},   
-	#
-	#"Character Name 2": 
-		#{
-			#2 : "And I am Character 2!"
-		#} 
-	#
-}
+# The Currently Selected Conversation Between Characters in this Dialogue #
+@export var conversation_current: Dictionary = {}
 
 
 
@@ -123,6 +109,38 @@ func adjust_current_line(forwards: bool = true) -> bool:
 	return false
 
 
+
+# Prepares a Dialogue to be inserted into the interface by setting all variables where they need to be for the beginning of the conversation
+func prepare_dialogue(conversation_name: String):
+	
+	# Fetch and store the current conversation, reset the current speaker's name, and reset the current line number
+	conversation_current = conversations[conversation_name]
+	current_speaker_name = ""
+	current_line_number = 0
+	
+	# Until the first speaker is found and set, search for the character who speaks the first line in this conversation
+	while current_speaker_name == "":
+		
+		# Increment the current starting line number
+		current_line_number += 1
+		
+		# Iterate over each Character's name in the current conversation
+		for character_name in conversation_current:
+		
+			# Determine if the Character name isn't a Game or Dialogue instruction
+			if character_name != "GAME" and character_name != "DIALOGUE":
+				
+				# Determine if this character has the line that matches the line number, then set that character as the current speaker and break out of the for loop
+				if conversation_current[character_name].get(current_line_number) != null:
+					current_speaker_name = character_name
+					break
+	
+	# Set the furthest line reached value equal to whatever the current line number is and store the first line as the current line
+	furthest_line_reached = current_line_number
+	current_line = conversation_current[current_speaker_name][current_line_number]
+
+
+
 # Loads and parses data from the given .txt file, stores the data into the 'conversations' array, and then saves a new resource with the same name as the .txt file.
 func create_and_save_resource(txt_file_name: String):
 	
@@ -157,6 +175,7 @@ func create_and_save_resource(txt_file_name: String):
 	while current_line == "":
 		current_line = txt_file.get_line()
 	
+	
 	# Until the end of the .txt file is reached, continue parsing and storing conversations into this Dialogue Resource
 	while !txt_file.eof_reached():
 		
@@ -177,7 +196,7 @@ func create_and_save_resource(txt_file_name: String):
 		
 		# Until there are no more lines of Dialogue left in the conversation or the end of the file has been reached, continue parsing and storing each Character's respective lines into this conversation
 		while not (int(current_line[0]) == 0 or txt_file.eof_reached()):
-
+			
 			# Parse and store the String form of the line number by taking whatever String comes before the '.' in this line of Dialogue
 			var line_number = current_line.get_slice(".", 0)
 			
@@ -204,7 +223,8 @@ func create_and_save_resource(txt_file_name: String):
 		# Add the conversation that was just parsed and stored in the previous while loop into the Resource's Dictionary of conversations with this conversation's name as the key
 		conversations[conversation_name] = conversation
 		conversation_current = conversations[conversation_name]
-	
+		
+		
 	# Save this Resource with it's file name in the Dialogue folder
 	ResourceSaver.save(self, "res://dialogue/" + file_name + ".tres")
 	

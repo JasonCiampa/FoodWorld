@@ -10,8 +10,7 @@ extends Node2D
 
 @onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/malick_sally.tscn").instantiate()
 
-@onready var food_citizen: FoodCitizen = $"Food Citizen"
-
+var food_citizen = load("res://scenes/food_citizen.tscn").instantiate()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -34,8 +33,10 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 # Enemies #
 @onready var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
 
+
 # Food Citizens #
 @onready var food_citizens: Array[Node] = get_tree().get_nodes_in_group("food_citizens")
+
 
 # Food Buddies #
 var food_buddies_active: Array[FoodBuddy]
@@ -59,18 +60,17 @@ var field_state_interface_unselected_food_buddy: FoodBuddy
 var dialogue_interface_active: bool = false
 var dialogue_interface_sleeping: bool = false
 
-var dialogue_interface_characters_active: Array[Node2D]
-var dialogue_interface_initiator: Node2D
 var dialogue_interface_current_dialogue: Dialogue
+var dialogue_interface_initiator: Node2D
+var dialogue_interface_characters_active: Array[Node2D]
+var dialogue_interface_dialogue_moving_forwards: bool
 var dialogue_interface_line_displayed: bool
-var dialogue_interface_current_speaker: Node2D
 
 var dialogue_interface_directions: Dictionary = {"GAME": {"Direction": "", "Processing": false}, "DIALOGUE": {"Direction": "", "Processing": false}}
 
 var dialogue_interface_game_direction: String
 var dialogue_interface_dialogue_direction: String
 
-var dialogue_interface_dialogue_moving_forwards: bool
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -83,51 +83,38 @@ var dialogue_interface_dialogue_moving_forwards: bool
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
+	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(MALICK)
 	food_buddies_active.append(SALLY)
 	
+	# Set Malick and Sally as the Food Buddies to fuse and store the fusion in the list of inactive fusions
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	## Disable the Dialogue Interface and remove any of it's stored values
-	#dialogue_interface_active = true
-	#
-	### Load in the current dialogue
-	#dialogue_interface_current_dialogue = load("res://dialogue/Malick-Player-Sally.tres")
-	#
-	## Set the current conversation
-	#dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations["Candy-Castle-Dungeon-1"]
-	#dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
-	#dialogue_interface_current_dialogue.current_line_number = 1
-	#dialogue_interface_current_dialogue.furthest_line_reached = 1
-	#dialogue_interface_current_dialogue.current_speaker_name = "Player"
-	#dialogue_interface_characters_active = [MALICK, PLAYER, SALLY]
-	#dialogue_interface_initiator = PLAYER
-	#dialogue_interface_line_displayed = false
-	#dialogue_interface_current_speaker = PLAYER
-	#
-	##dialogue_interface_current_dialogue.create_and_save_resource("Malick-Player-Sally")
-	#
-	## Pause all of the characters' processing while the interface is active
-	##MALICK.process_mode = PROCESS_MODE_DISABLED
-	##SALLY.process_mode = PROCESS_MODE_DISABLED
-	#ENEMY.process_mode = PROCESS_MODE_DISABLED
-	##PLAYER.paused = true
+	# Connect all of the Food Citizen's signals to the Game
+	food_citizen.target_player.connect(_on_character_target_player)
+	food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
+	food_citizen.move_towards_target.connect(_on_character_move_towards_target)
+	food_citizen.die.connect(_on_character_die)
+
+	# Add the Food Citizen to the Game's SceneTree
+	add_child(food_citizen)
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	# Process if the Player's hitbox has overlapped with any Food Citizen NPCs
 	process_overlapping_hitboxes(PLAYER.hitbox)
 	
+	# Determine if the Dialogue Interface is active, then process it
 	if dialogue_interface_active:
 		process_dialogue_interface(delta)
-		return
 	
+	# Determine if the FieldState Interface is active, then process it
 	if field_state_interface_active:
 		process_field_state_interface()
-	
-
 
 
 
@@ -195,6 +182,7 @@ func process_field_state_interface():
 		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 
 
+
 # Puts the Dialogue Interface to sleep so that it will not process Dialogue and Player Input until it wakes
 func dialogue_interface_sleep():
 	
@@ -218,30 +206,36 @@ func dialogue_interface_wake():
 	
 	# Set the interface to not be sleeping so it starts updating Dialogue again
 	dialogue_interface_sleeping = false
-	
+
+
 
 # Processes all of the logic involved for the Dialogue Interface
 func process_dialogue_interface(delta: float):
 	
 	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
 	if dialogue_interface_directions["GAME"]["Processing"]:
+		
 		# Process Game Direction
 		print("Game Instruction: " + dialogue_interface_directions["GAME"]["Direction"])
+		
 		# If Game Direction is done being processed, set the Game value in the processing dictionary to false and remove the Game Direction from the direction dictionary, and wake up the Dialogue Interface
 		dialogue_interface_directions["GAME"]["Processing"] = false
 		dialogue_interface_directions["GAME"]["Direction"] = ""
 		dialogue_interface_wake()
 		return
 	
+	
 	# Determine if the Dialogue Interface is currently processing a Dialogue Direction from the Dialogue Resource, then continue processing it
 	if dialogue_interface_directions["DIALOGUE"]["Processing"]:
+		
 		# Process Dialogue Direction
 		print("Dialogue Instruction: " + dialogue_interface_directions["DIALOGUE"]["Direction"])
-
+		
 		# If Dialogue Direction is done being processed, set the Dialogue value in the processing dictionary to false and remove the Dialogue Direction from the direction dictionary
 		dialogue_interface_directions["DIALOGUE"]["Processing"] = false
 		dialogue_interface_directions["DIALOGUE"]["Direction"] = ""
 		return
+	
 	
 	# Determine if the current line of Dialogue is a Game or Dialogue Direction, then set the interface to appropriately handle the direction
 	if dialogue_interface_current_dialogue.current_speaker_name == "GAME" or dialogue_interface_current_dialogue.current_speaker_name == "DIALOGUE":
@@ -280,6 +274,7 @@ func process_dialogue_interface(delta: float):
 			if dialogue_interface_current_dialogue.adjust_current_line(true):
 				dialogue_interface_line_displayed = false
 				dialogue_interface_dialogue_moving_forwards = true
+
 
 
 # Determines which enemies are currently on-screen and returns them in a list
@@ -380,7 +375,7 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 
 
 
-# Processes 
+# Checks if the test Food Citizen's Dialogue Hitbox has overlapped with the given character_hitbox and enables/disables a prompt for the user to 'Press 'E' To Interact'
 func process_overlapping_hitboxes(character_hitbox: Area2D):
 	
 	# Store a list of all hitboxes that are overlapping with the Character's Hitbox
@@ -389,7 +384,8 @@ func process_overlapping_hitboxes(character_hitbox: Area2D):
 	# Determine if a Food Citizen's Dialogue Hitbox is overlapping, then enable their "Press 'E' To Interact" label
 	if food_citizen.hitbox_dialogue in overlapping_hitboxes:
 		food_citizen.label_e_to_interact.show()
-		
+	else:
+		food_citizen.label_e_to_interact.hide()
 
 
 
@@ -448,6 +444,25 @@ func determine_player_location_world() -> World:
 
 
 # PLAYER CALLBACKS # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Callback function that executes whenever the Player presses 'E' to interact with something: Triggers Dialogue with the test Food Citizen
+func _on_player_interact() -> void:
+	
+	# Determine if the Food Citizen's 'Press 'E' To Interact' Label is appearing (meaning they're in range of the Player for a conversation), then trigger the Dialogue Interface
+	if food_citizen.label_e_to_interact.visible:
+		food_citizen.label_e_to_interact.hide()
+		_on_player_enable_dialogue_interface([PLAYER, food_buddies_active[0], food_buddies_active[1]], "Candy-Castle-Dungeon-1")
+
+
+
+# Callback function that executes whenever the Player presses 'ESC' to escape an active menu/interface: Closes Dialogue Interface
+func _on_player_escape_menu() -> void:
+	
+	if dialogue_interface_active:
+		_on_player_disable_dialogue_interface()
+		return
+
+
 
 # Callback function that executes whenever the Player equips or unequips a Food Buddy: finds the buddy that corresponds to the given buddy number and sets its FieldState to PLAYER if being equipped or to the appropriate FieldState if being unequipped
 func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
@@ -525,6 +540,10 @@ func _on_player_toggle_field_state_interface() -> void:
 	# Determine if the Food Buddy FieldState Interface isn't currently active, then activate it
 	if not field_state_interface_active:
 		
+		# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
+		if dialogue_interface_active:
+			return
+		
 		# Set Food Buddy 1 as the currently selected Food Buddy in the interface and Food Buddy 2 as the unselected Food Buddy
 		field_state_interface_selected_food_buddy = food_buddies_active[0]
 		field_state_interface_unselected_food_buddy = food_buddies_active[1]
@@ -532,7 +551,7 @@ func _on_player_toggle_field_state_interface() -> void:
 		print("\nFood Buddy FieldState Interface Opened!\n")
 		print("Press 'W' and 'S' to move through FieldState options")
 		print("Press 'A' and 'D' to move between Food Buddies\n")
-
+		
 		print("Currently Selected: " + str(field_state_interface_selected_food_buddy.name))
 		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
 		
@@ -547,7 +566,7 @@ func _on_player_toggle_field_state_interface() -> void:
 		
 	else:
 		print("\nFood Buddy FieldState Interface Closed!" +"\n")
-
+		
 		# Disable the Food Buddy FieldState Interface
 		field_state_interface_active = false
 		
@@ -559,8 +578,8 @@ func _on_player_toggle_field_state_interface() -> void:
 
 
 
-# Callback function that executes whenever the Player wants to trigger the Dialogue interface: opens/closes the interface depending on the interface's current state
-func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_initiator: Node2D) -> void:
+# Callback function that executes whenever the Player wants to enable the Dialogue interface: opens the Dialogue Interface
+func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String) -> void:
 	
 	# Determine if the Dialogue Interface isn't currently active, then activate it
 	if not field_state_interface_active:
@@ -576,27 +595,30 @@ func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_in
 		character_names.sort()
 		
 		# Create an empty String that will hold the name of the Dialogue Resource file to load into the Dialogue Interface
-		var file_name: String = "-"
+		var file_name: String
 		
 		# Generate the name of the Dialogue Resource file by formatting each Character's name into the file name
-		for name in character_names:
-			file_name += (name + "-")
+		for name_index in character_names.size():
+			if name_index != character_names.size() - 1:
+				file_name += (character_names[name_index] + "-")
+			else:
+				file_name += (character_names[name_index])
 		
-		# Load in the Dialogue Resource File, then store it into the Dialogue Interface along with the Characters involved and the Character who initiated the Dialogue
-		dialogue_interface_current_dialogue = load("res://" + file_name + ".tres")
+		
+		# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
+		dialogue_interface_current_dialogue = load("res://dialogue/" + file_name + ".tres")
+		
+		dialogue_interface_current_dialogue.prepare_dialogue(conversation_name)
+		
+		# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
 		dialogue_interface_characters_active = characters
-		dialogue_interface_initiator = dialogue_initiator
 		
-		dialogue_interface_current_dialogue = load("res://dialogue.tres")
-		dialogue_interface_current_dialogue.conversation_current = dialogue_interface_current_dialogue.conversations[0]["Violent Intro Conversation"]
-		dialogue_interface_current_dialogue.current_line = dialogue_interface_current_dialogue.conversation_current["Player"][1]
-		dialogue_interface_current_dialogue.current_line_number = 1
-		
-		dialogue_interface_characters_active = [PLAYER, MALICK]
+		# Store the Player as the Dialogue initator since this callback only activates when the Player triggers a Dialogue interaction
 		dialogue_interface_initiator = PLAYER
-		dialogue_interface_line_displayed = false
-		dialogue_interface_current_speaker = PLAYER
 		
+		# Set line displayed as false to indicate that the current line hasn't been displayed yet
+		dialogue_interface_line_displayed = false
+
 		# Enable the Dialogue Interface
 		dialogue_interface_active = true
 		
@@ -604,20 +626,28 @@ func _on_player_toggle_dialogue_interface(characters: Array[Node2D], dialogue_in
 		MALICK.process_mode = PROCESS_MODE_DISABLED
 		SALLY.process_mode = PROCESS_MODE_DISABLED
 		ENEMY.process_mode = PROCESS_MODE_DISABLED
+		food_citizen.process_mode = PROCESS_MODE_DISABLED
 		PLAYER.paused = true
-		
-	else:
-		# Disable the Dialogue Interface and remove any of it's stored values
-		dialogue_interface_active = false
-		dialogue_interface_current_dialogue = null
-		dialogue_interface_characters_active = []
-		dialogue_interface_initiator = null
-		
-		# Unpause all of the characters' processing now that the interface is no longer active
-		MALICK.process_mode = PROCESS_MODE_ALWAYS
-		SALLY.process_mode = PROCESS_MODE_ALWAYS
-		ENEMY.process_mode = PROCESS_MODE_ALWAYS
-		PLAYER.paused = false
+
+
+
+# Callback function that executes whenever the Player wants to disable the Dialogue interface: closes the Dialogue Interface
+func _on_player_disable_dialogue_interface():
+	
+	# Disable the Dialogue Interface and reset all of its values
+	dialogue_interface_current_dialogue = null
+	dialogue_interface_characters_active = []
+	dialogue_interface_initiator = null
+	dialogue_interface_line_displayed = false
+	dialogue_interface_active = false
+	
+	# Unpause all of the characters' processing now that the interface is no longer active
+	MALICK.process_mode = PROCESS_MODE_ALWAYS
+	SALLY.process_mode = PROCESS_MODE_ALWAYS
+	ENEMY.process_mode = PROCESS_MODE_ALWAYS
+	food_citizen.process_mode = PROCESS_MODE_ALWAYS
+	PLAYER.paused = false
+
 
 
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies

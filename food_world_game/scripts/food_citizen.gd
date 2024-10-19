@@ -80,7 +80,7 @@ var speed_current: int = speed_normal
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	# Store references to the Enemy's Nodes
+	# Store references to the Citizen's Nodes
 	sprite = $AnimatedSprite2D
 	animation_player = $AnimationPlayer
 	on_screen_notifier = $VisibleOnScreenNotifier2D
@@ -112,6 +112,8 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 

@@ -151,7 +151,7 @@ func use_solo_attack():
 		move_towards_target.emit(self, target, 10)
 	else:
 		#target_player.emit(self)
-		target_closest_food_buddy.emit(self)
+		#target_closest_food_buddy.emit(self)
 		return
 		
 	# Determine if the Enemy is in range of the target, then make them stop moving and launch their solo attack
