@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://c6y8ls1ofcp2y"]
 
-[ext_resource type="Script" path="res://scripts/food_buddy.gd" id="1_lus2v"]
+[ext_resource type="Script" path="res://scripts/blueprints/food_buddy.gd" id="1_lus2v"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_q4mxd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlufo"]

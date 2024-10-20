@@ -1,0 +1,71 @@
+[gd_scene load_steps=9 format=3 uid="uid://b4edk42lcf0n8"]
+
+[ext_resource type="Script" path="res://scripts/characters/malick.gd" id="1_bxh3n"]
+[ext_resource type="Texture2D" uid="uid://ckhyrlqirvbvs" path="res://images/characters/mallak.png" id="2_23d6t"]
+[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_3jwwt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c6oaw"]
+size = Vector2(19, 35)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_n3ptn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_23d6t")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3tign"]
+size = Vector2(50, 65)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_37hrf"]
+size = Vector2(65, 77)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wdp3y"]
+font = ExtResource("3_3jwwt")
+font_size = 7
+
+[node name="Malick" type="CharacterBody2D"]
+collision_mask = 0
+platform_floor_layers = 0
+script = ExtResource("1_bxh3n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-12.5, 0.5)
+shape = SubResource("RectangleShape2D_c6oaw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(-11, -3)
+sprite_frames = SubResource("SpriteFrames_n3ptn")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Damage Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+position = Vector2(-12, -2.5)
+shape = SubResource("RectangleShape2D_3tign")
+
+[node name="Dialogue Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Dialogue Hitbox"]
+position = Vector2(-12.5, -2.5)
+shape = SubResource("RectangleShape2D_37hrf")
+
+[node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
+visible = false
+offset_left = -35.0
+offset_top = -19.0
+offset_right = 135.0
+offset_bottom = -11.0
+text = "Press 'E' to Interact"
+label_settings = SubResource("LabelSettings_wdp3y")

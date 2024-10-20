@@ -8,9 +8,9 @@ extends Node2D
 @onready var MALICK: FoodBuddy = $Malick
 @onready var SALLY: FoodBuddy = $Sally
 
-@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/malick_sally.tscn").instantiate()
+@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick_sally.tscn").instantiate()
 
-var food_citizen = load("res://scenes/food_citizen.tscn").instantiate()
+var food_citizen = load("res://scenes/blueprints/food_citizen.tscn").instantiate()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -50,27 +50,9 @@ var food_buddy_fusions_inactive: Array[FoodBuddyFusion]
 var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 
-# Food Buddy FieldState Interface #
-var field_state_interface_active: bool = false
-var field_state_interface_selected_food_buddy: FoodBuddy
-var field_state_interface_unselected_food_buddy: FoodBuddy
-
-
-# Dialogue Interface #
-var dialogue_interface_active: bool = false
-var dialogue_interface_sleeping: bool = false
-
-var dialogue_interface_current_dialogue: Dialogue
-var dialogue_interface_initiator: Node2D
-var dialogue_interface_characters_active: Array[Node2D]
-var dialogue_interface_dialogue_moving_forwards: bool
-var dialogue_interface_line_displayed: bool
-
-var dialogue_interface_directions: Dictionary = {"GAME": {"Direction": "", "Processing": false}, "DIALOGUE": {"Direction": "", "Processing": false}}
-
-var dialogue_interface_game_direction: String
-var dialogue_interface_dialogue_direction: String
-
+# Interfaces #
+var interface_food_buddy_field_state: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food_buddy_field_state_interface.tscn").instantiate()
+var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialogue_interface.tscn").instantiate()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -106,15 +88,15 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	# Process if the Player's hitbox has overlapped with any Food Citizen NPCs
-	process_overlapping_hitboxes(PLAYER.hitbox)
+	process_overlapping_hitboxes(PLAYER.hitbox_damage)
 	
 	# Determine if the Dialogue Interface is active, then process it
-	if dialogue_interface_active:
-		process_dialogue_interface(delta)
+	if interface_dialogue.active:
+		interface_dialogue.process(delta)
 	
 	# Determine if the FieldState Interface is active, then process it
-	if field_state_interface_active:
-		process_field_state_interface()
+	if interface_food_buddy_field_state.active:
+		interface_food_buddy_field_state.process(PLAYER, food_buddies_active)
 
 
 
@@ -129,152 +111,6 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Processes all of the logic involved for the Food Buddy FieldState Interface
-func process_field_state_interface():
-	
-	# Determine if the Player's FieldState is not currently FUSION, then process input (if it is Fusion, we don't want to adjust Food Buddy states because they both need to be FUSION)
-	if PLAYER.field_state_current != PLAYER.FieldState.FUSION:
-		
-		# Store a reference to what the FieldState value is before any updates are made
-		var field_state_initial: int = field_state_interface_selected_food_buddy.field_state_current
-		
-		# Determine if the Player has pressed 'W', then decrement the FieldState value by 1
-		if Input.is_action_just_pressed("move_up"):
-			field_state_interface_selected_food_buddy.field_state_current -= 1
-			
-			# Determine if the FieldState value is out of the lower bound, then set it to the last FieldState before Fusion (Fusion can only be set by pressing '3')
-			if field_state_interface_selected_food_buddy.field_state_current < 0:
-				field_state_interface_selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 2
-			
-			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
-		
-		
-		# Determine if the Player has pressed 'S', then increment the FieldState value by 1
-		elif Input.is_action_just_pressed("move_down"):
-			field_state_interface_selected_food_buddy.field_state_current += 1
-			
-			# Determine if the FieldState value is out of the upper bound (the last FieldState before Fusion), then set it to the first FieldState (Fusion can only be set by pressing '3')
-			if field_state_interface_selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 2:
-				field_state_interface_selected_food_buddy.field_state_current = 0
-			
-			print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
-		
-		
-		# Determine if the two Food Buddies both have the PLAYER FieldState after the latest adjustment, then revert the latest adjustment because only one Food Buddy can have the PLAYER FieldState at a time
-		if field_state_interface_unselected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER and field_state_interface_selected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER:
-			field_state_interface_selected_food_buddy.field_state_current = field_state_initial
-			print("Reverted FieldState back to " + str(field_state_initial) + ". Only one Food Buddy can have the PLAYER FieldState at once!")
-			return
-		
-		
-	# Determine if the Player has pressed 'A' or 'S', then swap the currently selected Food Buddy
-	if Input.is_action_just_pressed("move_left") or Input.is_action_just_pressed("move_right"):
-		
-		if food_buddies_active[0] == field_state_interface_selected_food_buddy:
-			field_state_interface_selected_food_buddy = food_buddies_active[1]
-			field_state_interface_unselected_food_buddy = food_buddies_active[0]
-		else:
-			field_state_interface_selected_food_buddy = food_buddies_active[0]
-			field_state_interface_unselected_food_buddy = food_buddies_active[1]
-		
-		print("\nCurrently Selected: " + str(field_state_interface_selected_food_buddy.name))
-		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
-
-
-
-# Puts the Dialogue Interface to sleep so that it will not process Dialogue and Player Input until it wakes
-func dialogue_interface_sleep():
-	
-	# Determine if the Dialogue Interface is not already asleep, then play an animation to put it so sleep
-	if not dialogue_interface_sleeping:
-		pass
-		# Play an animation to hide the Dialogue Interface
-	
-	# Set the interface to be sleeping so it remains active but none of the Dialogue is updated
-	dialogue_interface_sleeping = true
-
-
-
-# Wakes up the Dialogue Interface so that it will begin processing Dialogue and Player Input again
-func dialogue_interface_wake():
-	
-	# Determine if the Dialogue Interface is asleep, then play an animation to wake it
-	if dialogue_interface_sleeping:
-		pass
-		# Play an animation to show the Dialogue Interface
-	
-	# Set the interface to not be sleeping so it starts updating Dialogue again
-	dialogue_interface_sleeping = false
-
-
-
-# Processes all of the logic involved for the Dialogue Interface
-func process_dialogue_interface(delta: float):
-	
-	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
-	if dialogue_interface_directions["GAME"]["Processing"]:
-		
-		# Process Game Direction
-		print("Game Instruction: " + dialogue_interface_directions["GAME"]["Direction"])
-		
-		# If Game Direction is done being processed, set the Game value in the processing dictionary to false and remove the Game Direction from the direction dictionary, and wake up the Dialogue Interface
-		dialogue_interface_directions["GAME"]["Processing"] = false
-		dialogue_interface_directions["GAME"]["Direction"] = ""
-		dialogue_interface_wake()
-		return
-	
-	
-	# Determine if the Dialogue Interface is currently processing a Dialogue Direction from the Dialogue Resource, then continue processing it
-	if dialogue_interface_directions["DIALOGUE"]["Processing"]:
-		
-		# Process Dialogue Direction
-		print("Dialogue Instruction: " + dialogue_interface_directions["DIALOGUE"]["Direction"])
-		
-		# If Dialogue Direction is done being processed, set the Dialogue value in the processing dictionary to false and remove the Dialogue Direction from the direction dictionary
-		dialogue_interface_directions["DIALOGUE"]["Processing"] = false
-		dialogue_interface_directions["DIALOGUE"]["Direction"] = ""
-		return
-	
-	
-	# Determine if the current line of Dialogue is a Game or Dialogue Direction, then set the interface to appropriately handle the direction
-	if dialogue_interface_current_dialogue.current_speaker_name == "GAME" or dialogue_interface_current_dialogue.current_speaker_name == "DIALOGUE":
-		
-		# Determine if the Dialogue is moving forwards, then store the Game Direction, advance the line to the the actual Dialogue, and begin processing the Game Direction
-		if dialogue_interface_dialogue_moving_forwards:
-			dialogue_interface_directions[dialogue_interface_current_dialogue.current_speaker_name]["Direction"] = dialogue_interface_current_dialogue.current_line
-			dialogue_interface_directions[dialogue_interface_current_dialogue.current_speaker_name]["Processing"] = true
-			dialogue_interface_current_dialogue.adjust_current_line(true)
-			
-		# The Dialogue is moving backwards which means no Game Directions need to be executed, so adjust the current line backwards
-		else:
-			dialogue_interface_current_dialogue.adjust_current_line(false)
-		
-		# Return so that the new current line can be processed appropriately
-		return
-	
-	
-	# Determine if the current line of Dialogue hasn't been displayed, then display it
-	if not dialogue_interface_line_displayed:
-		
-		# Iterate over characters of String and print them out (like I did in the Pokemon Game)
-		print("[" + str(dialogue_interface_current_dialogue.current_line_number) + "]  " + dialogue_interface_current_dialogue.current_speaker_name + ": " + dialogue_interface_current_dialogue.current_line)
-		
-		# If all of the characters of the current line have been displayed:
-		dialogue_interface_line_displayed = true
-		
-	else:
-		# Detect if the Player has tried to move backwards or forwards with the Dialogue, then adjust the current line in the Dialogue, flag the line to be displayed, and store the current direction of Dialogue
-		if Input.is_action_just_pressed("ability1"):
-			if dialogue_interface_current_dialogue.adjust_current_line(false):
-				dialogue_interface_line_displayed = false
-				dialogue_interface_dialogue_moving_forwards = false
-		
-		elif Input.is_action_just_pressed("ability2"):
-			if dialogue_interface_current_dialogue.adjust_current_line(true):
-				dialogue_interface_line_displayed = false
-				dialogue_interface_dialogue_moving_forwards = true
-
 
 
 # Determines which enemies are currently on-screen and returns them in a list
@@ -307,13 +143,13 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 		
 	# Temporarily store the first target in the list of targets as the closest target and also store it's distance from the subject
 	var target_closest = targets[0]
-	var target_closest_distance = subject.position.distance_to(target_closest.position)
+	var target_closest_distance = subject.center_point.distance_to(target_closest.center_point)
 	
 	# Iterate over all of the targets in the given list
 	for target in targets:
 		
 		# Calculate and store the distance between the subject and the target of this iteration
-		var target_distance: float = subject.position.distance_to(target.position)
+		var target_distance: float = subject.center_point.distance_to(target.center_point)
 		
 		# Determine if the target's distance is closer than the closest target's distance, then set that target as the new closest target
 		if target_distance < target_closest_distance:
@@ -325,23 +161,23 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(subject: CharacterBody2D, target: Node2D, desired_distance: float) -> float:
+func move_towards_target(subject: Character, target: Node2D, desired_distance: float) -> float:
 	
 	# Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
-	if subject.position.x < target.position.x:
+	if subject.center_point.x < target.center_point.x:
 		subject.velocity.x = subject.speed_current
 	
-	elif subject.position.x > target.position.x:
+	elif subject.center_point.x > target.center_point.x:
 		subject.velocity.x = -subject.speed_current
 	
-	if subject.position.y < target.position.y:
+	if subject.center_point.y < target.center_point.y:
 		subject.velocity.y = subject.speed_current
 	
-	elif subject.position.y > target.position.y:
+	elif subject.center_point.y > target.center_point.y:
 		subject.velocity.y = -subject.speed_current
 	
 	# Calculate the distance from the subject to the target
-	var target_distance = subject.position.distance_to(target.position)
+	var target_distance = subject.center_point.distance_to(target.center_point)
 	
 	# Determine if the subject has approximately reached the desired distance away from the target, then make them stop moving
 	if target_distance <= desired_distance:
@@ -357,10 +193,11 @@ func move_towards_target(subject: CharacterBody2D, target: Node2D, desired_dista
 func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 	
 	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
-	var hitboxes = attacker.hitbox.get_overlapping_areas()
+	var hitboxes = attacker.hitbox_damage.get_overlapping_areas()
 	
 	# Determine if the attacked Node's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
-	if target.hitbox in hitboxes:
+	if target.hitbox_damage in hitboxes:
+		
 		target.health_current -= damage
 		
 		# Determine if the attacked Node has run out of health, then emit their death signal
@@ -455,12 +292,14 @@ func _on_player_interact() -> void:
 
 
 
-# Callback function that executes whenever the Player presses 'ESC' to escape an active menu/interface: Closes Dialogue Interface
+# Callback function that executes whenever the Player presses 'ESC' to escape an active menu/interface: Closes any open Interface
 func _on_player_escape_menu() -> void:
 	
-	if dialogue_interface_active:
+	if interface_dialogue.active:
 		_on_player_disable_dialogue_interface()
-		return
+	
+	if interface_food_buddy_field_state.active:
+		interface_food_buddy_field_state.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 
 
 
@@ -537,116 +376,34 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 # Callback function that executes whenever the Player wants to trigger the Food Buddy FieldState updating interface: opens/closes the interface depending on the interface's current state
 func _on_player_toggle_field_state_interface() -> void:
 	
-	# Determine if the Food Buddy FieldState Interface isn't currently active, then activate it
-	if not field_state_interface_active:
-		
-		# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-		if dialogue_interface_active:
-			return
-		
-		# Set Food Buddy 1 as the currently selected Food Buddy in the interface and Food Buddy 2 as the unselected Food Buddy
-		field_state_interface_selected_food_buddy = food_buddies_active[0]
-		field_state_interface_unselected_food_buddy = food_buddies_active[1]
-		
-		print("\nFood Buddy FieldState Interface Opened!\n")
-		print("Press 'W' and 'S' to move through FieldState options")
-		print("Press 'A' and 'D' to move between Food Buddies\n")
-		
-		print("Currently Selected: " + str(field_state_interface_selected_food_buddy.name))
-		print("Current FieldState: " + str(field_state_interface_selected_food_buddy.field_state_current))
-		
-		# Enable the Food Buddy FieldState Interface
-		field_state_interface_active = true
-		
-		# Pause all of the characters' processing while the interface is active
-		MALICK.process_mode = PROCESS_MODE_DISABLED
-		SALLY.process_mode = PROCESS_MODE_DISABLED
-		ENEMY.process_mode = PROCESS_MODE_DISABLED
-		PLAYER.paused = true
-		
+	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
+	if interface_dialogue.active:
+		return
+	
+	if interface_food_buddy_field_state.active:
+		interface_food_buddy_field_state.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 	else:
-		print("\nFood Buddy FieldState Interface Closed!" +"\n")
-		
-		# Disable the Food Buddy FieldState Interface
-		field_state_interface_active = false
-		
-		# Unpause all of the characters' processing now that the interface is no longer active
-		MALICK.process_mode = PROCESS_MODE_ALWAYS
-		SALLY.process_mode = PROCESS_MODE_ALWAYS
-		ENEMY.process_mode = PROCESS_MODE_ALWAYS
-		PLAYER.paused = false
+		interface_food_buddy_field_state.enable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 
 
 
 # Callback function that executes whenever the Player wants to enable the Dialogue interface: opens the Dialogue Interface
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String) -> void:
 	
-	# Determine if the Dialogue Interface isn't currently active, then activate it
-	if not field_state_interface_active:
-		
-		# Create an empty Array that will hold Character names
-		var character_names: Array[String] = []
-		
-		# Add each Character's name to the list
-		for character in characters:
-			character_names.append(character.name)
-		
-		# Sort the Array of Character names alphabetically
-		character_names.sort()
-		
-		# Create an empty String that will hold the name of the Dialogue Resource file to load into the Dialogue Interface
-		var file_name: String
-		
-		# Generate the name of the Dialogue Resource file by formatting each Character's name into the file name
-		for name_index in character_names.size():
-			if name_index != character_names.size() - 1:
-				file_name += (character_names[name_index] + "-")
-			else:
-				file_name += (character_names[name_index])
-		
-		
-		# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
-		dialogue_interface_current_dialogue = load("res://dialogue/" + file_name + ".tres")
-		
-		dialogue_interface_current_dialogue.prepare_dialogue(conversation_name)
-		
-		# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
-		dialogue_interface_characters_active = characters
-		
-		# Store the Player as the Dialogue initator since this callback only activates when the Player triggers a Dialogue interaction
-		dialogue_interface_initiator = PLAYER
-		
-		# Set line displayed as false to indicate that the current line hasn't been displayed yet
-		dialogue_interface_line_displayed = false
-
-		# Enable the Dialogue Interface
-		dialogue_interface_active = true
-		
-		# Pause all of the characters' processing while the interface is active
-		MALICK.process_mode = PROCESS_MODE_DISABLED
-		SALLY.process_mode = PROCESS_MODE_DISABLED
-		ENEMY.process_mode = PROCESS_MODE_DISABLED
-		food_citizen.process_mode = PROCESS_MODE_DISABLED
-		PLAYER.paused = true
+	# Determine if the Dialogue Interface is already active or if the Food Buddy FieldState Interface is active, then return because the Dialogue Interface doesn't need the 'enable' function called.
+	if interface_dialogue.active or interface_food_buddy_field_state.active:
+		return
+	
+	interface_dialogue.enable(characters, PLAYER, conversation_name, [PLAYER, MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY])
 
 
 
 # Callback function that executes whenever the Player wants to disable the Dialogue interface: closes the Dialogue Interface
 func _on_player_disable_dialogue_interface():
 	
-	# Disable the Dialogue Interface and reset all of its values
-	dialogue_interface_current_dialogue = null
-	dialogue_interface_characters_active = []
-	dialogue_interface_initiator = null
-	dialogue_interface_line_displayed = false
-	dialogue_interface_active = false
-	
-	# Unpause all of the characters' processing now that the interface is no longer active
-	MALICK.process_mode = PROCESS_MODE_ALWAYS
-	SALLY.process_mode = PROCESS_MODE_ALWAYS
-	ENEMY.process_mode = PROCESS_MODE_ALWAYS
-	food_citizen.process_mode = PROCESS_MODE_ALWAYS
-	PLAYER.paused = false
+	# Determine if the Dialogue Interface is active, then disable it
+	if interface_dialogue.active:
+		interface_dialogue.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 
 
 
@@ -727,10 +484,11 @@ func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void
 	# Determine if the target exists, then set them as the Enemy's target and update the target distance
 	if target_closest != null:
 		character.target = target_closest
-		character.target_distance = character.position.distance_to(target_closest.position)
+		character.target_distance = character.center_point.distance_to(target_closest.center_point)
 	else:
 		character.target = null
 		character.target_distance = 0
+
 
 
 # Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
@@ -760,7 +518,7 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
 	if target_closest != null:
 		food_buddy.target = target_closest
-		food_buddy.target_distance = food_buddy.position.distance_to(target_closest.position)
+		food_buddy.target_distance = food_buddy.center_point.distance_to(target_closest.center_point)
 	else:
 		food_buddy.target = null
 		food_buddy.target_distance = 0

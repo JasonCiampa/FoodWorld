@@ -1,4 +1,4 @@
-extends Node2D
+extends FoodBuddy
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -44,21 +44,7 @@ extends Node2D
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass
 
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
-
-# Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
-	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -69,30 +55,28 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-# ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
 func ready():
-	pass
+	speed_normal = 20
+	speed_current = speed_normal
+	self.name = "Malick"
 
 
-
-# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process():
-	pass
-
-
-
-# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+# A custom process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_process()' function
+func process(delta: float):
+	
+	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state
+	if field_state_current == FieldState.FOLLOW:
+		target_player.emit(self)
+		move_towards_target.emit(self, target, 30)
+	elif field_state_current == FieldState.FORAGE:
+		pass
+	elif field_state_current == FieldState.FUSION:
+		pass
+	elif field_state_current == FieldState.SOLO:
+		pass
+	elif field_state_current == FieldState.PLAYER:
+		pass
+	
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

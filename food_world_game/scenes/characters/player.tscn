@@ -1,6 +1,6 @@
 [gd_scene load_steps=31 format=3 uid="uid://cu2ipprwef1jv"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_2axk5"]
+[ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
 [ext_resource type="Texture2D" uid="uid://dmnlae1ov7bhe" path="res://images/characters/main-character.png" id="3_ndyxs"]
 
@@ -318,9 +318,9 @@ libraries = {
 position = Vector2(-0.5, 1)
 shape = SubResource("RectangleShape2D_5mf36")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Damage Hitbox" type="Area2D" parent="."]
 
-[node name="Hitbox" type="CollisionShape2D" parent="Area2D"]
+[node name="Hitbox" type="CollisionShape2D" parent="Damage Hitbox"]
 position = Vector2(-0.5, -0.5)
 shape = SubResource("RectangleShape2D_5tqxi")
 

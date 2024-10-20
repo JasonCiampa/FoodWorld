@@ -1,7 +1,12 @@
-extends Node2D
+extends Character
+
+class_name FoodBuddyFusion
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Hitbox #
+var hitbox_dialogue: Area2D
 
 
 
@@ -13,7 +18,7 @@ extends Node2D
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,9 +26,7 @@ extends Node2D
 
 
 
-
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,7 +37,18 @@ extends Node2D
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Food Buddies #
+var food_buddy1: FoodBuddy
+var food_buddy2: FoodBuddy
 
+
+# Level and XP #
+var xp_current: int
+var xp_max: int
+
+# Inventory #
+var inventory: Array = []
+var inventory_size: int = 12
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -46,19 +60,33 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	# Store references to the Food Buddy's Nodes
+	sprite = $AnimatedSprite2D
+	animation_player  = $AnimationPlayer
+	hitbox_dialogue = $Area2D
+	
+	ready()
+	
+	update_center_point()
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	
+	if not paused:
+		process(delta)
 
 
 
-# Called every frame. Updates the Enemy's physics
+# Called every frame. Updates the Food Buddy Fusion's physics
 func _physics_process(delta: float) -> void:
-	pass
+	
+	if not paused:
+		physics_process(delta)
+	
+	update_center_point()
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -69,7 +97,10 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+# Sets the Food Buddies of this Food Buddy Fusion
+func set_food_buddies(food_buddy_1: FoodBuddy, food_buddy_2: FoodBuddy):
+	food_buddy1 = food_buddy_1
+	food_buddy2 = food_buddy_2
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -79,20 +110,45 @@ func _physics_process(delta: float) -> void:
 
 # ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
+# A custom ready function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_ready()' function
 func ready():
 	pass
 
 
 
-# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process():
+# A custom process function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_process()' function
+func process(delta: float):
 	pass
 
 
 
-# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
+# A custom physics_process function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_physics_process()' function
 func physics_process(delta: float) -> void:
 	pass
+
+
+
+# A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define.
+func use_ability1():
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy Fusion's Ability 1 has been triggered!")
+	pass
+
+
+
+# A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define.
+func use_ability2():
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy Fusion's Ability 2 has been triggered!")
+	pass
+
+
+
+# A custom function to execute the Food Buddy Fusion's special attack that each Food Buddy Fusion subclass should personally define.
+func use_special_attack():
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print("Food Buddy Fusion's Special Attack has been triggered!")
+	pass
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

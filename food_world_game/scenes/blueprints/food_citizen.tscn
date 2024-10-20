@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=3 uid="uid://dtdrrty6qehha"]
 
-[ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="1_l75t2"]
-[ext_resource type="Script" path="res://scripts/food_citizen.gd" id="1_oqbqr"]
-[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_y5deo"]
+[ext_resource type="Script" path="res://scripts/blueprints/food_citizen.gd" id="1_x4idu"]
+[ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_7peyw"]
+[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_owjg0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q3ar3"]
 size = Vector2(12, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0k52c"]
-atlas = ExtResource("1_l75t2")
+atlas = ExtResource("2_7peyw")
 region = Rect2(0, 66, 17, 22)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_xhpmg"]
@@ -29,12 +29,12 @@ size = Vector2(14, 19)
 size = Vector2(36, 31)
 
 [sub_resource type="LabelSettings" id="LabelSettings_tflci"]
-font = ExtResource("3_y5deo")
+font = ExtResource("3_owjg0")
 font_size = 7
 
 [node name="Food Citizen" type="CharacterBody2D"]
 platform_floor_layers = 0
-script = ExtResource("1_oqbqr")
+script = ExtResource("1_x4idu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1.5)

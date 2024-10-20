@@ -1,20 +1,20 @@
-extends CharacterBody2D
+class_name Character
 
-class_name FoodBuddyFusion
+extends CharacterBody2D
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Animations #
 var sprite: AnimatedSprite2D
+
 var animation_player: AnimationPlayer
 
-# Hitbox #
-var hitbox: Area2D
+# On-Screen Notifier #
+var on_screen_notifier: VisibleOnScreenNotifier2D
 
-# Inventory #
-var inventory: Array = []
-var inventory_size: int = 12
+# Hitboxes #
+var hitbox_damage: Area2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -24,7 +24,11 @@ var inventory_size: int = 12
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-signal killed_target
+signal target_player
+signal target_closest_food_buddy
+
+signal move_towards_target
+
 signal die
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,7 +37,9 @@ signal die
 
 
 
+
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -44,18 +50,26 @@ signal die
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Food Buddies #
-var food_buddy1: FoodBuddy
-var food_buddy2: FoodBuddy
+# Behavior #
+var paused: bool = false
+
+# Position and Size #
+var center_point: Vector2
+var width: float
+var height: float
 
 # Health #
 var health_current: int
 var health_max: int
 var alive: bool = true
 
-# Level and XP #
-var xp_current: int
-var xp_max: int
+# Target #
+var target: Node2D = null
+var target_distance: float
+
+# Speed #
+var speed_normal: int = 50
+var speed_current: int = speed_normal
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -67,26 +81,40 @@ var xp_max: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Store references to the Food Buddy's Nodes
-	sprite = $AnimatedSprite2D
-	animation_player  = $AnimationPlayer
-	hitbox = $Area2D
 	
+	# Store references to the Character's Nodes
+	sprite = $AnimatedSprite2D
+	animation_player = $AnimationPlayer
+	on_screen_notifier = $VisibleOnScreenNotifier2D
+	hitbox_damage = $"Damage Hitbox"
+	
+	# Call the custom ready function that subclasses may have defined manually
 	ready()
-
+	
+	update_center_point()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	process()
+	
+	if not paused:
+		
+		# Call the custom process function that subclasses may have defined manually
+		process(delta)
 
 
 
-# Called every frame. Updates the Food Buddy Fusion's physics
+
+# Called every frame. Updates the Enemy's physics
 func _physics_process(delta: float) -> void:
-	physics_process(delta)
-
-
+	
+	if not paused:
+	
+		# Call the custom physics process function that subclasses may have defined manually
+		physics_process(delta)
+	
+	update_center_point()
+	
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -96,10 +124,26 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Sets the Food Buddies of this Food Buddy Fusion
-func set_food_buddies(food_buddy_1: FoodBuddy, food_buddy_2: FoodBuddy):
-	food_buddy1 = food_buddy_1
-	food_buddy2 = food_buddy_2
+# Calculates the center point of the Character by taking its current position (bottom left of sprite) and adjusting it by the width and height of the current Sprite frame to get the center coordinates
+func update_center_point():
+	var frame_texture: Texture2D = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+	
+	width = frame_texture.get_width()
+	height = frame_texture.get_height()
+	
+	center_point.x = position.x + width / 2
+	center_point.y = position.y - height / 2
+
+
+
+# Returns the name of the Food Buddy's FieldState Enum value based on the number it is associated with
+func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
+	
+	for name in enum_target:
+		if enum_target[name] == enum_number:
+			return name
+	
+	return ""
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,45 +153,20 @@ func set_food_buddies(food_buddy_1: FoodBuddy, food_buddy_2: FoodBuddy):
 
 # ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# A custom ready function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_ready()' function
+# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
 func ready():
 	pass
 
 
 
-# A custom process function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_process()' function
-func process():
+# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
+func process(delta: float):
 	pass
 
 
 
-# A custom physics_process function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_physics_process()' function
+# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
 func physics_process(delta: float) -> void:
 	pass
-
-
-
-# A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define.
-func use_ability1():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Ability 1 has been triggered!")
-	pass
-
-
-
-# A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define.
-func use_ability2():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Ability 2 has been triggered!")
-	pass
-
-
-
-# A custom function to execute the Food Buddy Fusion's special attack that each Food Buddy Fusion subclass should personally define.
-func use_special_attack():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Special Attack has been triggered!")
-	pass
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

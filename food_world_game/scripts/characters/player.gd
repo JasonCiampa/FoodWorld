@@ -1,21 +1,15 @@
 class_name Player
 
-extends CharacterBody2D
+extends Character
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Animations #
-@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 # Timers #
 @onready var dodge_timer: Timer = $"Timers/Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
 @onready var timer: Timer = $Timers/Timer
-
-# Hitbox #
-@onready var hitbox: Area2D = $Area2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -40,7 +34,6 @@ signal use_ability_buddy_fusion
 signal interact
 signal escape_menu
 
-signal die
 signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,17 +71,11 @@ enum Ability { PUNCH = 1, KICK = 2}
 # Gravity #
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
-# Behavior #
-var paused: bool = false
 
 # Inventory #
 var inventory: Array = []
 var inventory_size: int = 12
 
-# Health #
-var health_current: int
-var health_max: int
-var alive: bool = true
 
 # Level and XP #
 var xp_current: int
@@ -105,10 +92,8 @@ var stamina_regen_delay_active: bool = false
 var stamina_just_ran_out: bool = false
 
 # Speed #
-var speed_normal: int = 60
 var speed_sprinting: int = 125
 var speed_dodging: int = 350
-var speed_current: int = speed_normal
 
 # Previous Frame Movement Direction #
 var direction_previous_horizontal: float = 0
@@ -144,8 +129,16 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# Store references to the Character's Nodes
+	sprite = $AnimatedSprite2D
+	animation_player = $AnimationPlayer
+	on_screen_notifier = $VisibleOnScreenNotifier2D
+	hitbox_damage = $"Damage Hitbox"
+	
 	sprite.play("test")
 	self.name = "Player"
+	update_center_point()
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -155,8 +148,8 @@ func _process(delta: float) -> void:
 	
 	if not paused:
 		process_ability_use()
-		update_movement_direction()
 		update_movement_animation()
+		update_movement_direction()
 		update_stamina(delta)
 		
 		if Input.is_action_just_pressed("interact"):
@@ -165,11 +158,17 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()
 	
+	Sprite2D
+	update_center_point()
+	
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
 		#print("Position X: " + str(position.x))
 		#print("Position Y: " + str(position.y))
+		#print(" ")
+		#print("Center X: " + str(center_point.x))
+		#print("Center Y: " + str(center_point.y))
 		#print(" ")
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
@@ -189,9 +188,11 @@ func _process(delta: float) -> void:
 
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:
-	update_movement_velocity(delta)
-	move_and_slide()
-	#check_collide_and_push()
+	
+	if not paused:
+		update_movement_velocity(delta)
+		move_and_slide()
+		#check_collide_and_push()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -200,6 +201,7 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 # Calculates the Player's current velocity based on their movement input.
 func calculate_velocity(direction):

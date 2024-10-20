@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://6k636yjpnvdv"]
 
-[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_usloy"]
+[ext_resource type="Script" path="res://scripts/blueprints/enemy.gd" id="1_usloy"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_hj1si"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vba01"]
@@ -41,9 +41,9 @@ shape = SubResource("RectangleShape2D_vba01")
 z_index = 1
 sprite_frames = SubResource("SpriteFrames_7q3yd")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Damage Hitbox" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_u43pv")
 

@@ -1,0 +1,72 @@
+[gd_scene load_steps=11 format=3 uid="uid://cbch3c02684qu"]
+
+[ext_resource type="Script" path="res://scripts/blueprints/food_buddy_fusion.gd" id="1_8lwpj"]
+[ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="2_0v4oy"]
+[ext_resource type="Texture2D" uid="uid://diaaj4e00nqeu" path="res://images/mallak.png" id="3_0kg5w"]
+[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="4_nt3xt"]
+[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="5_pqgxn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ietsu"]
+size = Vector2(15, 19)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rcm2x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_0v4oy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_0kg5w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_nt3xt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ibi0u"]
+size = Vector2(34.1, 32.185)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vc7wj"]
+size = Vector2(60, 53)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ugr8u"]
+font = ExtResource("5_pqgxn")
+font_size = 7
+
+[node name="FoodBuddyFusion" type="CharacterBody2D"]
+collision_layer = 4
+script = ExtResource("1_8lwpj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_ietsu")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_rcm2x")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Damage Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_ibi0u")
+
+[node name="Dialogue Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Dialogue Hitbox"]
+position = Vector2(0, -2.5)
+shape = SubResource("RectangleShape2D_vc7wj")
+
+[node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
+visible = false
+offset_left = -35.0
+offset_top = -19.0
+offset_right = 135.0
+offset_bottom = -11.0
+text = "Press 'E' to Interact"
+label_settings = SubResource("LabelSettings_ugr8u")
