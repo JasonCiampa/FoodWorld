@@ -59,13 +59,13 @@ frame_progress = 0.425633
 position = Vector2(-0.5, 0.5)
 shape = SubResource("RectangleShape2D_ibi0u")
 
-[node name="Dialogue Hitbox" type="Area2D" parent="."]
+[node name="Interaction Hitbox" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Dialogue Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_y72ki")
 
-[node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
+[node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 offset_left = -35.0
 offset_top = -19.0

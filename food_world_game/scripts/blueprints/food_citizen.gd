@@ -7,7 +7,7 @@ extends Character
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Hitbox #
-var hitbox_dialogue: Area2D
+var hitbox_interaction: Area2D
 
 # Press 'E' To Interact Label #
 var label_e_to_interact: Label
@@ -64,7 +64,7 @@ func _ready() -> void:
 	animation_player = $AnimationPlayer
 	on_screen_notifier = $VisibleOnScreenNotifier2D
 	hitbox_damage = $"Damage Hitbox"
-	hitbox_dialogue = $"Dialogue Hitbox"
+	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
 	
 	self.name = "Citizen"
@@ -91,8 +91,8 @@ func _physics_process(delta: float) -> void:
 	
 	if not paused:
 		
-		target_player.emit(self)
-		move_towards_target.emit(self, target, 40)
+		#target_player.emit(self)
+		#move_towards_target.emit(self, target, 40)
 		move_and_slide()
 	
 	update_center_point()

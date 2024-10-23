@@ -52,6 +52,7 @@ signal die
 
 # Behavior #
 var paused: bool = false
+var in_range: bool = false
 
 # Position and Size #
 var center_point: Vector2

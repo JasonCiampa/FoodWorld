@@ -38,6 +38,10 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 @onready var food_citizens: Array[Node] = get_tree().get_nodes_in_group("food_citizens")
 
 
+# Interactables #
+@onready var interactables: Array[Node] = get_tree().get_nodes_in_group("interactables")
+var closest_interactable_to_player: Node2D
+
 # Food Buddies #
 var food_buddies_active: Array[FoodBuddy]
 var food_buddies_inactive: Array[FoodBuddy]
@@ -74,21 +78,27 @@ func _ready() -> void:
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
 	# Connect all of the Food Citizen's signals to the Game
-	food_citizen.target_player.connect(_on_character_target_player)
-	food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
-	food_citizen.move_towards_target.connect(_on_character_move_towards_target)
-	food_citizen.die.connect(_on_character_die)
-
-	# Add the Food Citizen to the Game's SceneTree
-	add_child(food_citizen)
+	#food_citizen.target_player.connect(_on_character_target_player)
+	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
+	#food_citizen.move_towards_target.connect(_on_character_move_towards_target)
+	#food_citizen.die.connect(_on_character_die)
+#
+	## Add the Food Citizen to the Game's SceneTree
+	#add_child(food_citizen)
+	
+	print(interactables.size())
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	enemies = get_tree().get_nodes_in_group("enemies")
+	food_citizens = get_tree().get_nodes_in_group("food_citizens")
+	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	# Process if the Player's hitbox has overlapped with any Food Citizen NPCs
-	process_overlapping_hitboxes(PLAYER.hitbox_damage)
+	if not PLAYER.is_interacting:
+		# Process any Interaction Hitboxes that the Player might be in range with currently
+		process_player_nearby_interactables()
 	
 	# Determine if the Dialogue Interface is active, then process it
 	if interface_dialogue.active:
@@ -212,17 +222,45 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 
 
 
-# Checks if the test Food Citizen's Dialogue Hitbox has overlapped with the given character_hitbox and enables/disables a prompt for the user to 'Press 'E' To Interact'
-func process_overlapping_hitboxes(character_hitbox: Area2D):
+# Checks if the given Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
+func process_player_nearby_interactables():
 	
-	# Store a list of all hitboxes that are overlapping with the Character's Hitbox
-	var overlapping_hitboxes = character_hitbox.get_overlapping_areas()
+	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
+	if interactables.size() == 0:
+		return
 	
-	# Determine if a Food Citizen's Dialogue Hitbox is overlapping, then enable their "Press 'E' To Interact" label
-	if food_citizen.hitbox_dialogue in overlapping_hitboxes:
-		food_citizen.label_e_to_interact.show()
+	
+	# Store a list of all hitboxes that are overlapping with the Player's Hitbox
+	var overlapping_hitboxes = PLAYER.hitbox_damage.get_overlapping_areas()
+	
+	
+	# Iterate over every Asset on-screen that can be Interacted with
+	for interactable in interactables:
+		
+		# Determine if the Interactable's Interaction hitbox is included in the list of hitboxes that are overlapping with the Player's hitbox, then set the Interactable to be classified as in or out of range of the Player
+		if interactable.hitbox_interaction in overlapping_hitboxes:
+			interactable.in_range = true
+		else:
+			interactable.in_range = false
+
+		# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
+		if closest_interactable_to_player == null:
+			closest_interactable_to_player = interactable
+			closest_interactable_to_player.label_e_to_interact.show()
+			print(closest_interactable_to_player.name)
+		
+		# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
+		elif interactable.center_point.distance_to(PLAYER.center_point) < closest_interactable_to_player.center_point.distance_to(PLAYER.center_point):
+			closest_interactable_to_player.label_e_to_interact.hide()
+			closest_interactable_to_player = interactable
+	
+	
+	# Determine whether or not the closest Interactable to the Player is in range of the Player's hitbox, then show/hide their interaction prompt
+	if closest_interactable_to_player.in_range:
+		closest_interactable_to_player.label_e_to_interact.show()
 	else:
-		food_citizen.label_e_to_interact.hide()
+		closest_interactable_to_player.label_e_to_interact.hide()
+
 
 
 
@@ -286,8 +324,9 @@ func determine_player_location_world() -> World:
 func _on_player_interact() -> void:
 	
 	# Determine if the Food Citizen's 'Press 'E' To Interact' Label is appearing (meaning they're in range of the Player for a conversation), then trigger the Dialogue Interface
-	if food_citizen.label_e_to_interact.visible:
-		food_citizen.label_e_to_interact.hide()
+	if closest_interactable_to_player.in_range:
+		PLAYER.is_interacting = true
+		closest_interactable_to_player.label_e_to_interact.hide()
 		_on_player_enable_dialogue_interface([PLAYER, food_buddies_active[0], food_buddies_active[1]], "Candy-Castle-Dungeon-1")
 
 
@@ -297,6 +336,7 @@ func _on_player_escape_menu() -> void:
 	
 	if interface_dialogue.active:
 		_on_player_disable_dialogue_interface()
+		PLAYER.is_interacting = false
 	
 	if interface_food_buddy_field_state.active:
 		interface_food_buddy_field_state.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
@@ -543,3 +583,7 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
+
+
+func _on_food_buddy_killed_target() -> void:
+	pass # Replace with function body.

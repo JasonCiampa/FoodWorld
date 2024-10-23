@@ -33,7 +33,7 @@ size = Vector2(36, 41)
 font = ExtResource("3_e3mpv")
 font_size = 7
 
-[node name="Sally" type="CharacterBody2D"]
+[node name="Sally" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
 collision_mask = 0
 platform_floor_layers = 0
 script = ExtResource("1_8jequ")
@@ -55,17 +55,17 @@ sprite_frames = SubResource("SpriteFrames_7pd1y")
 position = Vector2(-11, -3.5)
 shape = SubResource("RectangleShape2D_tufua")
 
-[node name="Dialogue Hitbox" type="Area2D" parent="."]
+[node name="Interaction Hitbox" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Dialogue Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
 position = Vector2(-11, -3.5)
 shape = SubResource("RectangleShape2D_vh62s")
 
 [node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
 visible = false
-offset_left = -35.0
-offset_top = -19.0
-offset_right = 135.0
-offset_bottom = -11.0
+offset_left = -46.0
+offset_top = -29.0
+offset_right = 124.0
+offset_bottom = -21.0
 text = "Press 'E' to Interact"
 label_settings = SubResource("LabelSettings_a3bic")

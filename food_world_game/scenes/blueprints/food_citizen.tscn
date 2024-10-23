@@ -32,7 +32,8 @@ size = Vector2(36, 31)
 font = ExtResource("3_owjg0")
 font_size = 7
 
-[node name="Food Citizen" type="CharacterBody2D"]
+[node name="Food Citizen" type="CharacterBody2D" groups=["food_citizens", "interactables"]]
+slide_on_ceiling = false
 platform_floor_layers = 0
 script = ExtResource("1_x4idu")
 
@@ -54,13 +55,13 @@ sprite_frames = SubResource("SpriteFrames_xhpmg")
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_tp8s8")
 
-[node name="Dialogue Hitbox" type="Area2D" parent="."]
+[node name="Interaction Hitbox" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Dialogue Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
 position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_w7y03")
 
-[node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
+[node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 offset_left = -35.0
 offset_top = -19.0

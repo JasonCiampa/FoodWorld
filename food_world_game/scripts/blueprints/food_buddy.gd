@@ -7,7 +7,7 @@ extends Character
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Hitboxes #
-var hitbox_dialogue: Area2D
+var hitbox_interaction: Area2D
 
 # Press 'E' To Interact Label #
 var label_e_to_interact: Label
@@ -92,7 +92,8 @@ func _ready() -> void:
 	animation_player = $AnimationPlayer
 	on_screen_notifier = $VisibleOnScreenNotifier2D
 	hitbox_damage = $"Damage Hitbox"
-	hitbox_dialogue = $"Dialogue Hitbox"
+	hitbox_interaction = $"Interaction Hitbox"
+	label_e_to_interact = $"Press 'E' to Interact"
 	
 	# Set the Food Buddy's current field state to be fighting
 	field_state_current = FieldState.SOLO
@@ -205,6 +206,13 @@ func use_ability2():
 # A custom function to execute the Food Buddy's special attack that each Food Buddy subclass should personally define.
 func use_special_attack():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	pass
+
+
+
+		
+# A custom function to execute the Food Buddy's logic for when the Player interacts with them
+func interact_with_player(characters_in_range: Array[Node2D]):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

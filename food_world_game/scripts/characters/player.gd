@@ -71,6 +71,7 @@ enum Ability { PUNCH = 1, KICK = 2}
 # Gravity #
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
+var is_interacting: bool = false
 
 # Inventory #
 var inventory: Array = []
@@ -132,7 +133,7 @@ func _ready() -> void:
 	# Store references to the Character's Nodes
 	sprite = $AnimatedSprite2D
 	animation_player = $AnimationPlayer
-	on_screen_notifier = $VisibleOnScreenNotifier2D
+	on_screen_notifier = null
 	hitbox_damage = $"Damage Hitbox"
 	
 	sprite.play("test")

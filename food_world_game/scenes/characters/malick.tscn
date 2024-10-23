@@ -33,7 +33,7 @@ size = Vector2(65, 77)
 font = ExtResource("3_3jwwt")
 font_size = 7
 
-[node name="Malick" type="CharacterBody2D"]
+[node name="Malick" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
 collision_mask = 0
 platform_floor_layers = 0
 script = ExtResource("1_bxh3n")
@@ -55,17 +55,17 @@ sprite_frames = SubResource("SpriteFrames_n3ptn")
 position = Vector2(-12, -2.5)
 shape = SubResource("RectangleShape2D_3tign")
 
-[node name="Dialogue Hitbox" type="Area2D" parent="."]
+[node name="Interaction Hitbox" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Dialogue Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
 position = Vector2(-12.5, -2.5)
 shape = SubResource("RectangleShape2D_37hrf")
 
 [node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
 visible = false
-offset_left = -35.0
-offset_top = -19.0
-offset_right = 135.0
-offset_bottom = -11.0
+offset_left = -46.0
+offset_top = -40.0
+offset_right = 124.0
+offset_bottom = -32.0
 text = "Press 'E' to Interact"
 label_settings = SubResource("LabelSettings_wdp3y")
