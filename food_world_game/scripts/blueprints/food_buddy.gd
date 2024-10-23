@@ -1,16 +1,14 @@
 class_name FoodBuddy
 
-extends Character
+extends Interactable
 
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Hitboxes #
-var hitbox_interaction: Area2D
 
-# Press 'E' To Interact Label #
-var label_e_to_interact: Label
+
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -87,7 +85,7 @@ var xp_max: int
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	# Store references to the Character's Nodes
+	# Store references to the Food Buddy's Nodes
 	sprite = $AnimatedSprite2D
 	animation_player = $AnimationPlayer
 	on_screen_notifier = $VisibleOnScreenNotifier2D
@@ -97,6 +95,8 @@ func _ready() -> void:
 	
 	# Set the Food Buddy's current field state to be fighting
 	field_state_current = FieldState.SOLO
+	
+	self.name = "FoodBuddy"
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -138,7 +138,22 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+# A custom function to execute the Interactable's logic for when the Player interacts with them: Starts a conversation between this Food Buddy, the Player, and the other Food Buddy (if the other Food Buddy is in range).
+func interact_with_player(player: Player, characters_in_range: Array[Node2D]) -> Array[Node2D]:
+	
+	var characters_to_involve: Array[Node2D] = [player]
+	
+	# Check some sort of Game-Story-Tracking Variable to determine if any characters should be added to or removed from the list so that a specific Dialogue file can be be played at specific moments of the game
+	# If location == SweetsWorldCandyCastle and "Link" in characters_in_range:
+		# characters_to_involve.append(characters_in_range["Link"])
+	
+	#return characters_to_involve
+	
+	for character in characters_in_range:
+		if character is FoodBuddy:
+			characters_to_involve.append(character)
+	
+	return characters_to_involve
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -206,13 +221,6 @@ func use_ability2():
 # A custom function to execute the Food Buddy's special attack that each Food Buddy subclass should personally define.
 func use_special_attack():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	pass
-
-
-
-		
-# A custom function to execute the Food Buddy's logic for when the Player interacts with them
-func interact_with_player(characters_in_range: Array[Node2D]):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -86,6 +86,14 @@ func _ready() -> void:
 	## Add the Food Citizen to the Game's SceneTree
 	#add_child(food_citizen)
 	
+	## CREATE NEW DIALOGUE RESOURCE CODE
+	#interface_dialogue.current_dialogue = load("res://dialogue.tres")
+	#
+	#var temp = ["Malick-Player", "Player-Citizen", "Player-Sally"]
+	#
+	#for name in temp:
+		#interface_dialogue.current_dialogue.create_and_save_resource(name)
+	
 	print(interactables.size())
 
 
@@ -242,7 +250,7 @@ func process_player_nearby_interactables():
 			interactable.in_range = true
 		else:
 			interactable.in_range = false
-
+		
 		# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
 		if closest_interactable_to_player == null:
 			closest_interactable_to_player = interactable
@@ -323,11 +331,26 @@ func determine_player_location_world() -> World:
 # Callback function that executes whenever the Player presses 'E' to interact with something: Triggers Dialogue with the test Food Citizen
 func _on_player_interact() -> void:
 	
-	# Determine if the Food Citizen's 'Press 'E' To Interact' Label is appearing (meaning they're in range of the Player for a conversation), then trigger the Dialogue Interface
+	# Determine if the closest Interactable to the Player is in range for an interaction, then trigger the interaction
 	if closest_interactable_to_player.in_range:
+		
+		# Set the Player to be interacting and remove the label above the Interactable
 		PLAYER.is_interacting = true
 		closest_interactable_to_player.label_e_to_interact.hide()
-		_on_player_enable_dialogue_interface([PLAYER, food_buddies_active[0], food_buddies_active[1]], "Candy-Castle-Dungeon-1")
+		
+		# Determine if the closest Interactable is an Interactable Character
+		if closest_interactable_to_player is FoodCitizen or closest_interactable_to_player is FoodBuddy:
+			
+			# Create a variable to store all of the in-range Interactable Characters after they're filtered out of from the non-Character Interactables
+			var characters_in_range: Array[Node2D] = []
+			
+			# Iterate over each Interactable and add the Interactable Characters that are in range of the Player to the previously created list
+			for interactable in interactables:
+				if interactable.in_range and (interactable is FoodBuddy or interactable is FoodCitizen):
+					characters_in_range.append(interactable)
+			
+			# Trigger the interaction in the closest Interactable Character, then save the list of Characters that should be included in the Dialogue
+			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
 
 
 
@@ -428,13 +451,25 @@ func _on_player_toggle_field_state_interface() -> void:
 
 
 # Callback function that executes whenever the Player wants to enable the Dialogue interface: opens the Dialogue Interface
-func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String) -> void:
+func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if the Food Buddy FieldState Interface is active, then return because the Dialogue Interface doesn't need the 'enable' function called.
 	if interface_dialogue.active or interface_food_buddy_field_state.active:
 		return
 	
-	interface_dialogue.enable(characters, PLAYER, conversation_name, [PLAYER, MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY])
+	# Create a list that will hold any Node2D that should be frozen while the Dialogue Interface is enabled
+	var freeze_subjects: Array[Node2D] = []
+	
+	# Iterate over each Enemy and add it to the list of Node2Ds to freeze
+	for enemy in enemies:
+		freeze_subjects.append(enemy)
+	
+	# Iterate over each Interactable and add it to the list of Node2Ds to freeze
+	for interactable in interactables:
+		freeze_subjects.append(interactable)
+	
+	# Enable the Dialogue Interface
+	interface_dialogue.enable(characters, PLAYER, freeze_subjects, conversation_name)
 
 
 

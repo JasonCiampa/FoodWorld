@@ -925,6 +925,8 @@ tile_set = SubResource("TileSet_7kurk")
 position = Vector2(-299, -106)
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
+z_index = 0
+position = Vector2(2, 2)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 position = Vector2(109, 1)

@@ -1,12 +1,15 @@
-class_name FoodCitizen
+class_name Interactable
 
-extends Interactable
-
+extends Character
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Hitbox #
+var hitbox_interaction: Area2D
 
+# Press 'E' To Interact Label #
+var label_e_to_interact: Label
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -15,7 +18,6 @@ extends Interactable
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 
 
@@ -30,8 +32,6 @@ extends Interactable
 
 
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -39,8 +39,6 @@ extends Interactable
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 
 
@@ -54,44 +52,20 @@ extends Interactable
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
-	# Store references to the Food Citizen's Nodes
-	sprite = $AnimatedSprite2D
-	animation_player = $AnimationPlayer
-	on_screen_notifier = $VisibleOnScreenNotifier2D
-	hitbox_damage = $"Damage Hitbox"
 	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
-	
-	self.name = "Citizen"
-	
-	# Call the custom ready function that subclasses may have defined manually
-	ready()
-	
-	update_center_point()
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
-	if not paused:
-		
-		# Call the custom process function that subclasses may have defined manually
-		process(delta)
+	pass
 
 
 
 # Called every frame. Updates the Enemy's physics
 func _physics_process(delta: float) -> void:
-	
-	if not paused:
-		
-		#target_player.emit(self)
-		#move_towards_target.emit(self, target, 40)
-		move_and_slide()
-	
-	update_center_point()
+	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -101,8 +75,6 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 
 
@@ -130,5 +102,10 @@ func process(delta: float):
 func physics_process(delta: float) -> void:
 	pass
 
+
+
+# A custom function to execute the Interactable's logic for when the Player interacts with them
+func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
+	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://dgoj6j3ot102r"]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_dyo4t"]
+
+[resource]
+script = ExtResource("1_dyo4t")
+conversations = {
+"Friendly-Banter-1": {
+"DIALOGUE": {
+5: "char-anim=”Mysterious”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {
+3: "Malick_position=(Malick.x + 40, Malick.y)_animation=(’roll’, 5)"
+},
+"Malick": {
+4: "You bet your sweet bippy I am, Player!"
+},
+"Player": {
+1: "Hello Malick the Vicious Roasted Potato!",
+2: "You are such a swag pee pee kind of guy.",
+6: "My sweet bippy, you say?!"
+}
+},
+"The-Potato-vs.-Player-Superiority-Debate": {
+"DIALOGUE": {
+6: "char-anim=”Rage”"
+},
+"GAME": {},
+"Malick": {
+1: "I AM A VICIOUS GOD!!",
+2: "You think you can compare to me, mere mortal?!?"
+},
+"Player": {
+3: "You have a flamethrower, a floating crown, and that’s about it.",
+4: "Apparently my people have a history of devouring your people to death.",
+5: "I think I’ve got a shot."
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {
+6: "char-anim=”Rage”"
+},
+"GAME": {},
+"Malick": {
+1: "I AM A VICIOUS GOD!!",
+2: "You think you can compare to me, mere mortal?!?"
+},
+"Player": {
+3: "You have a flamethrower, a floating crown, and that’s about it.",
+4: "Apparently my people have a history of devouring your people to death.",
+5: "I think I’ve got a shot."
+}
+}

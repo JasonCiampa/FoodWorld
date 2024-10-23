@@ -112,52 +112,63 @@ func wake():
 
 
 # Enables the Dialogue Interface and freezes the updating for the given subjects while the Interface is active
-func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, conversation_name: String, freeze_subjects: Array[Node2D]) -> void:
+func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
 	
-	## Determine if the Dialogue Interface isn't currently active, then activate it
-	#if not interface_food_buddy_field_state.active:
-		
-		# Create an empty Array that will hold Character names
-		var character_names: Array[String] = []
-		
-		# Add each Character's name to the list
-		for character in dialogue_characters:
-			character_names.append(character.name)
-		
-		# Sort the Array of Character names alphabetically
-		character_names.sort()
-		
-		# Create an empty String that will hold the name of the Dialogue Resource file to load into the Dialogue Interface
-		var file_name: String
-		
-		# Generate the name of the Dialogue Resource file by formatting each Character's name into the file name
-		for name_index in character_names.size():
-			if name_index != character_names.size() - 1:
-				file_name += (character_names[name_index] + "-")
-			else:
-				file_name += (character_names[name_index])
-		
-		
-		# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
-		current_dialogue = load("res://dialogue/" + file_name + ".tres")
-		
+	# Create an empty Array that will hold Character names
+	var character_names: Array[String] = []
+	
+	# Add each Character's name to the list
+	for character in dialogue_characters:
+		character_names.append(character.name)
+	
+	# Sort the Array of Character names alphabetically
+	character_names.sort()
+	
+	# Create an empty String that will hold the name of the Dialogue Resource file to load into the Dialogue Interface
+	var file_name: String
+	
+	# Generate the name of the Dialogue Resource file by formatting each Character's name into the file name
+	for name_index in character_names.size():
+		if name_index != character_names.size() - 1:
+			file_name += (character_names[name_index] + "-")
+		else:
+			file_name += (character_names[name_index])
+	
+	
+	# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
+	print(file_name)
+	current_dialogue = load("res://dialogue/" + file_name + ".tres")
+	
+	if conversation_name != "":
 		current_dialogue.prepare_dialogue(conversation_name)
+	else:
+		# Iterate through the appropriate and proper lists of conversations in the Dialogue Resource (based on Player location and other game state variables)
+		# Check Play conditions to see if a conversation should be played
+		# If it shouldn't be played, move on and repeat
+		# If it should be played, check if it should be played now or be saved as an option to play
+		# If it should be played now, set it as the conversation name and prepare the dialogue to play
+		# If it should be saved as option, save it and then continue checking play conditions and repeating the process
 		
-		# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
-		characters_active = dialogue_characters
-		
-		# Store the Player as the Dialogue initator since this callback only activates when the Player triggers a Dialogue interaction
-		initiator = dialogue_initiator
-		
-		# Set line displayed as false to indicate that the current line hasn't been displayed yet
-		line_displayed = false
-
-		# Enable the Dialogue Interface
-		active = true
-		
-		# Pause all of the characters' processing while the interface is active
-		for subject in freeze_subjects:
-			subject.paused = true
+		# Create a new instance of a Random Number Generator, and use it to randomly select one of the two conversations that currently exist for each combination of Player and Food Buddy
+		var rng = RandomNumberGenerator.new()
+		var random_conversation_name: String = current_dialogue.conversations.keys()[rng.randf_range(0, 1)]
+		current_dialogue.prepare_dialogue(random_conversation_name)
+	
+	# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
+	characters_active = dialogue_characters
+	
+	# Store the Player as the Dialogue initator since this callback only activates when the Player triggers a Dialogue interaction
+	initiator = dialogue_initiator
+	
+	# Set line displayed as false to indicate that the current line hasn't been displayed yet
+	line_displayed = false
+	
+	# Enable the Dialogue Interface
+	active = true
+	
+	# Pause all of the characters' processing while the interface is active
+	for subject in freeze_subjects:
+		subject.paused = true
 
 
 

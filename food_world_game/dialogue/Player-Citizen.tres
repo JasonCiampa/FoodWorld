@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://d2b25dtgond6k"]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_hxumc"]
+
+[resource]
+script = ExtResource("1_hxumc")
+conversations = {
+"Awkward-Greeting": {
+"Citizen": {
+3: "Good… very good…"
+},
+"DIALOGUE": {
+2: "char-anim=”scary”_text-delay=18_text-italicize=19,21",
+5: "char-anim=”scary”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {
+4: "Player_position=(Player.x + 40, Player.y)_animation=(‘side-step’, 5)"
+},
+"Player": {
+1: "How are you doing, sir?",
+6: "Uh… okay. Cool."
+}
+},
+"Friendly-Greeting-Gone-Wrong": {
+"Citizen": {
+3: "Why you-",
+7: "“M’lady?” How old do I look, huh?!"
+},
+"DIALOGUE": {
+2: "char-anim=”angry”_text-delay=18_text-italicize=19,21",
+5: "char-anim=”pain”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {
+4: "Citizen_animation=(‘slap’, 5)"
+},
+"Player": {
+1: "What’s going on, m’lady?",
+6: "OW!!"
+}
+}
+}
+conversation_current = {
+"Citizen": {
+3: "Why you-",
+7: "“M’lady?” How old do I look, huh?!"
+},
+"DIALOGUE": {
+2: "char-anim=”angry”_text-delay=18_text-italicize=19,21",
+5: "char-anim=”pain”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {
+4: "Citizen_animation=(‘slap’, 5)"
+},
+"Player": {
+1: "What’s going on, m’lady?",
+6: "OW!!"
+}
+}

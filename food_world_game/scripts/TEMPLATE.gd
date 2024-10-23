@@ -86,7 +86,7 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process():
+func process(delta: float):
 	pass
 
 

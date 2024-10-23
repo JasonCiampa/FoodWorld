@@ -1,0 +1,32 @@
+﻿Malick-Player
+
+
+Friendly-Banter-1
+1. Player: Hello Malick the Vicious Roasted Potato!
+2. Player: You are such a swag pee pee kind of guy.
+
+
+3. GAME: Malick_position=(Malick.x + 40, Malick.y)_animation=(’roll’, 5)
+
+
+4. Malick: You bet your sweet bippy I am, Player!
+
+
+5. DIALOGUE: char-anim=”Mysterious”_text-delay=18_text-italicize=19,21
+6. Player: My sweet bippy, you say?!
+
+
+
+
+The-Potato-vs.-Player-Superiority-Debate
+1. Malick: I AM A VICIOUS GOD!!
+2. Malick: You think you can compare to me, mere mortal?!?
+
+
+3. Player: You have a flamethrower, a floating crown, and that’s about it.
+4. Player: Apparently my people have a history of devouring your people to death.
+5. Player: I think I’ve got a shot.
+
+
+6. DIALOGUE: char-anim=”Rage”
+7. Malick: YOU WORTHLESS FOOL!!
