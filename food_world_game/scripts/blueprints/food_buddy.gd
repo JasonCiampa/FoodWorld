@@ -44,8 +44,6 @@ FUSION  # Fusion with another Food Buddy
 }
 
 
-enum AttackDamage { SOLO = 10, ABILITY1 = 0, ABILITY2 = 0}
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -61,9 +59,10 @@ var field_state_current: FieldState
 
 
 # Abilities #
-var attack_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var attack_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-
+var ability_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
+var ability_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
+var ability_stamina_cost: Dictionary = { "Ability 1": [5, "Gradual"], "Ability 2": [10, "Gradual"] }
+var abilities: Dictionary = { "Ability 1": "use_ability1" }
 
 # Inventory #
 var inventory: Array = []
@@ -198,14 +197,14 @@ func use_solo_attack():
 	if target_distance <= 30 and target is Enemy:
 		velocity.x = 0
 		velocity.y = 0
-		use_ability_solo.emit(self, attack_damage["Solo"])
+		use_ability_solo.emit(self, ability_damage["Solo"])
 
 
 
 # A custom function to execute the Food Buddy's ability 1 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
 func use_ability1():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy's Ability 1 has been triggered!")
+	print(name + "'s Ability 1 has been triggered!")
 	pass
 
 
@@ -213,7 +212,7 @@ func use_ability1():
 # A custom function to execute the Food Buddy's ability 2 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
 func use_ability2():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy's Ability 2 has been triggered!")
+	print(name + "'s Ability 2 has been triggered!")
 	pass
 
 

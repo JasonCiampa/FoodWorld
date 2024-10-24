@@ -148,6 +148,21 @@ func get_enemies_on_screen() -> Array[Node2D]:
 
 
 
+# Returns a list of all assets currently in the game
+func get_all_assets_on_screen() -> Array[Node2D]:
+	var all_assets: Array[Node2D] = [PLAYER]
+	
+	# Iterate over each Enemy and add it to the list of Node2Ds to freeze
+	for enemy in enemies:
+		all_assets.append(enemy)
+	
+	# Iterate over each Interactable and add it to the list of Node2Ds to freeze
+	for interactable in interactables:
+		all_assets.append(interactable)
+	
+	return all_assets
+
+
 # Determines which target in a given list of targets is closest to the subject and returns that target (or null if no targets on-screen)
 func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 	
@@ -270,6 +285,50 @@ func process_player_nearby_interactables():
 		closest_interactable_to_player.label_e_to_interact.hide()
 
 
+
+# Processes the use of a Food Buddy or Food Buddy Fusion's ability
+func process_food_ability_use(food_entity, ability_number: int):
+	
+	# Determine if Ability 1 is being used, then process it and launch it
+	if ability_number == 1:
+		
+		# Determine if the Player has enough stamina to use the ability, then use the ability
+		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 1"][0], food_entity.ability_stamina_cost["Ability 1"][1]):
+			food_entity.use_ability1()
+	
+	
+	elif ability_number == 2:
+		
+		# Determine if the Player has enough stamina to use the ability, then use the ability
+		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 2"][0], food_entity.ability_stamina_cost["Ability 2"][1]):
+			food_entity.use_ability2()
+	
+	
+	else:
+		food_buddy_fusion_active.use_special_attack()
+
+
+# Processes a Food Buddy or Food Buddy Fusion's stamina use at the expense of the Player's stamina
+func process_food_stamina_use(stamina_cost: int, stamina_depletion_type: String) -> bool:
+
+	# Determine if the stamina should be depleted all at once
+	if stamina_depletion_type == "Instant":
+		
+		# Determine if the Player has enough stamina to use the ability, then use it
+		if PLAYER.stamina_current >= stamina_cost:
+			PLAYER.use_stamina(stamina_cost)
+			return true
+		
+		
+	# Determine if the stamina should be depleted over time
+	elif stamina_depletion_type == "Gradual":
+		
+		# Determine if the Player has any stamina left to use the ability, then use it
+		if PLAYER.stamina_current >= 0:
+			PLAYER.use_stamina(stamina_cost)
+			return true
+	
+	return false
 
 
 # Determines the correct Food Buddy Fusion Node based on the two given Food Buddies
@@ -444,9 +503,9 @@ func _on_player_toggle_field_state_interface() -> void:
 		return
 	
 	if interface_food_buddy_field_state.active:
-		interface_food_buddy_field_state.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+		interface_food_buddy_field_state.disable(get_all_assets_on_screen())
 	else:
-		interface_food_buddy_field_state.enable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+		interface_food_buddy_field_state.enable(get_all_assets_on_screen(), food_buddies_active)
 
 
 
@@ -457,19 +516,8 @@ func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversatio
 	if interface_dialogue.active or interface_food_buddy_field_state.active:
 		return
 	
-	# Create a list that will hold any Node2D that should be frozen while the Dialogue Interface is enabled
-	var freeze_subjects: Array[Node2D] = []
-	
-	# Iterate over each Enemy and add it to the list of Node2Ds to freeze
-	for enemy in enemies:
-		freeze_subjects.append(enemy)
-	
-	# Iterate over each Interactable and add it to the list of Node2Ds to freeze
-	for interactable in interactables:
-		freeze_subjects.append(interactable)
-	
 	# Enable the Dialogue Interface
-	interface_dialogue.enable(characters, PLAYER, freeze_subjects, conversation_name)
+	interface_dialogue.enable(characters, PLAYER, get_all_assets_on_screen(), conversation_name)
 
 
 
@@ -494,25 +542,15 @@ func _on_player_use_ability_solo(damage: int) -> void:
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy: executes the Food Buddy's ability
 func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> void:
-	if ability_number == 1:
-		food_buddies_active[buddy_number -1].use_ability1()
-	elif ability_number == 2:
-		food_buddies_active[buddy_number -1].use_ability2()
-	else:
-		food_buddies_active[buddy_number -1].use_special_attack()
-
+	# TEST IF A FUNCTION CAN BE CALLED JUST BY HAVING THE FUNCTION NAME STORE IN A DICTIONARY (.abilities in food_buddy.gd)
+	#food_buddies_active[buddy_number - 1].call(food_buddies_active[buddy_number - 1].abilities["Ability 1"])
+	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number)
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability
 func _on_player_use_ability_buddy_fusion(ability_number: int) -> void:
-	if ability_number == 1:
-		food_buddy_fusion_active.use_ability1()
-	elif ability_number == 2:
-		food_buddy_fusion_active.use_ability2()
-	else:
-		food_buddy_fusion_active.use_special_attack()
-
-
+	process_food_ability_use(food_buddy_fusion_active, ability_number)
+	
 
 # Callback function that executes whenever the Player has killed their target: sets the Player's target to null
 func _on_player_killed_target() -> void:
@@ -555,9 +593,11 @@ func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void
 	
 	# Store a local reference to the result of searching for the closest Food Buddy target
 	var target_closest = select_closest_target(character, food_buddies_active)
-		
+
+	print(food_buddies_active.size())
+	
 	# Determine if the target exists, then set them as the Enemy's target and update the target distance
-	if target_closest != null:
+	if target_closest != null and target_closest.alive:
 		character.target = target_closest
 		character.target_distance = character.center_point.distance_to(target_closest.center_point)
 	else:
@@ -590,8 +630,9 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	# Stores a local reference to the result of searching for the closest Enemy target
 	var target_closest = select_closest_target(food_buddy, get_enemies_on_screen())
 	
+
 	# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
-	if target_closest != null:
+	if target_closest != null and target_closest.alive:
 		food_buddy.target = target_closest
 		food_buddy.target_distance = food_buddy.center_point.distance_to(target_closest.center_point)
 	else:

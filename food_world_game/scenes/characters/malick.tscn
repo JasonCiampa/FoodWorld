@@ -63,6 +63,7 @@ shape = SubResource("RectangleShape2D_37hrf")
 
 [node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
 visible = false
+z_index = 2
 offset_left = -46.0
 offset_top = -40.0
 offset_right = 124.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c6y8ls1ofcp2y"]
+[gd_scene load_steps=10 format=3 uid="uid://c6y8ls1ofcp2y"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/food_buddy.gd" id="1_lus2v"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_q4mxd"]
@@ -30,12 +30,14 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5vwy7"]
 size = Vector2(34.1, 32.185)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3otkg"]
+size = Vector2(27.5, 24)
+
 [sub_resource type="LabelSettings" id="LabelSettings_yry6f"]
 font = ExtResource("3_650dw")
 font_size = 7
 
 [node name="Food Buddy" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
-z_index = 1
 collision_layer = 2
 platform_floor_layers = 0
 script = ExtResource("1_lus2v")
@@ -50,13 +52,20 @@ sprite_frames = SubResource("SpriteFrames_cd6f1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Interaction Hitbox" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_5vwy7")
 
+[node name="Damage Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+position = Vector2(0.25, 0)
+shape = SubResource("RectangleShape2D_3otkg")
+
 [node name="Press \'E\' to Interact" type="Label" parent="."]
+z_index = 2
 offset_left = -35.0
 offset_top = -19.0
 offset_right = 135.0

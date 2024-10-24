@@ -131,4 +131,24 @@ func physics_process(delta: float) -> void:
 	pass
 
 
+
+# A custom function to execute the Interactable's logic for when the Player interacts with them: Starts a conversation between this Food Citizen, the Player, and any other Characters that the logic of this function is designed to include
+func interact_with_player(player: Player, characters_in_range: Array[Node2D]) -> Array[Node2D]:
+	
+	# Create a list that will store all of the Characters that should be involved in the conversation that is about to start
+	var characters_to_involve: Array[Node2D] = [player, self]
+	
+	# Check some sort of Game-Story-Tracking Variable to determine if any characters should be added to or removed from the list so that a specific Dialogue file can be be played at specific moments of the game
+	# If location == SweetsWorldCandyCastle and "Link" in characters_in_range:
+		# characters_to_involve.append(characters_in_range["Link"])
+	
+	#return characters_to_involve
+	
+	# Include the Player's Food Buddies in the conversation if they're in-range
+	#for character in characters_in_range:
+		#if character is FoodBuddy:
+			#characters_to_involve.append(character)
+	
+	return characters_to_involve
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -65,12 +65,15 @@ func ready():
 
 # A custom process function that each Enemy subclass should personally define. This is called in the Character class's '_process()' function
 func process(delta: float):
+	use_solo_attack()
+	update_center_point()
 	pass
 
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the Character class's '_physics_process()' function
 func physics_process(delta: float) -> void:
+	move_and_slide()
 	pass
 
 
@@ -102,6 +105,7 @@ func use_solo_attack():
 	
 	# Determine if the Enemy has a target currently, then move towards them. Otherwise, have the Enemy look for a new target.
 	if target != null and target.alive:
+		
 		move_towards_target.emit(self, target, 10)
 	else:
 		#target_player.emit(self)

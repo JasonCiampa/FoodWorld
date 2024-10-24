@@ -75,11 +75,11 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Enables the Food Buddy FieldState Interface and freezes the updating for the given subjects while the Interface is active
-func enable(freeze_subjects: Array[Node2D]):
+func enable(freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy]):
 
 	# Set Food Buddy 1 as the currently selected Food Buddy in the interface and Food Buddy 2 as the unselected Food Buddy (these are the first two subjects to freeze in the given list)
-	selected_food_buddy = freeze_subjects[0]
-	unselected_food_buddy = freeze_subjects[1]
+	selected_food_buddy = food_buddies_active[0]
+	unselected_food_buddy = food_buddies_active[1]
 	
 	print("\nFood Buddy FieldState Interface Opened!\n")
 	print("Press 'W' and 'S' to move through FieldState options")
@@ -124,9 +124,9 @@ func process(player: Player, active_food_buddies: Array[FoodBuddy]):
 		if Input.is_action_just_pressed("move_up"):
 			selected_food_buddy.field_state_current -= 1
 			
-			# Determine if the FieldState value is out of the lower bound, then set it to the last FieldState before Fusion (Fusion can only be set by pressing '3')
+			# Determine if the FieldState value is out of the lower bound, then set it to the last FieldState before Fusion and Player (Player can only be set by pressing '1' and '2', and Fusion can only be set by pressing '3')
 			if selected_food_buddy.field_state_current < 0:
-				selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 2
+				selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 3
 			
 			print("Current FieldState: " + str(selected_food_buddy.get_enum_value_name(FoodBuddy.FieldState, selected_food_buddy.field_state_current)))
 		

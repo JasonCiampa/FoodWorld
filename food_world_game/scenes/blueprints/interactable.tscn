@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://dvn8r8xskq6g6"]
+[gd_scene load_steps=10 format=3 uid="uid://dvn8r8xskq6g6"]
 
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="1_4ctwh"]
 [ext_resource type="Script" path="res://scripts/blueprints/interactable.gd" id="1_7nxwk"]
+[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_skobu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0k52c"]
 atlas = ExtResource("1_4ctwh")
@@ -22,7 +23,14 @@ animations = [{
 size = Vector2(12, 15)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yu1cr"]
-size = Vector2(14, 19)
+size = Vector2(16, 21)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cnop0"]
+size = Vector2(34.1, 32.185)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jkl21"]
+font = ExtResource("3_skobu")
+font_size = 7
 
 [node name="Interactable" type="CharacterBody2D"]
 script = ExtResource("1_7nxwk")
@@ -44,3 +52,18 @@ shape = SubResource("RectangleShape2D_47uv4")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_yu1cr")
+
+[node name="Interaction Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_cnop0")
+
+[node name="Press \'E\' to Interact" type="Label" parent="."]
+z_index = 2
+offset_left = -35.0
+offset_top = -19.0
+offset_right = 135.0
+offset_bottom = -11.0
+text = "Press 'E' to Interact"
+label_settings = SubResource("LabelSettings_jkl21")

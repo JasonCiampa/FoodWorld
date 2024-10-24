@@ -56,6 +56,7 @@ extends FoodBuddy
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 func ready():
+	ability_stamina_cost = { "Ability 1": [5, "Gradual"], "Ability 2": [25, "Instant"] }
 	speed_normal = 20
 	speed_current = speed_normal
 	self.name = "Malick"

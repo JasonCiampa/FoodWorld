@@ -151,7 +151,7 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 		
 		# Create a new instance of a Random Number Generator, and use it to randomly select one of the two conversations that currently exist for each combination of Player and Food Buddy
 		var rng = RandomNumberGenerator.new()
-		var random_conversation_name: String = current_dialogue.conversations.keys()[rng.randf_range(0, 1)]
+		var random_conversation_name: String = current_dialogue.conversations.keys()[rng.randi_range(0, 1)]
 		current_dialogue.prepare_dialogue(random_conversation_name)
 	
 	# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed

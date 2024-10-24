@@ -41,6 +41,10 @@ signal killed_target
 var food_buddy1: FoodBuddy
 var food_buddy2: FoodBuddy
 
+# Abilities #
+var ability_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
+var ability_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
+var ability_stamina_cost: Dictionary = { "Ability 1": [5, "Gradual"], "Ability 2": [10, "Gradual"] }
 
 # Level and XP #
 var xp_current: int

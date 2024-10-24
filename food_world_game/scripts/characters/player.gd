@@ -54,7 +54,6 @@ BUDDY2,         # Food Buddy 2 equipped, can use player-based abilities of the F
 FUSION          # Food Buddy Fusion equipped, can use fusion-based abilities (differ dependent on the Food Buddy Fusion)
 }
 
-enum StaminaUse { SPRINT = 15, JUMP = 10, DODGE = 30, PUNCH = 5, KICK = 10}
 
 enum AttackKnockback { PUNCH = 25, KICK = 50}
 
@@ -82,6 +81,7 @@ var inventory_size: int = 12
 var xp_current: int
 var xp_max: int
 
+
 # Stamina #
 var stamina_previous: float = 0
 var stamina_current: float = 100
@@ -91,6 +91,8 @@ var stamina_decreasing: bool = false
 var stamina_increasing: bool = false
 var stamina_regen_delay_active: bool = false
 var stamina_just_ran_out: bool = false
+var stamina_use: Dictionary = { "Sprint": 15, "Jump": 10, "Dodge": 30, "Punch": 5, "Kick": 10 }
+
 
 # Speed #
 var speed_sprinting: int = 125
@@ -145,13 +147,14 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	update_field_state()
+	toggle_food_buddy_field_state_interface()
 	
 	if not paused:
 		process_ability_use()
 		update_movement_animation()
 		update_movement_direction()
 		update_stamina(delta)
+		update_field_state()
 		
 		if Input.is_action_just_pressed("interact"):
 			interact.emit()
@@ -159,7 +162,6 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()
 	
-	Sprite2D
 	update_center_point()
 	
 	# DEBUG #
@@ -225,10 +227,10 @@ func process_ability_use():
 		if field_state_current == FieldState.SOLO:
 			if ability_number == 1:
 				use_ability_solo.emit(attack_damage["Punch"])
-				use_stamina(StaminaUse.PUNCH)
+				use_stamina(stamina_use["Punch"])
 			else:
 				use_ability_solo.emit(attack_damage["Kick"])
-				use_stamina(StaminaUse.KICK)
+				use_stamina(stamina_use["Kick"])
 			
 		elif field_state_current == FieldState.BUDDY1:
 			use_ability_buddy.emit(1, ability_number)
@@ -298,9 +300,12 @@ func update_movement_animation():
 		
 		if Input.is_action_just_pressed("sprint"):
 			animation_player.play("start_sprinting")
-			sprite.speed_scale = 1.5
 		elif Input.is_action_just_released("sprint"):
 			animation_player.play("stop_sprinting")
+		
+		if is_sprinting:
+			sprite.speed_scale = 1.5
+		else:
 			sprite.speed_scale = 1
 		
 		if Input.is_action_just_pressed("dodge") and (not dodge_timer.is_stopped()):
@@ -311,15 +316,14 @@ func update_movement_animation():
 				animation_player.play("dodge_sprinting")
 			else:
 				animation_player.play("dodge")
-	
-	
-	# Determine if the Player has run out of stamina this frame, then adjust the animations that are being played and their speed
-	if stamina_just_ran_out:
-		sprite.speed_scale = 1
-		stamina_just_ran_out = false
-		
-		if Input.is_action_pressed("sprint"):
-			animation_player.play("stop_sprinting")
+	else:
+		# Determine if the Player has run out of stamina this frame, then adjust the animations that are being played and their speed
+		if stamina_just_ran_out:
+			stamina_just_ran_out = false
+			print("fart")
+			sprite.speed_scale = 1
+			if Input.is_action_pressed("sprint"):
+				animation_player.play("stop_sprinting")
 
 
 
@@ -348,14 +352,14 @@ func update_movement_velocity(delta):
 			jump_start_height = position.y
 			velocity.y = 0
 			velocity.y -= jump_velocity
-			use_stamina(StaminaUse.JUMP)
+			use_stamina(stamina_use["Jump"])
 		
 		
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
 		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
 			is_sprinting = true
 			speed_current = speed_sprinting
-			use_stamina_gradually(StaminaUse.SPRINT, delta)
+			use_stamina_gradually(stamina_use["Sprint"], delta)
 		else:
 			is_sprinting = false
 			speed_current = speed_normal
@@ -370,7 +374,7 @@ func update_movement_velocity(delta):
 		# Determine whether or not the Player is currently dodging, then adjust their speed
 		if not dodge_timer.is_stopped():
 			speed_current = speed_dodging
-			use_stamina_gradually(StaminaUse.DODGE, delta)
+			use_stamina_gradually(stamina_use["Dodge"], delta)
 			
 			# Determine if the Player is not currently moving in any direction (idle)
 			if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
@@ -456,28 +460,32 @@ func update_field_state():
 			field_state_current = FieldState.SOLO
 			sprite.play("field_state_solo")
 			print("Player's FieldState has been updated to SOLO")
-	
+
+
+
+# Toggles the Food Buddy FieldState Interface on/off
+func toggle_food_buddy_field_state_interface():
 	# Determine if the Player is trying to adjust the Food Buddy's FieldState and if they're NOT in the FUSION FieldState, then emit the signal to the Game to trigger the FieldState Interface (can't let Food Buddy Fusion FieldStates to become out of sync, so this menu is disabled until the Player is out of the FUSION FieldState)
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
 		toggle_field_state_interface.emit()
 
-
-
 # Depletes the Player's current stamina instantly by the given stamina use amount.
-func use_stamina(stamina_use: int):
-	stamina_current -= stamina_use
-	stamina_decreasing = true
-	stamina_increasing = false
-	stamina_regen_delay_timer.stop()
+func use_stamina(stamina_cost: int):
+	if stamina_current >= stamina_cost:
+		stamina_current -= stamina_cost
+		stamina_decreasing = true
+		stamina_increasing = false
+		stamina_regen_delay_timer.stop()
 
 
 
 # Depletes the Player's current stamina gradually over time by the given stamina use amount.
 func use_stamina_gradually(stamina_use: int, delta: float):
-	stamina_current -= stamina_use * delta
-	stamina_decreasing = true
-	stamina_increasing = false
-	stamina_regen_delay_timer.stop()
+	if stamina_current > 0:
+		stamina_current -= stamina_use * delta
+		stamina_decreasing = true
+		stamina_increasing = false
+		stamina_regen_delay_timer.stop()
 
 
 
@@ -502,7 +510,7 @@ func update_stamina(delta):
 	if stamina_current > stamina_max:
 		stamina_current = stamina_max
 		stamina_increasing = false
-	elif stamina_current < 0:
+	elif stamina_current <= 0 and stamina_regen_delay_timer.time_left == 0:
 		stamina_current = 0
 		stamina_just_ran_out = true
 	

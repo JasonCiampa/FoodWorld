@@ -929,18 +929,6 @@ z_index = 0
 position = Vector2(2, 2)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
-position = Vector2(109, 1)
-
-[node name="Food Citizen2" parent="." instance=ExtResource("6_0yf05")]
-position = Vector2(5, 58)
-
-[node name="Food Citizen3" parent="." instance=ExtResource("6_0yf05")]
-position = Vector2(-84, -17)
-
-[node name="Food Citizen4" parent="." instance=ExtResource("6_0yf05")]
-position = Vector2(-27, -51)
-
-[node name="Food Citizen5" parent="." instance=ExtResource("6_0yf05")]
 position = Vector2(52, -50)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
@@ -967,14 +955,14 @@ position = Vector2(-135, 16)
 [connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]
 [connection signal="use_ability_solo" from="Player" to="." method="_on_player_use_ability_solo"]
-[connection signal="die" from="Malick" to="." method="_on_character_die"]
+[connection signal="die" from="Malick" to="." method="_on_food_buddy_die"]
 [connection signal="killed_target" from="Malick" to="." method="_on_food_buddy_killed_target"]
 [connection signal="move_towards_target" from="Malick" to="." method="_on_character_move_towards_target"]
 [connection signal="target_closest_enemy" from="Malick" to="." method="_on_food_buddy_target_closest_enemy"]
 [connection signal="target_closest_food_buddy" from="Malick" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Malick" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Malick" to="." method="_on_food_buddy_use_ability_solo"]
-[connection signal="die" from="Sally" to="." method="_on_character_die"]
+[connection signal="die" from="Sally" to="." method="_on_food_buddy_die"]
 [connection signal="killed_target" from="Sally" to="." method="_on_food_buddy_killed_target"]
 [connection signal="move_towards_target" from="Sally" to="." method="_on_character_move_towards_target"]
 [connection signal="target_closest_enemy" from="Sally" to="." method="_on_food_buddy_target_closest_enemy"]
