@@ -1,4 +1,4 @@
-﻿Player-Citizen
+﻿Citizen-Player
 
 
 Awkward-Greeting
@@ -35,3 +35,6 @@ Friendly-Greeting-Gone-Wrong
 
 7. Citizen: “M’lady?” How old do I look, huh?!
 8. Citizen: Get lost!
+
+
+END

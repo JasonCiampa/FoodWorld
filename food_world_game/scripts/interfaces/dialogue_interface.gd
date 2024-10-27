@@ -5,33 +5,17 @@ class_name DialogueInterface
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -55,9 +39,6 @@ var dialogue_direction: String
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Called when the node enters the scene tree for the first time.
@@ -77,10 +58,6 @@ func _physics_process(delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -111,7 +88,7 @@ func wake():
 
 
 
-# Enables the Dialogue Interface and freezes the updating for the given subjects while the Interface is active
+# Enables and prepares the Dialogue Interface and freezes the updating for the given subjects while the Interface is active
 func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Create an empty Array that will hold Character names
@@ -136,11 +113,13 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 	
 	
 	# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
-	print(file_name)
 	current_dialogue = load("res://dialogue/" + file_name + ".tres")
 	
+	# Determine if a conversation name was specified, then load the specified conversation
 	if conversation_name != "":
 		current_dialogue.prepare_dialogue(conversation_name)
+	
+	# Otherwise, determine if a conversation should play automatically or if options should be presented to the Player to select from
 	else:
 		# Iterate through the appropriate and proper lists of conversations in the Dialogue Resource (based on Player location and other game state variables)
 		# Check Play conditions to see if a conversation should be played
@@ -213,6 +192,7 @@ func process(delta: float):
 		# If Dialogue Direction is done being processed, set the Dialogue value in the processing dictionary to false and remove the Dialogue Direction from the direction dictionary
 		script_directions["DIALOGUE"]["Processing"] = false
 		script_directions["DIALOGUE"]["Direction"] = ""
+		
 		return
 	
 	
@@ -253,17 +233,5 @@ func process(delta: float):
 			if current_dialogue.adjust_current_line(true):
 				line_displayed = false
 				dialogue_moving_forwards = true
-
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-# ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

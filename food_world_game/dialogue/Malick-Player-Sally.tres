@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://dq0w5ahiynmkd"]
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_4ks4g"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_3bcbq"]
 
 [resource]
-script = ExtResource("1_4ks4g")
+script = ExtResource("1_3bcbq")
 conversations = {
 "Candy-Castle-Dungeon-1": {
 "DIALOGUE": {
@@ -36,7 +36,9 @@ conversations = {
 4: "We can totally get out of here!",
 6: "I’m Malick the Vicious Roasted Potato."
 },
-"Player": {},
+"Player": {
+7: "I am the Player."
+},
 "Sally": {
 1: "I am Sally the Mozzarella Stick!",
 2: "And you can trust me- we ain’t gettin outta here.",
@@ -52,7 +54,9 @@ conversation_current = {
 4: "We can totally get out of here!",
 6: "I’m Malick the Vicious Roasted Potato."
 },
-"Player": {},
+"Player": {
+7: "I am the Player."
+},
 "Sally": {
 1: "I am Sally the Mozzarella Stick!",
 2: "And you can trust me- we ain’t gettin outta here.",

@@ -4,7 +4,6 @@ extends Character
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
 # Timers #
 @onready var dodge_timer: Timer = $"Timers/Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
@@ -12,9 +11,6 @@ extends Character
 @onready var timer: Timer = $Timers/Timer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,9 +35,6 @@ signal killed_target
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 enum Direction { IDLE = 0, UP = -1, DOWN = 1,  LEFT = -1, RIGHT = 1 }
@@ -62,9 +55,6 @@ enum Ability { PUNCH = 1, KICK = 2}
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Gravity #
@@ -76,11 +66,9 @@ var is_interacting: bool = false
 var inventory: Array = []
 var inventory_size: int = 12
 
-
 # Level and XP #
 var xp_current: int
 var xp_max: int
-
 
 # Stamina #
 var stamina_previous: float = 0
@@ -92,7 +80,6 @@ var stamina_increasing: bool = false
 var stamina_regen_delay_active: bool = false
 var stamina_just_ran_out: bool = false
 var stamina_use: Dictionary = { "Sprint": 15, "Jump": 10, "Dodge": 30, "Punch": 5, "Kick": 10 }
-
 
 # Speed #
 var speed_sprinting: int = 125
@@ -125,13 +112,11 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
 	# Store references to the Character's Nodes
 	sprite = $AnimatedSprite2D
 	animation_player = $AnimationPlayer
@@ -200,11 +185,7 @@ func _physics_process(delta: float) -> void:
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 # Calculates the Player's current velocity based on their movement input.
 func calculate_velocity(direction):
@@ -242,8 +223,9 @@ func process_ability_use():
 			use_ability_buddy_fusion.emit(ability_number)
 
 
+
 # CHECK OUT THIS LINK WHEN IT COMES TIME TO DO MOVEMENT WORK https://forum.godotengine.org/t/what-is-causing-my-collision2d-to-stick-to-each-others/1404
-# Checks if the Player collided with a RigidBody2D, and if so, pushes the RigidBody2D with power determined by the Player's current speed
+# Checks if the Player collided with a CharacterBody2D, and if so, pushes the CharacterBody2D with power determined by the Player's current speed
 func check_collide_and_push():
 	
 	# Iterate for the number of collisions that occured after move_and_slide() was called
@@ -270,20 +252,20 @@ func update_movement_animation():
 	
 	
 	# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
-	elif (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
-		if (direction_previous_horizontal == Direction.IDLE):
-			if (direction_previous_vertical == Direction.DOWN):
+	elif direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
+		if direction_previous_horizontal == Direction.IDLE:
+			if direction_previous_vertical == Direction.DOWN:
 				sprite.play("idle_front")
-			elif (direction_previous_vertical == Direction.UP):
+			elif direction_previous_vertical == Direction.UP:
 				sprite.play("idle_back")
-		elif (direction_previous_horizontal == Direction.LEFT) or (direction_previous_horizontal == Direction.RIGHT):
+		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
 			sprite.play("idle_sideways")
 	
 	
 	# Determine which direction the Player is moving, then play the correct 'running' animation based on the direction they're pursuing
-	elif (direction_current_vertical == Direction.UP):
+	elif direction_current_vertical == Direction.UP:
 		sprite.play("run_upward")
-	elif (direction_current_vertical == Direction.DOWN):
+	elif direction_current_vertical == Direction.DOWN:
 		sprite.play("run_downward")
 	else:
 		sprite.play("run_sideways")
@@ -320,7 +302,6 @@ func update_movement_animation():
 		# Determine if the Player has run out of stamina this frame, then adjust the animations that are being played and their speed
 		if stamina_just_ran_out:
 			stamina_just_ran_out = false
-			print("fart")
 			sprite.speed_scale = 1
 			if Input.is_action_pressed("sprint"):
 				animation_player.play("stop_sprinting")

@@ -6,14 +6,7 @@ extends Interactable
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -24,9 +17,6 @@ signal target_closest_enemy
 signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,20 +33,14 @@ PLAYER, # Use player-based abilities in the field (controlled by player)
 FUSION  # Fusion with another Food Buddy
 }
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
 # Field State #
 var field_state_previous: FieldState
 var field_state_current: FieldState
-
 
 # Abilities #
 var ability_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
@@ -68,15 +52,11 @@ var abilities: Dictionary = { "Ability 1": "use_ability1" }
 var inventory: Array = []
 var inventory_size: int = 12
 
-
 # Level and XP #
 var xp_current: int
 var xp_max: int
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -103,12 +83,14 @@ func _ready() -> void:
 	update_center_point()
 
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
 	if not paused:
 		# Call the custom "update()" function that Food Buddy subclasses will define individually
 		process(delta)
+
 
 
 # Called every frame. Updates the Player's physics
@@ -128,11 +110,7 @@ func _physics_process(delta: float) -> void:
 	
 	update_center_point()
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -140,6 +118,7 @@ func _physics_process(delta: float) -> void:
 # A custom function to execute the Interactable's logic for when the Player interacts with them: Starts a conversation between this Food Buddy, the Player, and the other Food Buddy (if the other Food Buddy is in range).
 func interact_with_player(player: Player, characters_in_range: Array[Node2D]) -> Array[Node2D]:
 	
+	# Create a list to store all of the Characters involved in an interaction with the Player
 	var characters_to_involve: Array[Node2D] = [player]
 	
 	# Check some sort of Game-Story-Tracking Variable to determine if any characters should be added to or removed from the list so that a specific Dialogue file can be be played at specific moments of the game
@@ -148,16 +127,15 @@ func interact_with_player(player: Player, characters_in_range: Array[Node2D]) ->
 	
 	#return characters_to_involve
 	
+	# Iterate over each Character that is in-range, and if they're a Food Buddy then add them as a Character to involve in the conversation
 	for character in characters_in_range:
 		if character is FoodBuddy:
 			characters_to_involve.append(character)
 	
+	# Return the list of Characters that should be involved in the conversation
 	return characters_to_involve
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -177,6 +155,7 @@ func process(delta: float):
 # A custom physics_process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_physics_process()' function
 func physics_process(delta: float) -> void:
 	pass
+
 
 
 # Executes the logic for a Food Buddy's solo attack

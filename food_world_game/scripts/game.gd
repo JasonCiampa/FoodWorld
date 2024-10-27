@@ -15,17 +15,11 @@ var food_citizen = load("res://scenes/blueprints/food_citizen.tscn").instantiate
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,9 +56,6 @@ var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialog
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Called when the node enters the scene tree for the first time.
@@ -89,12 +80,10 @@ func _ready() -> void:
 	## CREATE NEW DIALOGUE RESOURCE CODE
 	#interface_dialogue.current_dialogue = load("res://dialogue.tres")
 	#
-	#var temp = ["Malick-Player", "Player-Citizen", "Player-Sally"]
+	#var temp = ["Malick-Player-Sally", "Malick-Player", "Citizen-Player", "Player-Sally"]
 	#
 	#for name in temp:
 		#interface_dialogue.current_dialogue.create_and_save_resource(name)
-	
-	print(interactables.size())
 
 
 
@@ -125,11 +114,7 @@ func _physics_process(delta: float) -> void:
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 # Determines which enemies are currently on-screen and returns them in a list
 func get_enemies_on_screen() -> Array[Node2D]:
@@ -150,6 +135,8 @@ func get_enemies_on_screen() -> Array[Node2D]:
 
 # Returns a list of all assets currently in the game
 func get_all_assets_on_screen() -> Array[Node2D]:
+	
+	# Create a list that will store all Assets currently in the game and add the Player into it
 	var all_assets: Array[Node2D] = [PLAYER]
 	
 	# Iterate over each Enemy and add it to the list of Node2Ds to freeze
@@ -161,6 +148,7 @@ func get_all_assets_on_screen() -> Array[Node2D]:
 		all_assets.append(interactable)
 	
 	return all_assets
+
 
 
 # Determines which target in a given list of targets is closest to the subject and returns that target (or null if no targets on-screen)
@@ -270,7 +258,6 @@ func process_player_nearby_interactables():
 		if closest_interactable_to_player == null:
 			closest_interactable_to_player = interactable
 			closest_interactable_to_player.label_e_to_interact.show()
-			print(closest_interactable_to_player.name)
 		
 		# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
 		elif interactable.center_point.distance_to(PLAYER.center_point) < closest_interactable_to_player.center_point.distance_to(PLAYER.center_point):
@@ -308,9 +295,10 @@ func process_food_ability_use(food_entity, ability_number: int):
 		food_buddy_fusion_active.use_special_attack()
 
 
+
 # Processes a Food Buddy or Food Buddy Fusion's stamina use at the expense of the Player's stamina
 func process_food_stamina_use(stamina_cost: int, stamina_depletion_type: String) -> bool:
-
+	
 	# Determine if the stamina should be depleted all at once
 	if stamina_depletion_type == "Instant":
 		
@@ -329,6 +317,7 @@ func process_food_stamina_use(stamina_cost: int, stamina_depletion_type: String)
 			return true
 	
 	return false
+
 
 
 # Determines the correct Food Buddy Fusion Node based on the two given Food Buddies
@@ -375,17 +364,10 @@ func determine_player_location_world() -> World:
 	
 	return World.COLISEUM
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # CALLBACK FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-# PLAYER CALLBACKS # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Callback function that executes whenever the Player presses 'E' to interact with something: Triggers Dialogue with the test Food Citizen
 func _on_player_interact() -> void:
@@ -547,10 +529,12 @@ func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> voi
 	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number)
 
 
+
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability
 func _on_player_use_ability_buddy_fusion(ability_number: int) -> void:
 	process_food_ability_use(food_buddy_fusion_active, ability_number)
-	
+
+
 
 # Callback function that executes whenever the Player has killed their target: sets the Player's target to null
 func _on_player_killed_target() -> void:
@@ -565,22 +549,20 @@ func _on_player_die(player: Player) -> void:
 	print("Player has died!")
 
 
-# GENERAL CHARACTER CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
 
-
-# Callback function that executes whenever the Food Buddy wants to set the Player as it's target: sets the Player as the target of the Food Buddy
+# Callback function that executes whenever the Character wants to set the Player as it's target: sets the Player as the target of the Character
 func _on_character_target_player(character: CharacterBody2D) -> void:
 	character.target = PLAYER
 
 
 
-# Callback function that executes whenever the Food Buddy wants to move towards an enemy: moves the Food Buddy towards the given enemy
+# Callback function that executes whenever the Character wants to move towards an enemy: moves the Character towards the given target
 func _on_character_move_towards_target(character: CharacterBody2D, target: Node2D, desired_distance: float) -> void:
 	character.target_distance = move_towards_target(character, target, desired_distance)
 
 
 
-# Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
+# Callback function that executes whenever the Character has killed their target: sets the Character's target to null
 func _on_character_killed_target(character: CharacterBody2D) -> void:
 	character.target = null
 	character.target_distance = 0
@@ -588,13 +570,11 @@ func _on_character_killed_target(character: CharacterBody2D) -> void:
 
 
 
-# Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Enemy
+# Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Character
 func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void:
 	
 	# Store a local reference to the result of searching for the closest Food Buddy target
 	var target_closest = select_closest_target(character, food_buddies_active)
-
-	print(food_buddies_active.size())
 	
 	# Determine if the target exists, then set them as the Enemy's target and update the target distance
 	if target_closest != null and target_closest.alive:
@@ -606,14 +586,12 @@ func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void
 
 
 
-# Callback function that executes whenever an Enemy dies: removes the Enemy from the SceneTree
+# Callback function that executes whenever an Enemy dies: removes the Character from the SceneTree
 func _on_character_die(character: CharacterBody2D) -> void:
 	print(character.name + " has died!")
 	remove_child(character)
 
 
-
-# FOOD BUDDY CALLBACKS # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
 
 # Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against enemies
 func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void:
@@ -630,7 +608,7 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	# Stores a local reference to the result of searching for the closest Enemy target
 	var target_closest = select_closest_target(food_buddy, get_enemies_on_screen())
 	
-
+	
 	# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
 	if target_closest != null and target_closest.alive:
 		food_buddy.target = target_closest
@@ -638,6 +616,13 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	else:
 		food_buddy.target = null
 		food_buddy.target_distance = 0
+
+
+
+# Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
+func _on_food_buddy_killed_target() -> void:
+	# Increase XP for killing an enemy
+	pass
 
 
 
@@ -654,12 +639,6 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 
 
 
-# ENEMY CALLBACKS # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
-
-
-func _on_food_buddy_killed_target() -> void:
-	pass # Replace with function body.

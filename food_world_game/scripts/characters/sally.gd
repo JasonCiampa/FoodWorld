@@ -54,6 +54,7 @@ extends FoodBuddy
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# A custom ready function that is personally defined for Sally. This is called in the default Food Buddy class's '_ready()' function
 func ready():
 	ability_stamina_cost = { "Ability 1": [5, "Gradual"], "Ability 2": [10, "Gradual"] }
 	speed_normal = 45
@@ -61,7 +62,7 @@ func ready():
 	self.name = "Sally"
 
 
-# A custom process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_process()' function
+# A custom process function that is personally defined for Sally. This is called in the default Food Buddy class's '_process()' function
 func process(delta: float):
 
 	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state

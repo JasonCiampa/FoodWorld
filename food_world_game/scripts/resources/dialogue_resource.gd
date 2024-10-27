@@ -4,34 +4,17 @@ class_name Dialogue
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -54,24 +37,12 @@ var furthest_line_reached: int
 # The Currently Selected Conversation Between Characters in this Dialogue #
 @export var conversation_current: Dictionary = {}
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -82,6 +53,7 @@ func adjust_current_line(forwards: bool = true) -> bool:
 	# Determine which should be the new line to display: the line that came previously or the line that comes after the current line
 	var line_adjuster: int
 	
+	# Determine if the dialogue is or isn't moving forwards, then set the line_adjuster to move forward or backwards
 	if forwards:
 		line_adjuster = 1
 	else:
@@ -89,23 +61,26 @@ func adjust_current_line(forwards: bool = true) -> bool:
 	
 	
 	# Iterate over each Character involved in the current conversation
-	for character in conversation_current:
+	for character_name in conversation_current:
 		
 		# Store a reference to the line that should play next if the Character of this iteration has the line. Store 'null' if the Character of this iteration doesn't have the line.
-		var new_line = conversation_current[character].get(current_line_number + line_adjuster)
+		var new_line = conversation_current[character_name].get(current_line_number + line_adjuster)
 		
 		# Check if line that should play next was found from the Character of this iteration, then set it to be the new current line
 		if new_line != null:
 			
 			current_line = new_line
-			current_speaker_name = character
+			current_speaker_name = character_name
 			current_line_number += line_adjuster
 			
+			# Determine whether or not the current line is the furthest line that has been reached in the Dialogue so far, then store the line number as the furthest one reached
 			if current_line_number > furthest_line_reached:
 				furthest_line_reached = current_line_number
 			
+			# Return true to indicate that the line was adjusted
 			return true
 	
+	# Return false to indicate that the line was not adjusted
 	return false
 
 
@@ -127,8 +102,8 @@ func prepare_dialogue(conversation_name: String):
 		# Iterate over each Character's name in the current conversation
 		for character_name in conversation_current:
 		
-			# Determine if the Character name isn't a Game or Dialogue instruction
-			if character_name != "GAME" and character_name != "DIALOGUE":
+			# Determine if the Character name isn't actually a Play, Game, or Dialogue instruction
+			if character_name != "PLAY" and character_name != "GAME" and character_name != "DIALOGUE":
 				
 				# Determine if this character has the line that matches the line number, then set that character as the current speaker and break out of the for loop
 				if conversation_current[character_name].get(current_line_number) != null:
@@ -195,7 +170,7 @@ func create_and_save_resource(txt_file_name: String):
 			current_line = txt_file.get_line()
 		
 		# Until there are no more lines of Dialogue left in the conversation or the end of the file has been reached, continue parsing and storing each Character's respective lines into this conversation
-		while not (int(current_line[0]) == 0 or txt_file.eof_reached()):
+		while not (int(current_line[0]) == 0):
 			
 			# Parse and store the String form of the line number by taking whatever String comes before the '.' in this line of Dialogue
 			var line_number = current_line.get_slice(".", 0)

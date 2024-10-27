@@ -1,8 +1,6 @@
 ﻿Malick-Player-Sally
 
 
-
-
 Candy-Castle-Dungeon-1
 1. Player: Well this sucks.
 2. Player: I can’t believe they threw us in this cell!
@@ -45,3 +43,6 @@ Candy-Castle-Dungeon-2
 
 
 7. Player: I am the Player.
+
+
+END
