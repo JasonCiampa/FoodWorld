@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://d2b25dtgond6k"]
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_hxumc"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_htsxu"]
 
 [resource]
-script = ExtResource("1_hxumc")
+script = ExtResource("1_htsxu")
 conversations = {
 "Awkward-Greeting": {
 "Citizen": {
@@ -24,7 +24,8 @@ conversations = {
 "Friendly-Greeting-Gone-Wrong": {
 "Citizen": {
 3: "Why you-",
-7: "“M’lady?” How old do I look, huh?!"
+7: "“M’lady?” How old do I look, huh?!",
+8: "Get lost!"
 },
 "DIALOGUE": {
 2: "char-anim=”angry”_text-delay=18_text-italicize=19,21",
@@ -42,7 +43,8 @@ conversations = {
 conversation_current = {
 "Citizen": {
 3: "Why you-",
-7: "“M’lady?” How old do I look, huh?!"
+7: "“M’lady?” How old do I look, huh?!",
+8: "Get lost!"
 },
 "DIALOGUE": {
 2: "char-anim=”angry”_text-delay=18_text-italicize=19,21",

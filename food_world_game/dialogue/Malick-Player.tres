@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://dgoj6j3ot102r"]
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://bla02og6gtxk4"]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_dyo4t"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_wbf2v"]
 
 [resource]
-script = ExtResource("1_dyo4t")
+script = ExtResource("1_wbf2v")
 conversations = {
 "Friendly-Banter-1": {
 "DIALOGUE": {
@@ -28,7 +28,8 @@ conversations = {
 "GAME": {},
 "Malick": {
 1: "I AM A VICIOUS GOD!!",
-2: "You think you can compare to me, mere mortal?!?"
+2: "You think you can compare to me, mere mortal?!?",
+7: "YOU WORTHLESS FOOL!!"
 },
 "Player": {
 3: "You have a flamethrower, a floating crown, and that’s about it.",
@@ -44,7 +45,8 @@ conversation_current = {
 "GAME": {},
 "Malick": {
 1: "I AM A VICIOUS GOD!!",
-2: "You think you can compare to me, mere mortal?!?"
+2: "You think you can compare to me, mere mortal?!?",
+7: "YOU WORTHLESS FOOL!!"
 },
 "Player": {
 3: "You have a flamethrower, a floating crown, and that’s about it.",

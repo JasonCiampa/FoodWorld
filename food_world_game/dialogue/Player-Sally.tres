@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_1boti"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_3gasr"]
 
 [resource]
-script = ExtResource("1_1boti")
+script = ExtResource("1_3gasr")
 conversations = {
 "Jumpscare": {
 "DIALOGUE": {
@@ -21,7 +21,8 @@ conversations = {
 "Sally": {
 1: "Uh… Player?",
 4: "AHHHHHH!!!",
-8: "Yes, sorry- you startled me."
+8: "Yes, sorry- you startled me.",
+11: "Well, yes, but it caught me off guard!"
 }
 },
 "Shy-Introduction": {
@@ -59,6 +60,7 @@ conversation_current = {
 "Sally": {
 1: "Uh… Player?",
 4: "AHHHHHH!!!",
-8: "Yes, sorry- you startled me."
+8: "Yes, sorry- you startled me.",
+11: "Well, yes, but it caught me off guard!"
 }
 }
