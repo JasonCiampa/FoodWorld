@@ -10,6 +10,8 @@ extends Node2D
 
 @onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick_sally.tscn").instantiate()
 
+@onready var ryans_tile_ma_p_bkg: TileMapLayer = $"Ryans TileMaP BKG"
+
 var food_citizen = load("res://scenes/blueprints/food_citizen.tscn").instantiate()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -89,6 +91,11 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("ability1"):
+		ryans_tile_ma_p_bkg.visible = true
+	if Input.is_action_just_pressed("ability2"):
+		ryans_tile_ma_p_bkg.visible = false
+	
 	enemies = get_tree().get_nodes_in_group("enemies")
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
