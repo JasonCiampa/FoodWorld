@@ -1,0 +1,33 @@
+[gd_scene load_steps=8 format=3 uid="uid://cwesuyi7ijoo4"]
+
+[ext_resource type="PackedScene" uid="uid://dau326jmgchpk" path="res://scenes/map/garden_world.tscn" id="1_i18kx"]
+[ext_resource type="PackedScene" uid="uid://bdv6jtb6hrua0" path="res://scenes/map/junk_food_world.tscn" id="2_cy7lv"]
+[ext_resource type="PackedScene" uid="uid://cbru1faxuu60c" path="res://scenes/map/perishable_world.tscn" id="3_tbc4u"]
+[ext_resource type="PackedScene" uid="uid://h04ngo41lxqe" path="res://scenes/map/meat_mountain.tscn" id="4_nb3oc"]
+[ext_resource type="PackedScene" uid="uid://x0o2wdhhbm0q" path="res://scenes/map/seafood_world.tscn" id="5_n4jn8"]
+[ext_resource type="PackedScene" uid="uid://cys18bhagr0ld" path="res://scenes/map/sweets_world.tscn" id="6_44oyl"]
+[ext_resource type="PackedScene" uid="uid://brpmu0o3cm1la" path="res://scenes/map/town_center.tscn" id="7_u8nfc"]
+
+[node name="World Map" type="Node2D"]
+
+[node name="Garden World" parent="." instance=ExtResource("1_i18kx")]
+position = Vector2(-2943, 3850)
+
+[node name="Junk Food World" parent="." instance=ExtResource("2_cy7lv")]
+position = Vector2(8580, -5786)
+
+[node name="Perishable World" parent="." instance=ExtResource("3_tbc4u")]
+position = Vector2(-9596, -786)
+
+[node name="Meat Mountain" parent="." instance=ExtResource("4_nb3oc")]
+position = Vector2(403, 4334)
+
+[node name="Seafood World" parent="." instance=ExtResource("5_n4jn8")]
+position = Vector2(-7867, -6468)
+
+[node name="Sweets World" parent="." instance=ExtResource("6_44oyl")]
+position = Vector2(8580, 2936)
+
+[node name="Town Center" parent="." instance=ExtResource("7_u8nfc")]
+
+[editable path="Seafood World"]
