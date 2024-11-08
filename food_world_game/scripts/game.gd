@@ -527,7 +527,7 @@ func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> voi
 	# TEST IF A FUNCTION CAN BE CALLED JUST BY HAVING THE FUNCTION NAME STORE IN A DICTIONARY (.abilities in food_buddy.gd)
 	#food_buddies_active[buddy_number - 1].call(food_buddies_active[buddy_number - 1].abilities["Ability 1"])
 	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number)
-
+	print(food_buddies_active[buddy_number - 1].name + " has used ability " + str(ability_number))
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability

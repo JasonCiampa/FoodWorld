@@ -209,9 +209,11 @@ func process_ability_use():
 			if ability_number == 1:
 				use_ability_solo.emit(attack_damage["Punch"])
 				use_stamina(stamina_use["Punch"])
+				print("The Player used their punch attack!")
 			else:
 				use_ability_solo.emit(attack_damage["Kick"])
 				use_stamina(stamina_use["Kick"])
+				print("The Player used their kick attack!")
 			
 		elif field_state_current == FieldState.BUDDY1:
 			use_ability_buddy.emit(1, ability_number)
