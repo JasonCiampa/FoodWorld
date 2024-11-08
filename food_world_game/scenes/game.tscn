@@ -61,3 +61,7 @@ position = Vector2(-135, 16)
 [connection signal="target_closest_food_buddy" from="Sally" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Sally" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
+
+[editable path="World Map"]
+[editable path="World Map/Seafood World"]
+[editable path="World Map/Town Center"]
