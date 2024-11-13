@@ -1,5 +1,20 @@
 extends Node2D
 
+
+# create tile.gd file
+# in game.gd have a function to check what tile the Player is currently standing on. Then using the coordinates of that tile, get the tiledata and call the tile's process custom data function on the tile and pass in the Player as a parameter
+# using those same coordinates in the same function, access all of the surrounding tiles and call their process custom data function on the tile and pass in the player
+
+# The tile process custom data function should consider if the character is jumping (at least in the case of a ledge tile)
+	# If the Character is jumping, allow the Player's bottom y-coordinate to go above the tile's top y-coordinate
+	# If not, then don't allow the Player to move above you (simulate collision with setting y-position) at middle of tile
+
+
+# USE THE TILE CUSTOM DATA FROM SEAFOOD WORLD TILE "tile_type"
+# FIGURE OUT HOW TO LOAD TILE FUNCTIONS INTO GAME.GD
+# THEN CREATE A FUNCTION IN TILE.GD TO TAKE A REFERENCE TO THE PLAYER AND PROCESS WHAT TILE THE PLAYER IS ON AND CALL THE APPROPRIATE CALLBACK FUNCTION BASED ON THE ONES IN TILE.GD
+
+
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @onready var PLAYER: Player = $Player
@@ -52,6 +67,10 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 var interface_food_buddy_field_state: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food_buddy_field_state_interface.tscn").instantiate()
 var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialogue_interface.tscn").instantiate()
 
+var TileScript
+var TileInstance
+
+@onready var current_tilemap: TileMapLayer = $"World Map/Town Center/World Map"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -67,6 +86,9 @@ func _ready() -> void:
 	# Set Malick and Sally as the Food Buddies to fuse and store the fusion in the list of inactive fusions
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
+	
+	TileScript = load("res://scripts/tile.gd")
+	TileInstance = TileScript.new()
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -89,9 +111,12 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
 	enemies = get_tree().get_nodes_in_group("enemies")
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
+	
+	TileInstance.process_tiles_around(current_tilemap, PLAYER)
 	
 	if not PLAYER.is_interacting:
 		# Process any Interaction Hitboxes that the Player might be in range with currently

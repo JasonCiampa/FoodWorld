@@ -125,7 +125,7 @@ func _ready() -> void:
 	
 	sprite.play("test")
 	self.name = "Player"
-	update_center_point()
+	update_location_points()
 
 
 
@@ -147,7 +147,7 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()
 	
-	update_center_point()
+	update_location_points()
 	
 	# DEBUG #
 	if timer.time_left == 0:
@@ -158,6 +158,9 @@ func _process(delta: float) -> void:
 		#print("Center X: " + str(center_point.x))
 		#print("Center Y: " + str(center_point.y))
 		#print(" ")
+		print("Bottom X: " + str(bottom_point.x))
+		print("Bottom Y: " + str(bottom_point.y))
+		print(" ")
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")

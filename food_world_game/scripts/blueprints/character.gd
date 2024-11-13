@@ -44,6 +44,7 @@ var in_range: bool = false
 
 # Position and Size #
 var center_point: Vector2
+var bottom_point: Vector2
 var width: float
 var height: float
 
@@ -55,6 +56,11 @@ var alive: bool = true
 # Target #
 var target: Node2D = null
 var target_distance: float
+
+# Jumping #
+var is_jumping: bool = false
+var jump_start_height: float
+const jump_velocity: int = 250
 
 # Speed #
 var speed_normal: int = 50
@@ -78,7 +84,7 @@ func _ready() -> void:
 	ready()
 	
 	# Update the (x,y) coordinates of the Character's center point
-	update_center_point()
+	update_location_points()
 
 
 
@@ -103,15 +109,15 @@ func _physics_process(delta: float) -> void:
 		physics_process(delta)
 	
 	# Update the (x,y) coordinates of the Character's center point
-	update_center_point()
+	update_location_points()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Calculates the center point of the Character by taking its current position (bottom left of sprite) and adjusting it by the width and height of the current Sprite frame to get the center coordinates
-func update_center_point():
+# Calculates the center point of the Character by taking its current position (top left of sprite) and adjusting it by the width and height of the current Sprite frame to get the center coordinates
+func update_location_points():
 	
 	# Store a reference to the current Sprite frame of the Character's animation
 	var frame_texture: Texture2D = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
@@ -120,9 +126,12 @@ func update_center_point():
 	width = frame_texture.get_width()
 	height = frame_texture.get_height()
 	
-	# Calculate and store the values of the Character's (x,y) coordinates at its center point based on the Character's width, height, and the (x,y) coordinates at its bottom left registration point
+	# Calculate and store the values of the Character's (x,y) coordinates at its center point based on the Character's width, height, and the (x,y) coordinates at its top left registration point
 	center_point.x = position.x + width / 2
-	center_point.y = position.y - height / 2
+	center_point.y = position.y + height / 2
+	
+	bottom_point.x = center_point.x
+	bottom_point.y = position.y + height
 
 
 

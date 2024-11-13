@@ -54,7 +54,7 @@ func _ready() -> void:
 	
 	ready()
 	
-	update_center_point()
+	update_location_points()
 
 
 
@@ -72,7 +72,7 @@ func _physics_process(delta: float) -> void:
 	if not paused:
 		physics_process(delta)
 	
-	update_center_point()
+	update_location_points()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

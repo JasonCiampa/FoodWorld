@@ -80,7 +80,7 @@ func _ready() -> void:
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
-	update_center_point()
+	update_location_points()
 
 
 
@@ -108,7 +108,7 @@ func _physics_process(delta: float) -> void:
 		# Call the custom "physics_process()" function that Food Buddy subclasses will define individually
 		physics_process(delta)
 	
-	update_center_point()
+	update_location_points()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
