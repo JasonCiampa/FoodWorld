@@ -99,11 +99,6 @@ var is_sprinting: bool
 # Dodging #
 var is_dodging: bool
 
-# Jumping #
-var is_jumping: bool
-var jump_start_height: float
-const jump_velocity: int = 250
-
 # Field State #
 var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
@@ -155,12 +150,12 @@ func _process(delta: float) -> void:
 		#print("Position X: " + str(position.x))
 		#print("Position Y: " + str(position.y))
 		#print(" ")
-		#print("Center X: " + str(center_point.x))
-		#print("Center Y: " + str(center_point.y))
-		#print(" ")
-		print("Bottom X: " + str(bottom_point.x))
-		print("Bottom Y: " + str(bottom_point.y))
+		print("Center X: " + str(center_point.x))
+		print("Center Y: " + str(center_point.y))
 		print(" ")
+		#print("Bottom X: " + str(bottom_point.x))
+		#print("Bottom Y: " + str(bottom_point.y))
+		#print(" ")
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")

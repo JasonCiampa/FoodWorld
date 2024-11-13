@@ -38,11 +38,10 @@ extends Node2D
 
 var tile_callbacks : Dictionary = {
 	
-	"ledge" : Callable(TileData, "process_ledge")
+	"ledge" : tile_callback_ledge
 	
 }
 
-var fart = "fart"
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -76,33 +75,72 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var tile_callback_ledge = func(character: Character, on_tile: bool = false):
+# A variable that stores a callback function to be played when a Ledge Tile is being processed
+var tile_callback_ledge = func(tile_coords: Vector2i, character: Character):
 	
-	# Find out how to get this specific tile's local coordinates and compare it to the Player's bottom.
-	# If the character isn't jumping, isn't on top of the tile (meaning they are below it
-	#if not character.is_jumping and not on_tile and character.bottom_point.y < FILL IN THIS PART HERE!!!! :
+	# Determine if the Character is horizontally in-range of the tile, then determine their vertical positioning towards the Tile
+	if tile_coords.x - 8 < character.position.x - character.width / 2 or character.position.x + character.width / 2 < tile_coords.x + 8:
 		
-		pass
+		# Determine if the Character is directly beneath the tile
+		if tile_coords.y - 8 < character.position.y and character.position.y < tile_coords.y + 8:
+			
+			# Determine if the Character's center point is past the tile's center point and determine if the Character is jumping
+			if character.position.y < tile_coords.y:
+				
+				# Determine if the Character is NOT jumping, then adjust the Character's y-position back to the center of the tile because the Character should have to jump above a ledge tile
+				if not character.is_jumping:
+					character.position.y = tile_coords.y
+					
+	print(character.bottom_point.y)
+	print(tile_coords.y)
 
-func process_tiles_around(tilemap: TileMapLayer, character: Character):
-	#var test = character.to_local(character.bottom_point)
-	#print("Local X: " + str(test.x))
-	#print("Local Y: " + str(test.y))
-	#print(" ")
+
+func process_tile_data(tilemap: TileMapLayer, tile_map_coords: Vector2i, character: Character):
 	
-	var tile_coords = tilemap.local_to_map(character.center_point)
-	var tile_x = tile_coords.x
-	var tile_y = tile_coords.y
+	# Attempt to fetch and store this Tile's data using the Tile's map coords
+	var tile_data = tilemap.get_cell_tile_data(tile_map_coords)
 	
-	#FIGURE OUT A SMART WAY TO ITERATE AND GET ACCESS TO THE SURROUNDING TILES
-	for i in range(1, 4):
-		var nearby 
-		var tile_data = tilemap.get_cell_tile_data(tile_coords)
+	# Determine if Tile data was fetched, then call the Tile's appropriate callback function
+	if tile_data != null:
 		
-		#MAYBE PASS THE CHARACTER'S COORDS INTO THE CALLBACK AND USE THEM IN THE PROCESSING 
-		if tile_data != null:
-			var tile_callback = tile_callbacks[tile_data.get_custom_data("tile_type")]
-			tile_callback.call(character)
+		# Store a reference to the variable holding the callback function by accessing it from the callbacks dictionary using the Tile's data as the key
+		var tile_callback = tile_callbacks[tile_data.get_custom_data("tile_type")]
+		
+		# Store the coordinates of the Tile that the Character is standing on in Local Coordinates
+		var tile_local_coords = tilemap.map_to_local(tilemap.local_to_map(character.bottom_point))
+		
+		# Determine if the Tile data matched a callback function, then call that function
+		if tile_callback != null:
+			tile_callback.call(tile_local_coords, character)
+
+
+# number of layers of tiles to process as a parameter??
+func process_tiles_around(tilemap: TileMapLayer, character: Character):
+	
+	# Store the coordinates of the Tile that the Character is standing on in Map Coordinates
+	var tile_map_coords = tilemap.local_to_map(character.bottom_point)
+	process_tile_data(tilemap, tile_map_coords, character)
+	
+	var top_tile_coords = Vector2i(tile_map_coords.y + 1, tile_map_coords.y)
+	var bottom_tile_coords = Vector2i(tile_map_coords.y - 1, tile_map_coords.y)	
+	process_tile_data(tilemap, top_tile_coords, character)
+	process_tile_data(tilemap, bottom_tile_coords, character)
+	
+	var left_tile_coords = Vector2i(tile_map_coords.x - 1, tile_map_coords.y)
+	var right_tile_coords = Vector2i(tile_map_coords.x + 1, tile_map_coords.y)
+	process_tile_data(tilemap, left_tile_coords, character)
+	process_tile_data(tilemap, right_tile_coords, character)
+	
+	var top_left_tile_coords = Vector2i(tile_map_coords.x - 1, tile_map_coords.y + 1)
+	var top_right_tile_coords = Vector2i(tile_map_coords.x + 1, tile_map_coords.y + 1)
+	process_tile_data(tilemap, top_left_tile_coords, character)
+	process_tile_data(tilemap, top_right_tile_coords, character)
+	
+	var bottom_left_tile_coords = Vector2i(tile_map_coords.x - 1, tile_map_coords.y - 1)
+	var bottom_right_tile_coords = Vector2i(tile_map_coords.x + 1, tile_map_coords.y - 1)
+	process_tile_data(tilemap, bottom_left_tile_coords, character)
+	process_tile_data(tilemap, bottom_right_tile_coords, character)
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

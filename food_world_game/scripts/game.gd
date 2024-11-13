@@ -70,7 +70,8 @@ var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialog
 var TileScript
 var TileInstance
 
-@onready var current_tilemap: TileMapLayer = $"World Map/Town Center/World Map"
+@onready var current_tilemap: TileMapLayer = $"World Map/Town Center"
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -223,7 +224,7 @@ func move_towards_target(subject: Character, target: Node2D, desired_distance: f
 		subject.velocity.y = -subject.speed_current
 	
 	# Calculate the distance from the subject to the target
-	var target_distance = subject.center_point.distance_to(target.center_point)
+	var target_distance = subject.position.distance_to(target.position)
 	
 	# Determine if the subject has approximately reached the desired distance away from the target, then make them stop moving
 	if target_distance <= desired_distance:

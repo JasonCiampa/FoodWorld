@@ -16,6 +16,8 @@ var on_screen_notifier: VisibleOnScreenNotifier2D
 # Hitboxes #
 var hitbox_damage: Area2D
 
+var feet: Node2D
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -79,11 +81,13 @@ func _ready() -> void:
 	animation_player = $AnimationPlayer
 	on_screen_notifier = $VisibleOnScreenNotifier2D
 	hitbox_damage = $"Damage Hitbox"
+	feet = $Feet
+
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
-	# Update the (x,y) coordinates of the Character's center point
+	# Update the (x,y) coordinates of the Character's location points
 	update_location_points()
 
 
@@ -108,7 +112,7 @@ func _physics_process(delta: float) -> void:
 		# Call the custom physics process function that subclasses may have defined manually
 		physics_process(delta)
 	
-	# Update the (x,y) coordinates of the Character's center point
+	# Update the (x,y) coordinates of the Character's locaiton point
 	update_location_points()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,7 +120,7 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Calculates the center point of the Character by taking its current position (top left of sprite) and adjusting it by the width and height of the current Sprite frame to get the center coordinates
+# Calculates the location point of the Character by taking its current position and adjusting it by the width and height of the current Sprite frame to get the location coordinates
 func update_location_points():
 	
 	# Store a reference to the current Sprite frame of the Character's animation
@@ -126,12 +130,9 @@ func update_location_points():
 	width = frame_texture.get_width()
 	height = frame_texture.get_height()
 	
-	# Calculate and store the values of the Character's (x,y) coordinates at its center point based on the Character's width, height, and the (x,y) coordinates at its top left registration point
-	center_point.x = position.x + width / 2
-	center_point.y = position.y + height / 2
-	
-	bottom_point.x = center_point.x
-	bottom_point.y = position.y + height
+	# Store the current coordinates for the bottom of this Character
+	bottom_point.x = position.x
+	bottom_point.y = position.y + height / 2
 
 
 

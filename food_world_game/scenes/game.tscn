@@ -923,6 +923,7 @@ sources/0 = SubResource("TileSetAtlasSource_mb2tf")
 script = ExtResource("1_in6cb")
 
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
+position = Vector2(0, -5)
 
 [node name="Garden World" parent="World Map" index="0"]
 position = Vector2(-5851, 4734)
@@ -947,7 +948,7 @@ tile_set = SubResource("TileSet_w7tmp")
 position = Vector2(-299, -106)
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-z_index = 0
+position = Vector2(-55, -168)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 position = Vector2(52, -50)

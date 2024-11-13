@@ -293,7 +293,7 @@ _data = {
 size = Vector2(13, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5tqxi"]
-size = Vector2(19, 37)
+size = Vector2(18, 36)
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 1
@@ -314,14 +314,17 @@ libraries = {
 }
 
 [node name="Collision Box" type="CollisionShape2D" parent="."]
-position = Vector2(-0.5, 1)
 shape = SubResource("RectangleShape2D_5mf36")
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
 
 [node name="Hitbox" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(-0.5, -0.5)
 shape = SubResource("RectangleShape2D_5tqxi")
+
+[node name="Polygon2D" type="Polygon2D" parent="Damage Hitbox"]
+visible = false
+color = Color(0.94902, 0, 0.513726, 0.298039)
+polygon = PackedVector2Array(-9, -18, 9, -18, 9, 18, -9, 18)
 
 [node name="Timers" type="Node" parent="."]
 
@@ -340,3 +343,8 @@ one_shot = true
 [node name="Timer" type="Timer" parent="Timers"]
 wait_time = 0.1
 one_shot = true
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(-4, 1)
+color = Color(0.94902, 0, 0.513726, 0.298039)
+polygon = PackedVector2Array(-4, -8, 12, -8, 12, 9, -4, 9)
