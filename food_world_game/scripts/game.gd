@@ -70,8 +70,7 @@ var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialog
 var TileScript
 var TileInstance
 
-@onready var current_tilemap: TileMapLayer = $"World Map/Town Center"
-
+@onready var current_tilemap: TileMapLayer = $"World Map/Town Center/Terrains"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

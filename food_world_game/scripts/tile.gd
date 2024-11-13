@@ -76,8 +76,8 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # A variable that stores a callback function to be played when a Ledge Tile is being processed
-var tile_callback_ledge = func(tile_coords: Vector2i, character: Character):
-	
+func tile_callback_ledge(tile_coords: Vector2i, character: Character):
+	print("hello")
 	# Determine if the Character is horizontally in-range of the tile, then determine their vertical positioning towards the Tile
 	if tile_coords.x - 8 < character.position.x - character.width / 2 or character.position.x + character.width / 2 < tile_coords.x + 8:
 		
@@ -97,21 +97,21 @@ var tile_callback_ledge = func(tile_coords: Vector2i, character: Character):
 
 func process_tile_data(tilemap: TileMapLayer, tile_map_coords: Vector2i, character: Character):
 	
-	# Attempt to fetch and store this Tile's data using the Tile's map coords
+	# Attempt to fetch and store this Tile's data using the Tile's map coords (might fail if an invalid tile was given to the func)
 	var tile_data = tilemap.get_cell_tile_data(tile_map_coords)
 	
-	# Determine if Tile data was fetched, then call the Tile's appropriate callback function
+	# Determine if Tile data was fetched, then attempt to fetch the custom data I've embedded into the Tile
 	if tile_data != null:
 		
-		# Store a reference to the variable holding the callback function by accessing it from the callbacks dictionary using the Tile's data as the key
-		var tile_callback = tile_callbacks[tile_data.get_custom_data("tile_type")]
+		# Attempt to fetch and store the specified custom data from the Tile (the Tile's type in this case)
+		var tile_custom_data = tile_data.get_custom_data("tile_type")
 		
-		# Store the coordinates of the Tile that the Character is standing on in Local Coordinates
-		var tile_local_coords = tilemap.map_to_local(tilemap.local_to_map(character.bottom_point))
-		
-		# Determine if the Tile data matched a callback function, then call that function
-		if tile_callback != null:
-			tile_callback.call(tile_local_coords, character)
+		# Determine if the Tile's custom data (tile type) has a designated callback function to execute, then execute it
+		if tile_custom_data in tile_callbacks.keys():
+			
+			# Call the callback function for this tile and pass in the coordinates of the Tile that the Character is standing on in Local Coordinates as well as the Character
+			tile_callbacks[tile_custom_data].call(tilemap.map_to_local(tilemap.local_to_map(character.bottom_point)), character)
+
 
 
 # number of layers of tiles to process as a parameter??

@@ -945,6 +945,5 @@ position = Vector2(8580, 2936)
 tile_set = SubResource("TileSet_w7tmp")
 
 [node name="Town Center" parent="." instance=ExtResource("7_u8nfc")]
-tile_set = SubResource("TileSet_w7tmp")
 
 [editable path="Seafood World"]
