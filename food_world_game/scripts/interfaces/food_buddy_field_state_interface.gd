@@ -90,11 +90,12 @@ func disable(unfreeze_subjects: Array[Node2D]):
 # Processes all of the logic involved for the Food Buddy FieldState Interface
 func process(player: Player, active_food_buddies: Array[FoodBuddy]):
 	
-	# Determine if the Player's FieldState is not currently FUSION, then process input (if it is Fusion, we don't want to adjust Food Buddy states because they both need to be FUSION)
-	if player.field_state_current != player.FieldState.FUSION:
+	# Determine if the Food Buddy's current FieldState isn't PLAYER or FUSION, then let the user adjust the Food Buddy's FieldState through the interface (PLAYER and FUSION should be assigned based on '1', '2', and '3' keys)
+	if selected_food_buddy.field_state_current != FoodBuddy.FieldState.PLAYER and selected_food_buddy.field_state_current != FoodBuddy.FieldState.FUSION:
 		
 		# Store a reference to what the FieldState value is before any updates are made
 		var field_state_initial: int = selected_food_buddy.field_state_current
+		
 		
 		# Determine if the Player has pressed 'W', then decrement the FieldState value by 1
 		if Input.is_action_just_pressed("move_up"):
@@ -112,17 +113,10 @@ func process(player: Player, active_food_buddies: Array[FoodBuddy]):
 			selected_food_buddy.field_state_current += 1
 			
 			# Determine if the FieldState value is out of the upper bound (the last FieldState before Fusion), then set it to the first FieldState (Fusion can only be set by pressing '3')
-			if selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 2:
+			if selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 3:
 				selected_food_buddy.field_state_current = 0
 			
 			print("Current FieldState: " + str(selected_food_buddy.get_enum_value_name(FoodBuddy.FieldState, selected_food_buddy.field_state_current)))
-		
-		
-		# Determine if the two Food Buddies both have the PLAYER FieldState after the latest adjustment, then revert the latest adjustment because only one Food Buddy can have the PLAYER FieldState at a time
-		if unselected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER and selected_food_buddy.field_state_current == FoodBuddy.FieldState.PLAYER:
-			selected_food_buddy.field_state_current = field_state_initial
-			print("Reverted FieldState back to " + str(field_state_initial) + ". Only one Food Buddy can have the PLAYER FieldState at once!")
-			return
 		
 		
 	# Determine if the Player has pressed 'A' or 'S', then swap the currently selected Food Buddy

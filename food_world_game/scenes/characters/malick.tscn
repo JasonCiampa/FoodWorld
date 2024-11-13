@@ -23,50 +23,55 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3tign"]
-size = Vector2(50, 65)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_37hrf"]
 size = Vector2(65, 77)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3tign"]
+size = Vector2(50, 65)
 
 [sub_resource type="LabelSettings" id="LabelSettings_wdp3y"]
 font = ExtResource("3_3jwwt")
 font_size = 7
 
 [node name="Malick" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
+position = Vector2(17, -4)
 collision_mask = 0
 platform_floor_layers = 0
 script = ExtResource("1_bxh3n")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-12.5, 0.5)
 shape = SubResource("RectangleShape2D_c6oaw")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 1
-position = Vector2(-11, -3)
 sprite_frames = SubResource("SpriteFrames_n3ptn")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
-[node name="Damage Hitbox" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(-12, -2.5)
-shape = SubResource("RectangleShape2D_3tign")
-
 [node name="Interaction Hitbox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
-position = Vector2(-12.5, -2.5)
 shape = SubResource("RectangleShape2D_37hrf")
+
+[node name="Polygon2D" type="Polygon2D" parent="Interaction Hitbox"]
+color = Color(0.00392157, 0.945098, 0, 0.341176)
+polygon = PackedVector2Array(-32, -38, 32, -38, 32, 38, -32, 38)
+
+[node name="Damage Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+shape = SubResource("RectangleShape2D_3tign")
+
+[node name="Polygon2D" type="Polygon2D" parent="Damage Hitbox"]
+color = Color(0.737255, 0.00784314, 0.443137, 0.682353)
+polygon = PackedVector2Array(-25, -32, 25, -32, 25, 33, -25, 33)
 
 [node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
 visible = false
 z_index = 2
-offset_left = -46.0
-offset_top = -40.0
-offset_right = 124.0
-offset_bottom = -32.0
+offset_left = -36.0
+offset_top = -37.0
+offset_right = 39.0
+offset_bottom = -29.0
 text = "Press 'E' to Interact"
 label_settings = SubResource("LabelSettings_wdp3y")

@@ -22,7 +22,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u43pv"]
-size = Vector2(34.1, 32.185)
+size = Vector2(34, 32)
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 z_index = 1
@@ -32,7 +32,6 @@ platform_floor_layers = 0
 script = ExtResource("1_usloy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_vba01")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
@@ -44,7 +43,15 @@ sprite_frames = SubResource("SpriteFrames_7q3yd")
 [node name="Damage Hitbox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(0, 0.5)
+position = Vector2(0, -4.76837e-07)
 shape = SubResource("RectangleShape2D_u43pv")
 
+[node name="Polygon2D" type="Polygon2D" parent="Damage Hitbox"]
+scale = Vector2(0.68, 0.507692)
+color = Color(0.94902, 0, 0.513726, 0.407843)
+polygon = PackedVector2Array(-25, -31.5152, 25, -31.5152, 25, 31.5152, -25, 31.5152)
+
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[node name="Feet" type="Node2D" parent="."]
+position = Vector2(0, 9.99)

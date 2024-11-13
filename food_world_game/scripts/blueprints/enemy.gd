@@ -47,7 +47,7 @@ func ready():
 # A custom process function that each Enemy subclass should personally define. This is called in the Character class's '_process()' function
 func process(delta: float):
 	use_solo_attack()
-	update_center_point()
+	update_location_points()
 	pass
 
 
