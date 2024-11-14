@@ -34,7 +34,8 @@ font = ExtResource("3_e3mpv")
 font_size = 7
 
 [node name="Sally" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
-collision_mask = 0
+collision_layer = 2
+collision_mask = 8
 platform_floor_layers = 0
 script = ExtResource("1_8jequ")
 

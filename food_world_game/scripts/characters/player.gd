@@ -131,7 +131,7 @@ func _process(delta: float) -> void:
 	
 	if not paused:
 		process_ability_use()
-		update_movement_animation()
+		#update_movement_animation()
 		update_movement_direction()
 		update_stamina(delta)
 		update_field_state()

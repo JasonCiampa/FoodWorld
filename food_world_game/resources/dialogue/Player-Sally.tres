@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_3gasr"]
+
+[resource]
+script = ExtResource("1_3gasr")
+conversations = {
+"Jumpscare": {
+"DIALOGUE": {
+3: "char-anim=”Screaming”_text-delay=18_text-italicize=19,21",
+5: "char-anim=”Confused”_text-delay=18_text-italicize=19,21",
+7: "char-anim=”Relieved”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {},
+"Player": {
+2: "Yeah, what’s up?",
+6: "What?! Are you okay?!",
+9: "But… you were the one who called my name?",
+10: "Didn’t you expect me to respond?"
+},
+"Sally": {
+1: "Uh… Player?",
+4: "AHHHHHH!!!",
+8: "Yes, sorry- you startled me.",
+11: "Well, yes, but it caught me off guard!"
+}
+},
+"Shy-Introduction": {
+"DIALOGUE": {
+7: "char-anim=”Confused”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {
+2: "Sally_position=(Sally.x + 40, Sally.y)_animation=(’hop’, 5)"
+},
+"Player": {
+1: "Hello Sally the Shy Mozzarella Stick!",
+3: "You… okay?",
+8: "Yeah, that's right."
+},
+"Sally": {
+4: "Y-y-yes… I just have a h-hard time meeting new Foods.",
+5: "OOH! Uh- er- you aren’t a Food- you’re a- uh…",
+6: "A HUMAN! Right?"
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {
+3: "char-anim=”Screaming”_text-delay=18_text-italicize=19,21",
+5: "char-anim=”Confused”_text-delay=18_text-italicize=19,21",
+7: "char-anim=”Relieved”_text-delay=18_text-italicize=19,21"
+},
+"GAME": {},
+"Player": {
+2: "Yeah, what’s up?",
+6: "What?! Are you okay?!",
+9: "But… you were the one who called my name?",
+10: "Didn’t you expect me to respond?"
+},
+"Sally": {
+1: "Uh… Player?",
+4: "AHHHHHH!!!",
+8: "Yes, sorry- you startled me.",
+11: "Well, yes, but it caught me off guard!"
+}
+}

@@ -25,7 +25,7 @@ extends Node2D
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
+enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -36,9 +36,18 @@ extends Node2D
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var tilemap_pits: TileMapLayer
+var tilemap_water: TileMapLayer
+var tilemap_ground: TileMapLayer
+var tilemap_environment: TileMapLayer
+var tilemap_sky: TileMapLayer
+
+
+
 var tile_callbacks : Dictionary = {
 	
-	"ledge" : tile_callback_ledge
+	"ledge" : tile_callback_ledge,
+	"grass" : tile_callback_grass
 	
 }
 
@@ -76,23 +85,31 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # A variable that stores a callback function to be played when a Ledge Tile is being processed
-func tile_callback_ledge(tile_coords: Vector2i, character: Character):
-	print("hello")
-	# Determine if the Character is horizontally in-range of the tile, then determine their vertical positioning towards the Tile
-	if tile_coords.x - 8 < character.position.x - character.width / 2 or character.position.x + character.width / 2 < tile_coords.x + 8:
+func tile_callback_ledge(tilemap: TileMapLayer, tile_data: TileData, tile_map_coords: Vector2i, character: Character):
+	# Set the ledge to appear above the Player
+	var tile_local_coords = tilemap.map_to_local(tile_map_coords)
+	
+	if tile_local_coords.x - 20 <= character.position.x and character.position.x <= tile_local_coords.x + 20:
 		
-		# Determine if the Character is directly beneath the tile
-		if tile_coords.y - 8 < character.position.y and character.position.y < tile_coords.y + 8:
-			
-			# Determine if the Character's center point is past the tile's center point and determine if the Character is jumping
-			if character.position.y < tile_coords.y:
-				
-				# Determine if the Character is NOT jumping, then adjust the Character's y-position back to the center of the tile because the Character should have to jump above a ledge tile
-				if not character.is_jumping:
-					character.position.y = tile_coords.y
-					
-	print(character.bottom_point.y)
-	print(tile_coords.y)
+		if character.position.y <= tile_local_coords.y:
+			tilemap_environment.set_cell(tile_map_coords, 0, tilemap_environment.get_cell_atlas_coords(tile_map_coords), 1)
+			tilemap_ground.set_cell(tile_map_coords, 0, tilemap_ground.get_cell_atlas_coords(tile_map_coords), 1)
+			return
+
+	tilemap_environment.set_cell(tile_map_coords, 0, tilemap_environment.get_cell_atlas_coords(tile_map_coords))
+	tilemap_ground.set_cell(tile_map_coords, 0, tilemap_ground.get_cell_atlas_coords(tile_map_coords))
+
+
+
+
+# A variable that stores a callback function to be played when a Ledge Tile is being processed
+func tile_callback_grass(tilemap: TileMapLayer, tile_data: TileData, tile_coords: Vector2i, character: Character):
+	pass
+	
+
+# Returns a list of all the Tile Types for each tile surrounding the given Tile
+func get_surrounding_tile_types(tile_coords: Vector2i):
+	pass
 
 
 func process_tile_data(tilemap: TileMapLayer, tile_map_coords: Vector2i, character: Character):
@@ -109,38 +126,44 @@ func process_tile_data(tilemap: TileMapLayer, tile_map_coords: Vector2i, charact
 		# Determine if the Tile's custom data (tile type) has a designated callback function to execute, then execute it
 		if tile_custom_data in tile_callbacks.keys():
 			
-			# Call the callback function for this tile and pass in the coordinates of the Tile that the Character is standing on in Local Coordinates as well as the Character
-			tile_callbacks[tile_custom_data].call(tilemap.map_to_local(tilemap.local_to_map(character.bottom_point)), character)
+			# Call the callback function for this tile and pass in the Tilemap, the coordinates of the Tile that the Character is standing on in Local Coordinates, and the Character
+			tile_callbacks[tile_custom_data].call(tilemap, tile_data, tile_map_coords, character)
 
 
 
 # number of layers of tiles to process as a parameter??
-func process_tiles_around(tilemap: TileMapLayer, character: Character):
+func process_tiles_around(tilemap: TileMapLayer, character: Character, tiles_from_center: int):
 	
 	# Store the coordinates of the Tile that the Character is standing on in Map Coordinates
-	var tile_map_coords = tilemap.local_to_map(character.bottom_point)
-	process_tile_data(tilemap, tile_map_coords, character)
+	var main_tile_coords = tilemap.local_to_map(character.bottom_point)
+	var tiles_to_process: Array[Vector2i] = [main_tile_coords]
 	
-	var top_tile_coords = Vector2i(tile_map_coords.y + 1, tile_map_coords.y)
-	var bottom_tile_coords = Vector2i(tile_map_coords.y - 1, tile_map_coords.y)	
-	process_tile_data(tilemap, top_tile_coords, character)
-	process_tile_data(tilemap, bottom_tile_coords, character)
-	
-	var left_tile_coords = Vector2i(tile_map_coords.x - 1, tile_map_coords.y)
-	var right_tile_coords = Vector2i(tile_map_coords.x + 1, tile_map_coords.y)
-	process_tile_data(tilemap, left_tile_coords, character)
-	process_tile_data(tilemap, right_tile_coords, character)
-	
-	var top_left_tile_coords = Vector2i(tile_map_coords.x - 1, tile_map_coords.y + 1)
-	var top_right_tile_coords = Vector2i(tile_map_coords.x + 1, tile_map_coords.y + 1)
-	process_tile_data(tilemap, top_left_tile_coords, character)
-	process_tile_data(tilemap, top_right_tile_coords, character)
-	
-	var bottom_left_tile_coords = Vector2i(tile_map_coords.x - 1, tile_map_coords.y - 1)
-	var bottom_right_tile_coords = Vector2i(tile_map_coords.x + 1, tile_map_coords.y - 1)
-	process_tile_data(tilemap, bottom_left_tile_coords, character)
-	process_tile_data(tilemap, bottom_right_tile_coords, character)
+	# Forms a 25x25 grid of tiles to process
+	for count in range(1, tiles_from_center + 1):
+		tiles_to_process.append(Vector2i(main_tile_coords.x + count, main_tile_coords.y))
+		tiles_to_process.append(Vector2i(main_tile_coords.x - count, main_tile_coords.y))
+		tiles_to_process.append(Vector2i(main_tile_coords.x, main_tile_coords.y + count))
+		tiles_to_process.append(Vector2i(main_tile_coords.x, main_tile_coords.y - count))
+		
+		tiles_to_process.append(Vector2i(main_tile_coords.x - count, main_tile_coords.y - count))
+		tiles_to_process.append(Vector2i(main_tile_coords.x + count, main_tile_coords.y - count))
+		
+		tiles_to_process.append(Vector2i(main_tile_coords.x - count, main_tile_coords.y + count))
+		tiles_to_process.append(Vector2i(main_tile_coords.x + count, main_tile_coords.y + count))
+		
+		for number in range(1, count):
+			tiles_to_process.append(Vector2i(main_tile_coords.x - count, main_tile_coords.y - count + number))
+			tiles_to_process.append(Vector2i(main_tile_coords.x + count, main_tile_coords.y - count + number))
+			tiles_to_process.append(Vector2i(main_tile_coords.x - count + number, main_tile_coords.y - count))
+			tiles_to_process.append(Vector2i(main_tile_coords.x + count - number, main_tile_coords.y - count))
+			
+			tiles_to_process.append(Vector2i(main_tile_coords.x - count, main_tile_coords.y + count - number))
+			tiles_to_process.append(Vector2i(main_tile_coords.x + count, main_tile_coords.y + count - number))
+			tiles_to_process.append(Vector2i(main_tile_coords.x - count + number, main_tile_coords.y + count))
+			tiles_to_process.append(Vector2i(main_tile_coords.x + count - number, main_tile_coords.y + count))
 
+	for tile_coords in tiles_to_process:
+		process_tile_data(tilemap, tile_coords, character)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

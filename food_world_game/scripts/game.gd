@@ -71,6 +71,8 @@ var TileScript
 var TileInstance
 
 @onready var current_tilemap: TileMapLayer = $"World Map/Town Center/Terrains"
+@onready var town_center: TileMapLayer = $"World Map/Town Center/Town Center"
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -89,6 +91,9 @@ func _ready() -> void:
 	
 	TileScript = load("res://scripts/tile.gd")
 	TileInstance = TileScript.new()
+	
+	TileInstance.tilemap_ground = $"World Map/Town Center/Ground"
+	TileInstance.tilemap_environment = $"World Map/Town Center/Terrains"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -116,7 +121,15 @@ func _process(delta: float) -> void:
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	TileInstance.process_tiles_around(current_tilemap, PLAYER)
+	TileInstance.process_tiles_around(TileInstance.tilemap_ground, PLAYER, 2)
+	TileInstance.process_tiles_around(TileInstance.tilemap_environment, PLAYER, 2)
+	
+	TileInstance.process_tiles_around(TileInstance.tilemap_ground, MALICK, 3)
+	TileInstance.process_tiles_around(TileInstance.tilemap_environment, MALICK, 3)
+	
+	TileInstance.process_tiles_around(TileInstance.tilemap_ground, SALLY, 2)
+	TileInstance.process_tiles_around(TileInstance.tilemap_environment, SALLY, 2)
+	
 	
 	if not PLAYER.is_interacting:
 		# Process any Interaction Hitboxes that the Player might be in range with currently

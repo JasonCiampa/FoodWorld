@@ -133,6 +133,9 @@ func update_location_points():
 	# Store the current coordinates for the bottom of this Character
 	bottom_point.x = position.x
 	bottom_point.y = position.y + height / 2
+	
+	center_point.x = position.x
+	center_point.y = position.y
 
 
 

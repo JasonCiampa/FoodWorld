@@ -290,14 +290,14 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5mf36"]
-size = Vector2(13, 30)
+size = Vector2(10, 8)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5tqxi"]
 size = Vector2(18, 36)
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 1
-collision_mask = 0
+collision_mask = 9
 platform_floor_layers = 0
 script = ExtResource("1_2axk5")
 
@@ -314,17 +314,28 @@ libraries = {
 }
 
 [node name="Collision Box" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 2)
 shape = SubResource("RectangleShape2D_5mf36")
 
+[node name="Polygon2D" type="Polygon2D" parent="."]
+z_index = 1
+position = Vector2(-3.22222, 2.22222)
+scale = Vector2(0.555556, 0.222222)
+color = Color(0.94902, 0, 0.513726, 0.298039)
+polygon = PackedVector2Array(-5, -19, 5.28572, -19, 13, -19, 13, 17, -5, 17, -5, -0.892746)
+
 [node name="Damage Hitbox" type="Area2D" parent="."]
+visible = false
 
 [node name="Hitbox" type="CollisionShape2D" parent="Damage Hitbox"]
+visible = false
 shape = SubResource("RectangleShape2D_5tqxi")
 
 [node name="Polygon2D" type="Polygon2D" parent="Damage Hitbox"]
 visible = false
+position = Vector2(-4, 1)
 color = Color(0.94902, 0, 0.513726, 0.298039)
-polygon = PackedVector2Array(-9, -18, 9, -18, 9, 18, -9, 18)
+polygon = PackedVector2Array(-5, -19, 13, -19, 13, 17, -5, 17)
 
 [node name="Timers" type="Node" parent="."]
 
@@ -343,8 +354,3 @@ one_shot = true
 [node name="Timer" type="Timer" parent="Timers"]
 wait_time = 0.1
 one_shot = true
-
-[node name="Polygon2D" type="Polygon2D" parent="."]
-position = Vector2(-4, 1)
-color = Color(0.94902, 0, 0.513726, 0.298039)
-polygon = PackedVector2Array(-4, -8, 12, -8, 12, 9, -4, 9)
