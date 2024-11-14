@@ -5,7 +5,7 @@
 [ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_e3mpv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k5yvm"]
-size = Vector2(16, 34)
+size = Vector2(16, 14)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7pd1y"]
 animations = [{
@@ -40,6 +40,8 @@ platform_floor_layers = 0
 script = ExtResource("1_8jequ")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_k5yvm")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -49,15 +51,18 @@ sprite_frames = SubResource("SpriteFrames_7pd1y")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
 shape = SubResource("RectangleShape2D_tufua")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
 color = Color(0.94902, 0, 0.513726, 1)
 polygon = PackedVector2Array(-14, -20, 14, -20, 13, 20, -14, 20)
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
 shape = SubResource("RectangleShape2D_vh62s")
@@ -69,7 +74,7 @@ polygon = PackedVector2Array(-32.5, -37.561, 32.5, -37.561, 32.5, 37.561, -32.5,
 
 [node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
 visible = false
-z_index = 2
+z_index = 4096
 offset_left = -37.0
 offset_top = -29.0
 offset_right = 38.0

@@ -93,7 +93,7 @@ func _ready() -> void:
 	TileInstance = TileScript.new()
 	
 	TileInstance.tilemap_ground = $"World Map/Town Center/Ground"
-	TileInstance.tilemap_environment = $"World Map/Town Center/Terrains"
+	TileInstance.tilemap_terrain = $"World Map/Town Center/Terrains"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -122,13 +122,13 @@ func _process(delta: float) -> void:
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
 	TileInstance.process_tiles_around(TileInstance.tilemap_ground, PLAYER, 2)
-	TileInstance.process_tiles_around(TileInstance.tilemap_environment, PLAYER, 2)
+	TileInstance.process_tiles_around(TileInstance.tilemap_terrain, PLAYER, 2)
 	
 	TileInstance.process_tiles_around(TileInstance.tilemap_ground, MALICK, 3)
-	TileInstance.process_tiles_around(TileInstance.tilemap_environment, MALICK, 3)
+	TileInstance.process_tiles_around(TileInstance.tilemap_terrain, MALICK, 3)
 	
 	TileInstance.process_tiles_around(TileInstance.tilemap_ground, SALLY, 2)
-	TileInstance.process_tiles_around(TileInstance.tilemap_environment, SALLY, 2)
+	TileInstance.process_tiles_around(TileInstance.tilemap_terrain, SALLY, 2)
 	
 	
 	if not PLAYER.is_interacting:
