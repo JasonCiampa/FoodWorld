@@ -86,7 +86,7 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	TileScript = load("res://scripts/tile.gd")
+	TileScript = load("res://scripts/tile_manager.gd")
 	TileInstance = TileScript.new()
 	
 	TileInstance.tilemap_ground = $"World Map/Town Center/Ground"

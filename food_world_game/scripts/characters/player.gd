@@ -10,6 +10,9 @@ extends Character
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
 @onready var timer: Timer = $Timers/Timer
 
+@onready var collision_box_body: CollisionShape2D = $"Body Collision Box"
+@onready var collision_box_feet: CollisionShape2D = $"Feet Collision Box"
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -331,8 +334,8 @@ func update_movement_velocity(delta):
 		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			is_jumping = true
-			set_collision_layer_value(1, false)
-			set_collision_mask_value(4, false)
+			collision_box_body.disabled = true
+			collision_box_feet.disabled = true
 			jump_start_height = position.y
 			velocity.y = 0
 			velocity.y -= jump_velocity
@@ -392,8 +395,8 @@ func update_movement_velocity(delta):
 		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and set their current y-position to the y-position they initiated the jump from
 		if position.y > jump_start_height:
 			is_jumping = false
-			set_collision_layer_value(1, true)
-			set_collision_mask_value(4, true)
+			collision_box_body.disabled = false
+			collision_box_feet.disabled = false
 			position.y = jump_start_height
 			velocity.y = 0
 	

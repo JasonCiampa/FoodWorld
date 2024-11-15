@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=32 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -290,7 +290,10 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5mf36"]
-size = Vector2(12, 8)
+size = Vector2(12, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8bbpt"]
+size = Vector2(12, 2)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5tqxi"]
 size = Vector2(18, 36)
@@ -313,16 +316,27 @@ libraries = {
 "": SubResource("AnimationLibrary_uh8r5")
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
+[node name="Body Collision Box" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_5mf36")
+
+[node name="Polygon2D" type="Polygon2D" parent="Body Collision Box"]
 z_index = 1
-position = Vector2(4.76837e-07, 3.2)
+position = Vector2(0, -0.8)
 scale = Vector2(1.42627, 0.196159)
 color = Color(0.94902, 0, 0.513726, 0.756863)
 polygon = PackedVector2Array(-4.20678, -16.3133, 4.20678, -16.3133, 4.20678, 3.97419, 4.20678, 24.4699, -4.20678, 24.4699)
 
-[node name="Collision Box" type="CollisionShape2D" parent="."]
-position = Vector2(4.76837e-07, 4)
-shape = SubResource("RectangleShape2D_5mf36")
+[node name="Feet Collision Box" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 15)
+shape = SubResource("RectangleShape2D_8bbpt")
+
+[node name="Polygon2D" type="Polygon2D" parent="Feet Collision Box"]
+z_index = 1
+position = Vector2(-1, 0)
+scale = Vector2(1.30741, 0.0539437)
+color = Color(0.94902, 0, 0.513726, 0.756863)
+polygon = PackedVector2Array(-3.82434, -18.5378, 5.35408, -18.5378, 5.35408, 18.5378, -3.82434, 18.5378)
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
 visible = false
