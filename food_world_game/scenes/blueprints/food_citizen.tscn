@@ -33,6 +33,8 @@ font = ExtResource("3_owjg0")
 font_size = 7
 
 [node name="Food Citizen" type="CharacterBody2D" groups=["food_citizens", "interactables"]]
+collision_layer = 4
+collision_mask = 8
 slide_on_ceiling = false
 platform_floor_layers = 0
 script = ExtResource("1_x4idu")

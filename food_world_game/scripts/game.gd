@@ -70,9 +70,6 @@ var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialog
 var TileScript
 var TileInstance
 
-@onready var current_tilemap: TileMapLayer = $"World Map/Town Center/Terrains"
-@onready var town_center: TileMapLayer = $"World Map/Town Center/Town Center"
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -121,14 +118,14 @@ func _process(delta: float) -> void:
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	TileInstance.process_tiles_around(TileInstance.tilemap_ground, PLAYER, 2)
-	TileInstance.process_tiles_around(TileInstance.tilemap_terrain, PLAYER, 2)
+	TileInstance.process_nearby_tiles(TileInstance.tilemap_ground, PLAYER, 2)
+	TileInstance.process_nearby_tiles(TileInstance.tilemap_terrain, PLAYER, 2)
 	
-	TileInstance.process_tiles_around(TileInstance.tilemap_ground, MALICK, 3)
-	TileInstance.process_tiles_around(TileInstance.tilemap_terrain, MALICK, 3)
+	TileInstance.process_nearby_tiles(TileInstance.tilemap_ground, MALICK, 3)
+	TileInstance.process_nearby_tiles(TileInstance.tilemap_terrain, MALICK, 3)
 	
-	TileInstance.process_tiles_around(TileInstance.tilemap_ground, SALLY, 2)
-	TileInstance.process_tiles_around(TileInstance.tilemap_terrain, SALLY, 2)
+	TileInstance.process_nearby_tiles(TileInstance.tilemap_ground, SALLY, 2)
+	TileInstance.process_nearby_tiles(TileInstance.tilemap_terrain, SALLY, 2)
 	
 	
 	if not PLAYER.is_interacting:

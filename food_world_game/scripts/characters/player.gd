@@ -155,7 +155,8 @@ func _process(delta: float) -> void:
 		#print(" ")
 		#print("Bottom X: " + str(bottom_point.x))
 		#print("Bottom Y: " + str(bottom_point.y))
-		#print(" ")
+		print(" ")
+		print("Z-Index: " + str(z_index))
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")
@@ -330,6 +331,8 @@ func update_movement_velocity(delta):
 		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			is_jumping = true
+			set_collision_layer_value(1, false)
+			set_collision_mask_value(4, false)
 			jump_start_height = position.y
 			velocity.y = 0
 			velocity.y -= jump_velocity
@@ -389,6 +392,8 @@ func update_movement_velocity(delta):
 		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and set their current y-position to the y-position they initiated the jump from
 		if position.y > jump_start_height:
 			is_jumping = false
+			set_collision_layer_value(1, true)
+			set_collision_mask_value(4, true)
 			position.y = jump_start_height
 			velocity.y = 0
 	

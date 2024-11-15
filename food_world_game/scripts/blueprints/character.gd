@@ -68,6 +68,10 @@ const jump_velocity: int = 250
 var speed_normal: int = 50
 var speed_current: int = speed_normal
 
+# Tiles #
+var current_tile: Vector2i
+var previous_tile: Vector2i
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
