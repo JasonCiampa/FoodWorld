@@ -61,16 +61,20 @@ var target_distance: float
 
 # Jumping #
 var is_jumping: bool = false
+var jump_peaked: bool = false
 var jump_start_height: float
-const jump_velocity: int = 250
+var jump_peak_height: float
+var current_altitude: int
+const jump_velocity: int = 240
 
 # Speed #
 var speed_normal: int = 50
 var speed_current: int = speed_normal
 
 # Tiles #
-var current_tile: Vector2i
-var previous_tile: Vector2i
+var current_tile: Tile
+var previous_tile: Tile
+var on_platform: bool
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

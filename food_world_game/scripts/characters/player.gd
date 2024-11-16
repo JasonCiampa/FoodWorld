@@ -8,10 +8,12 @@ extends Character
 @onready var dodge_timer: Timer = $"Timers/Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
+@onready var jump_timer: Timer = $"Timers/Jump Timer"
 @onready var timer: Timer = $Timers/Timer
 
-@onready var collision_box_body: CollisionShape2D = $"Body Collision Box"
-@onready var collision_box_feet: CollisionShape2D = $"Feet Collision Box"
+@onready var body_collider: CollisionShape2D = $"Body Collider"
+@onready var feet_collider: CollisionShape2D = $"Feet Collider"
+@onready var feet_detector: Area2D = $"Feet Collider/Feet Detector"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -114,13 +116,14 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
+	body_collider.disabled = false
+	feet_collider.disabled = true
+
 	# Store references to the Character's Nodes
 	sprite = $AnimatedSprite2D
 	animation_player = $AnimationPlayer
 	on_screen_notifier = null
 	hitbox_damage = $"Damage Hitbox"
-	
 	sprite.play("test")
 	self.name = "Player"
 	update_location_points()
@@ -129,6 +132,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	#if current_tile.set_custom_data("tile_type"):
+		#print(current_tile.custom_data)
 	
 	toggle_food_buddy_field_state_interface()
 	
@@ -158,8 +163,11 @@ func _process(delta: float) -> void:
 		#print(" ")
 		#print("Bottom X: " + str(bottom_point.x))
 		#print("Bottom Y: " + str(bottom_point.y))
-		print(" ")
-		print("Z-Index: " + str(z_index))
+		#print(" ")
+		#print("Tile X: " + str(current_tile.x))
+		#print("Tile Y: " + str(current_tile.y))
+		#print(" ")
+		#print("Z-Index: " + str(z_index))
 		#print("Velocity X: " + str(velocity.x))
 		#print("Velocity Y: " + str(velocity.y))
 		#print(" ")
@@ -171,7 +179,6 @@ func _process(delta: float) -> void:
 		#print("Stamina Regen Delay: " + str(stamina_regen_delay_timer.time_left))
 		#print(" ")
 		#print("Current Health: " + str(health_current))
-		#print(" ")
 		#print(" ")
 
 
@@ -330,16 +337,19 @@ func update_movement_velocity(delta):
 	
 	# Determine if the Player currently has stamina
 	if stamina_current > 0:
-		
+
 		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			is_jumping = true
-			collision_box_body.disabled = true
-			collision_box_feet.disabled = true
+			on_platform = false
+			body_collider.disabled = true
+			feet_collider.disabled = true
 			jump_start_height = position.y
+			jump_peak_height = jump_start_height
 			velocity.y = 0
 			velocity.y -= jump_velocity
 			use_stamina(stamina_use["Jump"])
+			jump_timer.start()
 		
 		
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
@@ -389,31 +399,53 @@ func update_movement_velocity(delta):
 	
 	
 	# Determine if the Player is currently jumping, then adjust their y-position by gravity
-	if is_jumping:
+	if is_jumping :
+		
 		velocity.y += gravity * delta
 		
+		# I WANT TO ADD THIS BUT IT ISNT WORKING. TEST IT OUT AND FIX IT
+		#if position.y < jump_peak_height:
+			#jump_peak_height = position.y
+		if jump_timer.time_left > 0.25:
+			scale.x += 0.01
+			scale.y += 0.01
+		else:
+			feet_collider.disabled = false
+			scale.x -= 0.01
+			scale.y -= 0.01
+			
 		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and set their current y-position to the y-position they initiated the jump from
-		if position.y > jump_start_height:
+		
+		
+		if on_platform:
 			is_jumping = false
-			collision_box_body.disabled = false
-			collision_box_feet.disabled = false
-			position.y = jump_start_height
+			body_collider.disabled = false
+			feet_collider.disabled = true
 			velocity.y = 0
-	
-	
+			scale.x = 1
+			scale.y = 1
+			
+		elif position.y > jump_start_height:
+			position.y = jump_start_height
+			is_jumping = false
+			body_collider.disabled = false
+			feet_collider.disabled = true
+			velocity.y = 0
+			scale.x = 1
+			scale.y = 1
+
 	# Determine if the Player is moving horizontally, then adjust the x-velocity
 	if direction_current_horizontal != Direction.IDLE:
 		velocity.x = calculate_velocity(direction_current_horizontal)
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed_current)
 	
-	# Determine if the Player isn't jumping, then determine if the Player is moving vertically, then adjust the y-velocity
-	if is_jumping == false:
+	if !is_jumping:
+		# Determine if the Player isn't jumping, then determine if the Player is moving vertically, then adjust the y-velocity
 		if direction_current_vertical != Direction.IDLE:
 			velocity.y = calculate_velocity(direction_current_vertical)
 		else:
 			velocity.y = move_toward(velocity.y, 0, speed_current)
-
 
 
 # Updates the Player's current FieldState based on their key presses
@@ -513,3 +545,41 @@ func update_stamina(delta):
 # Updates a stat chosen by the Player, increments level, resets current xp, refills hp, maybe increase max xp (harder to level up as you progress?)
 func level_up():
 	pass
+
+
+func _on_feet_detector_body_entered(body: Node2D) -> void:
+	
+	# Determine if the feet are colliding with a physics body in the tilemap
+	if body is TileMapLayer:
+		
+		# Determine if the tile that the Character is currently standing on has set its tile type custom data
+		if current_tile.set_custom_data("tile_type"):
+			
+			# Determine if the current tile is a ledge tile and if the Character is currently jumping, then set 'on_platform' to true now that the Character has landed on the ledge
+			if current_tile.custom_data == "ledge":
+				
+				if is_jumping and bottom_point.y > current_tile.coords_local.y:
+					on_platform = true
+				else:
+					feet_collider.disabled = true
+					body_collider.disabled = true
+				
+
+
+
+func _on_feet_detector_body_exited(body: Node2D) -> void:
+	
+	# Determine if the feet are colliding with a physics body in the tilemap
+	if body is TileMapLayer:
+		
+		# Determine if the previous and current tiles that the Character has stood on have their tile type custom data set
+		if previous_tile.set_custom_data("tile_type") and current_tile.set_custom_data("tile_type"):
+			
+			# Determine if the previous tile is a ledge and if the current tile is not a ledge
+			if previous_tile.custom_data == "ledge":
+				
+				if current_tile.custom_data != "ledge":
+					on_platform = false
+				else:
+					feet_collider.disabled = false
+					body_collider.disabled = true

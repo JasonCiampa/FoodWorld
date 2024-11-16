@@ -53,8 +53,8 @@ func _init(tilemap: TileMapLayer, coords_map: Vector2i):
 	self.tilemap = tilemap
 	self.coords_map = coords_map
 	
-	get_data()
-	get_local_coords()
+	set_data()
+	set_local_coords()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -86,11 +86,11 @@ func get_surrounding_tile_types(tile_coords: Vector2i):
 	pass
 
 # Returns the coordinates of this Tile in the local format
-func get_local_coords():
-	tilemap.map_to_local(coords_map)
+func set_local_coords():
+	coords_local = tilemap.map_to_local(coords_map)
 
-# Attempts to fetch and store this Tile's data and returns true if successful or false if unsuccessful
-func get_data() -> bool:
+# Attempts to fetch and set this Tile's data variable and returns true if successful or false if unsuccessful
+func set_data() -> bool:
 	
 	# Get this Tile's data by locating it at the map coords on the tilemap
 	var tile_data = tilemap.get_cell_tile_data(coords_map)
@@ -105,8 +105,8 @@ func get_data() -> bool:
 		return false
 
 
-# Attempts to fetch and store this Tile's custom data and returns true if successful or false if unsuccessful
-func get_custom_data(data_name: String) -> Variant:
+# Attempts to set this Tile's custom data variable and returns true if successful or false if unsuccessful
+func set_custom_data(data_name: String) -> Variant:
 	
 	# Determine if this Tile has no data, then return false to indicate there isn't any data
 	if !data:
