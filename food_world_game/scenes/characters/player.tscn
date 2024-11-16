@@ -5,13 +5,13 @@
 [ext_resource type="Texture2D" uid="uid://dmnlae1ov7bhe" path="res://images/characters/main-character.png" id="3_ndyxs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5mf36"]
-size = Vector2(14, 1)
+size = Vector2(14, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8bbpt"]
-size = Vector2(12, 1)
+size = Vector2(12, 2)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ecm54"]
-size = Vector2(14, 1)
+size = Vector2(14, 4)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a1dot"]
 atlas = ExtResource("2_08uiw")
@@ -306,38 +306,38 @@ z_index = 1
 platform_floor_layers = 0
 script = ExtResource("1_2axk5")
 
-[node name="Body Collider" type="CollisionShape2D" parent="."]
+[node name="Debug Visual" type="Polygon2D" parent="."]
 z_index = 1
-position = Vector2(-1, 8.5)
-shape = SubResource("RectangleShape2D_5mf36")
-
-[node name="Debug Visual" type="Polygon2D" parent="Body Collider"]
-z_index = 1
-position = Vector2(2.14577e-06, -0.0999995)
-scale = Vector2(1.66398, 0.0245199)
+position = Vector2(-1, 8.4)
+scale = Vector2(1.66398, 0.147119)
 color = Color(0.94902, 0, 0.513726, 0.756863)
 polygon = PackedVector2Array(-4.20678, -16.3133, 4.20678, -16.3133, 4.20678, 3.97419, 4.20678, 24.4699, -4.20678, 24.4699)
 
+[node name="Body Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+position = Vector2(-1, 9)
+shape = SubResource("RectangleShape2D_5mf36")
+
 [node name="Feet Collider" type="CollisionShape2D" parent="."]
 z_index = 1
-position = Vector2(-1, 15.5)
+position = Vector2(-1, 15)
 shape = SubResource("RectangleShape2D_8bbpt")
 disabled = true
 
 [node name="Feet Detector" type="Area2D" parent="Feet Collider"]
 z_index = 1
-position = Vector2(1, -15.5)
+position = Vector2(1, -15)
 collision_layer = 8
 collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Feet Collider/Feet Detector"]
-position = Vector2(-1, 15.5)
+position = Vector2(-1, 15)
 shape = SubResource("RectangleShape2D_ecm54")
 
 [node name="Debug Visual" type="Polygon2D" parent="Feet Collider"]
 z_index = 1
-position = Vector2(-0.999999, -9.53674e-07)
-scale = Vector2(1.30741, 0.0269718)
+position = Vector2(-1, 0)
+scale = Vector2(1.30741, 0.0539438)
 color = Color(0.94902, 0, 0.513726, 0.756863)
 polygon = PackedVector2Array(-3.82434, -18.5378, 5.35408, -18.5378, 5.35408, 18.5378, -3.82434, 18.5378)
 
@@ -378,7 +378,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="Timer" type="Timer" parent="Timers"]
-wait_time = 0.1
+wait_time = 0.3
 one_shot = true
 
 [node name="Jump Timer" type="Timer" parent="Timers"]

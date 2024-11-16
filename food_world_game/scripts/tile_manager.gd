@@ -1,5 +1,6 @@
 extends Node2D
 
+class_name TileManager
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -47,6 +48,7 @@ var tilemap_sky: TileMapLayer
 var tile_callbacks : Dictionary = {
 	
 	"ledge" : tile_callback_ledge,
+	"ledge_top": tile_callback_ledge_top,
 	"grass" : tile_callback_grass
 	
 }
@@ -88,10 +90,32 @@ func _physics_process(delta: float) -> void:
 # A variable that stores a callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: Character):
 	
-	if character.on_platform or character.is_jumping:
+	if character.on_platform:
+		character.z_index = tile.data.z_index + 1
+		
+		var tile_above = Tile.new(tilemap_terrain, Vector2i(tile.coords_map.x, tile.coords_map.y - 1))
+	
+		if tile_above.set_custom_data("tile_type"):
+		
+			# Determine if the tile above the Character is a ledge
+			if tile_above.custom_data == "ledge":
+				return
+		
+		else:
+			
+			# Determine if the ledge that the Character is on doesn't have a ledge above of it (the Character is on this ledge if they are on a platform and their feet are above the bottom of the tile)
+			if tile.coords_local.y + 8 > character.bottom_point.y and character.bottom_point.y > tile.coords_local.y - 8:
+			
+				# Set this current ledge tile to be an alternate ledge_top tile with a physics barrier on top because this ledge is the highest so it won't have another ledge with its own barrier above it to prevent the Player from walking off
+				tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map), 1)
+				character.body_collider.disabled = true
+				character.position.y -= 1
+				return
+		
+	if character.is_jumping:
 		character.z_index = 10
 		return
-	
+
 	# Determine if the Character is horizontally in range of the Tile
 	if tile.coords_local.x - 16 <= character.position.x and character.position.x <= tile.coords_local.x + 16:
 		
@@ -104,6 +128,27 @@ func tile_callback_ledge(tile: Tile, character: Character):
 		# Otherwise, the Character is below the Tile
 		else:
 			character.z_index = 1
+
+
+
+func tile_callback_ledge_top(tile: Tile, character: Character):
+	
+	if character.on_platform:
+		if character.bottom_point.y < tile.coords_local.y + 8:
+			character.body_collider.disabled = true
+	
+	if character.is_jumping:
+		
+		if tile.coords_local.y + 8 > character.jump_start_height and character.jump_start_height > tile.coords_local.y - 8:
+			tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
+			# Change this so that the character will fall back down to the collider
+			character.jump_start_height = tile.coords_local.y + 8
+	
+	#if character.is_falling:
+		#if character.bottom_point.y < tile.coords_local.y - 8:
+			#print("fart")
+			#tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
+
 
 
 
@@ -140,13 +185,16 @@ func execute_tile_callback(tile: Tile, character: Character):
 func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out: int):
 	
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
-	character.previous_tile = character.current_tile
-	character.current_tile = Tile.new(tilemap, tilemap.local_to_map(character.bottom_point))
+	character.previous_tile_position = character.current_tile_position
+	character.current_tile_position = tilemap.local_to_map(character.bottom_point)
 	
 	# Create a list of Tile coordinates to process starting with the tile that the Character is currently standing on
-	var tiles_to_process: Array[Tile] = [character.current_tile]
-	var x = character.current_tile.coords_map.x
-	var y = character.current_tile.coords_map.y
+	var tiles_to_process: Array[Tile] = [Tile.new(tilemap, character.current_tile_position)]
+	#tiles_to_process[0].set_custom_data("tile_type")
+	#if tiles_to_process[0].custom_data:
+		#print(tiles_to_process[0].custom_data)
+	var x = character.current_tile_position.x
+	var y = character.current_tile_position.y
 	
 	 #Iterate tiles_out number of times so that the coordinates for all of the Tiles are added to be processed 
 	#(tiles_out represents how many tiles away from the Character on each side should be processed)

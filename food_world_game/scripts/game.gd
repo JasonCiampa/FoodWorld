@@ -67,8 +67,8 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 var interface_food_buddy_field_state: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food_buddy_field_state_interface.tscn").instantiate()
 var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialogue_interface.tscn").instantiate()
 
-var TileScript
-var TileInstance
+var TileScript: Resource
+var TileManager: TileManager
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,10 +87,10 @@ func _ready() -> void:
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
 	TileScript = load("res://scripts/tile_manager.gd")
-	TileInstance = TileScript.new()
+	TileManager = TileScript.new()
 	
-	TileInstance.tilemap_ground = $"World Map/Town Center/Ground"
-	TileInstance.tilemap_terrain = $"World Map/Town Center/Terrains"
+	TileManager.tilemap_ground = $"World Map/Town Center/Ground"
+	TileManager.tilemap_terrain = $"World Map/Town Center/Terrains"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -118,14 +118,14 @@ func _process(delta: float) -> void:
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	TileInstance.process_nearby_tiles(TileInstance.tilemap_ground, PLAYER, 2)
-	TileInstance.process_nearby_tiles(TileInstance.tilemap_terrain, PLAYER, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 2)
 	
-	TileInstance.process_nearby_tiles(TileInstance.tilemap_ground, MALICK, 3)
-	TileInstance.process_nearby_tiles(TileInstance.tilemap_terrain, MALICK, 3)
+	TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
+	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
 	
-	TileInstance.process_nearby_tiles(TileInstance.tilemap_ground, SALLY, 2)
-	TileInstance.process_nearby_tiles(TileInstance.tilemap_terrain, SALLY, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_ground, SALLY, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, SALLY, 2)
 	
 	
 	if not PLAYER.is_interacting:
@@ -677,3 +677,51 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
+
+
+func _on_player_feet_collide_start(body: Node2D) -> void:
+	
+	if PLAYER.is_falling:
+		# Determine if the feet are colliding with a physics body in the tilemap
+		if body is TileMapLayer:
+			
+			var current_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.current_tile_position)
+			
+			# Determine if the tile that the Character is currently standing on has set its tile type custom data
+			if current_tile.set_custom_data("tile_type"):
+				
+				# Determine if the current tile is a ledge tile, then set 'on_platform' to true now that the Character has landed on the ledge
+				if current_tile.custom_data == "ledge":
+					PLAYER.on_platform = true
+					PLAYER.is_falling = false
+				else:
+					PLAYER.feet_collider.disabled = true
+					PLAYER.body_collider.disabled = true
+
+
+
+func _on_player_feet_collide_end(body: Node2D) -> void:
+	## Determine if the feet are colliding with a physics body in the tilemap
+	#if body is TileMapLayer:
+		#
+		#var previous_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.previous_tile_position)
+		#var current_tile = Tile.new(TileManager.tilemap_ground, PLAYER.current_tile_position)
+		#
+		## Determine if the previous and current tiles that the Character has stood on have their tile type custom data set
+		#if previous_tile.set_custom_data("tile_type") and current_tile.set_custom_data("tile_type"):
+			#print("Exited!")
+			#print("Previous: " + previous_tile.custom_data, previous_tile.coords_local)
+			#print("Current: " + current_tile.custom_data, current_tile.coords_local)
+			#print("Player: ", position)
+			#print("")
+			#
+			## Determine if the previous tile is a ledge and if the current tile is not a ledge
+			#if previous_tile.custom_data == "ledge" or previous_tile.custom_data == "ledge_grass":
+				#
+				#if current_tile.custom_data != "ledge":
+					#PLAYER.on_platform = false
+				#else:
+					#PLAYER.feet_collider.disabled = false
+					#PLAYER.body_collider.disabled = true
+
+	pass

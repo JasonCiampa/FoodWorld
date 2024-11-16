@@ -15,7 +15,7 @@ script = ExtResource("1_in6cb")
 position = Vector2(-299, -106)
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(238, 527)
+position = Vector2(370, 450)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 position = Vector2(52, -50)
@@ -41,8 +41,6 @@ tile_map_data = PackedByteArray("AAAaABQAAAACAAgAAAAYAAwAAAABAAcAAAAYAA0AAAABAAk
 [connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
-[connection signal="feet_collide_end" from="Player" to="." method="_on_player_feet_collide_end"]
-[connection signal="feet_collide_start" from="Player" to="." method="_on_player_feet_collide_start"]
 [connection signal="interact" from="Player" to="." method="_on_player_interact"]
 [connection signal="killed_target" from="Player" to="." method="_on_player_killed_target"]
 [connection signal="revert_buddy_field_state" from="Player" to="." method="_on_player_revert_buddy_field_state"]

@@ -35,6 +35,9 @@ signal use_ability_buddy_fusion
 signal interact
 signal escape_menu
 
+signal feet_collide_start
+signal feet_collide_end
+
 signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -118,6 +121,7 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 func _ready() -> void:
 	body_collider.disabled = false
 	feet_collider.disabled = true
+	feet_detector.monitoring = false
 
 	# Store references to the Character's Nodes
 	sprite = $AnimatedSprite2D
@@ -132,8 +136,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	#if current_tile.set_custom_data("tile_type"):
-		#print(current_tile.custom_data)
 	
 	toggle_food_buddy_field_state_interface()
 	
@@ -164,8 +166,8 @@ func _process(delta: float) -> void:
 		#print("Bottom X: " + str(bottom_point.x))
 		#print("Bottom Y: " + str(bottom_point.y))
 		#print(" ")
-		#print("Tile X: " + str(current_tile.x))
-		#print("Tile Y: " + str(current_tile.y))
+		#print("Tile X: " + str(current_tile_position.x))
+		#print("Tile Y: " + str(current_tile_position.y))
 		#print(" ")
 		#print("Z-Index: " + str(z_index))
 		#print("Velocity X: " + str(velocity.x))
@@ -180,7 +182,11 @@ func _process(delta: float) -> void:
 		#print(" ")
 		#print("Current Health: " + str(health_current))
 		#print(" ")
-
+		#print("Jumping: " + str(is_jumping))
+		#print("Falling: " + str(is_falling))
+		#print("On Platform: " + str(on_platform))
+		#print("Feet Disabled: " + str(feet_collider.disabled))
+		#print("Body Disabled: " + str(body_collider.disabled))
 
 
 # Called every frame. Updates the Player's physics
@@ -195,6 +201,143 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Starts the Player's sprint
+func sprint_start(delta: float):
+	is_sprinting = true
+	speed_current = speed_sprinting
+	use_stamina_gradually(stamina_use["Sprint"], delta)
+
+
+# Ends the Player's sprint
+func sprint_end():
+	is_sprinting = false
+	speed_current = speed_normal
+
+
+
+# Starts the Player's jump
+func jump_start():
+	is_jumping = true
+	is_falling = false
+	on_platform = false
+	
+	body_collider.disabled = true
+	feet_collider.disabled = true
+	feet_detector.monitoring = false
+	
+	jump_start_height = bottom_point.y
+	jump_peak_height = jump_start_height + 1
+	
+	velocity.y = 0
+	velocity.y -= jump_velocity
+	
+	use_stamina(stamina_use["Jump"])
+
+
+# Processes the Player's jump
+func jump_process(delta: float):
+	
+	# Determine if the PLayer is currently falling or has landed on a platform
+	if is_falling or on_platform:
+		
+		# Adjust the Player's scale back down to 1 (it was incrementing as the Player jumped and should decrement as they fall/land)
+		if scale.x > 1:
+			scale.x -=  1 * delta
+		else:
+			scale.x = 1
+		
+		if scale.y > 1:
+			scale.y -=  1 * delta
+		else:
+			scale.y = 1
+	
+	# Determine if the Player has landed on a platform
+	if on_platform:
+		
+		# Determine if the Player's scale has returned to normal, then end the jump
+		if scale.x == 1 and scale.y == 1:
+			jump_end()
+			return
+	
+	# Otherwise, determine if the Player has landed below where they initially jumped from, then set their current y-position to the y-position they initiated the jump from and end the jump
+	elif bottom_point.y > jump_start_height:
+		bottom_point.y = jump_start_height
+		jump_end()
+		return
+	
+	# Apply gravity to the Player so they fall
+	velocity.y += gravity * delta
+	
+	# Determine if the Player's current altitude is higher than the highest altitude the Player has reached in the jump so far
+	if bottom_point.y < jump_peak_height:
+		
+		# Set the Player's current altitude as the new highest altitude reached and then increase the Player's scale as they ascend
+		jump_peak_height = bottom_point.y
+		scale.x += 1 * delta
+		scale.y += 1 * delta
+	else: 
+		is_falling = true
+		feet_collider.disabled = false
+		feet_detector.monitoring = true
+
+
+# Ends the Player's jump
+func jump_end():
+	is_jumping = false
+	is_falling = false
+	
+	body_collider.disabled = false
+	
+	if on_platform:
+		feet_detector.monitoring = true
+		feet_collider.disabled = false
+	else:
+		feet_detector.monitoring = false
+		feet_collider.disabled = true
+	
+	velocity.y = 0
+	
+	scale.x = 1
+	scale.y = 1
+
+
+
+# Starts the Player's dodge
+func dodge_start():
+	dodge_cooldown_timer.start()
+	dodge_timer.start()
+	is_dodging = true
+
+
+
+# Process the Player's dodge (returns true if Player is dodging from an idle position, false if not)
+func dodge_process(delta: float) -> bool:
+	speed_current = speed_dodging
+	use_stamina_gradually(stamina_use["Dodge"], delta)
+	
+	# Determine if the Player is not currently moving in any direction (idle)
+	if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
+		
+		# Determine if the Player is facing either the left or right, then have them dodge in that direction from an idle position
+		if sprite.animation == "idle_sideways":
+			if sprite.flip_h:
+				velocity.x = calculate_velocity(Direction.LEFT)
+			else:
+				velocity.x = calculate_velocity(Direction.RIGHT)
+		
+		# Determine if the Player is facing forward or backward, then have them dodge in that direction from an idle position
+		if sprite.animation == "idle_front":
+			velocity.y = calculate_velocity(Direction.DOWN)
+		elif sprite.animation == "idle_back":
+			velocity.y = calculate_velocity(Direction.UP)
+		
+		# Return true to indicate that the Player was dodging from an idle position
+		return true
+	
+	# Return false to indicate that the Player was dodging from an idle position
+	return false
 
 # Calculates the Player's current velocity based on their movement input.
 func calculate_velocity(direction):
@@ -337,111 +480,53 @@ func update_movement_velocity(delta):
 	
 	# Determine if the Player currently has stamina
 	if stamina_current > 0:
-
+		
 		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
-			is_jumping = true
-			on_platform = false
-			body_collider.disabled = true
-			feet_collider.disabled = true
-			jump_start_height = position.y
-			jump_peak_height = jump_start_height
-			velocity.y = 0
-			velocity.y -= jump_velocity
-			use_stamina(stamina_use["Jump"])
-			jump_timer.start()
+			jump_start()
 		
 		
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
 		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
-			is_sprinting = true
-			speed_current = speed_sprinting
-			use_stamina_gradually(stamina_use["Sprint"], delta)
+			sprint_start(delta)
 		else:
-			is_sprinting = false
-			speed_current = speed_normal
+			sprint_end()
 		
 		
 		# Determine whether or not the Player is starting a dodge, then trigger the dodge and it's cooldown
 		if Input.is_action_just_pressed("dodge") and stamina_current > 0 and dodge_cooldown_timer.is_stopped() and (not is_jumping):
-			dodge_cooldown_timer.start()
-			dodge_timer.start()
-			is_dodging = true
+			dodge_start()
 		
 		# Determine whether or not the Player is currently dodging, then adjust their speed
 		if not dodge_timer.is_stopped():
-			speed_current = speed_dodging
-			use_stamina_gradually(stamina_use["Dodge"], delta)
 			
-			# Determine if the Player is not currently moving in any direction (idle)
-			if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
-				
-				# Determine if the Player is facing either the left or right, then have them dodge in that direction from an idle position
-				if sprite.animation == "idle_sideways":
-					if sprite.flip_h:
-						velocity.x = calculate_velocity(Direction.LEFT)
-					else:
-						velocity.x = calculate_velocity(Direction.RIGHT)
-				
-				# Determine if the Player is facing forward or backward, then have them dodge in that direction from an idle position
-				if sprite.animation == "idle_front":
-					velocity.y = calculate_velocity(Direction.DOWN)
-				elif sprite.animation == "idle_back":
-					velocity.y = calculate_velocity(Direction.UP)
-				
+			# Process the dodge and determine if the Player dodged from an idle position, then return so that velocity isn't set back to 0 further below in this function
+			if dodge_process(delta):
 				return
+			
 		else:
 			is_dodging = false
+	
+	# Otherwise, the Player doesn't have any stamina, so prevent them from dodging and sprinting (don't prevent jumping because the Player could be in the middle of one)
 	else:
 		speed_current = speed_normal
 		is_sprinting = false
 		is_dodging = false
 	
 	
-	# Determine if the Player is currently jumping, then adjust their y-position by gravity
-	if is_jumping :
-		
-		velocity.y += gravity * delta
-		
-		# I WANT TO ADD THIS BUT IT ISNT WORKING. TEST IT OUT AND FIX IT
-		#if position.y < jump_peak_height:
-			#jump_peak_height = position.y
-		if jump_timer.time_left > 0.25:
-			scale.x += 0.01
-			scale.y += 0.01
-		else:
-			feet_collider.disabled = false
-			scale.x -= 0.01
-			scale.y -= 0.01
-			
-		# Determine if the application of gravity has pushed the Player too far below their intial jump-point, then end the jump and set their current y-position to the y-position they initiated the jump from
-		
-		
-		if on_platform:
-			is_jumping = false
-			body_collider.disabled = false
-			feet_collider.disabled = true
-			velocity.y = 0
-			scale.x = 1
-			scale.y = 1
-			
-		elif position.y > jump_start_height:
-			position.y = jump_start_height
-			is_jumping = false
-			body_collider.disabled = false
-			feet_collider.disabled = true
-			velocity.y = 0
-			scale.x = 1
-			scale.y = 1
-
 	# Determine if the Player is moving horizontally, then adjust the x-velocity
 	if direction_current_horizontal != Direction.IDLE:
 		velocity.x = calculate_velocity(direction_current_horizontal)
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed_current)
 	
-	if !is_jumping:
-		# Determine if the Player isn't jumping, then determine if the Player is moving vertically, then adjust the y-velocity
+	# Determine if the Player is jumping, then process their jump and ignore movement input for the y-axis
+	if is_jumping:
+		jump_process(delta)
+	
+	# Otherwise, determine if the Player is moving vertically, then adjust the y-velocity
+	else:
+		
 		if direction_current_vertical != Direction.IDLE:
 			velocity.y = calculate_velocity(direction_current_vertical)
 		else:
@@ -548,38 +633,9 @@ func level_up():
 
 
 func _on_feet_detector_body_entered(body: Node2D) -> void:
-	
-	# Determine if the feet are colliding with a physics body in the tilemap
-	if body is TileMapLayer:
-		
-		# Determine if the tile that the Character is currently standing on has set its tile type custom data
-		if current_tile.set_custom_data("tile_type"):
-			
-			# Determine if the current tile is a ledge tile and if the Character is currently jumping, then set 'on_platform' to true now that the Character has landed on the ledge
-			if current_tile.custom_data == "ledge":
-				
-				if is_jumping and bottom_point.y > current_tile.coords_local.y:
-					on_platform = true
-				else:
-					feet_collider.disabled = true
-					body_collider.disabled = true
-				
+	feet_collide_start.emit(body)
 
 
 
 func _on_feet_detector_body_exited(body: Node2D) -> void:
-	
-	# Determine if the feet are colliding with a physics body in the tilemap
-	if body is TileMapLayer:
-		
-		# Determine if the previous and current tiles that the Character has stood on have their tile type custom data set
-		if previous_tile.set_custom_data("tile_type") and current_tile.set_custom_data("tile_type"):
-			
-			# Determine if the previous tile is a ledge and if the current tile is not a ledge
-			if previous_tile.custom_data == "ledge":
-				
-				if current_tile.custom_data != "ledge":
-					on_platform = false
-				else:
-					feet_collider.disabled = false
-					body_collider.disabled = true
+	feet_collide_end.emit(body)
