@@ -11,10 +11,6 @@ extends Character
 @onready var jump_timer: Timer = $"Timers/Jump Timer"
 @onready var timer: Timer = $Timers/Timer
 
-@onready var body_collider: CollisionShape2D = $"Body Collider"
-@onready var feet_collider: CollisionShape2D = $"Feet Collider"
-@onready var feet_detector: Area2D = $"Feet Collider/Feet Detector"
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -64,9 +60,6 @@ enum Ability { PUNCH = 1, KICK = 2}
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Gravity #
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 var is_interacting: bool = false
 
@@ -119,15 +112,12 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super()
+	
 	body_collider.disabled = false
 	feet_collider.disabled = true
 	feet_detector.monitoring = false
 
-	# Store references to the Character's Nodes
-	sprite = $AnimatedSprite2D
-	animation_player = $AnimationPlayer
-	on_screen_notifier = null
-	hitbox_damage = $"Damage Hitbox"
 	sprite.play("test")
 	self.name = "Player"
 	update_location_points()
@@ -236,71 +226,7 @@ func jump_start():
 	use_stamina(stamina_use["Jump"])
 
 
-# Processes the Player's jump
-func jump_process(delta: float):
-	
-	# Determine if the PLayer is currently falling or has landed on a platform
-	if is_falling or on_platform:
-		
-		# Adjust the Player's scale back down to 1 (it was incrementing as the Player jumped and should decrement as they fall/land)
-		if scale.x > 1:
-			scale.x -=  1 * delta
-		else:
-			scale.x = 1
-		
-		if scale.y > 1:
-			scale.y -=  1 * delta
-		else:
-			scale.y = 1
-	
-	# Determine if the Player has landed on a platform
-	if on_platform:
-		
-		# Determine if the Player's scale has returned to normal, then end the jump
-		if scale.x == 1 and scale.y == 1:
-			jump_end()
-			return
-	
-	# Otherwise, determine if the Player has landed below where they initially jumped from, then set their current y-position to the y-position they initiated the jump from and end the jump
-	elif bottom_point.y > jump_start_height:
-		bottom_point.y = jump_start_height
-		jump_end()
-		return
-	
-	# Apply gravity to the Player so they fall
-	velocity.y += gravity * delta
-	
-	# Determine if the Player's current altitude is higher than the highest altitude the Player has reached in the jump so far
-	if bottom_point.y < jump_peak_height:
-		
-		# Set the Player's current altitude as the new highest altitude reached and then increase the Player's scale as they ascend
-		jump_peak_height = bottom_point.y
-		scale.x += 1 * delta
-		scale.y += 1 * delta
-	else: 
-		is_falling = true
-		feet_collider.disabled = false
-		feet_detector.monitoring = true
 
-
-# Ends the Player's jump
-func jump_end():
-	is_jumping = false
-	is_falling = false
-	
-	body_collider.disabled = false
-	
-	if on_platform:
-		feet_detector.monitoring = true
-		feet_collider.disabled = false
-	else:
-		feet_detector.monitoring = false
-		feet_collider.disabled = true
-	
-	velocity.y = 0
-	
-	scale.x = 1
-	scale.y = 1
 
 
 

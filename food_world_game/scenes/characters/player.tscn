@@ -306,13 +306,6 @@ z_index = 1
 platform_floor_layers = 0
 script = ExtResource("1_2axk5")
 
-[node name="Debug Visual" type="Polygon2D" parent="."]
-z_index = 1
-position = Vector2(-1, 8.4)
-scale = Vector2(1.66398, 0.147119)
-color = Color(0.94902, 0, 0.513726, 0.756863)
-polygon = PackedVector2Array(-4.20678, -16.3133, 4.20678, -16.3133, 4.20678, 3.97419, 4.20678, 24.4699, -4.20678, 24.4699)
-
 [node name="Body Collider" type="CollisionShape2D" parent="."]
 z_index = 1
 position = Vector2(-1, 9)

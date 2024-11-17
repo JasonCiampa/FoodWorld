@@ -63,14 +63,7 @@ var xp_max: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
-	# Store references to the Food Buddy's Nodes
-	sprite = $AnimatedSprite2D
-	animation_player = $AnimationPlayer
-	on_screen_notifier = $VisibleOnScreenNotifier2D
-	hitbox_damage = $"Damage Hitbox"
-	hitbox_interaction = $"Interaction Hitbox"
-	label_e_to_interact = $"Press 'E' to Interact"
+	super()
 	
 	# Set the Food Buddy's current field state to be fighting
 	field_state_current = FieldState.SOLO

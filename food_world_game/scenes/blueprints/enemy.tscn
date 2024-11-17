@@ -1,16 +1,22 @@
-[gd_scene load_steps=7 format=3 uid="uid://6k636yjpnvdv"]
+[gd_scene load_steps=9 format=3 uid="uid://6k636yjpnvdv"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/enemy.gd" id="1_usloy"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_hj1si"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_vba01"]
-size = Vector2(15, 19)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oce14"]
+size = Vector2(14, 6)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m3qpq"]
+size = Vector2(12, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vmbrq"]
+size = Vector2(14, 4)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0k52c"]
 atlas = ExtResource("2_hj1si")
 region = Rect2(0, 66, 17, 22)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_7q3yd"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_80ewq"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -21,8 +27,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_u43pv"]
-size = Vector2(34, 32)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_unylj"]
+size = Vector2(14, 19)
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 z_index = 1
@@ -31,27 +37,37 @@ collision_layer = 8
 platform_floor_layers = 0
 script = ExtResource("1_usloy")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_vba01")
+[node name="Body Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+position = Vector2(-1, 9)
+shape = SubResource("RectangleShape2D_oce14")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="Feet Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+position = Vector2(-1, 15)
+shape = SubResource("RectangleShape2D_m3qpq")
+disabled = true
+
+[node name="Feet Detector" type="Area2D" parent="Feet Collider"]
+z_index = 1
+position = Vector2(1, -15)
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Feet Collider/Feet Detector"]
+position = Vector2(-1, 15)
+shape = SubResource("RectangleShape2D_vmbrq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 1
-sprite_frames = SubResource("SpriteFrames_7q3yd")
+sprite_frames = SubResource("SpriteFrames_80ewq")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(0, -4.76837e-07)
-shape = SubResource("RectangleShape2D_u43pv")
-
-[node name="Polygon2D" type="Polygon2D" parent="Damage Hitbox"]
-scale = Vector2(0.68, 0.507692)
-color = Color(0.94902, 0, 0.513726, 0.407843)
-polygon = PackedVector2Array(-25, -31.5152, 25, -31.5152, 25, 31.5152, -25, 31.5152)
-
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-
-[node name="Feet" type="Node2D" parent="."]
-position = Vector2(0, 9.99)
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_unylj")

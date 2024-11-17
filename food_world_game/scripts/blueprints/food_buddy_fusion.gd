@@ -46,11 +46,7 @@ var inventory_size: int = 12
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Store references to the Food Buddy's Nodes
-	sprite = $AnimatedSprite2D
-	animation_player  = $AnimationPlayer
-	hitbox_interaction = $"Interaction Hitbox"
-	label_e_to_interact = $"Press 'E' to Interact"
+	super()
 	
 	ready()
 	
