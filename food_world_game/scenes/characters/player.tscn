@@ -356,6 +356,8 @@ shape = SubResource("RectangleShape2D_5tqxi")
 color = Color(0.94902, 0, 0.513726, 0.298039)
 polygon = PackedVector2Array(-9, -18, 9, -18, 9, 18, -9, 18)
 
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
 [node name="Timers" type="Node" parent="."]
 
 [node name="Dodge Timer" type="Timer" parent="Timers"]
@@ -371,7 +373,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="Timer" type="Timer" parent="Timers"]
-wait_time = 0.3
+wait_time = 0.1
 one_shot = true
 
 [node name="Jump Timer" type="Timer" parent="Timers"]

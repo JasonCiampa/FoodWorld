@@ -67,11 +67,12 @@ var target_distance: float
 
 # Jumping #
 var is_jumping: bool = false
-var is_falling: bool = false
-var jump_peaked: bool = false
 var jump_start_height: float
 var jump_peak_height: float
-var current_altitude: int
+var jump_peaked: bool = false
+var is_falling: bool = false
+var current_altitude: int = 0
+
 const jump_velocity: int = 240
 
 # Speed #
@@ -114,8 +115,15 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	# DEBUG
+	#print('Current Altitude: ', str(current_altitude))
+	#print('Current Z-Index: ', str(z_index))
+	#print("")
+	
 	# Determine if the Character's processing is not paused
 	if not paused:
+		
+		#process_fall()
 		
 		# Call the custom process function that subclasses may have defined manually
 		process(delta)
@@ -172,25 +180,57 @@ func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
 	return ""
 
 
+# Process the Character's falling
+func process_fall():
+	
+	# DESCEND
+	# Determine if the PLayer is currently falling or has landed on a platform
+	if is_falling:
+		
+		# Calculate the altitude as the distance that the character fell since the last update
+		current_altitude += jump_peak_height - bottom_point.y
+		print(current_altitude)
+		# Set the z-index to be the current altitude / -7 because each platform will be placed 7 high on a tile, meaning that each increase in altitude should be a multiple of 7 each time.
+		# The z-index is divided by a negative because it is supposed to be 1 lower with each increase in altitude to make the character further in the background than characters below them
+		z_index = int(current_altitude / 8)
+		
+		# Determine if the current altitude is less than or equal to zero, then end the jump because the Character is back on the ground
+		if current_altitude <= 0:
+			position.y -= current_altitude
+			current_altitude = 0
+			jump_end()
+
+
+# Starts the Player's jump
+func jump_start():
+	# Indicate that the jump is starting, the Character is not falling, and the Character is not on a platform
+	is_jumping = true
+	is_falling = false
+	on_platform = false
+	
+	body_collider.disabled = true
+	feet_collider.disabled = true
+	feet_detector.monitoring = false
+	
+	# Store the starting y-coordinate of the jump from the Character's bottom
+	jump_start_height = bottom_point.y
+	
+	# Intialize the jump's peak height to be 1 more than the jump's start height now that the jump has begun
+	jump_peak_height = jump_start_height + 1
+	
+	# Reset velocity so the jump doesn't receive extra or reduced force, then adjust the Character's velocity upward by the jump force
+	velocity.y = 0
+	velocity.y -= jump_velocity
 
 
 
 # Processes the Player's jump
 func jump_process(delta: float):
 	
-	# Determine if the PLayer is currently falling or has landed on a platform
-	if is_falling or on_platform:
-		
-		# Adjust the Player's scale back down to 1 (it was incrementing as the Player jumped and should decrement as they fall/land)
-		if scale.x > 1:
-			scale.x -=  1 * delta
-		else:
-			scale.x = 1
-		
-		if scale.y > 1:
-			scale.y -=  1 * delta
-		else:
-			scale.y = 1
+	# DESCEND
+	# Determine if the Cbaracter is currently falling and process it
+	process_fall()
+			
 	
 	# Determine if the Player has landed on a platform
 	if on_platform:
@@ -201,21 +241,45 @@ func jump_process(delta: float):
 			return
 	
 	# Otherwise, determine if the Player has landed below where they initially jumped from, then set their current y-position to the y-position they initiated the jump from and end the jump
-	elif bottom_point.y > jump_start_height:
+	elif bottom_point.y > jump_start_height and current_altitude == 0:
 		bottom_point.y = jump_start_height
-		jump_end()
 		return
 	
-	# Apply gravity to the Player so they fall
+	
+	# Adjust the Player's scale back down to 1 (it was incrementing as the Player jumped and should decrement as they fall/land)
+	if scale.x > 1:
+		scale.x -=  1 * delta
+	else:
+		scale.x = 1
+	
+	if scale.y > 1:
+		scale.y -=  1 * delta
+	else:
+		scale.y = 1
+	
+	
+	# Apply gravity to the Player so they gradually begin to fall
 	velocity.y += gravity * delta
 	
+	# ASCEND
 	# Determine if the Player's current altitude is higher than the highest altitude the Player has reached in the jump so far
-	if bottom_point.y < jump_peak_height:
+	if !is_falling and bottom_point.y < jump_peak_height:
 		
-		# Set the Player's current altitude as the new highest altitude reached and then increase the Player's scale as they ascend
+		# Calculate the altitude as the distance that the character rose since the last update (subtract peak - bottom_point because even though bottom point should be higher as the Player ascends, it moves lower because y-axos
+		current_altitude += int(jump_peak_height - bottom_point.y)
+		
+		# Set the z-index to be the current altitude / -7 because each platform will be placed 7 high on a tile, meaning that each increase in altitude should be a multiple of 7 each time.
+		# The z-index is divided by a negative because it is supposed to be 1 lower with each increase in altitude to make the character further in the background than characters below them
+		z_index = int(current_altitude / -8)
+		
+		# Set the Player's current altitude as the new highest altitude reached
 		jump_peak_height = bottom_point.y
+		
+		# Increase the Player's scale as they ascend
 		scale.x += 1 * delta
 		scale.y += 1 * delta
+		
+	# Otherwise, the Character must be falling because the jump has peaked
 	else: 
 		is_falling = true
 		feet_collider.disabled = false

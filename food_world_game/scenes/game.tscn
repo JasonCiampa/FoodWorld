@@ -17,6 +17,9 @@ position = Vector2(-299, -106)
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 position = Vector2(238, 527)
 
+[node name="Timer" parent="Player/Timers" index="3"]
+wait_time = 0.05
+
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 position = Vector2(52, -50)
 
@@ -68,4 +71,5 @@ tile_map_data = PackedByteArray("AAAaABQAAAACAAgAAAAYAAwAAAABAAcAAAAYAA0AAAABAAk
 [connection signal="target_player" from="Sally" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
 
+[editable path="Player"]
 [editable path="World Map"]

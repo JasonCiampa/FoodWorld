@@ -177,7 +177,9 @@ func _process(delta: float) -> void:
 		#print("On Platform: " + str(on_platform))
 		#print("Feet Disabled: " + str(feet_collider.disabled))
 		#print("Body Disabled: " + str(body_collider.disabled))
-
+		print('Current Altitude: ', str(current_altitude))
+		print('Current Z-Index: ', str(z_index))
+		print("")
 
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:
@@ -205,25 +207,6 @@ func sprint_end():
 	is_sprinting = false
 	speed_current = speed_normal
 
-
-
-# Starts the Player's jump
-func jump_start():
-	is_jumping = true
-	is_falling = false
-	on_platform = false
-	
-	body_collider.disabled = true
-	feet_collider.disabled = true
-	feet_detector.monitoring = false
-	
-	jump_start_height = bottom_point.y
-	jump_peak_height = jump_start_height + 1
-	
-	velocity.y = 0
-	velocity.y -= jump_velocity
-	
-	use_stamina(stamina_use["Jump"])
 
 
 
@@ -410,6 +393,7 @@ func update_movement_velocity(delta):
 		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			jump_start()
+			use_stamina(stamina_use["Jump"])
 		
 		
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
