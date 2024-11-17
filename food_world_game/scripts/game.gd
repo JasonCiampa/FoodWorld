@@ -121,11 +121,11 @@ func _process(delta: float) -> void:
 	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 2)
 	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 2)
 	
-	TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
-	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
-	
-	TileManager.process_nearby_tiles(TileManager.tilemap_ground, SALLY, 2)
-	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, SALLY, 2)
+	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
+	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
+	#
+	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, SALLY, 2)
+	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, SALLY, 2)
 	
 	
 	if not PLAYER.is_interacting:
@@ -687,16 +687,13 @@ func _on_player_feet_collide_start(body: Node2D) -> void:
 			
 			var current_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.current_tile_position)
 			
-			# Determine if the tile that the Character is currently standing on has set its tile type custom data
-			if current_tile.set_custom_data("tile_type"):
-				
-				# Determine if the current tile is a ledge tile, then set 'on_platform' to true now that the Character has landed on the ledge
-				if current_tile.custom_data == "ledge":
-					PLAYER.on_platform = true
-					PLAYER.is_falling = false
-				else:
-					PLAYER.feet_collider.disabled = true
-					PLAYER.body_collider.disabled = true
+			# Determine if the current tile the Player is standing on is a ledge tile, then set 'on_platform' to true now that the Character has landed on the ledge
+			if current_tile.get_custom_data("tile_type") == "ledge":
+				PLAYER.on_platform = true
+				PLAYER.is_falling = false
+			else:
+				PLAYER.feet_collider.disabled = true
+				PLAYER.body_collider.disabled = true
 
 
 

@@ -105,26 +105,17 @@ func set_data() -> bool:
 		return false
 
 
-# Attempts to set this Tile's custom data variable and returns true if successful or false if unsuccessful
-func set_custom_data(data_name: String) -> Variant:
+# Fetches and returns this Tile's custom data variable (even if null)
+func get_custom_data(data_name: String) -> Variant:
 	
 	# Determine if this Tile has no data, then return false to indicate there isn't any data
 	if !data:
-		return false
+		return null
 	
 	# Get this Tile's custom data by searching for a custom field value
-	var tile_custom_data = data.get_custom_data(data_name)
-
-	# Determine if this Tile has any custom data, then store the custom data within the Tile and return true to indicate custom data was retrieved
-	if tile_custom_data:
-		custom_data = tile_custom_data
-		return true
+	custom_data = data.get_custom_data(data_name)
 	
-	# Otherwise, this Tile doesn't have any custom data, so set custom data to null and return false to indicate that custom data was not retrieved
-	else:
-		custom_data = null
-		return false
-
+	return custom_data
 
 
 # Attempts to fetch, store, and return the Tile in the cell with map coords equivalent this Tile's coords, but in a different Tilemap

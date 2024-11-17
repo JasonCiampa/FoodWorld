@@ -86,6 +86,11 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Immediately unloads the Tile from memory
+func unload_tile(tile: Tile):
+	tile.free()
+	tile = null
+
 
 # A variable that stores a callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: Character):
@@ -95,12 +100,10 @@ func tile_callback_ledge(tile: Tile, character: Character):
 		
 		var tile_above = Tile.new(tilemap_terrain, Vector2i(tile.coords_map.x, tile.coords_map.y - 1))
 	
-		if tile_above.set_custom_data("tile_type"):
-		
-			# Determine if the tile above the Character is a ledge
-			if tile_above.custom_data == "ledge":
-				return
-		
+	# Determine if the tile above the Character is a ledge
+		if tile_above.get_custom_data("tile_type") == "ledge":
+			return
+			
 		else:
 			
 			# Determine if the ledge that the Character is on doesn't have a ledge above of it (the Character is on this ledge if they are on a platform and their feet are above the bottom of the tile)
@@ -110,7 +113,10 @@ func tile_callback_ledge(tile: Tile, character: Character):
 				tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map), 1)
 				character.body_collider.disabled = true
 				character.position.y -= 1
+				
 				return
+			
+		unload_tile(tile_above)
 		
 	if character.is_jumping:
 		character.z_index = 10
@@ -157,13 +163,15 @@ func tile_callback_grass(tile: Tile, character: Character):
 	
 	var terrain_tile = tile.get_same_cell(tilemap_terrain)
 		
-	if terrain_tile.set_custom_data("tile_type"):
+	if terrain_tile.get_custom_data("tile_type"):
 		
 		# Determine if the Tile at the same coordinates as this Tile on the terrain map is a ledge, then set this grass Tile to be ledge_grass
 		if terrain_tile.custom_data == "ledge":
 			
 			# Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
 			tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
+	
+	unload_tile(terrain_tile)
 
 
 
@@ -171,7 +179,7 @@ func tile_callback_grass(tile: Tile, character: Character):
 func execute_tile_callback(tile: Tile, character: Character):
 	
 	# Set the Tile's type in the Tile's custom data variable
-	if tile.set_custom_data("tile_type"):
+	if tile.get_custom_data("tile_type"):
 		
 		# Determine if the Tile's custom data (tile type) has a designated callback function to execute, then execute it
 		if tile.custom_data in tile_callbacks.keys():
@@ -190,9 +198,7 @@ func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out
 	
 	# Create a list of Tile coordinates to process starting with the tile that the Character is currently standing on
 	var tiles_to_process: Array[Tile] = [Tile.new(tilemap, character.current_tile_position)]
-	#tiles_to_process[0].set_custom_data("tile_type")
-	#if tiles_to_process[0].custom_data:
-		#print(tiles_to_process[0].custom_data)
+
 	var x = character.current_tile_position.x
 	var y = character.current_tile_position.y
 	
@@ -226,9 +232,11 @@ func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y + count)))
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y + count)))
 	
-	# Process each of the Tiles using the coordinates from the list
-	for tile in tiles_to_process:
-		execute_tile_callback(tile, character)
+	## Process each of the Tiles using the coordinates from the list
+	for tile in range(tiles_to_process.size() - 1, -1, -1):
+		execute_tile_callback(tiles_to_process[tile], character)
+		tiles_to_process[tile].free()
+		tiles_to_process[tile] = null		
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
