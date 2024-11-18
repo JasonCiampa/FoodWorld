@@ -15,15 +15,7 @@ script = ExtResource("1_in6cb")
 position = Vector2(-299, -106)
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(291, 454)
-collision_layer = 8
-collision_mask = 8
-
-[node name="Body Collider" parent="Player" index="0"]
-one_way_collision_margin = 0.0
-
-[node name="Feet Collider" parent="Player" index="1"]
-one_way_collision_margin = 0.0
+position = Vector2(363, 493)
 
 [node name="Timer" parent="Player/Timers" index="3"]
 wait_time = 0.05

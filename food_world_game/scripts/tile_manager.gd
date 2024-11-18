@@ -47,9 +47,6 @@ var tilemap_sky: TileMapLayer
 
 var tile_callbacks : Dictionary = {
 	
-	"ledge" : tile_callback_ledge,
-	"ledge_top": tile_callback_ledge_top,
-	"grass" : tile_callback_grass
 	
 }
 
@@ -91,87 +88,6 @@ func unload_tile(tile: Tile):
 	tile.free()
 	tile = null
 
-
-# A variable that stores a callback function to be played when a Ledge Tile is being processed
-func tile_callback_ledge(tile: Tile, character: Character):
-	
-	if character.on_platform:
-		character.z_index = tile.data.z_index + 1
-		
-		var tile_above = Tile.new(tilemap_terrain, Vector2i(tile.coords_map.x, tile.coords_map.y - 1))
-	
-	# Determine if the tile above the Character is a ledge
-		if tile_above.get_custom_data("tile_type") == "ledge":
-			return
-			
-		else:
-			
-			# Determine if the ledge that the Character is on doesn't have a ledge above of it (the Character is on this ledge if they are on a platform and their feet are above the bottom of the tile)
-			if tile.coords_local.y + 8 > character.bottom_point.y and character.bottom_point.y > tile.coords_local.y - 8:
-			
-				# Set this current ledge tile to be an alternate ledge_top tile with a physics barrier on top because this ledge is the highest so it won't have another ledge with its own barrier above it to prevent the Player from walking off
-				tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map), 1)
-				character.body_collider.disabled = true
-				character.position.y -= 1
-				
-				return
-			
-		unload_tile(tile_above)
-		
-	if character.is_jumping:
-		character.z_index = 10
-		return
-
-	# Determine if the Character is horizontally in range of the Tile
-	if tile.coords_local.x - 16 <= character.position.x and character.position.x <= tile.coords_local.x + 16:
-		
-		# Determine if the Character is above the Tile
-		if character.bottom_point.y < tile.coords_local.y:
-			
-			# Set the Character's z-index to be 2 less than than the Tile's so that the Character appears as if they are behind the Tile
-			character.z_index = tile.data.z_index - 2
-			
-		# Otherwise, the Character is below the Tile
-		else:
-			character.z_index = 1
-
-
-
-func tile_callback_ledge_top(tile: Tile, character: Character):
-	
-	if character.on_platform:
-		if character.bottom_point.y < tile.coords_local.y + 8:
-			character.body_collider.disabled = true
-	
-	if character.is_jumping:
-		
-		if tile.coords_local.y + 8 > character.jump_start_height and character.jump_start_height > tile.coords_local.y - 8:
-			tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
-			# Change this so that the character will fall back down to the collider
-			character.jump_start_height = tile.coords_local.y + 8
-	
-	#if character.is_falling:
-		#if character.bottom_point.y < tile.coords_local.y - 8:
-			#print("fart")
-			#tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
-
-
-
-
-# A variable that stores a callback function to be played when a Ledge Tile is being processed
-func tile_callback_grass(tile: Tile, character: Character):
-	
-	var terrain_tile = tile.get_same_cell(tilemap_terrain)
-		
-	if terrain_tile.get_custom_data("tile_type"):
-		
-		# Determine if the Tile at the same coordinates as this Tile on the terrain map is a ledge, then set this grass Tile to be ledge_grass
-		if terrain_tile.custom_data == "ledge":
-			
-			# Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
-			tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
-	
-	unload_tile(terrain_tile)
 
 
 

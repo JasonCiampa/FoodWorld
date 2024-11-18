@@ -679,25 +679,40 @@ func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
 
 
-func _on_player_feet_collide_start(body: Node2D) -> void:
-	
-	if PLAYER.is_falling:
+
+func _on_character_feet_collide_start(body: Node2D, character: Character) -> void:
+	# JUMP UP HILLS
+	# 1. SWITCH FEET OUT OF ALL COLLISION LAYERS AND SWITCH BODY TO ONLY COLLIDE WITH WALLS
+	# 2. DETECT WITH AREA2D FOR ANY LEDGES WITH THE LANDING PHYSICS LAYER SLIGHTLY BELOW TILE
+	# 3. IF COLLISION IS FAR ENOUGH FROM CHARACTER, RE-ENABLE THE COLLISION LAYER FOR THE FEET
+	if character.is_falling:
+		
 		# Determine if the feet are colliding with a physics body in the tilemap
 		if body is TileMapLayer:
+			print(body.name)
 			
-			var current_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.current_tile_position)
-			
+			var current_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
+
 			# Determine if the current tile the Player is standing on is a ledge tile, then set 'on_platform' to true now that the Character has landed on the ledge
 			if current_tile.get_custom_data("tile_type") == "ledge":
-				PLAYER.on_platform = true
-				PLAYER.is_falling = false
-			else:
-				PLAYER.feet_collider.disabled = true
-				PLAYER.body_collider.disabled = true
+				character.on_platform = true
+				character.fall_end()
+				
+				character.set_collision_layer_value(4, true)
+				character.set_collision_mask_value(4, true)
+				
+				character.set_collision_layer_value(5, false)
+				character.set_collision_mask_value(5, false)
+			#else:
+				#character.feet_collider.disabled = true
+				#character.body_collider.disabled = true
+			#
+			## Unload the current tile from memory now that it is done being used
+			#TileManager.unload_tile(current_tile)
 
 
 
-func _on_player_feet_collide_end(body: Node2D) -> void:
+func _on_character_feet_collide_end(body: Node2D) -> void:
 	## Determine if the feet are colliding with a physics body in the tilemap
 	#if body is TileMapLayer:
 		#

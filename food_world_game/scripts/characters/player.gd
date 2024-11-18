@@ -31,9 +31,6 @@ signal use_ability_buddy_fusion
 signal interact
 signal escape_menu
 
-signal feet_collide_start
-signal feet_collide_end
-
 signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -113,10 +110,6 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
-	
-	body_collider.disabled = false
-	feet_collider.disabled = true
-	feet_detector.monitoring = false
 
 	sprite.play("test")
 	self.name = "Player"
@@ -147,8 +140,8 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
-		#print("Position X: " + str(position.x))
-		#print("Position Y: " + str(position.y))
+		print("Position X: " + str(position.x))
+		print("Position Y: " + str(position.y))
 		#print(" ")
 		#print("Center X: " + str(center_point.x))
 		#print("Center Y: " + str(center_point.y))
@@ -172,11 +165,11 @@ func _process(delta: float) -> void:
 		#print(" ")
 		#print("Current Health: " + str(health_current))
 		#print(" ")
-		#print("Jumping: " + str(is_jumping))
-		#print("Falling: " + str(is_falling))
-		#print("On Platform: " + str(on_platform))
-		#print("Feet Disabled: " + str(feet_collider.disabled))
-		#print("Body Disabled: " + str(body_collider.disabled))
+		print("Jumping: " + str(is_jumping))
+		print("Falling: " + str(is_falling))
+		print("On Platform: " + str(on_platform))
+		print("Feet Disabled: " + str(feet_collider.disabled))
+		print("Body Disabled: " + str(body_collider.disabled))
 		print('Current Altitude: ', str(current_altitude))
 		print('Current Z-Index: ', str(z_index))
 		print("")
@@ -434,8 +427,8 @@ func update_movement_velocity(delta):
 	if is_jumping:
 		jump_process(delta)
 	
-	# Otherwise, determine if the Player is moving vertically, then adjust the y-velocity
-	else:
+	# Otherwise determine if the Player isn't falling, then see if they're moving vertically, then adjust the y-velocity
+	elif !is_falling:
 		
 		if direction_current_vertical != Direction.IDLE:
 			velocity.y = calculate_velocity(direction_current_vertical)
@@ -496,9 +489,9 @@ func use_stamina(stamina_cost: int):
 
 
 # Depletes the Player's current stamina gradually over time by the given stamina use amount.
-func use_stamina_gradually(stamina_use: int, delta: float):
+func use_stamina_gradually(stamina_cost: int, delta: float):
 	if stamina_current > 0:
-		stamina_current -= stamina_use * delta
+		stamina_current -= stamina_cost * delta
 		stamina_decreasing = true
 		stamina_increasing = false
 		stamina_regen_delay_timer.stop()
@@ -540,12 +533,3 @@ func update_stamina(delta):
 # Updates a stat chosen by the Player, increments level, resets current xp, refills hp, maybe increase max xp (harder to level up as you progress?)
 func level_up():
 	pass
-
-
-func _on_feet_detector_body_entered(body: Node2D) -> void:
-	feet_collide_start.emit(body)
-
-
-
-func _on_feet_detector_body_exited(body: Node2D) -> void:
-	feet_collide_end.emit(body)

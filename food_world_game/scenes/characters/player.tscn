@@ -11,7 +11,7 @@ size = Vector2(14, 6)
 size = Vector2(12, 2)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ecm54"]
-size = Vector2(14, 4)
+size = Vector2(12, 3.99867)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a1dot"]
 atlas = ExtResource("2_08uiw")
@@ -303,6 +303,8 @@ size = Vector2(18, 36)
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 1
+collision_layer = 16
+collision_mask = 16
 platform_floor_layers = 0
 script = ExtResource("1_2axk5")
 
@@ -314,8 +316,9 @@ shape = SubResource("RectangleShape2D_5mf36")
 [node name="Feet Collider" type="CollisionShape2D" parent="."]
 z_index = 1
 position = Vector2(-1, 15)
+rotation = 3.14292
 shape = SubResource("RectangleShape2D_8bbpt")
-disabled = true
+one_way_collision_margin = 128.0
 
 [node name="Feet Detector" type="Area2D" parent="Feet Collider"]
 z_index = 1
@@ -324,15 +327,8 @@ collision_layer = 8
 collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Feet Collider/Feet Detector"]
-position = Vector2(-1, 15)
+position = Vector2(-0.999999, 14.0007)
 shape = SubResource("RectangleShape2D_ecm54")
-
-[node name="Debug Visual" type="Polygon2D" parent="Feet Collider"]
-z_index = 1
-position = Vector2(-1, 0)
-scale = Vector2(1.30741, 0.0539438)
-color = Color(0.94902, 0, 0.513726, 0.756863)
-polygon = PackedVector2Array(-3.82434, -18.5378, 5.35408, -18.5378, 5.35408, 18.5378, -3.82434, 18.5378)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ndqxf")
@@ -357,6 +353,7 @@ color = Color(0.94902, 0, 0.513726, 0.298039)
 polygon = PackedVector2Array(-9, -18, 9, -18, 9, 18, -9, 18)
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+visible = false
 
 [node name="Timers" type="Node" parent="."]
 
@@ -373,7 +370,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="Timer" type="Timer" parent="Timers"]
-wait_time = 0.1
+wait_time = 0.4
 one_shot = true
 
 [node name="Jump Timer" type="Timer" parent="Timers"]

@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://duflla3k6fhg"]
+[gd_scene load_steps=9 format=3 uid="uid://duflla3k6fhg"]
 
+[ext_resource type="Script" path="res://scripts/blueprints/character.gd" id="1_nr5r5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="1_r8qkt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ewc2n"]
@@ -30,6 +31,7 @@ animations = [{
 size = Vector2(14, 19)
 
 [node name="Character" type="CharacterBody2D"]
+script = ExtResource("1_nr5r5")
 
 [node name="Body Collider" type="CollisionShape2D" parent="."]
 z_index = 1
@@ -65,3 +67,5 @@ sprite_frames = SubResource("SpriteFrames_ere4c")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_7yw10")
+
+[connection signal="body_entered" from="Feet Collider/Feet Detector" to="." method="_on_feet_detector_body_entered"]
