@@ -46,8 +46,9 @@ var tilemap_sky: TileMapLayer
 
 
 var tile_callbacks : Dictionary = {
-	
-	
+	#"ledge" : tile_callback_ledge,
+	#"ledge_grass" : tile_callback_ledge_grass,
+	#"grass" : tile_callback_grass,
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,8 +88,6 @@ func _physics_process(delta: float) -> void:
 func unload_tile(tile: Tile):
 	tile.free()
 	tile = null
-
-
 
 
 # Process the Tile's designated callback function based on its type
@@ -153,6 +152,65 @@ func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out
 		execute_tile_callback(tiles_to_process[tile], character)
 		tiles_to_process[tile].free()
 		tiles_to_process[tile] = null		
+
+
+
+
+#
+# A callback function to be played when a Ledge Tile is being processed
+func tile_callback_ledge(tile: Tile, character: Character):
+	
+	if character.on_platform:
+		character.z_index = tile.data.z_index + 1
+		
+	if character.is_jumping:
+		character.z_index = 10
+		return
+	
+	# Determine if the Character is horizontally in range of the Tile
+	if tile.coords_local.x - 16 <= character.position.x and character.position.x <= tile.coords_local.x + 16:
+		
+		# Determine if the Character is above the Tile
+		if character.bottom_point.y < tile.coords_local.y:
+			
+			# Set the Character's z-index to be 2 less than than the Tile's so that the Character appears as if they are behind the Tile
+			character.z_index = tile.data.z_index - 2
+			
+		# Otherwise, the Character is below the Tile
+		else:
+			character.z_index = 1
+#
+#
+#
+## A callback function to be played when a Ledge-Grass Tile is being processed
+#func tile_callback_ledge_grass(tile: Tile, character: Character):
+	#
+	## Determine if the Character's bottom-point.y local coords are in this Tile's map coords, then land the Character on this 
+	#if character.is_falling and tile.tilemap.local_to_map(character.bottom_point) == tile.coords_map:
+		#character.on_platform = true
+		#character.fall_end()
+#
+#
+#
+# A callback function to be played when a Grass Tile is being processed
+func tile_callback_grass(tile: Tile, character: Character):
+	
+	# Determine if the Character's bottom-point.y local coords are in this Tile's map coords, then land the Character on this 
+	if character.is_falling and tile.tilemap.local_to_map(character.bottom_point) == tile.coords_map:
+		character.on_platform = true
+		character.fall_end()
+	
+	var terrain_tile = tile.get_same_cell(tilemap_terrain)
+	
+	# Check if the the Tile that is in the samdwe cell coordinates as this Tile but in the terrain tile map is a 'ledge' tile
+	if terrain_tile.get_custom_data("tile_type") == "ledge":
+		
+		# Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
+		tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
+		
+	
+	unload_tile(terrain_tile)
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

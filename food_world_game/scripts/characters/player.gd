@@ -8,7 +8,6 @@ extends Character
 @onready var dodge_timer: Timer = $"Timers/Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
-@onready var jump_timer: Timer = $"Timers/Jump Timer"
 @onready var timer: Timer = $Timers/Timer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -110,6 +109,8 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	jump_timer = $"Timers/Jump Timer"
+	shadow = $"Shadow"
 
 	sprite.play("test")
 	self.name = "Player"
@@ -119,7 +120,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
+
 	toggle_food_buddy_field_state_interface()
 	
 	if not paused:
@@ -140,8 +141,8 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
-		print("Position X: " + str(position.x))
-		print("Position Y: " + str(position.y))
+		#print("Position X: " + str(position.x))
+		#print("Position Y: " + str(position.y))
 		#print(" ")
 		#print("Center X: " + str(center_point.x))
 		#print("Center Y: " + str(center_point.y))
@@ -165,14 +166,16 @@ func _process(delta: float) -> void:
 		#print(" ")
 		#print("Current Health: " + str(health_current))
 		#print(" ")
-		print("Jumping: " + str(is_jumping))
-		print("Falling: " + str(is_falling))
-		print("On Platform: " + str(on_platform))
-		print("Feet Disabled: " + str(feet_collider.disabled))
-		print("Body Disabled: " + str(body_collider.disabled))
-		print('Current Altitude: ', str(current_altitude))
-		print('Current Z-Index: ', str(z_index))
-		print("")
+		#print("Jumping: " + str(is_jumping))
+		#print("Jump Timer: " + str(jump_timer.time_left))
+		#print("Jump Landing Height: " + str(jump_landing_height))
+		#print("Falling: " + str(is_falling))
+		#print("On Platform: " + str(on_platform))
+		#print("Feet Disabled: " + str(feet_collider.disabled))
+		#print("Body Disabled: " + str(body_collider.disabled))
+		#print('Current Altitude: ', str(current_altitude))
+		#print('Current Z-Index: ', str(z_index))
+		#print("")
 
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:
@@ -426,6 +429,14 @@ func update_movement_velocity(delta):
 	# Determine if the Player is jumping, then process their jump and ignore movement input for the y-axis
 	if is_jumping:
 		jump_process(delta)
+		
+		if direction_current_vertical != Direction.IDLE:
+			var position_shift = calculate_velocity(direction_current_vertical) * delta
+			if direction_current_vertical == Direction.UP:
+				position.y += position_shift
+			else:
+				position.y -= position_shift
+			jump_landing_height += position_shift
 	
 	# Otherwise determine if the Player isn't falling, then see if they're moving vertically, then adjust the y-velocity
 	elif !is_falling:

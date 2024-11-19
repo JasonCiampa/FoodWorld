@@ -68,4 +68,14 @@ sprite_frames = SubResource("SpriteFrames_ere4c")
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_7yw10")
 
+[node name="Jump Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="Shadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(-1, -6)
+color = Color(0, 0, 0, 0.380392)
+polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
+
 [connection signal="body_entered" from="Feet Collider/Feet Detector" to="." method="_on_feet_detector_body_entered"]
