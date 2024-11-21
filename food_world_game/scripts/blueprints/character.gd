@@ -37,6 +37,8 @@ signal feet_collide_start
 signal jump_starting
 signal jump_ending
 
+signal fall_starting
+signal fall_ending
 
 signal die
 

@@ -760,13 +760,14 @@ func _on_character_jump_ending(character: Character) -> void:
 		character.z_index -= 1
 	
 	# Otherwise both Tiles must be Terrain Tiles, so adjust the Character's z-index forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
-	elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall":
+	elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall" and character.jump_end_tile.get_custom_data("tile_type") != "ledge_wall":
 		
-		print("End Tile: ", character.jump_end_tile.get_custom_data("tile_type"))
-		print("Start TIle: ", character.jump_start_tile.get_custom_data("tile_type"))
+		#print("End Tile: ", character.jump_end_tile.get_custom_data("tile_type"))
+		#print("Start TIle: ", character.jump_start_tile.get_custom_data("tile_type"))
 		
 		character.z_index -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
-	
+	else:
+		character.z_index = 0
 	
 	
 	# Unload the Tile that the jump was initiated from
