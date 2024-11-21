@@ -39,7 +39,6 @@ var tilemap: TileMapLayer
 var coords_local: Vector2i
 var coords_map: Vector2i
 var data: TileData
-var custom_data: Variant
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,10 +111,8 @@ func get_custom_data(data_name: String) -> Variant:
 	if !data:
 		return null
 	
-	# Get this Tile's custom data by searching for a custom field value
-	custom_data = data.get_custom_data(data_name)
-	
-	return custom_data
+	# Get and return this Tile's custom data by searching for a custom field value
+	return data.get_custom_data(data_name)
 
 
 # Attempts to fetch, store, and return the Tile in the cell with map coords equivalent this Tile's coords, but in a different Tilemap

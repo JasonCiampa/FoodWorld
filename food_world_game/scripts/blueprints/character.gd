@@ -34,6 +34,10 @@ signal move_towards_target
 
 signal feet_collide_start
 
+signal jump_starting
+signal jump_ending
+
+
 signal die
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -73,7 +77,8 @@ var is_jumping: bool = false
 var jump_peak_height: float
 var jump_landing_height: float
 var jump_start_height: float
-
+var jump_start_tile: Tile
+var jump_end_tile: Tile
 
 var is_falling: bool = false
 
@@ -89,6 +94,8 @@ var speed_current: int = speed_normal
 var current_tile_position: Vector2i
 var previous_tile_position: Vector2i
 var on_platform: bool
+
+var collision_value_current: int
 
 @onready var jump_timer: Timer = $"Jump Timer"
 @onready var shadow: Polygon2D = $Shadow
@@ -128,6 +135,7 @@ func _process(delta: float) -> void:
 	#print('Current Altitude: ', str(current_altitude))
 	#print('Current Z-Index: ', str(z_index))
 	#print("")
+	
 	
 	# Determine if the Character's processing is not paused
 	if not paused:
@@ -190,6 +198,21 @@ func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
 
 
 
+# Enables the collision layer and mask of the Character for the given collision_value
+func set_collision_value(new_collision_value: int):
+	
+	# Disable collisions on the current layer and mask
+	set_collision_layer_value(collision_value_current, false)
+	set_collision_mask_value(collision_value_current, false)
+	
+	# Update the current collision value to be the given new collision value
+	collision_value_current = new_collision_value
+	
+	# Otherwise, enable the given layer and mask value
+	set_collision_layer_value(new_collision_value, true)
+	set_collision_mask_value(new_collision_value, true)
+
+
 # Start the Character's falling
 func fall_start():
 	pass
@@ -208,36 +231,50 @@ func fall_end():
 
 
 
-# Starts the Player's jump
+# Starts the Character's jump
 func jump_start():
-	set_collision_layer_value(4, false)
-	set_collision_mask_value(4, false)
-	set_collision_layer_value(5, true)
-	set_collision_mask_value(5, true)
 	
-	feet_detector.set_collision_layer_value(4, true)
-	feet_detector.set_collision_mask_value(4, true)
+	# Disable all collisions for this Character
+	set_collision_value(6)
 	
+	# Enable jumping as the Character prepares to ascend and disable falling until they begin to descend
 	is_jumping = true
 	is_falling = false
+	
+	# Store the height that the jump is starting from as the Character's bottom point and also set that as the initial landing height
 	jump_start_height = bottom_point.y
 	jump_landing_height = jump_start_height
+	
+	# Store an initial starter value for the peak height of the jump
 	jump_peak_height = jump_landing_height + 1
 	
-	z_index = z_index - 1
+	# Apply upward velocity
 	velocity.y -= jump_velocity
+	
+	# Set the Character's shadow's initial position to be 
 	shadow.position.y = jump_landing_height - global_position.y - 10
+	
+	# Emit a signal to the game indicating that this Character is starting their jump
+	jump_starting.emit(self)
+
 
 # Process the ascending portion of the jump (the portion of the jump in which the Player hasn't reached a peak height of the jump)
 func jump_ascend(delta: float):
+	
+	# Determine if the Character's feet are higher than the currently stored peak height of the jump, then update the peak height
 	if bottom_point.y < jump_peak_height:
 		jump_peak_height = bottom_point.y
+	
+	# Otherwise, the Character has reached the peak jump so they must be falling
 	else:
 		is_falling = true
 
 
+
 # Process the descending portion of the jump (the portion of the jump that occurs immediately after the Player reaches the peak height of the jump and begin to start falling)
 func jump_descend(delta: float):
+	
+	# Determine if the Character's feet are lower than the height they were supposed to land at, then adjust them so they're at the proper height and end the jump
 	if bottom_point.y >= jump_landing_height:
 		position.y -= bottom_point.y - jump_landing_height
 		jump_end()
@@ -245,15 +282,19 @@ func jump_descend(delta: float):
 
 # Processes the Player's jump
 func jump_process(delta: float):
-	velocity.y += gravity * delta
-	#scale.x = 1 + ((jump_landing_height - bottom_point.y) * 0.01)
-	#scale.y = 1 + ((jump_landing_height - bottom_point.y) * 0.01)
 	
+	# Apply gravity to the Character
+	velocity.y += gravity * delta
+	
+	# Update the Shadow's position
 	shadow.position.y = jump_landing_height - global_position.y - 22
 	shadow.z_index = 800
 	
+	# Determine if the Character is not falling, then process the jump's ascension
 	if !is_falling:
 		jump_ascend(delta)
+	
+	# Otherwise, process the jump's descension
 	else:
 		jump_descend(delta)
 
@@ -261,23 +302,17 @@ func jump_process(delta: float):
 
 # Ends the Player's jump
 func jump_end():
-	set_collision_layer_value(4, true)
-	set_collision_mask_value(4, true)
-	set_collision_layer_value(5, false)
-	set_collision_mask_value(5, false)
 	
-	feet_detector.set_collision_layer_value(4, true)
-	feet_detector.set_collision_mask_value(4, true)
-	feet_detector.set_collision_layer_value(5, false)
-	feet_detector.set_collision_mask_value(5, false)
+	# Set the Character to collide with layer 1 (on top of a tile)
+	set_collision_value(3)
 	
-	#if scale.x != 1 or scale.y != 1:
-		#scale.x = 1
-		#scale.y = 1
 	
 	is_jumping = false
 	is_falling = false
 	velocity.y = 0
+	
+	# Emit a signal to the game indicating that this Character is ending their jump
+	jump_ending.emit(self)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

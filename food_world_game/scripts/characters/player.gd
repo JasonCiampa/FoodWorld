@@ -120,7 +120,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-
+	
 	toggle_food_buddy_field_state_interface()
 	
 	if not paused:
@@ -141,6 +141,7 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
+		#print(collision_value_current)
 		#print("Position X: " + str(position.x))
 		#print("Position Y: " + str(position.y))
 		#print(" ")

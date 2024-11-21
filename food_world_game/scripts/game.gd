@@ -90,7 +90,7 @@ func _ready() -> void:
 	TileManager = TileScript.new()
 	
 	TileManager.tilemap_ground = $"World Map/Town Center/Ground"
-	TileManager.tilemap_terrain = $"World Map/Town Center/Terrains"
+	TileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -118,8 +118,8 @@ func _process(delta: float) -> void:
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 2)
-	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 1)
+	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 1)
 	
 	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
 	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
@@ -127,6 +127,9 @@ func _process(delta: float) -> void:
 	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, SALLY, 2)
 	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, SALLY, 2)
 	
+	#var temp_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.current_tile_position)
+	#print(temp_tile.get_custom_data("tile_type"))
+	#TileManager.unload_tile(temp_tile)
 	
 	if not PLAYER.is_interacting:
 		# Process any Interaction Hitboxes that the Player might be in range with currently
@@ -681,37 +684,24 @@ func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 
 
 func _on_character_feet_collide_start(body: Node2D, character: Character) -> void:
-	# JUMP UP HILLS
-	# 1. SWITCH FEET OUT OF ALL COLLISION LAYERS AND SWITCH BODY TO ONLY COLLIDE WITH WALLS
-	# 2. DETECT WITH AREA2D FOR ANY LEDGES WITH THE LANDING PHYSICS LAYER SLIGHTLY BELOW TILE
-	# 3. IF COLLISION IS FAR ENOUGH FROM CHARACTER, RE-ENABLE THE COLLISION LAYER FOR THE FEET
 	
-	pass
-	
-	#if character.is_falling:
+	pass	
+	## Determine if the feet are colliding with a physics body in the tilemap
+	#if body is TileMapLayer:
 		#
-		## Determine if the feet are colliding with a physics body in the tilemap
-		#if body is TileMapLayer:
-			#print(body.name)
+		#var current_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
+		#
+		## Continue decreasing (rising) the Character's position until their feet are out of the collider they're overlapping with
+		#while character.bottom_point.y > current_tile.coords_local.y + 8:
+			#character.bottom_point.y -= 2
+			#character.position.y -= 2
+			#print(character.bottom_point.y)
 			#
-			#var current_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
+			## LEFT OFF HERE
 #
-			## Determine if the current tile the Player is standing on is a ledge tile, then set 'on_platform' to true now that the Character has landed on the ledge
-			#if current_tile.get_custom_data("tile_type") == "ledge":
-				#character.on_platform = true
-				#character.fall_end()
-				#
-				#character.set_collision_layer_value(4, true)
-				#character.set_collision_mask_value(4, true)
-				#
-				#character.set_collision_layer_value(5, false)
-				#character.set_collision_mask_value(5, false)
-			#else:
-				#character.feet_collider.disabled = true
-				#character.body_collider.disabled = true
-			#
-			## Unload the current tile from memory now that it is done being used
-			#TileManager.unload_tile(current_tile)
+		#
+		## Unload the current tile from memory now that it is done being used
+		#TileManager.unload_tile(current_tile)
 
 
 
@@ -740,3 +730,49 @@ func _on_character_feet_collide_end(body: Node2D) -> void:
 					#PLAYER.body_collider.disabled = true
 
 	pass
+
+
+# A callback function to execute whenever a Character begins a jump
+func _on_character_jump_starting(character: Character) -> void:
+	
+	# Determine if the Character is starting their jump from the ground, then create a Tile referencing the Ground Tilemap
+	if character.z_index == 0:
+		character.jump_start_tile = Tile.new(TileManager.tilemap_ground, character.current_tile_position)
+	
+	# Otherwise, the Character is starting their jump from a platform, so create a Tile referencing the Terrain Tilemap
+	else:
+		character.jump_start_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
+		
+
+
+# A callback function to execute whenever a Character finishes a jump
+func _on_character_jump_ending(character: Character) -> void:
+	
+	# Set the Tile that the Character landed on to be from the Terrain Tilemap at the Character's feet position
+	character.jump_end_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
+	
+	# Determine if the Terrain Tile at the Character's current coordinates doesn't exist, then set the Character's z-index to 0 because that means they're back on the ground
+	if !character.jump_end_tile.get_custom_data("tile_type"):
+		character.z_index = 0
+	
+	# Otherwise the Tile that the Character landed on must be a Terrain Tile, so determine if the Tile the Character jumped from was grass (Ground Tilemap), then decrement the Character's z-index as they ascend
+	elif character.jump_start_tile.get_custom_data("tile_type") == "grass":
+		character.z_index -= 1
+	
+	# Otherwise both Tiles must be Terrain Tiles, so adjust the Character's z-index forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
+	elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall":
+		
+		print("End Tile: ", character.jump_end_tile.get_custom_data("tile_type"))
+		print("Start TIle: ", character.jump_start_tile.get_custom_data("tile_type"))
+		
+		character.z_index -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
+	
+	
+	
+	# Unload the Tile that the jump was initiated from
+	TileManager.unload_tile(character.jump_start_tile)
+	character.jump_start_tile = null
+	
+	# Unload the Tile that the jump ended on
+	TileManager.unload_tile(character.jump_end_tile)
+	character.jump_end_tile = null
