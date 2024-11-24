@@ -84,7 +84,7 @@ var jump_end_tile: Tile
 
 var is_falling: bool = false
 
-var current_altitude: float = 0
+var current_altitude: int = 0
 
 const jump_velocity: int = 200
 
@@ -97,7 +97,7 @@ var current_tile_position: Vector2i
 var previous_tile_position: Vector2i
 var on_platform: bool
 
-var collision_value_current: int
+var collision_value_current: int = 1
 
 @onready var jump_timer: Timer = $"Jump Timer"
 @onready var shadow: Polygon2D = $Shadow
@@ -120,7 +120,6 @@ func _ready() -> void:
 	
 	feet_collider = $"Feet Collider"
 	feet_detector = $"Feet Collider/Feet Detector"
-
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -202,6 +201,10 @@ func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
 
 # Enables the collision layer and mask of the Character for the given collision_value
 func set_collision_value(new_collision_value: int):
+	
+	# Determine if the given collision value is NOT within the range of a valid value, then return
+	if new_collision_value < 1 or new_collision_value > 32:
+		return
 	
 	# Disable collisions on the current layer and mask
 	set_collision_layer_value(collision_value_current, false)

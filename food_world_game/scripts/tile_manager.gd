@@ -28,7 +28,6 @@ class_name TileManager
 
 enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -46,9 +45,9 @@ var tilemap_sky: TileMapLayer
 
 
 var tile_callbacks : Dictionary = {
-	"ledge" : tile_callback_ledge,
+	#"ledge" : tile_callback_ledge,
 	#"ledge_grass" : tile_callback_ledge_grass,
-	"grass" : tile_callback_grass,
+	#"grass" : tile_callback_grass,
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -92,12 +91,12 @@ func unload_tile(tile: Tile):
 
 # Process the Tile's designated callback function based on its type
 func execute_tile_callback(tile: Tile, character: Character):
-	
-	# Determine if the Tile's custom data (tile type) has a designated callback function to execute, then execute it
-	if tile.get_custom_data("tile_type") in tile_callbacks.keys():
-		
-		# Call the callback function for this tile and pass in the Tilemap, the coordinates of the Tile that the Character is standing on in Local Coordinates, and the Character
-		tile_callbacks[tile.get_custom_data("tile_type")].call(tile, character)
+	pass	
+	## Determine if the Tile's custom data (tile type) has a designated callback function to execute, then execute it
+	#if tile.get_custom_data("tile_type") != null and (tile.get_custom_data("tile_type") == "ledge_front" or tile.get_custom_data("tile_type") == "ledge_platform"):
+	#
+		## Call the callback function for this Tile and return the z-index of the Character (z-index or null be returned by each callback unless otherwise specified)
+		#return tile_callbacks["ledge"].call(tile, character)
 
 
 
@@ -111,8 +110,8 @@ func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out
 	# Create a list of Tile coordinates to process starting with the tile that the Character is currently standing on
 	var tiles_to_process: Array[Tile] = [Tile.new(tilemap, character.current_tile_position)]
 
-	var x = character.current_tile_position.x
-	var y = character.current_tile_position.y
+	var x: int = character.current_tile_position.x
+	var y: int = character.current_tile_position.y
 	
 	 #Iterate tiles_out number of times so that the coordinates for all of the Tiles are added to be processed 
 	#(tiles_out represents how many tiles away from the Character on each side should be processed)
@@ -144,9 +143,13 @@ func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out
 			#tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y + count)))
 			#tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y + count)))
 	
+	
 	# Process each of the Tiles using the coordinates from the list
 	for tile in range(tiles_to_process.size() - 1, -1, -1):
+		
 		execute_tile_callback(tiles_to_process[tile], character)
+		
+		# Unload the tile
 		tiles_to_process[tile].free()
 		tiles_to_process[tile] = null
 
@@ -235,37 +238,40 @@ func get_nearest_ledge_front(tile: Tile):
 
 
 
-# A callback function to be played when a Ledge Tile is being processed
-func tile_callback_ledge(tile: Tile, character: Character):
-	pass
-
-
-	## Determine if the Character is horizontally in range of the Tile
-	#if tile.coords_local.x - 16 <= character.position.x and character.position.x <= tile.coords_local.x + 16:
+## A callback function to be played when a Ledge Tile is being processed
+#func tile_callback_ledge(tile: Tile, character: Character):
+	#
+	## Determine if the Character is behind the bottom point of the ledge Tile
+	#if character.bottom_point.y < tile.coords_local.y + 8:
 		#
-		## Determine if the Character is behind the Tile
-		#if character.bottom_point.y < tile.coords_local.y + 8:
-			#
-			#if !character.is_jumping:
-				#character.set_collision_value(1)
-				#character.body_collider.disabled = false
-				#character.feet_collider.disabled = true
-			#
-			## Set the Character's z-index to be 2 less than than the Tile's so that the Character appears as if they are behind the Tile
-			#character.z_index = tile.data.z_index
-			#
-		## Otherwise, the Character is in front of the Tile
-		#else:
-			#
-			#if !character.is_jumping:
-				#character.set_collision_value(1)
-				#character.body_collider.disabled = true
-				#character.feet_collider.disabled = false
-			#
-			#character.z_index = 1
+		#if character.z_index + 2 not in alternative_ledge_ids.keys():
+			#print(character.z_index + 2)
+			#return
+		#
+		## Set this ledge Tile to be the appropriate alternative ledge tile so that it can be positioned in front of the Character
+		#tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map), alternative_ledge_ids[character.z_index + 2])
+	#
+#
+	#
+	## Otherwise, the Character must be in front of the ledge Tile, so set the Character to appear 2 z-indexes in front of the Tile
+	#else:
+		#character.z_index = tile.data.z_index + 2
 #
 #
 #
+## A callback function to be played when an alternative Ledge Tile is being processed
+#func tile_callback_ledge_alternative(tile: Tile, character: Character):
+	#
+	## Determine if the Character is in front of the alternative ledge Tile, so set the Character to appear 2 z-indexes in front of the Tile
+	#if character.bottom_point.y > tile.coords_local.y + 8:
+		#
+		## Set this alternative ledge Tile to be a normal ledge tile again so that it can be positioned in front of the Character
+		#tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
+		#
+		#var alternative_ledge = Tile.new(tilemap_terrain, tile.coords_map)
+
+
+
 ## A callback function to be played when a Ledge-Grass Tile is being processed
 #func tile_callback_ledge_grass(tile: Tile, character: Character):
 	#
@@ -275,19 +281,20 @@ func tile_callback_ledge(tile: Tile, character: Character):
 		#character.fall_end()
 #
 #
-##
+
+
 # A callback function to be played when a Grass Tile is being processed
-func tile_callback_grass(tile: Tile, character: Character):
-	
-	var terrain_tile = tile.get_same_cell(tilemap_terrain)
-	
-	# Check if the the Tile that is in the same cell coordinates as this Tile but in the terrain tile map is a 'ledge' tile
-	if terrain_tile.get_custom_data("tile_type") == "ledge":
-		
-		# Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
-		tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
-	
-	unload_tile(terrain_tile)
+#func tile_callback_grass(tile: Tile, character: Character):
+	#
+	#var terrain_tile = tile.get_same_cell(tilemap_terrain)
+	#
+	## Check if the the Tile that is in the same cell coordinates as this Tile but in the terrain tile map is a 'ledge' tile
+	#if terrain_tile.get_custom_data("tile_type") == "ledge":
+		#
+		## Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
+		#tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
+	#
+	#unload_tile(terrain_tile)
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

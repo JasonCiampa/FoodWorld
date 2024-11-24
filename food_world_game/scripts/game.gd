@@ -283,6 +283,11 @@ func process_player_nearby_interactables():
 	var overlapping_hitboxes = PLAYER.hitbox_damage.get_overlapping_areas()
 	
 	
+	# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
+	if closest_interactable_to_player == null:
+		closest_interactable_to_player = interactables[0]
+	
+	
 	# Iterate over every Asset on-screen that can be Interacted with
 	for interactable in interactables:
 		
@@ -292,13 +297,8 @@ func process_player_nearby_interactables():
 		else:
 			interactable.in_range = false
 		
-		# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
-		if closest_interactable_to_player == null:
-			closest_interactable_to_player = interactable
-			closest_interactable_to_player.label_e_to_interact.show()
-		
 		# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
-		elif interactable.center_point.distance_to(PLAYER.center_point) < closest_interactable_to_player.center_point.distance_to(PLAYER.center_point):
+		if interactable.center_point.distance_to(PLAYER.center_point) < closest_interactable_to_player.center_point.distance_to(PLAYER.center_point):
 			closest_interactable_to_player.label_e_to_interact.hide()
 			closest_interactable_to_player = interactable
 	
@@ -736,7 +736,7 @@ func _on_character_feet_collide_end(body: Node2D) -> void:
 func _on_character_jump_starting(character: Character) -> void:
 	
 	# Determine if the Character is starting their jump from the ground, then create a Tile referencing the Ground Tilemap
-	if character.z_index == 0:
+	if character.current_altitude == 0:
 		character.jump_start_tile = Tile.new(TileManager.tilemap_ground, character.current_tile_position)
 	
 	# Otherwise, the Character is starting their jump from a platform, so create a Tile referencing the Terrain Tilemap
@@ -751,23 +751,20 @@ func _on_character_jump_ending(character: Character) -> void:
 	# Set the Tile that the Character landed on to be from the Terrain Tilemap at the Character's feet position
 	character.jump_end_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
 	
-	# Determine if the Terrain Tile at the Character's current coordinates doesn't exist, then set the Character's z-index to 0 because that means they're back on the ground
+	# Determine if the Terrain Tile at the Character's current coordinates doesn't exist, then set the Character's altitude to 0 because that means they're back on the ground
 	if !character.jump_end_tile.get_custom_data("tile_type"):
-		character.z_index = 0
+		character.current_altitude = 0
 	
-	# Otherwise the Tile that the Character landed on must be a Terrain Tile, so determine if the Tile the Character jumped from was grass (Ground Tilemap), then decrement the Character's z-index as they ascend
+	# Otherwise the Tile that the Character landed on must be a Terrain Tile, so determine if the Tile the Character jumped from was grass (Ground Tilemap), then decrement the Character's altitude as they ascend
 	elif character.jump_start_tile.get_custom_data("tile_type") == "grass":
-		character.z_index -= 1
+		character.current_altitude -= TileManager.get_altitude(character.jump_end_tile)
 	
-	# Otherwise both Tiles must be Terrain Tiles, so adjust the Character's z-index forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
+	# Otherwise both Tiles must be Terrain Tiles, so adjust the Character's altitude forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
 	elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall" and character.jump_end_tile.get_custom_data("tile_type") != "ledge_wall":
 		
-		#print("End Tile: ", character.jump_end_tile.get_custom_data("tile_type"))
-		#print("Start TIle: ", character.jump_start_tile.get_custom_data("tile_type"))
-		
-		character.z_index -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
+		character.current_altitude -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
 	else:
-		character.z_index = 0
+		character.current_altitude = 0
 	
 	
 	# Unload the Tile that the jump was initiated from

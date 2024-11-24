@@ -31,6 +31,7 @@ animations = [{
 size = Vector2(14, 19)
 
 [node name="Character" type="CharacterBody2D"]
+y_sort_enabled = true
 script = ExtResource("1_nr5r5")
 
 [node name="Body Collider" type="CollisionShape2D" parent="."]

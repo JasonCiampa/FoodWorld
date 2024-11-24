@@ -174,7 +174,7 @@ func _process(delta: float) -> void:
 		#print("On Platform: " + str(on_platform))
 		#print("Feet Disabled: " + str(feet_collider.disabled))
 		#print("Body Disabled: " + str(body_collider.disabled))
-		#print('Current Altitude: ', str(current_altitude))
+		print('Current Altitude: ', str(current_altitude))
 		print('Current Z-Index: ', str(z_index))
 		#print("")
 
