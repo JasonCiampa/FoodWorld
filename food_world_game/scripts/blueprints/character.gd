@@ -61,7 +61,6 @@ var in_range: bool = false
 
 # Position and Size #
 var center_point: Vector2
-var bottom_point: Vector2
 var width: float
 var height: float
 
@@ -137,6 +136,11 @@ func _process(delta: float) -> void:
 	#print('Current Z-Index: ', str(z_index))
 	#print("")
 	
+	if current_altitude < 0:
+		on_platform = true
+	else:
+		on_platform = false
+	
 	
 	# Determine if the Character's processing is not paused
 	if not paused:
@@ -175,12 +179,9 @@ func update_location_points():
 	width = frame_texture.get_width()
 	height = frame_texture.get_height()
 	
-	# Store the current coordinates for the bottom of this Character
-	bottom_point.x = position.x
-	bottom_point.y = position.y + height / 2
-	
+	# Store the current coordinates for the center of this Character
 	center_point.x = position.x
-	center_point.y = position.y
+	center_point.y = position.y - height / 2
 
 
 
@@ -202,8 +203,8 @@ func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
 # Enables the collision layer and mask of the Character for the given collision_value
 func set_collision_value(new_collision_value: int):
 	
-	# Determine if the given collision value is NOT within the range of a valid value, then return
-	if new_collision_value < 1 or new_collision_value > 32:
+	# Determine if the given collision value is NOT within the range of a valid value or is the same as the current value, then return
+	if new_collision_value < 1 or new_collision_value > 32 or new_collision_value == collision_value_current:
 		return
 	
 	# Disable collisions on the current layer and mask
@@ -247,7 +248,7 @@ func jump_start():
 	is_falling = false
 	
 	# Store the height that the jump is starting from as the Character's bottom point and also set that as the initial landing height
-	jump_start_height = bottom_point.y
+	jump_start_height = position.y
 	jump_landing_height = jump_start_height
 	
 	# Store an initial starter value for the peak height of the jump
@@ -257,18 +258,20 @@ func jump_start():
 	velocity.y -= jump_velocity
 	
 	# Set the Character's shadow's initial position to be 
-	shadow.position.y = jump_landing_height - global_position.y - 10
+	shadow.position.y = jump_landing_height
 	
 	# Emit a signal to the game indicating that this Character is starting their jump
 	jump_starting.emit(self)
+	
+	z_index = 1
 
 
 # Process the ascending portion of the jump (the portion of the jump in which the Player hasn't reached a peak height of the jump)
 func jump_ascend(delta: float):
 	
 	# Determine if the Character's feet are higher than the currently stored peak height of the jump, then update the peak height
-	if bottom_point.y < jump_peak_height:
-		jump_peak_height = bottom_point.y
+	if position.y < jump_peak_height:
+		jump_peak_height = position.y
 	
 	# Otherwise, the Character has reached the peak jump so they must be falling
 	else:
@@ -280,8 +283,8 @@ func jump_ascend(delta: float):
 func jump_descend(delta: float):
 	
 	# Determine if the Character's feet are lower than the height they were supposed to land at, then adjust them so they're at the proper height and end the jump
-	if bottom_point.y >= jump_landing_height:
-		position.y -= bottom_point.y - jump_landing_height
+	if position.y >= jump_landing_height:
+		position.y -= position.y - jump_landing_height
 		jump_end()
 
 
@@ -291,7 +294,7 @@ func jump_process(delta: float):
 	# Apply gravity to the Character
 	velocity.y += gravity * delta
 	
-	# Update the Shadow's position
+	# Update the Shadow's position to be the difference between the jump's landing height and the Character's global y-coordinate, subtracted by the offset of the shadow
 	shadow.position.y = jump_landing_height - global_position.y - 22
 	shadow.z_index = 800
 	
@@ -308,16 +311,15 @@ func jump_process(delta: float):
 # Ends the Player's jump
 func jump_end():
 	
-	# Set the Character to collide with layer 1 (on top of a tile)
-	set_collision_value(3)
-	
-	
+	shadow.position.y = jump_landing_height - global_position.y - 22
 	is_jumping = false
 	is_falling = false
 	velocity.y = 0
 	
 	# Emit a signal to the game indicating that this Character is ending their jump
 	jump_ending.emit(self)
+	
+	z_index = 0
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

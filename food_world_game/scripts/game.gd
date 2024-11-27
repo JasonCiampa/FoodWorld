@@ -126,8 +126,8 @@ func _process(delta: float) -> void:
 	#
 	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, SALLY, 2)
 	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, SALLY, 2)
-	
-	#var temp_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.current_tile_position)
+	#
+	#var temp_tile = Tile.new(TileManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.get_custom_data("tile_type"))
 	#TileManager.unload_tile(temp_tile)
 	
@@ -692,10 +692,10 @@ func _on_character_feet_collide_start(body: Node2D, character: Character) -> voi
 		#var current_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
 		#
 		## Continue decreasing (rising) the Character's position until their feet are out of the collider they're overlapping with
-		#while character.bottom_point.y > current_tile.coords_local.y + 8:
-			#character.bottom_point.y -= 2
+		#while character.position.y > current_tile.coords_local.y + 8:
 			#character.position.y -= 2
-			#print(character.bottom_point.y)
+			#character.position.y -= 2
+			#print(character.position.y)
 			#
 			## LEFT OFF HERE
 #

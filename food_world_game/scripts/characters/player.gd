@@ -120,6 +120,11 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+		
+	if current_altitude < 0:
+		on_platform = true
+	else:
+		on_platform = false
 	
 	toggle_food_buddy_field_state_interface()
 	
@@ -142,14 +147,11 @@ func _process(delta: float) -> void:
 	if timer.time_left == 0:
 		timer.start()
 		#print(collision_value_current)
-		#print("Position X: " + str(position.x))
-		#print("Position Y: " + str(position.y))
-		#print(" ")
 		#print("Center X: " + str(center_point.x))
 		#print("Center Y: " + str(center_point.y))
 		#print(" ")
-		#print("Bottom X: " + str(bottom_point.x))
-		#print("Bottom Y: " + str(bottom_point.y))
+		#print("Bottom X: " + str(position.x))
+		#print("Bottom Y: " + str(position.y))
 		#print(" ")
 		#print("Tile X: " + str(current_tile_position.x))
 		#print("Tile Y: " + str(current_tile_position.y))
@@ -174,8 +176,8 @@ func _process(delta: float) -> void:
 		#print("On Platform: " + str(on_platform))
 		#print("Feet Disabled: " + str(feet_collider.disabled))
 		#print("Body Disabled: " + str(body_collider.disabled))
-		print('Current Altitude: ', str(current_altitude))
-		print('Current Z-Index: ', str(z_index))
+		#print('Current Altitude: ', str(current_altitude))
+		#print('Current Z-Index: ', str(z_index))
 		#print("")
 
 # Called every frame. Updates the Player's physics
