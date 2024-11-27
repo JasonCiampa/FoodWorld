@@ -8,7 +8,7 @@
 size = Vector2(13, 4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8bbpt"]
-size = Vector2(12.0013, 1.99203)
+size = Vector2(13.0016, 1.99203)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ecm54"]
 size = Vector2(12, 2.00003)
@@ -317,13 +317,13 @@ shape = SubResource("RectangleShape2D_5mf36")
 one_way_collision_margin = 0.0
 
 [node name="Feet Collider" type="CollisionShape2D" parent="."]
-position = Vector2(-1.001, -1)
+position = Vector2(-0.500825, -1)
 shape = SubResource("RectangleShape2D_8bbpt")
 one_way_collision_margin = 0.0
 
 [node name="Feet Detector" type="Area2D" parent="Feet Collider"]
 z_index = 1
-position = Vector2(1, -15)
+position = Vector2(0.499825, -15)
 collision_layer = 8
 collision_mask = 8
 

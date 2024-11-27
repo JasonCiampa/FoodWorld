@@ -92,6 +92,8 @@ func _ready() -> void:
 	TileManager.tilemap_ground = $"World Map/Town Center/Ground"
 	TileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
 	
+	TileManager._ready()
+	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
@@ -118,8 +120,8 @@ func _process(delta: float) -> void:
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 1)
-	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 1)
+	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 2)
 	
 	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
 	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
@@ -734,14 +736,14 @@ func _on_character_feet_collide_end(body: Node2D) -> void:
 
 # A callback function to execute whenever a Character begins a jump
 func _on_character_jump_starting(character: Character) -> void:
-	
-	# Determine if the Character is starting their jump from the ground, then create a Tile referencing the Ground Tilemap
-	if character.current_altitude == 0:
-		character.jump_start_tile = Tile.new(TileManager.tilemap_ground, character.current_tile_position)
-	
-	# Otherwise, the Character is starting their jump from a platform, so create a Tile referencing the Terrain Tilemap
-	else:
-		character.jump_start_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
+	pass
+	## Determine if the Character is starting their jump from the ground, then create a Tile referencing the Ground Tilemap
+	#if character.current_altitude == 0:
+		#character.jump_start_tile = Tile.new(TileManager.tilemap_ground, character.current_tile_position)
+	#
+	## Otherwise, the Character is starting their jump from a platform, so create a Tile referencing the Terrain Tilemap
+	#else:
+		#character.jump_start_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
 		
 
 
@@ -751,26 +753,28 @@ func _on_character_jump_ending(character: Character) -> void:
 	# Set the Tile that the Character landed on to be from the Terrain Tilemap at the Character's feet position
 	character.jump_end_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
 	
-	# Determine if the Terrain Tile at the Character's current coordinates doesn't exist, then set the Character's altitude to 0 because that means they're back on the ground
-	if !character.jump_end_tile.get_custom_data("tile_type"):
-		character.current_altitude = 0
-	
-	# Otherwise the Tile that the Character landed on must be a Terrain Tile, so determine if the Tile the Character jumped from was grass (Ground Tilemap), then decrement the Character's altitude as they ascend
-	elif character.jump_start_tile.get_custom_data("tile_type") == "grass":
-		character.current_altitude -= TileManager.get_altitude(character.jump_end_tile)
-	
-	# Otherwise both Tiles must be Terrain Tiles, so adjust the Character's altitude forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
-	elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall" and character.jump_end_tile.get_custom_data("tile_type") != "ledge_wall":
-		
-		character.current_altitude -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
-	else:
-		character.current_altitude = 0
-	
-	
-	# Unload the Tile that the jump was initiated from
-	TileManager.unload_tile(character.jump_start_tile)
-	character.jump_start_tile = null
-	
-	# Unload the Tile that the jump ended on
-	TileManager.unload_tile(character.jump_end_tile)
-	character.jump_end_tile = null
+	character.current_altitude = TileManager.get_altitude(character.jump_end_tile)
+	#
+	## Determine if the Terrain Tile at the Character's current coordinates doesn't exist, then set the Character's altitude to 0 because that means they're back on the ground
+	#if !character.jump_end_tile.get_custom_data("tile_type"):
+		#character.current_altitude = 0
+	#
+	## Otherwise the Tile that the Character landed on must be a Terrain Tile, so determine if the Tile the Character jumped from was grass (Ground Tilemap), then decrement the Character's altitude as they ascend
+	#elif character.jump_start_tile.get_custom_data("tile_type") == "grass":
+		#character.current_altitude -= TileManager.get_altitude(character.jump_end_tile)
+	#
+	## Otherwise both Tiles must be Terrain Tiles, so adjust the Character's altitude forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
+	#elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall" and character.jump_end_tile.get_custom_data("tile_type") != "ledge_wall":
+		#
+		#character.current_altitude -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
+	#else:
+		#character.current_altitude = 0
+	#
+	#
+	## Unload the Tile that the jump was initiated from
+	#TileManager.unload_tile(character.jump_start_tile)
+	#character.jump_start_tile = null
+	#
+	## Unload the Tile that the jump ended on
+	#TileManager.unload_tile(character.jump_end_tile)
+	#character.jump_end_tile = null

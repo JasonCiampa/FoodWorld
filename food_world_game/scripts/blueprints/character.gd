@@ -136,7 +136,7 @@ func _process(delta: float) -> void:
 	#print('Current Z-Index: ', str(z_index))
 	#print("")
 	
-	if current_altitude < 0:
+	if current_altitude > 0:
 		on_platform = true
 	else:
 		on_platform = false

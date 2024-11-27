@@ -120,8 +120,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-		
-	if current_altitude < 0:
+	
+	if current_altitude > 0:
 		on_platform = true
 	else:
 		on_platform = false
@@ -173,12 +173,13 @@ func _process(delta: float) -> void:
 		#print("Jump Timer: " + str(jump_timer.time_left))
 		#print("Jump Landing Height: " + str(jump_landing_height))
 		#print("Falling: " + str(is_falling))
-		#print("On Platform: " + str(on_platform))
+		print("On Platform: " + str(on_platform))
 		#print("Feet Disabled: " + str(feet_collider.disabled))
 		#print("Body Disabled: " + str(body_collider.disabled))
-		#print('Current Altitude: ', str(current_altitude))
+		print('Current Altitude: ', str(current_altitude))
 		#print('Current Z-Index: ', str(z_index))
-		#print("")
+		print('Current Collision Value: ', str(collision_value_current))
+		print("")
 
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:
