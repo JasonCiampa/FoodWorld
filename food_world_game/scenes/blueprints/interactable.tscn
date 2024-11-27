@@ -38,7 +38,7 @@ size = Vector2(34.1, 32.185)
 font = ExtResource("3_skobu")
 font_size = 7
 
-[node name="Interactable" type="CharacterBody2D"]
+[node name="Interactable" type="CharacterBody2D" groups=["interactables"]]
 script = ExtResource("1_7nxwk")
 
 [node name="Body Collider" type="CollisionShape2D" parent="."]

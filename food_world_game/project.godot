@@ -121,6 +121,12 @@ escape_menu={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Character Standing In Front of Tile"
+2d_physics/layer_2="Character Standing Behind Tile"
+2d_physics/layer_3="Character Descending onto Tile"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

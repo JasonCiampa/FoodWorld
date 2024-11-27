@@ -113,7 +113,7 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 	
 	
 	# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
-	current_dialogue = load("res://dialogue/" + file_name + ".tres")
+	current_dialogue = load("res://resources/dialogue/" + file_name + ".tres")
 	
 	# Determine if a conversation name was specified, then load the specified conversation
 	if conversation_name != "":
