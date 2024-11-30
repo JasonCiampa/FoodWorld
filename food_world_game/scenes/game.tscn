@@ -45,15 +45,9 @@ tile_set = ExtResource("3_0xyr8")
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 z_index = 0
-position = Vector2(441, 519)
+position = Vector2(538, 217)
 collision_layer = 8
 collision_mask = 8
-
-[node name="Body Collider" parent="Player" index="0"]
-disabled = true
-
-[node name="Feet Collider" parent="Player" index="1"]
-disabled = true
 
 [node name="Feet Detector" parent="Player/Feet Collider" index="0"]
 collision_layer = 4

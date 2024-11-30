@@ -70,7 +70,12 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+# A custom function to execute the Interactable's logic for when the Player interacts with them
+func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
+	
+	
+	print("berry retrieved")
+	
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -91,6 +91,7 @@ func _ready() -> void:
 	
 	TileManager.tilemap_ground = $"World Map/Town Center/Ground"
 	TileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
+	TileManager.tilemap_environment = $"World Map/Town Center/Environment"
 	
 	TileManager._ready()
 	
@@ -122,6 +123,7 @@ func _process(delta: float) -> void:
 	
 	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 2)
 	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 2)
+	TileManager.process_nearby_tiles(TileManager.tilemap_environment, PLAYER, 2)
 	
 	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
 	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
@@ -443,6 +445,8 @@ func _on_player_interact() -> void:
 				
 				if interactable.in_range is NatureAsset:
 					characters_in_range.append(interactable)
+			
+			closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range)
 
 
 

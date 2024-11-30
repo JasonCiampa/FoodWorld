@@ -39,7 +39,10 @@ enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 var tilemap_pits: TileMapLayer
 var tilemap_water: TileMapLayer
 var tilemap_ground: TileMapLayer
+
 var tilemap_environment: TileMapLayer
+var active_nature_assets: Array[Tile]
+
 var tilemap_terrain: TileMapLayer
 var tilemap_sky: TileMapLayer
 
@@ -52,6 +55,7 @@ var tile_callbacks : Dictionary = {
 	"ledge_grass" : tile_callback_ledge_grass,
 	"ledge_grass_elevated" : tile_callback_ledge_grass_elevated,
 	"grass" : tile_callback_grass,
+	"nature_asset" : tile_callback_nature_asset
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -326,7 +330,7 @@ func tile_callback_ledge_back_elevated(tile: Tile, character: Character):
 	
 	if !character.is_jumping:
 		
-		# Set the Character to collide with layer 1, enable their body collider, and disable their feet collider
+		# Set the Character to collide with layer 3, enable their body collider, and disable their feet collider
 		character.set_collision_value(3)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
@@ -377,6 +381,18 @@ func tile_callback_grass(tile: Tile, character: Character):
 			
 	
 	unload_tile(terrain_tile)
+
+
+# A callback function to be played when a NatureAsset Tile is being processed
+func tile_callback_nature_asset(tile: Tile, character: Character):
+	
+	if !character.is_jumping:
+	
+		# Set the Character to collide with layer 1, enable their body collider, and disable their feet collider
+		character.set_collision_value(1)
+		character.body_collider.disabled = true
+		character.feet_collider.disabled = false
+	
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
