@@ -432,6 +432,17 @@ func _on_player_interact() -> void:
 			
 			# Trigger the interaction in the closest Interactable Character, then save the list of Characters that should be included in the Dialogue
 			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
+		
+		elif closest_interactable_to_player is NatureAsset:
+			
+			# Create a variable to store all of the in-range Interactable NatureAsset after they're filtered out of from the non-NatureAsset Interactables
+			var characters_in_range: Array[NatureAsset] = []
+			
+			# Iterate over each Interactable and add the Interactable Characters that are in range of the Player to the previously created list
+			for interactable in interactables:
+				
+				if interactable.in_range is NatureAsset:
+					characters_in_range.append(interactable)
 
 
 
