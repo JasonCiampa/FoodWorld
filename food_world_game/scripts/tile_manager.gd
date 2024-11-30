@@ -105,8 +105,10 @@ func execute_tile_callback(tile: Tile, character: Character):
 		if tile_type == "ledge_platform" or tile_type == "ledge_wall":
 			return
 		
-		# Call the callback function for this Tile
-		tile_callbacks[tile_type].call(tile, character)
+		if tile_type in tile_callbacks.keys():
+		
+			# Call the callback function for this Tile
+			tile_callbacks[tile_type].call(tile, character)
 
 
 
