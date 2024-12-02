@@ -1,0 +1,82 @@
+[gd_scene load_steps=9 format=3 uid="uid://cbch3c02684qu"]
+
+[ext_resource type="Script" path="res://scripts/blueprints/FoodBuddyFusion.gd" id="1_8lwpj"]
+[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="5_pqgxn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_43w4p"]
+size = Vector2(14, 6)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3chuv"]
+size = Vector2(9, 2)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j6uk3"]
+animations = []
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5g1xt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kanf4"]
+size = Vector2(34.1, 32.185)
+
+[sub_resource type="LabelSettings" id="LabelSettings_hijjt"]
+font = ExtResource("5_pqgxn")
+font_size = 7
+shadow_size = 0
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="FoodBuddyFusion" type="CharacterBody2D"]
+y_sort_enabled = true
+collision_layer = 4
+script = ExtResource("1_8lwpj")
+
+[node name="Body Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+position = Vector2(0, -13)
+shape = SubResource("RectangleShape2D_43w4p")
+debug_color = Color(0, 0.619608, 1, 0.427451)
+
+[node name="Feet Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+shape = SubResource("RectangleShape2D_3chuv")
+debug_color = Color(0, 0.619608, 1, 0.427451)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(0, -14)
+sprite_frames = SubResource("SpriteFrames_j6uk3")
+animation = &""
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+visible = false
+position = Vector2(0, -22.6)
+
+[node name="Damage Hitbox" type="Area2D" parent="."]
+position = Vector2(0, -13)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+shape = SubResource("RectangleShape2D_5g1xt")
+debug_color = Color(0.505887, 0, 0.044596, 0.42)
+
+[node name="Shadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(0, -22)
+color = Color(0, 0, 0, 0.380392)
+polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
+
+[node name="Interaction Hitbox" type="Area2D" parent="."]
+position = Vector2(0, -14)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_kanf4")
+
+[node name="Press \'E\' to Interact" type="Label" parent="."]
+z_index = 2
+offset_left = -35.0
+offset_top = -38.0
+offset_right = 135.0
+offset_bottom = -30.0
+text = "Press 'E' to Interact"
+label_settings = SubResource("LabelSettings_hijjt")
+metadata/_edit_use_anchors_ = true

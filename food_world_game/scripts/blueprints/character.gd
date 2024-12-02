@@ -5,22 +5,22 @@ extends CharacterBody2D
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Animations #
-var sprite: AnimatedSprite2D
-
-var animation_player: AnimationPlayer
-
 # On-Screen Notifier #
 var on_screen_notifier: VisibleOnScreenNotifier2D
+
+# Animations #
+var sprite: AnimatedSprite2D
+var animation_player: AnimationPlayer
 
 # Hitboxes #
 var hitbox_damage: Area2D
 
+# Colliders #
 var body_collider: CollisionShape2D
-
 var feet_collider: CollisionShape2D
-var feet_detector: Area2D 
 
+# Shadow #
+var shadow: Polygon2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -98,9 +98,6 @@ var on_platform: bool
 
 var collision_value_current: int = 1
 
-@onready var jump_timer: Timer = $"Jump Timer"
-@onready var shadow: Polygon2D = $Shadow
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -118,7 +115,8 @@ func _ready() -> void:
 	body_collider = $"Body Collider"
 	
 	feet_collider = $"Feet Collider"
-	feet_detector = $"Feet Collider/Feet Detector"
+	
+	shadow = $"Shadow"
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -343,7 +341,3 @@ func physics_process(delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-func _on_feet_detector_body_entered(body: Node2D) -> void:
-	feet_collide_start.emit(body, self)

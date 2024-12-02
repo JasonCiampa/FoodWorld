@@ -1,16 +1,20 @@
-extends Interactable
+class_name InteractableCharacter
 
-class_name FoodBuddyFusion
+extends Character
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Hitbox #
+var hitbox_interaction: Area2D
+
+# Press 'E' To Interact Label #
+var label_e_to_interact: Label
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -22,23 +26,6 @@ signal killed_target
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Food Buddies #
-var food_buddy1: FoodBuddy
-var food_buddy2: FoodBuddy
-
-# Abilities #
-var ability_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var ability_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var ability_stamina_cost: Dictionary = { "Ability 1": [5, "Gradual"], "Ability 2": [10, "Gradual"] }
-
-# Level and XP #
-var xp_current: int
-var xp_max: int
-
-# Inventory #
-var inventory: Array = []
-var inventory_size: int = 12
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -48,83 +35,58 @@ var inventory_size: int = 12
 func _ready() -> void:
 	super()
 	
-	ready()
-	
-	update_location_points()
+	# Store references to the InteractableCharacter's Nodes
+	hitbox_interaction = $"Interaction Hitbox"
+	label_e_to_interact = $"Press 'E' to Interact"
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
-	if not paused:
-		process(delta)
+	pass
 
 
 
-# Called every frame. Updates the Food Buddy Fusion's physics
+# Called every frame. Updates the Enemy's physics
 func _physics_process(delta: float) -> void:
-	
-	if not paused:
-		physics_process(delta)
-	
-	update_location_points()
-
+	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Sets the Food Buddies of this Food Buddy Fusion
-func set_food_buddies(food_buddy_1: FoodBuddy, food_buddy_2: FoodBuddy):
-	food_buddy1 = food_buddy_1
-	food_buddy2 = food_buddy_2
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# A custom ready function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_ready()' function
+# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
 func ready():
 	pass
 
 
 
-# A custom process function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_process()' function
+# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
 func process(delta: float):
 	pass
 
 
 
-# A custom physics_process function that each Food Buddy Fusion subclass should personally define. This is called in the default Food Buddy Fusion class's '_physics_process()' function
+# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
 func physics_process(delta: float) -> void:
 	pass
 
 
 
-# A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define.
-func use_ability1():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Ability 1 has been triggered!")
+# A custom function to execute the InteractableCharacter's logic for when the Player interacts with them
+func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
 	pass
 
 
 
-# A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define.
-func use_ability2():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Ability 2 has been triggered!")
+# A custom function to execute the InteractableCharacter's logic for when a Character interacts with them
+func interact_with_character(character: Character, characters_in_range: Array[Node2D]):
 	pass
-
-
-
-# A custom function to execute the Food Buddy Fusion's special attack that each Food Buddy Fusion subclass should personally define.
-func use_special_attack():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Special Attack has been triggered!")
-	pass
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

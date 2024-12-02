@@ -50,7 +50,7 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 
 # Interfaces #
-var interface_food_buddy_field_state: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food_buddy_field_state_interface.tscn").instantiate()
+var FoodBuddyFieldStateInterface: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food_buddy_field_state_interface.tscn").instantiate()
 var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialogue_interface.tscn").instantiate()
 
 var TileScript: Resource
@@ -72,8 +72,7 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	TileScript = load("res://scripts/tile_manager.gd")
-	TileManager = TileScript.new()
+	TileManager = load("res://scripts/tile_manager.gd").new()
 	
 	TileManager.tilemap_ground = $"World Map/Town Center/Ground"
 	TileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
@@ -130,8 +129,8 @@ func _process(delta: float) -> void:
 		interface_dialogue.process(delta)
 	
 	# Determine if the FieldState Interface is active, then process it
-	if interface_food_buddy_field_state.active:
-		interface_food_buddy_field_state.process(PLAYER, food_buddies_active)
+	if FoodBuddyFieldStateInterface.active:
+		FoodBuddyFieldStateInterface.process(PLAYER, food_buddies_active)
 
 
 
@@ -270,9 +269,9 @@ func process_player_nearby_interactables():
 		
 		var tile = Tile.new(TileManager.tilemap_environment, coords)
 		
-		# Determine if the NatureAsset Tile is within range of the Player (range equals the average of half the Player's height plus half the Player's width)
+		# Determine if the EnvironmentAsset Tile is within range of the Player (range equals the average of half the Player's height plus half the Player's width)
 		if coords.distance_to(Vector2i(PLAYER.position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
-			pass # Instantiate a new NatureAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
+			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
 	
 	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
@@ -432,16 +431,16 @@ func _on_player_interact() -> void:
 			# Trigger the interaction in the closest Interactable Character, then save the list of Characters that should be included in the Dialogue
 			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
 		
-		elif closest_interactable_to_player is NatureAsset:
+		elif closest_interactable_to_player is EnvironmentAsset:
 			
 			
-			# Create a variable to store all of the in-range Interactable NatureAsset after they're filtered out of from the non-NatureAsset Interactables
-			var characters_in_range: Array[NatureAsset] = []
+			# Create a variable to store all of the in-range Interactable EnvironmentAsset after they're filtered out of from the non-EnvironmentAsset Interactables
+			var characters_in_range: Array[EnvironmentAsset] = []
 			
 			# Iterate over each Interactable and add the Interactable Characters that are in range of the Player to the previously created list
 			for interactable in interactables:
 				
-				if interactable.in_range is NatureAsset:
+				if interactable.in_range is EnvironmentAsset:
 					characters_in_range.append(interactable)
 			
 			closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range)
@@ -455,8 +454,8 @@ func _on_player_escape_menu() -> void:
 		_on_player_disable_dialogue_interface()
 		PLAYER.is_interacting = false
 	
-	if interface_food_buddy_field_state.active:
-		interface_food_buddy_field_state.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+	if FoodBuddyFieldStateInterface.active:
+		FoodBuddyFieldStateInterface.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 
 
 
@@ -537,10 +536,10 @@ func _on_player_toggle_field_state_interface() -> void:
 	if interface_dialogue.active:
 		return
 	
-	if interface_food_buddy_field_state.active:
-		interface_food_buddy_field_state.disable(get_all_assets_on_screen())
+	if FoodBuddyFieldStateInterface.active:
+		FoodBuddyFieldStateInterface.disable(get_all_assets_on_screen())
 	else:
-		interface_food_buddy_field_state.enable(get_all_assets_on_screen(), food_buddies_active)
+		FoodBuddyFieldStateInterface.enable(get_all_assets_on_screen(), food_buddies_active)
 
 
 
@@ -548,7 +547,7 @@ func _on_player_toggle_field_state_interface() -> void:
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if the Food Buddy FieldState Interface is active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if interface_dialogue.active or interface_food_buddy_field_state.active:
+	if interface_dialogue.active or FoodBuddyFieldStateInterface.active:
 		return
 	
 	# Enable the Dialogue Interface
@@ -695,99 +694,3 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
-
-
-
-func _on_character_feet_collide_start(body: Node2D, character: Character) -> void:
-	
-	pass	
-	## Determine if the feet are colliding with a physics body in the tilemap
-	#if body is TileMapLayer:
-		#
-		#var current_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
-		#
-		## Continue decreasing (rising) the Character's position until their feet are out of the collider they're overlapping with
-		#while character.position.y > current_tile.coords_local.y + 8:
-			#character.position.y -= 2
-			#character.position.y -= 2
-			#print(character.position.y)
-			#
-			## LEFT OFF HERE
-#
-		#
-		## Unload the current tile from memory now that it is done being used
-		#TileManager.unload_tile(current_tile)
-
-
-
-func _on_character_feet_collide_end(body: Node2D) -> void:
-	## Determine if the feet are colliding with a physics body in the tilemap
-	#if body is TileMapLayer:
-		#
-		#var previous_tile = Tile.new(TileManager.tilemap_terrain, PLAYER.previous_tile_position)
-		#var current_tile = Tile.new(TileManager.tilemap_ground, PLAYER.current_tile_position)
-		#
-		## Determine if the previous and current tiles that the Character has stood on have their tile type custom data set
-		#if previous_tile.set_custom_data("tile_type") and current_tile.set_custom_data("tile_type"):
-			#print("Exited!")
-			#print("Previous: " + previous_tile.custom_data, previous_tile.coords_local)
-			#print("Current: " + current_tile.custom_data, current_tile.coords_local)
-			#print("Player: ", position)
-			#print("")
-			#
-			## Determine if the previous tile is a ledge and if the current tile is not a ledge
-			#if previous_tile.custom_data == "ledge" or previous_tile.custom_data == "ledge_grass":
-				#
-				#if current_tile.custom_data != "ledge":
-					#PLAYER.on_platform = false
-				#else:
-					#PLAYER.feet_collider.disabled = false
-					#PLAYER.body_collider.disabled = true
-
-	pass
-
-
-# A callback function to execute whenever a Character begins a jump
-func _on_character_jump_starting(character: Character) -> void:
-	pass
-	## Determine if the Character is starting their jump from the ground, then create a Tile referencing the Ground Tilemap
-	#if character.current_altitude == 0:
-		#character.jump_start_tile = Tile.new(TileManager.tilemap_ground, character.current_tile_position)
-	#
-	## Otherwise, the Character is starting their jump from a platform, so create a Tile referencing the Terrain Tilemap
-	#else:
-		#character.jump_start_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
-		
-
-
-# A callback function to execute whenever a Character finishes a jump
-func _on_character_jump_ending(character: Character) -> void:
-	
-	# Set the Tile that the Character landed on to be from the Terrain Tilemap at the Character's feet position
-	character.jump_end_tile = Tile.new(TileManager.tilemap_terrain, character.current_tile_position)
-	
-	character.current_altitude = TileManager.get_altitude(character.jump_end_tile)
-	#
-	## Determine if the Terrain Tile at the Character's current coordinates doesn't exist, then set the Character's altitude to 0 because that means they're back on the ground
-	#if !character.jump_end_tile.get_custom_data("tile_type"):
-		#character.current_altitude = 0
-	#
-	## Otherwise the Tile that the Character landed on must be a Terrain Tile, so determine if the Tile the Character jumped from was grass (Ground Tilemap), then decrement the Character's altitude as they ascend
-	#elif character.jump_start_tile.get_custom_data("tile_type") == "grass":
-		#character.current_altitude -= TileManager.get_altitude(character.jump_end_tile)
-	#
-	## Otherwise both Tiles must be Terrain Tiles, so adjust the Character's altitude forward or backward depending on the difference of the end Tile's altitude minus the start Tile's altitude
-	#elif character.jump_start_tile.get_custom_data("tile_type") != "ledge_wall" and character.jump_end_tile.get_custom_data("tile_type") != "ledge_wall":
-		#
-		#character.current_altitude -= TileManager.get_altitude(character.jump_end_tile) - TileManager.get_altitude(character.jump_start_tile)
-	#else:
-		#character.current_altitude = 0
-	#
-	#
-	## Unload the Tile that the jump was initiated from
-	#TileManager.unload_tile(character.jump_start_tile)
-	#character.jump_start_tile = null
-	#
-	## Unload the Tile that the jump ended on
-	#TileManager.unload_tile(character.jump_end_tile)
-	#character.jump_end_tile = null

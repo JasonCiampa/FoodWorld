@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
-[ext_resource type="PackedScene" uid="uid://6k636yjpnvdv" path="res://scenes/blueprints/enemy.tscn" id="2_2d8m7"]
-[ext_resource type="PackedScene" uid="uid://cwesuyi7ijoo4" path="res://scenes/map/world_map.tscn" id="2_q5di4"]
+[ext_resource type="PackedScene" uid="uid://6k636yjpnvdv" path="res://scenes/blueprints/Enemy.tscn" id="2_2d8m7"]
+[ext_resource type="PackedScene" uid="uid://cwesuyi7ijoo4" path="res://scenes/map/WorldMap.tscn" id="2_q5di4"]
 [ext_resource type="TileSet" uid="uid://cngdqdr7a568a" path="res://resources/mega_tilemap.tres" id="3_0xyr8"]
 [ext_resource type="PackedScene" uid="uid://b4edk42lcf0n8" path="res://scenes/characters/malick.tscn" id="5_184d6"]
-[ext_resource type="PackedScene" uid="uid://dtdrrty6qehha" path="res://scenes/blueprints/food_citizen.tscn" id="6_0yf05"]
+[ext_resource type="PackedScene" uid="uid://dtdrrty6qehha" path="res://scenes/blueprints/FoodCitizen.tscn" id="6_0yf05"]
 [ext_resource type="PackedScene" uid="uid://com21o63hyb7l" path="res://scenes/characters/sally.tscn" id="6_vh2pn"]
 
 [node name="Game" type="Node2D"]

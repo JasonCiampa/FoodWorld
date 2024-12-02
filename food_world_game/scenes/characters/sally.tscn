@@ -1,17 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://com21o63hyb7l"]
+[gd_scene load_steps=10 format=3 uid="uid://com21o63hyb7l"]
 
 [ext_resource type="Script" path="res://scripts/characters/sally.gd" id="1_8jequ"]
 [ext_resource type="Texture2D" uid="uid://b3p4vw0y6gobx" path="res://images/characters/sally-the-sticky-mozzerela-stick.png" id="2_xocr1"]
 [ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_e3mpv"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_8r2ew"]
-size = Vector2(14, 6)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_y67ab"]
-size = Vector2(12, 2)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_1qtae"]
-size = Vector2(14, 4)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7pd1y"]
 animations = [{
@@ -29,74 +20,80 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_tufua"]
-size = Vector2(28, 40)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qi3b3"]
+size = Vector2(28, 36)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_vh62s"]
-size = Vector2(36, 40)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3n7ol"]
+size = Vector2(16, 36)
 
-[sub_resource type="LabelSettings" id="LabelSettings_a3bic"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v4miu"]
+size = Vector2(14, 6)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_14e6k"]
+size = Vector2(9, 2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_v53cs"]
 font = ExtResource("3_e3mpv")
 font_size = 7
+shadow_size = 0
+shadow_color = Color(0, 0, 0, 1)
 
 [node name="Sally" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
+y_sort_enabled = true
 collision_layer = 2
 collision_mask = 8
 platform_floor_layers = 0
 script = ExtResource("1_8jequ")
 
-[node name="Body Collider" type="CollisionShape2D" parent="."]
-z_index = 1
-position = Vector2(-1, 9)
-shape = SubResource("RectangleShape2D_8r2ew")
-
-[node name="Feet Collider" type="CollisionShape2D" parent="."]
-z_index = 1
-position = Vector2(-1, 15)
-shape = SubResource("RectangleShape2D_y67ab")
-disabled = true
-
-[node name="Feet Detector" type="Area2D" parent="Feet Collider"]
-z_index = 1
-position = Vector2(1, -15)
-collision_layer = 8
-collision_mask = 8
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Feet Collider/Feet Detector"]
-position = Vector2(-1, 15)
-shape = SubResource("RectangleShape2D_1qtae")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(7.62939e-07, -16)
+scale = Vector2(0.8, 1.7)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 1
+position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_7pd1y")
 
-[node name="Damage Hitbox" type="Area2D" parent="."]
-visible = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-shape = SubResource("RectangleShape2D_tufua")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
-visible = false
+position = Vector2(0, -14)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
-shape = SubResource("RectangleShape2D_vh62s")
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_qi3b3")
 
-[node name="Polygon2D" type="Polygon2D" parent="Interaction Hitbox"]
-scale = Vector2(0.553846, 0.532468)
-color = Color(0.49682, 0.512312, 0.0134337, 0.298039)
-polygon = PackedVector2Array(-32.5, -37.561, 32.5, -37.561, 32.5, 37.561, -32.5, 37.561)
+[node name="Damage Hitbox" type="Area2D" parent="."]
+position = Vector2(0, -13)
 
-[node name="Press \'E\' to Interact" type="Label" parent="." groups=["food_citizens"]]
-visible = false
-z_index = 4096
-offset_left = -37.0
-offset_top = -29.0
-offset_right = 38.0
-offset_bottom = -21.0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_3n7ol")
+debug_color = Color(0.505887, 0, 0.044596, 0.42)
+
+[node name="Body Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+position = Vector2(0, -13)
+shape = SubResource("RectangleShape2D_v4miu")
+debug_color = Color(0, 0.619608, 1, 0.427451)
+
+[node name="Feet Collider" type="CollisionShape2D" parent="."]
+z_index = 1
+shape = SubResource("RectangleShape2D_14e6k")
+debug_color = Color(0, 0.619608, 1, 0.427451)
+
+[node name="Shadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(0, -22)
+color = Color(0, 0, 0, 0.380392)
+polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
+
+[node name="Press \'E\' to Interact" type="Label" parent="."]
+z_index = 2
+offset_left = -35.0
+offset_top = -42.0
+offset_right = 135.0
+offset_bottom = -34.0
 text = "Press 'E' to Interact"
-label_settings = SubResource("LabelSettings_a3bic")
+label_settings = SubResource("LabelSettings_v53cs")
+metadata/_edit_use_anchors_ = true
