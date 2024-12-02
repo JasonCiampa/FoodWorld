@@ -1,20 +1,6 @@
 extends Node2D
 
 
-# create tile.gd file
-# in game.gd have a function to check what tile the Player is currently standing on. Then using the coordinates of that tile, get the tiledata and call the tile's process custom data function on the tile and pass in the Player as a parameter
-# using those same coordinates in the same function, access all of the surrounding tiles and call their process custom data function on the tile and pass in the player
-
-# The tile process custom data function should consider if the character is jumping (at least in the case of a ledge tile)
-	# If the Character is jumping, allow the Player's bottom y-coordinate to go above the tile's top y-coordinate
-	# If not, then don't allow the Player to move above you (simulate collision with setting y-position) at middle of tile
-
-
-# USE THE TILE CUSTOM DATA FROM SEAFOOD WORLD TILE "tile_type"
-# FIGURE OUT HOW TO LOAD TILE FUNCTIONS INTO GAME.GD
-# THEN CREATE A FUNCTION IN TILE.GD TO TAKE A REFERENCE TO THE PLAYER AND PROCESS WHAT TILE THE PLAYER IS ON AND CALL THE APPROPRIATE CALLBACK FUNCTION BASED ON THE ONES IN TILE.GD
-
-
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @onready var PLAYER: Player = $Player
@@ -278,6 +264,17 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 # Checks if the given Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
 func process_player_nearby_interactables():
 	
+	var tile_coords = TileManager.tilemap_environment.get_used_cells()
+	
+	for coords in tile_coords:
+		
+		var tile = Tile.new(TileManager.tilemap_environment, coords)
+		
+		# Determine if the NatureAsset Tile is within range of the Player (range equals the average of half the Player's height plus half the Player's width)
+		if coords.distance_to(Vector2i(PLAYER.position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
+			pass # Instantiate a new NatureAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
+	
+	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
 	if interactables.size() == 0:
 		return
@@ -436,6 +433,7 @@ func _on_player_interact() -> void:
 			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
 		
 		elif closest_interactable_to_player is NatureAsset:
+			
 			
 			# Create a variable to store all of the in-range Interactable NatureAsset after they're filtered out of from the non-NatureAsset Interactables
 			var characters_in_range: Array[NatureAsset] = []

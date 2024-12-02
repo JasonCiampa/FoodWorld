@@ -299,7 +299,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5tqxi"]
-size = Vector2(18, 36)
+size = Vector2(19, 36)
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 1
@@ -346,14 +346,11 @@ libraries = {
 }
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
-visible = false
+position = Vector2(0, -16)
 
 [node name="Hitbox" type="CollisionShape2D" parent="Damage Hitbox"]
+position = Vector2(-0.5, 0)
 shape = SubResource("RectangleShape2D_5tqxi")
-
-[node name="Polygon2D" type="Polygon2D" parent="Damage Hitbox"]
-color = Color(0.94902, 0, 0.513726, 0.298039)
-polygon = PackedVector2Array(-9, -18, 9, -18, 9, 18, -9, 18)
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 visible = false
