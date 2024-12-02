@@ -11,8 +11,6 @@ extends Character
 
 signal use_ability
 
-signal killed_target
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -45,7 +43,7 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the Character class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	use_solo_attack()
 	update_location_points()
 	pass
@@ -53,7 +51,7 @@ func process(delta: float):
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the Character class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	move_and_slide()
 	pass
 

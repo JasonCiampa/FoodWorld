@@ -35,7 +35,7 @@ func ready():
 
 
 # A custom process function that is personally defined for the Malick-Sally Food Fusion. This is called in the default Food Buddy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

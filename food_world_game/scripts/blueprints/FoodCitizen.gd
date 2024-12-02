@@ -49,7 +49,7 @@ func _process(delta: float) -> void:
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	
 	if not paused:
 		
@@ -76,19 +76,19 @@ func ready():
 
 
 # A custom process function that each Food Citizen subclass should personally define. This is called in the default Food Citizen class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Food Citizen subclass should personally define. This is called in the default Food Citizen class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 
 
 # A custom function to execute the Interactable's logic for when the Player interacts with them: Starts a conversation between this Food Citizen, the Player, and any other Characters that the logic of this function is designed to include
-func interact_with_player(player: Player, characters_in_range: Array[Node2D]) -> Array[Node2D]:
+func interact_with_player(player: Player, _characters_in_range: Array[Node2D]) -> Array[Node2D]:
 	
 	# Create a list that will store all of the Characters that should be involved in the conversation that is about to start
 	var characters_to_involve: Array[Node2D] = [player, self]

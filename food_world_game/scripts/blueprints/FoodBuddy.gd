@@ -14,7 +14,6 @@ extends InteractableCharacter
 signal use_ability_solo
 
 signal target_closest_enemy
-signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -140,13 +139,13 @@ func ready():
 
 
 # A custom process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Food Buddy subclass should personally define. This is called in the default FoodBuddy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 

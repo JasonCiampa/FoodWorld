@@ -11,7 +11,7 @@ extends Node2D
 
 @onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick_sally.tscn").instantiate()
 
-var food_citizen = load("res://scenes/blueprints/food_citizen.tscn").instantiate()
+var food_citizen = load("res://scenes/blueprints/FoodCitizen.tscn").instantiate()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -50,11 +50,11 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 
 # Interfaces #
-var FoodBuddyFieldStateInterface: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food_buddy_field_state_interface.tscn").instantiate()
-var interface_dialogue: DialogueInterface = load("res://scenes/interfaces/dialogue_interface.tscn").instantiate()
+var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/FoodBuddyFieldStateInterface.tscn").instantiate()
+var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/DialogueInterface.tscn").instantiate()
 
-var TileScript: Resource
-var TileManager: TileManager
+# Managers #
+var TilesManager: TileManager = load("res://scripts/TileManager.gd").new()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -72,13 +72,12 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	TileManager = load("res://scripts/tile_manager.gd").new()
 	
-	TileManager.tilemap_ground = $"World Map/Town Center/Ground"
-	TileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
-	TileManager.tilemap_environment = $"World Map/Town Center/Environment"
+	TilesManager.tilemap_ground = $"World Map/Town Center/Ground"
+	TilesManager.tilemap_terrain = $"World Map/Town Center/Terrain"
+	TilesManager.tilemap_environment = $"World Map/Town Center/Environment"
 	
-	TileManager._ready()
+	TilesManager._ready()
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -90,12 +89,12 @@ func _ready() -> void:
 	#add_child(food_citizen)
 	
 	## CREATE NEW DIALOGUE RESOURCE CODE
-	#interface_dialogue.current_dialogue = load("res://dialogue.tres")
+	#InterfaceDialogue.current_dialogue = load("res://dialogue.tres")
 	#
 	#var temp = ["Malick-Player-Sally", "Malick-Player", "Citizen-Player", "Player-Sally"]
 	#
 	#for name in temp:
-		#interface_dialogue.current_dialogue.create_and_save_resource(name)
+		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
 
 
 
@@ -106,36 +105,36 @@ func _process(delta: float) -> void:
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
-	TileManager.process_nearby_tiles(TileManager.tilemap_ground, PLAYER, 2)
-	TileManager.process_nearby_tiles(TileManager.tilemap_terrain, PLAYER, 2)
-	TileManager.process_nearby_tiles(TileManager.tilemap_environment, PLAYER, 2)
+	TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, PLAYER, 2)
+	TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, PLAYER, 2)
+	TilesManager.process_nearby_tiles(TilesManager.tilemap_environment, PLAYER, 2)
 	
-	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, MALICK, 3)
-	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, MALICK, 3)
+	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, MALICK, 3)
+	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, MALICK, 3)
 	#
-	#TileManager.process_nearby_tiles(TileManager.tilemap_ground, SALLY, 2)
-	#TileManager.process_nearby_tiles(TileManager.tilemap_terrain, SALLY, 2)
+	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, SALLY, 2)
+	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, SALLY, 2)
 	#
-	#var temp_tile = Tile.new(TileManager.tilemap_ground, PLAYER.current_tile_position)
+	#var temp_tile = Tile.new(TilesManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.get_custom_data("tile_type"))
-	#TileManager.unload_tile(temp_tile)
+	#TilesManager.unload_tile(temp_tile)
 	
 	if not PLAYER.is_interacting:
 		# Process any Interaction Hitboxes that the Player might be in range with currently
 		process_player_nearby_interactables()
 	
 	# Determine if the Dialogue Interface is active, then process it
-	if interface_dialogue.active:
-		interface_dialogue.process(delta)
+	if InterfaceDialogue.active:
+		InterfaceDialogue.process(delta)
 	
 	# Determine if the FieldState Interface is active, then process it
-	if FoodBuddyFieldStateInterface.active:
-		FoodBuddyFieldStateInterface.process(PLAYER, food_buddies_active)
+	if InterfaceFoodBuddyFieldState.active:
+		InterfaceFoodBuddyFieldState.process(food_buddies_active)
 
 
 
 # Called every frame. Updates the Player's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -263,14 +262,15 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 # Checks if the given Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
 func process_player_nearby_interactables():
 	
-	var tile_coords = TileManager.tilemap_environment.get_used_cells()
+	var tile_coords = TilesManager.tilemap_environment.get_used_cells()
 	
 	for coords in tile_coords:
 		
-		var tile = Tile.new(TileManager.tilemap_environment, coords)
+		var tile = Tile.new(TilesManager.tilemap_environment, coords)
 		
 		# Determine if the EnvironmentAsset Tile is within range of the Player (range equals the average of half the Player's height plus half the Player's width)
 		if coords.distance_to(Vector2i(PLAYER.position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
+			interactables.append(EnvironmentAsset.new())
 			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
 	
 	
@@ -433,7 +433,6 @@ func _on_player_interact() -> void:
 		
 		elif closest_interactable_to_player is EnvironmentAsset:
 			
-			
 			# Create a variable to store all of the in-range Interactable EnvironmentAsset after they're filtered out of from the non-EnvironmentAsset Interactables
 			var characters_in_range: Array[EnvironmentAsset] = []
 			
@@ -450,12 +449,12 @@ func _on_player_interact() -> void:
 # Callback function that executes whenever the Player presses 'ESC' to escape an active menu/interface: Closes any open Interface
 func _on_player_escape_menu() -> void:
 	
-	if interface_dialogue.active:
+	if InterfaceDialogue.active:
 		_on_player_disable_dialogue_interface()
 		PLAYER.is_interacting = false
 	
-	if FoodBuddyFieldStateInterface.active:
-		FoodBuddyFieldStateInterface.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+	if InterfaceFoodBuddyFieldState.active:
+		InterfaceFoodBuddyFieldState.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 
 
 
@@ -533,13 +532,13 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 func _on_player_toggle_field_state_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if interface_dialogue.active:
+	if InterfaceDialogue.active:
 		return
 	
-	if FoodBuddyFieldStateInterface.active:
-		FoodBuddyFieldStateInterface.disable(get_all_assets_on_screen())
+	if InterfaceFoodBuddyFieldState.active:
+		InterfaceFoodBuddyFieldState.disable(get_all_assets_on_screen())
 	else:
-		FoodBuddyFieldStateInterface.enable(get_all_assets_on_screen(), food_buddies_active)
+		InterfaceFoodBuddyFieldState.enable(get_all_assets_on_screen(), food_buddies_active)
 
 
 
@@ -547,11 +546,11 @@ func _on_player_toggle_field_state_interface() -> void:
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if the Food Buddy FieldState Interface is active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if interface_dialogue.active or FoodBuddyFieldStateInterface.active:
+	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.active:
 		return
 	
 	# Enable the Dialogue Interface
-	interface_dialogue.enable(characters, PLAYER, get_all_assets_on_screen(), conversation_name)
+	InterfaceDialogue.enable(characters, PLAYER, get_all_assets_on_screen(), conversation_name)
 
 
 
@@ -559,8 +558,8 @@ func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversatio
 func _on_player_disable_dialogue_interface():
 	
 	# Determine if the Dialogue Interface is active, then disable it
-	if interface_dialogue.active:
-		interface_dialogue.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+	if InterfaceDialogue.active:
+		InterfaceDialogue.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
 
 
 

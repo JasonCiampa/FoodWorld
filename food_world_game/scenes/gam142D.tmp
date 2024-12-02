@@ -50,7 +50,6 @@ z_index = 0
 position = Vector2(1248, 1051)
 collision_layer = 8
 collision_mask = 8
-metadata/_edit_group_ = true
 
 [node name="Shadow" parent="Player" index="6"]
 z_index = 0
@@ -80,8 +79,10 @@ position = Vector2(-339, 464)
 [connection signal="jump_ending" from="Player" to="." method="_on_character_jump_ending"]
 [connection signal="jump_starting" from="Player" to="." method="_on_character_jump_starting"]
 [connection signal="killed_target" from="Player" to="." method="_on_player_killed_target"]
+[connection signal="revert_buddy_field_state" from="Player" to="." method="_on_player_revert_buddy_field_state"]
 [connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]
 [connection signal="toggle_buddy_fusion_equipped" from="Player" to="." method="_on_player_toggle_buddy_fusion_equipped"]
+[connection signal="toggle_dialogue_interface" from="Player" to="." method="_on_player_toggle_dialogue_interface"]
 [connection signal="toggle_field_state_interface" from="Player" to="." method="_on_player_toggle_field_state_interface"]
 [connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]

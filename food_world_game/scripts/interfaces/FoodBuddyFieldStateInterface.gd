@@ -37,13 +37,13 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,13 +88,10 @@ func disable(unfreeze_subjects: Array[Node2D]):
 
 
 # Processes all of the logic involved for the Food Buddy FieldState Interface
-func process(player: Player, active_food_buddies: Array[FoodBuddy]):
+func process(active_food_buddies: Array[FoodBuddy]):
 	
 	# Determine if the Food Buddy's current FieldState isn't PLAYER or FUSION, then let the user adjust the Food Buddy's FieldState through the interface (PLAYER and FUSION should be assigned based on '1', '2', and '3' keys)
 	if selected_food_buddy.field_state_current != FoodBuddy.FieldState.PLAYER and selected_food_buddy.field_state_current != FoodBuddy.FieldState.FUSION:
-		
-		# Store a reference to what the FieldState value is before any updates are made
-		var field_state_initial: int = selected_food_buddy.field_state_current
 		
 		
 		# Determine if the Player has pressed 'W', then decrement the FieldState value by 1
@@ -102,8 +99,8 @@ func process(player: Player, active_food_buddies: Array[FoodBuddy]):
 			selected_food_buddy.field_state_current -= 1
 			
 			# Determine if the FieldState value is out of the lower bound, then set it to the last FieldState before Fusion and Player (Player can only be set by pressing '1' and '2', and Fusion can only be set by pressing '3')
-			if selected_food_buddy.field_state_current < 0:
-				selected_food_buddy.field_state_current = FoodBuddy.FieldState.size() - 3
+			if selected_food_buddy.field_state_current < FoodBuddy.FieldState.FOLLOW:
+				selected_food_buddy.field_state_current = FoodBuddy.FieldState.SOLO
 			
 			print("Current FieldState: " + str(selected_food_buddy.get_enum_value_name(FoodBuddy.FieldState, selected_food_buddy.field_state_current)))
 		
@@ -113,8 +110,8 @@ func process(player: Player, active_food_buddies: Array[FoodBuddy]):
 			selected_food_buddy.field_state_current += 1
 			
 			# Determine if the FieldState value is out of the upper bound (the last FieldState before Fusion), then set it to the first FieldState (Fusion can only be set by pressing '3')
-			if selected_food_buddy.field_state_current > FoodBuddy.FieldState.size() - 3:
-				selected_food_buddy.field_state_current = 0
+			if selected_food_buddy.field_state_current > FoodBuddy.FieldState.SOLO:
+				selected_food_buddy.field_state_current = FoodBuddy.FieldState.FOLLOW
 			
 			print("Current FieldState: " + str(selected_food_buddy.get_enum_value_name(FoodBuddy.FieldState, selected_food_buddy.field_state_current)))
 		

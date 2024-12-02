@@ -1,9 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://duflla3k6fhg"]
+[gd_scene load_steps=8 format=3 uid="uid://duflla3k6fhg"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/Character.gd" id="1_yyxwy"]
+[ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_eu4yn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdobk"]
+atlas = ExtResource("2_eu4yn")
+region = Rect2(0, 0, 17, 22)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ere4c"]
-animations = []
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdobk")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dsou4"]
 
@@ -22,9 +35,9 @@ position = Vector2(0, -13)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 1
-position = Vector2(0, -14)
+position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_ere4c")
-animation = &""
+animation = &"new_animation"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

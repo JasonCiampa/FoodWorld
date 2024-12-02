@@ -37,7 +37,7 @@ func ready():
 
 
 # A custom process function that is personally defined for Malick. This is called in the default Food Buddy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	
 	# Determine the Food Buddy's current field state, then alter their movement/attack behavior based on that field state
 	if field_state_current == FieldState.FOLLOW:

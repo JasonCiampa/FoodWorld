@@ -19,9 +19,6 @@ signal toggle_buddy_equipped
 signal toggle_buddy_fusion_equipped
 
 signal toggle_field_state_interface
-signal toggle_dialogue_interface
-
-signal revert_buddy_field_state
 
 signal use_ability_solo
 signal use_ability_buddy
@@ -29,8 +26,6 @@ signal use_ability_buddy_fusion
 
 signal interact
 signal escape_menu
-
-signal killed_target
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,8 +104,6 @@ var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
-	jump_timer = $"Timers/Jump Timer"
-	shadow = $"Shadow"
 
 	sprite.play("test")
 	self.name = "Player"
@@ -492,6 +485,8 @@ func toggle_food_buddy_field_state_interface():
 	# Determine if the Player is trying to adjust the Food Buddy's FieldState and if they're NOT in the FUSION FieldState, then emit the signal to the Game to trigger the FieldState Interface (can't let Food Buddy Fusion FieldStates to become out of sync, so this menu is disabled until the Player is out of the FUSION FieldState)
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
 		toggle_field_state_interface.emit()
+
+
 
 # Depletes the Player's current stamina instantly by the given stamina use amount.
 func use_stamina(stamina_cost: int):

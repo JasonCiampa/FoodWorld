@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://6k636yjpnvdv"]
+[gd_scene load_steps=8 format=3 uid="uid://6k636yjpnvdv"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/Enemy.gd" id="1_usloy"]
+[ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_q6eoy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1d5wb"]
 size = Vector2(14, 6)
@@ -8,10 +9,22 @@ size = Vector2(14, 6)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gfacv"]
 size = Vector2(9, 2)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_dwk6k"]
-animations = []
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kjxnu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdobk"]
+atlas = ExtResource("2_q6eoy")
+region = Rect2(0, 0, 17, 22)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7s1h6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdobk")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 z_index = 1
@@ -32,12 +45,6 @@ z_index = 1
 shape = SubResource("RectangleShape2D_gfacv")
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 1
-position = Vector2(0, -14)
-sprite_frames = SubResource("SpriteFrames_dwk6k")
-animation = &""
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
@@ -56,3 +63,9 @@ z_index = -1
 position = Vector2(0, -22)
 color = Color(0, 0, 0, 0.380392)
 polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
+position = Vector2(0, -9)
+sprite_frames = SubResource("SpriteFrames_7s1h6")
+animation = &"new_animation"

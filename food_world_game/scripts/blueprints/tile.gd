@@ -48,9 +48,9 @@ var data: TileData
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func _init(tilemap: TileMapLayer, coords_map: Vector2i):
-	self.tilemap = tilemap
-	self.coords_map = coords_map
+func _init(_tilemap: TileMapLayer, _coords_map: Vector2i):
+	self.tilemap = _tilemap
+	self.coords_map = _coords_map
 	
 	set_data()
 	set_local_coords()
@@ -62,13 +62,13 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Returns a list of all the Tile Types for each tile surrounding the given Tile
-func get_surrounding_tile_types(tile_coords: Vector2i):
+func get_surrounding_tile_types(_tile_coords: Vector2i):
 	pass
 
 # Returns the coordinates of this Tile in the local format
@@ -135,13 +135,13 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

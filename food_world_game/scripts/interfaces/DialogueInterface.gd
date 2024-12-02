@@ -48,13 +48,13 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 	character_names.sort()
 	
 	# Create an empty String that will hold the name of the Dialogue Resource file to load into the Dialogue Interface
-	var file_name: String
+	var file_name: String = ""
 	
 	# Generate the name of the Dialogue Resource file by formatting each Character's name into the file name
 	for name_index in character_names.size():
@@ -168,7 +168,7 @@ func disable(unfreeze_subjects: Array[Node2D]):
 
 
 # Processes all of the logic involved for the Dialogue Interface
-func process(delta: float):
+func process(_delta: float):
 	
 	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
 	if script_directions["GAME"]["Processing"]:

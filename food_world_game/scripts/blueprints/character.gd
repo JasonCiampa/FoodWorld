@@ -29,6 +29,7 @@ var shadow: Polygon2D
 
 signal target_player
 signal target_closest_food_buddy
+signal killed_target
 
 signal move_towards_target
 
@@ -129,11 +130,6 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	# DEBUG
-	#print('Current Altitude: ', str(current_altitude))
-	#print('Current Z-Index: ', str(z_index))
-	#print("")
-	
 	if current_altitude > 0:
 		on_platform = true
 	else:
@@ -173,9 +169,12 @@ func update_location_points():
 	# Store a reference to the current Sprite frame of the Character's animation
 	var frame_texture: Texture2D = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
 	
-	# Store the current width and height of the Character's current Sprite frame
-	width = frame_texture.get_width()
-	height = frame_texture.get_height()
+	# Determine if the current Sprite frame was found, then store the width and height of the frame
+	if frame_texture != null:
+		
+		# Store the current width and height of the Character's current Sprite frame
+		width = frame_texture.get_width()
+		height = frame_texture.get_height()
 	
 	# Store the current coordinates for the center of this Character
 	center_point.x = position.x
@@ -187,11 +186,11 @@ func update_location_points():
 func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
 	
 	# Iterate over each enum name
-	for name in enum_target:
+	for enum_name in enum_target:
 		
-		# Determine if the name's corresponding value matches the given value
-		if enum_target[name] == enum_number:
-			return name
+		# Determine if the enum_name's corresponding value matches the given value
+		if enum_target[enum_name] == enum_number:
+			return enum_name
 	
 	# Return an empty String because there are no enum names that correspond to the given number
 	return ""
@@ -224,7 +223,7 @@ func fall_start():
 
 
 # Process the Character's falling
-func fall_process(delta: float):
+func fall_process(_delta: float):
 	pass
 
 
@@ -265,7 +264,7 @@ func jump_start():
 
 
 # Process the ascending portion of the jump (the portion of the jump in which the Player hasn't reached a peak height of the jump)
-func jump_ascend(delta: float):
+func jump_ascend(_delta: float):
 	
 	# Determine if the Character's feet are higher than the currently stored peak height of the jump, then update the peak height
 	if position.y < jump_peak_height:
@@ -278,7 +277,7 @@ func jump_ascend(delta: float):
 
 
 # Process the descending portion of the jump (the portion of the jump that occurs immediately after the Player reaches the peak height of the jump and begin to start falling)
-func jump_descend(delta: float):
+func jump_descend():
 	
 	# Determine if the Character's feet are lower than the height they were supposed to land at, then adjust them so they're at the proper height and end the jump
 	if position.y >= jump_landing_height:
@@ -302,7 +301,7 @@ func jump_process(delta: float):
 	
 	# Otherwise, process the jump's descension
 	else:
-		jump_descend(delta)
+		jump_descend()
 
 
 
@@ -331,13 +330,13 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

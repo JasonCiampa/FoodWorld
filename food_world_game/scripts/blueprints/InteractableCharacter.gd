@@ -42,13 +42,13 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -68,25 +68,25 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 
 
 # A custom function to execute the InteractableCharacter's logic for when the Player interacts with them
-func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
+func interact_with_player(_player: Player, _characters_in_range: Array[Node2D]):
 	pass
 
 
 
 # A custom function to execute the InteractableCharacter's logic for when a Character interacts with them
-func interact_with_character(character: Character, characters_in_range: Array[Node2D]):
+func interact_with_character(_character: Character, _characters_in_range: Array[Node2D]):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

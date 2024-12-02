@@ -74,13 +74,13 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ func tile_callback_grass(tile: Tile, character: Character):
 
 
 # A callback function to be played when a NatureAsset Tile is being processed
-func tile_callback_nature_asset(tile: Tile, character: Character):
+func tile_callback_nature_asset(_tile: Tile, character: Character):
 	
 	if !character.is_jumping:
 	
@@ -410,13 +410,13 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
