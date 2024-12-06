@@ -35,8 +35,7 @@ signal move_towards_target
 
 signal feet_collide_start
 
-signal jump_starting
-signal jump_ending
+signal update_altitude
 
 signal fall_starting
 signal fall_ending
@@ -257,10 +256,8 @@ func jump_start():
 	# Set the Character's shadow's initial position to be 
 	shadow.position.y = jump_landing_height
 	
-	# Emit a signal to the game indicating that this Character is starting their jump
-	jump_starting.emit(self)
-	
 	z_index = 1
+
 
 
 # Process the ascending portion of the jump (the portion of the jump in which the Player hasn't reached a peak height of the jump)
@@ -285,7 +282,7 @@ func jump_descend():
 		jump_end()
 
 
-# Processes the Player's jump
+# Processes the Character's jump
 func jump_process(delta: float):
 	
 	# Apply gravity to the Character
@@ -293,7 +290,6 @@ func jump_process(delta: float):
 	
 	# Update the Shadow's position to be the difference between the jump's landing height and the Character's global y-coordinate, subtracted by the offset of the shadow
 	shadow.position.y = jump_landing_height - global_position.y - 22
-	shadow.z_index = 800
 	
 	# Determine if the Character is not falling, then process the jump's ascension
 	if !is_falling:
@@ -305,7 +301,7 @@ func jump_process(delta: float):
 
 
 
-# Ends the Player's jump
+# Ends the Character's jump
 func jump_end():
 	
 	shadow.position.y = jump_landing_height - global_position.y - 22
@@ -313,8 +309,12 @@ func jump_end():
 	is_falling = false
 	velocity.y = 0
 	
-	# Emit a signal to the game indicating that this Character is ending their jump
-	jump_ending.emit(self)
+	update_altitude.emit(self)
+	
+	if current_altitude == 0:
+		set_collision_value(1)
+	else:
+		set_collision_value(3)
 	
 	z_index = 0
 

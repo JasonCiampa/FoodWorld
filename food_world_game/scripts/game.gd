@@ -103,17 +103,17 @@ func _process(delta: float) -> void:
 	enemies = get_tree().get_nodes_in_group("enemies")
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
-	
+	#
 	TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, PLAYER, 2)
 	TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, PLAYER, 2)
 	TilesManager.process_nearby_tiles(TilesManager.tilemap_environment, PLAYER, 2)
 	
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, MALICK, 3)
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, MALICK, 3)
-	#
+	
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, SALLY, 2)
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, SALLY, 2)
-	#
+	
 	#var temp_tile = Tile.new(TilesManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.type)
 	#TilesManager.unload_tile(temp_tile)
@@ -275,7 +275,9 @@ func process_player_nearby_interactables():
 		if coords.distance_to(Vector2i(PLAYER.position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
 			interactables.append(EnvironmentAsset.new())
 			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
-	
+		
+		TilesManager.unload_tile(tile)
+		tile = null
 	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
 	if interactables.size() == 0:
@@ -662,7 +664,6 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	# Stores a local reference to the result of searching for the closest Enemy target
 	var target_closest = select_closest_target(food_buddy, get_enemies_on_screen())
 	
-	
 	# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
 	if target_closest != null and target_closest.alive:
 		food_buddy.target = target_closest
@@ -696,3 +697,10 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
+
+
+
+
+# 
+func _on_character_update_altitude(character) -> void:
+	TilesManager.get_character_altitude(character)
