@@ -386,7 +386,7 @@ func tile_callback_nature_asset(_tile: Tile, character: Character):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
-	
+		
 		# Set the Character to collide with layer 1, enable their body collider, and disable their feet collider
 		character.set_collision_value(1)
 		character.body_collider.disabled = true
