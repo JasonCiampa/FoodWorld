@@ -36,9 +36,9 @@ var tile_callbacks : Dictionary = {
 	"ledge_front_elevated" : tile_callback_ledge_front_elevated,
 	"ledge_back" : tile_callback_ledge_back,
 	"ledge_back_elevated" : tile_callback_ledge_back_elevated,
-	"ledge_grass" : tile_callback_ledge_grass,
-	"ledge_grass_elevated" : tile_callback_ledge_grass_elevated,
-	"grass" : tile_callback_grass,
+	"ledge_ground" : tile_callback_ledge_ground,
+	"ledge_ground_elevated" : tile_callback_ledge_ground_elevated,
+	"ground" : tile_callback_ground,
 	"nature_asset" : tile_callback_nature_asset
 }
 
@@ -338,7 +338,7 @@ func tile_callback_ledge_back_elevated(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge-Grass Tile is being processed
-func tile_callback_ledge_grass(tile: Tile, character: Character):
+func tile_callback_ledge_ground(tile: Tile, character: Character):
 	
 	# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
 	if character.on_platform:
@@ -347,7 +347,7 @@ func tile_callback_ledge_grass(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge-Grass-Elevated Tile is being processed
-func tile_callback_ledge_grass_elevated(tile: Tile, character: Character):
+func tile_callback_ledge_ground_elevated(tile: Tile, character: Character):
 	
 	# Determine if the Character is on the ground, then set this cell to have the y-sort origin necessary when the Character is on the ground
 	if !character.on_platform:
@@ -356,7 +356,7 @@ func tile_callback_ledge_grass_elevated(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Grass Tile is being processed
-func tile_callback_grass(tile: Tile, character: Character):
+func tile_callback_ground(tile: Tile, character: Character):
 	
 	# Store a reference to the Tile in the same cell as the given tile but in the Terrain tilemap
 	var terrain_tile = tile.get_same_cell(tilemap_terrain)
@@ -367,11 +367,11 @@ func tile_callback_grass(tile: Tile, character: Character):
 		# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
 		if character.on_platform:
 			
-			# Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
+			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
 			tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 2)
 		
 		else:
-			# Set this current grass tile to be a ledge_grass tile because the tile on the terrain map is a ledge
+			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
 			tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
 			
 	
