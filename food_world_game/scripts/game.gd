@@ -53,9 +53,9 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/FoodBuddyFieldStateInterface.tscn").instantiate()
 var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/DialogueInterface.tscn").instantiate()
 
+
 # Managers #
 var TilesManager: TileManager = load("res://scripts/TileManager.gd").new()
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -63,7 +63,8 @@ var TilesManager: TileManager = load("res://scripts/TileManager.gd").new()
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:	
+func _ready() -> void:
+	
 	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(MALICK)
 	food_buddies_active.append(SALLY)
@@ -72,19 +73,17 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
-	
+	# Set the current TileMapLayers for the TileManager
 	TilesManager.tilemap_ground = $"World Map/Town Center/Ground"
 	TilesManager.tilemap_terrain = $"World Map/Town Center/Terrain"
 	TilesManager.tilemap_environment = $"World Map/Town Center/Environment"
-	
-	TilesManager._ready()
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
 	#food_citizen.move_towards_target.connect(_on_character_move_towards_target)
 	#food_citizen.die.connect(_on_character_die)
-#
+	
 	## Add the Food Citizen to the Game's SceneTree
 	#add_child(food_citizen)
 	
@@ -104,19 +103,19 @@ func _process(delta: float) -> void:
 	enemies = get_tree().get_nodes_in_group("enemies")
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
-	
+	#
 	TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, PLAYER, 2)
 	TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, PLAYER, 2)
 	TilesManager.process_nearby_tiles(TilesManager.tilemap_environment, PLAYER, 2)
 	
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, MALICK, 3)
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, MALICK, 3)
-	#
+	
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, SALLY, 2)
 	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, SALLY, 2)
-	#
+	
 	#var temp_tile = Tile.new(TilesManager.tilemap_ground, PLAYER.current_tile_position)
-	#print(temp_tile.get_custom_data("tile_type"))
+	#print(temp_tile.type)
 	#TilesManager.unload_tile(temp_tile)
 	
 	if not PLAYER.is_interacting:
@@ -184,13 +183,16 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 	if targets.size() == 0:
 		return null
 	
+	
 	# Determine if there are is only one target in the provided list of targets, then return null because it is the only target and therefore the closest
 	if targets.size() == 1:
 		return targets[0]
-		
+	
+	
 	# Temporarily store the first target in the list of targets as the closest target and also store it's distance from the subject
 	var target_closest = targets[0]
 	var target_closest_distance = subject.center_point.distance_to(target_closest.center_point)
+	
 	
 	# Iterate over all of the targets in the given list
 	for target in targets:
@@ -202,6 +204,7 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 		if target_distance < target_closest_distance:
 			target_closest = target
 			target_closest_distance = target_distance
+	
 	
 	return target_closest
 
@@ -272,7 +275,9 @@ func process_player_nearby_interactables():
 		if coords.distance_to(Vector2i(PLAYER.position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
 			interactables.append(EnvironmentAsset.new())
 			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
-	
+		
+		TilesManager.unload_tile(tile)
+		tile = null
 	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
 	if interactables.size() == 0:
@@ -659,7 +664,6 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	# Stores a local reference to the result of searching for the closest Enemy target
 	var target_closest = select_closest_target(food_buddy, get_enemies_on_screen())
 	
-	
 	# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
 	if target_closest != null and target_closest.alive:
 		food_buddy.target = target_closest
@@ -693,3 +697,10 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
+
+
+
+
+# 
+func _on_character_update_altitude(character) -> void:
+	TilesManager.get_character_altitude(character)

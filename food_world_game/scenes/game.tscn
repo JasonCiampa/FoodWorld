@@ -60,7 +60,7 @@ tile_set = ExtResource("3_0xyr8")
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 z_index = 0
-position = Vector2(1248, 1051)
+position = Vector2(442, 441)
 collision_layer = 8
 collision_mask = 8
 metadata/_edit_group_ = true
@@ -90,12 +90,11 @@ position = Vector2(-339, 464)
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
 [connection signal="feet_collide_start" from="Player" to="." method="_on_character_feet_collide_start"]
 [connection signal="interact" from="Player" to="." method="_on_player_interact"]
-[connection signal="jump_ending" from="Player" to="." method="_on_character_jump_ending"]
-[connection signal="jump_starting" from="Player" to="." method="_on_character_jump_starting"]
 [connection signal="killed_target" from="Player" to="." method="_on_player_killed_target"]
 [connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]
 [connection signal="toggle_buddy_fusion_equipped" from="Player" to="." method="_on_player_toggle_buddy_fusion_equipped"]
 [connection signal="toggle_field_state_interface" from="Player" to="." method="_on_player_toggle_field_state_interface"]
+[connection signal="update_altitude" from="Player" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]
 [connection signal="use_ability_solo" from="Player" to="." method="_on_player_use_ability_solo"]

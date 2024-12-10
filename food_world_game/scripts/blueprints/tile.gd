@@ -4,33 +4,17 @@ class_name Tile
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -39,21 +23,29 @@ var tilemap: TileMapLayer
 var coords_local: Vector2i
 var coords_map: Vector2i
 var data: TileData
+var type: String
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Called when this class's '.new()' function is invoked
 func _init(_tilemap: TileMapLayer, _coords_map: Vector2i):
+	
 	self.tilemap = _tilemap
 	self.coords_map = _coords_map
 	
 	set_data()
 	set_local_coords()
+	
+	# Determine if there is Tile data, then set the type of the Tile
+	if data != null:
+		self.type = data.get_custom_data("tile_type")
+	else:
+		self.type = ""
+
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -74,19 +66,13 @@ func _physics_process(_delta: float) -> void:
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
-
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Returns a list of all the Tile Types for each tile surrounding the given Tile
-func get_surrounding_tile_types(_tile_coords: Vector2i):
-	pass
-
-# Returns the coordinates of this Tile in the local format
+# Sets the coordinates of this Tile in the local format
 func set_local_coords():
 	coords_local = tilemap.map_to_local(coords_map)
+
+
 
 # Attempts to fetch and set this Tile's data variable and returns true if successful or false if unsuccessful
 func set_data() -> bool:
@@ -98,32 +84,19 @@ func set_data() -> bool:
 	if tile_data:
 		data = tile_data
 		return true
+	
 	# Otherwise, this Tile doesn't have any data, so set data to null and return false to indicate that data was not retrieved
 	else:
 		data = null
 		return false
 
 
-# Fetches and returns this Tile's custom data variable (even if null)
-func get_custom_data(data_name: String) -> Variant:
-	
-	# Determine if this Tile has no data, then return false to indicate there isn't any data
-	if !data:
-		return null
-	
-	# Get and return this Tile's custom data by searching for a custom field value
-	return data.get_custom_data(data_name)
-
 
 # Attempts to fetch, store, and return the Tile in the cell with map coords equivalent this Tile's coords, but in a different Tilemap
 func get_same_cell(other_tilemap: TileMapLayer) -> Tile:
 	return Tile.new(other_tilemap, coords_map)
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
 # ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
