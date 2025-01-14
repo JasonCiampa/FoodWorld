@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://cttvsfp77goo5"]
 
-[ext_resource type="Script" path="res://scripts/fusions/malick_sally.gd" id="1_i1hif"]
+[ext_resource type="Script" path="res://scripts/fusions/malick-sally.gd" id="1_i1hif"]
 [ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="2_qhomf"]
 [ext_resource type="Texture2D" uid="uid://diaaj4e00nqeu" path="res://images/mallak.png" id="3_wkg82"]
 [ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="4_02lbl"]

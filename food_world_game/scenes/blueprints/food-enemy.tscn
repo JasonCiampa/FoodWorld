@@ -1,7 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://6k636yjpnvdv"]
 
-[ext_resource type="Script" path="res://scripts/blueprints/Enemy.gd" id="1_usloy"]
+[ext_resource type="Script" path="res://scripts/blueprints/food-enemy.gd" id="1_usloy"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_q6eoy"]
+
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1d5wb"]
 size = Vector2(14, 6)

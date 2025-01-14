@@ -166,14 +166,14 @@ func _process(delta: float) -> void:
 		#print("Jump Timer: " + str(jump_timer.time_left))
 		#print("Jump Landing Height: " + str(jump_landing_height))
 		#print("Falling: " + str(is_falling))
-		print("On Platform: " + str(on_platform))
-		print("Feet Disabled: " + str(feet_collider.disabled))
-		print("Body Disabled: " + str(body_collider.disabled))
-		print('Current Altitude: ', str(current_altitude))
-		print('Current Z-Index: ', str(z_index))
-		print('Current Collision Value: ', str(collision_value_current))
-		print("Z-Index: ", z_index)
-		print("")
+		#print("On Platform: " + str(on_platform))
+		#print("Feet Disabled: " + str(feet_collider.disabled))
+		#print("Body Disabled: " + str(body_collider.disabled))
+		#print('Current Altitude: ', str(current_altitude))
+		#print('Current Z-Index: ', str(z_index))
+		#print('Current Collision Value: ', str(collision_value_current))
+		#print("Z-Index: ", z_index)
+		#print("")
 
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:

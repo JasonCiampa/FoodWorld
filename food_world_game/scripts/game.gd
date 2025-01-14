@@ -9,9 +9,9 @@ extends Node2D
 @onready var MALICK: FoodBuddy = $Malick
 @onready var SALLY: FoodBuddy = $Sally
 
-@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick_sally.tscn").instantiate()
+@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick-sally.tscn").instantiate()
 
-var food_citizen = load("res://scenes/blueprints/FoodCitizen.tscn").instantiate()
+var food_citizen = load("res://scenes/blueprints/food-citizen.tscn").instantiate()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,6 +37,7 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 @onready var interactables: Array[Node] = get_tree().get_nodes_in_group("interactables")
 var closest_interactable_to_player: Node2D
 
+
 # Food Buddies #
 var food_buddies_active: Array[FoodBuddy]
 var food_buddies_inactive: Array[FoodBuddy]
@@ -50,12 +51,12 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 
 # Interfaces #
-var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/FoodBuddyFieldStateInterface.tscn").instantiate()
-var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/DialogueInterface.tscn").instantiate()
+var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food-buddy-field-state-interface.tscn").instantiate()
+var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogue-interface.tscn").instantiate()
 
 
 # Managers #
-var TilesManager: TileManager = load("res://scripts/TileManager.gd").new()
+var GameTileManager: TileManager = load("res://scripts/tile-manager.gd").new()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -69,14 +70,14 @@ func _ready() -> void:
 	food_buddies_active.append(MALICK)
 	food_buddies_active.append(SALLY)
 	
-	# Set Malick and Sally as the Food Buddies to fuse and store the fusion in the list of inactive fusions
+	# Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
 	# Set the current TileMapLayers for the TileManager
-	TilesManager.tilemap_ground = $"World Map/Town Center/Ground"
-	TilesManager.tilemap_terrain = $"World Map/Town Center/Terrain"
-	TilesManager.tilemap_environment = $"World Map/Town Center/Environment"
+	GameTileManager.tilemap_ground = $"World Map/Town Center/Ground"
+	GameTileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
+	GameTileManager.tilemap_environment = $"World Map/Town Center/Environment"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -100,26 +101,22 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	# Update the list of on-screen enemies, food citizens, and interactables
 	enemies = get_tree().get_nodes_in_group("enemies")
 	food_citizens = get_tree().get_nodes_in_group("food_citizens")
 	interactables = get_tree().get_nodes_in_group("interactables")
-	#
-	TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, PLAYER, 2)
-	TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, PLAYER, 2)
-	TilesManager.process_nearby_tiles(TilesManager.tilemap_environment, PLAYER, 2)
 	
-	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, MALICK, 3)
-	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, MALICK, 3)
+	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 2)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 2)
 	
-	#TilesManager.process_nearby_tiles(TilesManager.tilemap_ground, SALLY, 2)
-	#TilesManager.process_nearby_tiles(TilesManager.tilemap_terrain, SALLY, 2)
-	
-	#var temp_tile = Tile.new(TilesManager.tilemap_ground, PLAYER.current_tile_position)
+	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.type)
-	#TilesManager.unload_tile(temp_tile)
+	#GameTileManager.unload_tile(temp_tile)
 	
+	# Determine if the Player is not already interacting, then process in-range potential interactions
 	if not PLAYER.is_interacting:
-		# Process any Interaction Hitboxes that the Player might be in range with currently
 		process_player_nearby_interactables()
 	
 	# Determine if the Dialogue Interface is active, then process it
@@ -144,7 +141,7 @@ func _physics_process(_delta: float) -> void:
 # Determines which enemies are currently on-screen and returns them in a list
 func get_enemies_on_screen() -> Array[Node2D]:
 	
-	# Store a list of references to all of the enemies currently loaded into the game, and create an empty list that will hold any enemies on the screen
+	# Create an empty list that will hold any enemies on the screen
 	var enemies_on_screen: Array[Node2D] = []
 	
 	# Iterate over all of the enemies currently loaded in the game
@@ -158,25 +155,38 @@ func get_enemies_on_screen() -> Array[Node2D]:
 
 
 
+# Determines which interactables are currently on-screen and returns them in a list
+func get_interactables_on_screen() -> Array[Node2D]:
+	
+	# Create an empty list that will hold any Interactable on the screen
+	var interactables_on_screen: Array[Node2D] = []
+	
+	# Iterate over each Interactable currently loaded in the game
+	for interactable in interactables:
+
+		# Determine if the Interactable is on-screen, then add them to a list of on-screen Interactables
+		if interactable.on_screen_notifier.is_on_screen():
+			interactables_on_screen.append(interactable)
+	
+	return interactables_on_screen
+
+
+
 # Returns a list of all assets currently in the game
 func get_all_assets_on_screen() -> Array[Node2D]:
 	
 	# Create a list that will store all Assets currently in the game and add the Player into it
-	var all_assets: Array[Node2D] = [PLAYER]
+	var assets_on_screen: Array[Node2D] = [PLAYER]
 	
-	# Iterate over each Enemy and add it to the list of Node2Ds to freeze
-	for enemy in enemies:
-		all_assets.append(enemy)
+	# Fetch all on-screen enemies and Interactables and append them to the list of on-screen assets
+	assets_on_screen.append(get_enemies_on_screen())
+	assets_on_screen.append(get_interactables_on_screen())
 	
-	# Iterate over each Interactable and add it to the list of Node2Ds to freeze
-	for interactable in interactables:
-		all_assets.append(interactable)
-	
-	return all_assets
+	return assets_on_screen
 
 
 
-# Determines which target in a given list of targets is closest to the subject and returns that target (or null if no targets on-screen)
+# Determines which target in a given list of targets is closest to the subject and returns that target (or returns null if no targets on-screen)
 func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 	
 	# Determine if there are no targets in the provided list of targets, then return null because there are no targets to choose from
@@ -184,12 +194,12 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 		return null
 	
 	
-	# Determine if there are is only one target in the provided list of targets, then return null because it is the only target and therefore the closest
+	# Determine if there are is only one target in the provided list of targets, then return the target because it is the only target and therefore the closest
 	if targets.size() == 1:
 		return targets[0]
 	
 	
-	# Temporarily store the first target in the list of targets as the closest target and also store it's distance from the subject
+	# Temporarily store the first target in the list of targets as the closest target, and also store it's distance from the subject
 	var target_closest = targets[0]
 	var target_closest_distance = subject.center_point.distance_to(target_closest.center_point)
 	
@@ -227,7 +237,7 @@ func move_towards_target(subject: Character, target: Node2D, desired_distance: f
 		subject.velocity.y = -subject.speed_current
 	
 	# Calculate the distance from the subject to the target
-	var target_distance = subject.position.distance_to(target.position)
+	var target_distance = subject.global_position.distance_to(target.global_position)
 	
 	# Determine if the subject has approximately reached the desired distance away from the target, then make them stop moving
 	if target_distance <= desired_distance:
@@ -245,7 +255,7 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
 	var hitboxes = attacker.hitbox_damage.get_overlapping_areas()
 	
-	# Determine if the attacked Node's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
+	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
 	if target.hitbox_damage in hitboxes:
 		
 		target.health_current -= damage
@@ -262,22 +272,29 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 
 
 
-# Checks if the given Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
+# Checks if the Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
 func process_player_nearby_interactables():
 	
-	var tile_coords = TilesManager.tilemap_environment.get_used_cells()
+	# Store a list of the coordinates for every Tile in the environment tilemap
+	var tile_coords = GameTileManager.tilemap_environment.get_used_cells()
 	
+	# Iterate over each Tile's coordinates
 	for coords in tile_coords:
 		
-		var tile = Tile.new(TilesManager.tilemap_environment, coords)
+		# Create an instance of the Tile in the environment tilemap at the coords of this iteration
+		var tile = Tile.new(GameTileManager.tilemap_environment, coords)
 		
 		# Determine if the EnvironmentAsset Tile is within range of the Player (range equals the average of half the Player's height plus half the Player's width)
-		if coords.distance_to(Vector2i(PLAYER.position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
-			interactables.append(EnvironmentAsset.new())
+		if coords.distance_to(Vector2i(PLAYER.global_position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
+			
+			# Add the EnvironmentAsset Tile to the list of interactables since it is in-range of the Player
+			interactables.append(EnvironmentAsset.new())     # Use Tile data as parameters for the environemtasset's .new function (tile type (bush/tree/rock), coords, etc.)
 			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
 		
-		TilesManager.unload_tile(tile)
+		# Unload the Tile of this iteration
+		GameTileManager.unload_tile(tile)
 		tile = null
+	
 	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
 	if interactables.size() == 0:
@@ -294,7 +311,7 @@ func process_player_nearby_interactables():
 	
 	
 	# Iterate over every Asset on-screen that can be Interacted with
-	for interactable in interactables:
+	for interactable in get_interactables_on_screen():
 		
 		# Determine if the Interactable's Interaction hitbox is included in the list of hitboxes that are overlapping with the Player's hitbox, then set the Interactable to be classified as in or out of range of the Player
 		if interactable.hitbox_interaction in overlapping_hitboxes:
@@ -319,21 +336,21 @@ func process_player_nearby_interactables():
 # Processes the use of a Food Buddy or Food Buddy Fusion's ability
 func process_food_ability_use(food_entity, ability_number: int):
 	
-	# Determine if Ability 1 is being used, then process it and launch it
+	# Determine if Ability 1 is being used, then process and launch it
 	if ability_number == 1:
 		
 		# Determine if the Player has enough stamina to use the ability, then use the ability
 		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 1"][0], food_entity.ability_stamina_cost["Ability 1"][1]):
 			food_entity.use_ability1()
 	
-	
+	# Otherwise, determine if Ability 2 is being used, then process and launch it
 	elif ability_number == 2:
 		
 		# Determine if the Player has enough stamina to use the ability, then use the ability
 		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 2"][0], food_entity.ability_stamina_cost["Ability 2"][1]):
 			food_entity.use_ability2()
 	
-	
+	# Otherwise, a special attack is being used, so process and launch it
 	else:
 		food_buddy_fusion_active.use_special_attack()
 
@@ -385,16 +402,19 @@ func unequip_food_buddy_fusion():
 	# Store local references to the Food Buddies whose FieldStates should be adjusted so we don't have to access the list multiple times
 	var food_buddy1: FoodBuddy = food_buddies_active[0]
 	var food_buddy2: FoodBuddy = food_buddies_active[1]
-
+	
+	# Update the Food Buddies' FieldStates to FOLLOW and store FUSION as their previous state
 	food_buddy1.field_state_current = FoodBuddy.FieldState.FOLLOW
 	food_buddy1.field_state_previous = FoodBuddy.FieldState.FUSION
 	
 	food_buddy2.field_state_current = FoodBuddy.FieldState.FOLLOW
 	food_buddy2.field_state_previous = FoodBuddy.FieldState.FUSION
 	
+	# Add the individual Food Buddies back into the game
 	add_child(food_buddy1)
 	add_child(food_buddy2)
 	
+	# Remove the Food Buddy Fusion from the game
 	remove_child(food_buddy_fusion_active)
 	food_buddy_fusion_active = null
 
@@ -412,8 +432,12 @@ func determine_player_location_world() -> World:
 
 # CALLBACK FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Callback function that executes whenever the Player presses 'E' to interact with something: Triggers Dialogue with the test Food Citizen
+# PLAYER CALLBACKS #
+
+# Callback function that executes whenever the Player presses 'E' to interact with something
 func _on_player_interact() -> void:
+	
+	var interactables_on_screen = get_interactables_on_screen()
 	
 	# Determine if the closest Interactable to the Player is in range for an interaction, then trigger the interaction
 	if closest_interactable_to_player.in_range:
@@ -428,21 +452,22 @@ func _on_player_interact() -> void:
 			# Create a variable to store all of the in-range Interactable Characters after they're filtered out of from the non-Character Interactables
 			var characters_in_range: Array[Node2D] = []
 			
-			# Iterate over each Interactable and add the Interactable Characters that are in range of the Player to the previously created list
-			for interactable in interactables:
+			# Iterate over each on-screen Interactable and add the Interactable Characters that are in range of the Player to the previously created list
+			for interactable in interactables_on_screen:
 				if interactable.in_range and (interactable is FoodBuddy or interactable is FoodCitizen):
 					characters_in_range.append(interactable)
 			
 			# Trigger the interaction in the closest Interactable Character, then save the list of Characters that should be included in the Dialogue
 			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
 		
+		# Otherwise, determine if the closest Interactable is an EnvironmentAsset
 		elif closest_interactable_to_player is EnvironmentAsset:
 			
 			# Create a variable to store all of the in-range Interactable EnvironmentAsset after they're filtered out of from the non-EnvironmentAsset Interactables
 			var characters_in_range: Array[EnvironmentAsset] = []
 			
 			# Iterate over each Interactable and add the Interactable Characters that are in range of the Player to the previously created list
-			for interactable in interactables:
+			for interactable in interactables_on_screen:
 				
 				if interactable.in_range is EnvironmentAsset:
 					characters_in_range.append(interactable)
@@ -459,7 +484,7 @@ func _on_player_escape_menu() -> void:
 		PLAYER.is_interacting = false
 	
 	if InterfaceFoodBuddyFieldState.active:
-		InterfaceFoodBuddyFieldState.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+		InterfaceFoodBuddyFieldState.disable(get_all_assets_on_screen())
 
 
 
@@ -484,6 +509,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
 		food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
 		food_buddy_selected.field_state_previous = FoodBuddy.FieldState.PLAYER
+	
 	else:
 		
 		# Determine if the Food Buddy that wasn't selected is currently the Player's active Food Buddy or if a Food Buddy Fusion is currently active
@@ -528,6 +554,7 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 		# Remove the individual Food Buddies from the SceneTree while the Food Buddy Fusion occurs since they'll all be merged into one animation
 		remove_child(food_buddy1)
 		remove_child(food_buddy2)
+		
 	else:
 		PLAYER.field_state_current = PLAYER.field_state_previous
 
@@ -540,6 +567,7 @@ func _on_player_toggle_field_state_interface() -> void:
 	if InterfaceDialogue.active:
 		return
 	
+	# Determine if the Field State interface is active/inactive, then disable/enable it
 	if InterfaceFoodBuddyFieldState.active:
 		InterfaceFoodBuddyFieldState.disable(get_all_assets_on_screen())
 	else:
@@ -547,7 +575,7 @@ func _on_player_toggle_field_state_interface() -> void:
 
 
 
-# Callback function that executes whenever the Player wants to enable the Dialogue interface: opens the Dialogue Interface
+# Callback function that executes whenever the Player wants to enable the Dialogue interface
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if the Food Buddy FieldState Interface is active, then return because the Dialogue Interface doesn't need the 'enable' function called.
@@ -559,12 +587,12 @@ func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversatio
 
 
 
-# Callback function that executes whenever the Player wants to disable the Dialogue interface: closes the Dialogue Interface
+# Callback function that executes whenever the Player wants to disable the Dialogue interface
 func _on_player_disable_dialogue_interface():
 	
 	# Determine if the Dialogue Interface is active, then disable it
 	if InterfaceDialogue.active:
-		InterfaceDialogue.disable([MALICK, SALLY, ENEMY, food_citizen, FUSION_MALICK_SALLY, PLAYER])
+		InterfaceDialogue.disable(get_all_assets_on_screen())
 
 
 
@@ -580,8 +608,8 @@ func _on_player_use_ability_solo(damage: int) -> void:
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy: executes the Food Buddy's ability
 func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> void:
-	# TEST IF A FUNCTION CAN BE CALLED JUST BY HAVING THE FUNCTION NAME STORE IN A DICTIONARY (.abilities in food_buddy.gd)
-	#food_buddies_active[buddy_number - 1].call(food_buddies_active[buddy_number - 1].abilities["Ability 1"])
+	
+	# Process the usage of the target Food Buddy's target ability
 	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number)
 	print(food_buddies_active[buddy_number - 1].name + " has used ability " + str(ability_number))
 
@@ -606,6 +634,17 @@ func _on_player_die(player: Player) -> void:
 
 
 
+
+
+
+# CHARACTER CALLBACKS
+
+# Callback function that executes whenever the Character wants to update their altitude: updates the Character's altitude
+func _on_character_update_altitude(character) -> void:
+	GameTileManager.get_character_altitude(character)
+
+
+
 # Callback function that executes whenever the Character wants to set the Player as it's target: sets the Player as the target of the Character
 func _on_character_target_player(character: CharacterBody2D) -> void:
 	character.target = PLAYER
@@ -626,7 +665,7 @@ func _on_character_killed_target(character: CharacterBody2D) -> void:
 
 
 
-# Callback function that executes whenever the Enemy wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Character
+# Callback function that executes whenever the Character wants to set the closest Food Buddy as it's target: sets the closest Food Buddy as the target of the Character
 func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void:
 	
 	# Store a local reference to the result of searching for the closest Food Buddy target
@@ -642,19 +681,21 @@ func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void
 
 
 
-# Callback function that executes whenever an Enemy dies: removes the Character from the SceneTree
+# Callback function that executes whenever a Character dies: removes the Character from the SceneTree
 func _on_character_die(character: CharacterBody2D) -> void:
 	print(character.name + " has died!")
 	remove_child(character)
 
 
 
-# Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against enemies
+
+
+
+# FOOD BUDDY CALLBACKS #
+
+# Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against the Food Buddy's target enemy
 func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void:
-	
-	# Iterate over every enemy currently on the screen to check if the Food Buddy's attack landed on them
-	for enemy in get_enemies_on_screen():
-		process_attack(enemy, food_buddy, damage)
+	process_attack(food_buddy.target, food_buddy, damage)
 
 
 
@@ -694,13 +735,11 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 
 
 
+
+
+
+# ENEMY CALLBACKS #
+
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
-
-
-
-
-# 
-func _on_character_update_altitude(character) -> void:
-	TilesManager.get_character_altitude(character)

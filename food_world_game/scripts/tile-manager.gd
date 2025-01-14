@@ -87,48 +87,52 @@ func execute_tile_callback(tile: Tile, character: Character):
 
 
 
-# Process the tiles nearby a given Character on the given Tilemap
-func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out: int):
+# Process the tiles nearby a given Character on the given Tilemap(s)
+func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: Character, tiles_out: int):
 	
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
 	character.previous_tile_position = character.current_tile_position
-	character.current_tile_position = tilemap.local_to_map(character.position)
+	character.current_tile_position = tilemaps[0].local_to_map(character.position)
 	
-	# Create a list of Tile coordinates to process starting with the tile that the Character is currently standing on
+	# Create a list of Tile coordinates to process
 	var tiles_to_process: Array[Tile] = []
 	
 	# Store a local reference to the x and y coordinates of the Character's current Tile position
 	var x: int = character.current_tile_position.x
 	var y: int = character.current_tile_position.y
 	
-	# Iterate tiles_out number of times so that the coordinates for all of the Tiles are added to be processed 
+	# Iterate 'tiles_out' times so that all desired Tiles will be processed (lower tile_out values = less Tiles processed)
 	for count in range(1, tiles_out + 1):
 		
-		# Retrieve the coordinates for the Tiles to the left and right of the Character's current Tile
-		tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y)))
-		tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y)))
+		# Iterate over each of the tilemaps that should have their Tiles processed
+		for tilemap in tilemaps:
 		
-		# Retrieve the coordinates for the Tiles diagonally above the Character's current Tile
-		tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count)))
-		tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count)))
-		
-		# Retrieve the coordinates for the Tiles diagonally below the Character's current Tile
-		tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y + count)))
-		tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y + count)))
-		
-		# Retrieve the coordinates for any remaining Tiles within range of the Character's current Tile (the range is determined by tiles_out)
-		for number in range(1, count):
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count + number)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count + number)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y - count)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y - count)))
+			# Retrieve the coordinates for the Tiles to the left and right of the Character's current Tile
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y)))
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y)))
 			
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y + count - number)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y + count - number)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y + count)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y + count)))
+			# Retrieve the coordinates for the Tiles diagonally above the Character's current Tile
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count)))
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count)))
+			
+			# Retrieve the coordinates for the Tiles diagonally below the Character's current Tile
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y + count)))
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y + count)))
+			
+			# Retrieve the coordinates for any remaining Tiles within range of the Character's current Tile (the range is determined by tiles_out)
+			for number in range(1, count):
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count + number)))
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count + number)))
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y - count)))
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y - count)))
+				
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y + count - number)))
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y + count - number)))
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y + count)))
+				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y + count)))
 	
-	# Process each of the Tiles using the coordinates from the list
+	
+	# Process each of the Tiles using their coordinates that were stored in the list
 	for tile in range(tiles_to_process.size() - 1, -1, -1):
 		
 		# Execute the callback function associated with the type of Tile of this iteration
@@ -139,29 +143,32 @@ func process_nearby_tiles(tilemap: TileMapLayer, character: Character, tiles_out
 		tiles_to_process[tile] = null
 	
 	
-	# Store references to the Tiles that are above and below the Tile that the Character is currently standing on
-	var tile_current = Tile.new(tilemap, character.current_tile_position)
-	var tile_above = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
-	var tile_below = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y + 1))
-	
-	# Determine if the Character is standing closer to the Tile above them than the Tile below them, then execute the above Tile's callback function
-	if character.position.distance_to(tile_above.coords_local) < character.position.distance_to(tile_below.coords_local):
-		execute_tile_callback(tile_above, character)
-	
-	# Otherwise the Character must be standing closer to the Tile below them, so execute the below Tile's callback function
-	else:
-		execute_tile_callback(tile_below, character)
-	
-	# Execute the callback function for the Tile that the Character is currently standing on
-	execute_tile_callback(tile_current, character)
-	
-	# Unload each of the Tiles
-	unload_tile(tile_current)
-	unload_tile(tile_above)
-	unload_tile(tile_below)
-	tile_current = null
-	tile_above = null
-	tile_below = null
+	# Iterate over each of the tilemaps that should have their Tiles processed
+	for tilemap in tilemaps:
+		
+		# Store references to the Tiles that are above and below the Tile that the Character is currently standing on
+		var tile_current = Tile.new(tilemap, character.current_tile_position)
+		var tile_above = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
+		var tile_below = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y + 1))
+		
+		# Determine if the Character is standing closer to the Tile above them than the Tile below them, then execute the above Tile's callback function
+		if character.position.distance_to(tile_above.coords_local) < character.position.distance_to(tile_below.coords_local):
+			execute_tile_callback(tile_above, character)
+		
+		# Otherwise the Character must be standing closer to the Tile below them, so execute the below Tile's callback function
+		else:
+			execute_tile_callback(tile_below, character)
+		
+		# Execute the callback function for the Tile that the Character is currently standing on
+		execute_tile_callback(tile_current, character)
+		
+		# Unload each of the Tiles
+		unload_tile(tile_current)
+		unload_tile(tile_above)
+		unload_tile(tile_below)
+		tile_current = null
+		tile_above = null
+		tile_below = null
 
 
 func get_character_altitude(character: Character):
