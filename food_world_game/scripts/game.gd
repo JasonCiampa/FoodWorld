@@ -179,8 +179,11 @@ func get_all_assets_on_screen() -> Array[Node2D]:
 	var assets_on_screen: Array[Node2D] = [PLAYER]
 	
 	# Fetch all on-screen enemies and Interactables and append them to the list of on-screen assets
-	assets_on_screen.append(get_enemies_on_screen())
-	assets_on_screen.append(get_interactables_on_screen())
+	for enemy in get_enemies_on_screen():
+		assets_on_screen.append(enemy)
+		
+	for interactable in get_interactables_on_screen():
+		assets_on_screen.append(interactable)
 	
 	return assets_on_screen
 

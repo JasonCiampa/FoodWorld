@@ -45,24 +45,6 @@ func _init(_tilemap: TileMapLayer, _coords_map: Vector2i):
 	else:
 		self.type = ""
 
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass
-
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
-
-
-
-# Called every frame. Updates the Enemy's physics
-func _physics_process(_delta: float) -> void:
-	pass
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -95,26 +77,5 @@ func set_data() -> bool:
 # Attempts to fetch, store, and return the Tile in the cell with map coords equivalent this Tile's coords, but in a different Tilemap
 func get_same_cell(other_tilemap: TileMapLayer) -> Tile:
 	return Tile.new(other_tilemap, coords_map)
-
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-# ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
-func ready():
-	pass
-
-
-
-# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(_delta: float):
-	pass
-
-
-
-# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(_delta: float) -> void:
-	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

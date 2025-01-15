@@ -21,24 +21,27 @@ enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var tilemap_ground: TileMapLayer
+var tilemap_environment: TileMapLayer
+var tilemap_terrain: TileMapLayer
+
 var tilemap_pits: TileMapLayer
 var tilemap_water: TileMapLayer
-var tilemap_ground: TileMapLayer
-
-var tilemap_environment: TileMapLayer
-
-var tilemap_terrain: TileMapLayer
 var tilemap_sky: TileMapLayer
 
-
+# A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
 	"ledge_front" : tile_callback_ledge_front,
 	"ledge_front_elevated" : tile_callback_ledge_front_elevated,
+	
 	"ledge_back" : tile_callback_ledge_back,
 	"ledge_back_elevated" : tile_callback_ledge_back_elevated,
+	
 	"ledge_ground" : tile_callback_ledge_ground,
 	"ledge_ground_elevated" : tile_callback_ledge_ground_elevated,
+	
 	"ground" : tile_callback_ground,
+	
 	"nature_asset" : tile_callback_nature_asset
 }
 
@@ -82,7 +85,7 @@ func execute_tile_callback(tile: Tile, character: Character):
 	# Determine if the Tile's type has a designated callback function to execute, then execute it
 	if tile.type in tile_callbacks.keys():
 		
-		# Call the callback function for this Tile
+		# Call the callback function for this Tile to process it with respect to the given Character
 		tile_callbacks[tile.type].call(tile, character)
 
 
@@ -92,7 +95,7 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: Character, t
 	
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
 	character.previous_tile_position = character.current_tile_position
-	character.current_tile_position = tilemaps[0].local_to_map(character.position)
+	character.current_tile_position = tilemaps[0].local_to_map(character.global_position)
 	
 	# Create a list of Tile coordinates to process
 	var tiles_to_process: Array[Tile] = []
@@ -152,7 +155,7 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: Character, t
 		var tile_below = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y + 1))
 		
 		# Determine if the Character is standing closer to the Tile above them than the Tile below them, then execute the above Tile's callback function
-		if character.position.distance_to(tile_above.coords_local) < character.position.distance_to(tile_below.coords_local):
+		if character.global_position.distance_to(tile_above.coords_local) < character.global_position.distance_to(tile_below.coords_local):
 			execute_tile_callback(tile_above, character)
 		
 		# Otherwise the Character must be standing closer to the Tile below them, so execute the below Tile's callback function
@@ -171,14 +174,14 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: Character, t
 		tile_below = null
 
 
+
+# Returns the given Character's current altitude
 func get_character_altitude(character: Character):
 	
+	# Store a local reference to the Tile that the Character is currently standing on in the terrain tilemap (the only map with elevation... at least as of 1/14/25)
 	var current_tile = Tile.new(tilemap_terrain, character.current_tile_position)
 	
-	if current_tile.data == null:
-		character.current_altitude = 0
-		execute_tile_callback(current_tile, character)
-	
+	# Calculate and update the Character's current altitude
 	character.current_altitude = get_altitude(current_tile)
 	
 	unload_tile(current_tile)
@@ -196,7 +199,7 @@ func get_altitude(ledge_tile: Tile):
 	# Determine if the given ledge_tile is not a front ledge, then fetch the closest front ledge, get it's height, and return that as the altitude
 	if ledge_tile.type != "ledge_front" and ledge_tile.type != "ledge_front_elevated":
 		
-		# Store a local reference to the closest ledge_front Tile and store an altitude value equal to the height of that ledge_front Tile
+		# Store a local reference to the closest ledge_front Tile, and store an altitude value equal to the height of that ledge_front Tile
 		var nearest_ledge_front = get_nearest_ledge_front(ledge_tile)
 		var altitude = get_ledge_height(nearest_ledge_front, 1)
 		
@@ -232,7 +235,7 @@ func get_ledge_height(ledge_front_tile: Tile, altitude_counter: int):
 		nearest_ledge_front = null
 	
 	
-	# Otherwise, determine if the Tile below is ledge_front or a wall, which would indicate elevation, then try to get the height from that ledge_front with the altitude counter incremented to 2 now
+	# Otherwise, determine if the Tile below is ledge_front or a wall, which would indicate elevation, then calculate the altitude from that ledge_front with the altitude counter incremented
 	elif tile_below.type == "ledge_front" or tile_below.type == "ledge_front_elevated" or tile_below.type == "ledge_wall":
 		
 		# Store the altitude counter value generated by the next recursive call of this function when the altitude counter incremented by 1
@@ -270,8 +273,6 @@ func get_nearest_ledge_front(tile: Tile):
 		# Determine if the Tile below is a ledge_front tile, then return the Tile
 		if tile_below.type == "ledge_front" or tile_below.type == "ledge_front_elevated":
 			return tile_below
-	
-	return tile_below
 
 
 
@@ -344,7 +345,7 @@ func tile_callback_ledge_back_elevated(tile: Tile, character: Character):
 
 
 
-# A callback function to be played when a Ledge-Grass Tile is being processed
+# A callback function to be played when a Ledge Ground Tile is being processed
 func tile_callback_ledge_ground(tile: Tile, character: Character):
 	
 	# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
@@ -362,13 +363,13 @@ func tile_callback_ledge_ground_elevated(tile: Tile, character: Character):
 
 
 
-# A callback function to be played when a Grass Tile is being processed
+# A callback function to be played when a Ground Tile is being processed
 func tile_callback_ground(tile: Tile, character: Character):
 	
 	# Store a reference to the Tile in the same cell as the given tile but in the Terrain tilemap
 	var terrain_tile = tile.get_same_cell(tilemap_terrain)
 	
-	# Check if the the Tile that is in the same cell coordinates as this Tile but in the terrain tile map is a 'ledge' tile
+	# Check if the Tile that is in the same cell coordinates in the terrain tilemap as this Tile in the ground tilemap is a 'ledge' Tile
 	if "ledge" in terrain_tile.type and terrain_tile.type != "ledge_wall":
 		
 		# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
@@ -399,29 +400,5 @@ func tile_callback_nature_asset(_tile: Tile, character: Character):
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 
-
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-# ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
-func ready():
-	pass
-
-
-
-# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(_delta: float):
-	pass
-
-
-
-# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(_delta: float) -> void:
-	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
