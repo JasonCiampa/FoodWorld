@@ -85,7 +85,7 @@ func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
 
 
 # A custom function to execute the InteractableCharacter's logic for when a Character interacts with them
-func interact_with_character(character: Character, characters_in_range: Array[Node2D]):
+func interact_with_character(character: GameCharacter, characters_in_range: Array[Node2D]):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

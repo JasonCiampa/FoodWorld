@@ -1,4 +1,4 @@
-class_name Character
+class_name GameCharacter
 
 extends CharacterBody2D
 
@@ -59,43 +59,51 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var paused: bool = false
 var in_range: bool = false
 
+
 # Position and Size #
 var center_point: Vector2
 var width: float
 var height: float
+
 
 # Health #
 var health_current: int
 var health_max: int
 var alive: bool = true
 
+
 # Target #
 var target: Node2D = null
 var target_distance: float
 
-# Jumping #
+
+# Jumping/Falling #
 var is_jumping: bool = false
+var is_falling: bool = false
+var on_platform: bool = false
+
+var jump_velocity: int = 200
 var jump_peak_height: float
 var jump_landing_height: float
 var jump_start_height: float
+
 var jump_start_tile: Tile
 var jump_end_tile: Tile
 
-var is_falling: bool = false
-
 var current_altitude: int = 0
 
-const jump_velocity: int = 200
 
 # Speed #
 var speed_normal: int = 50
 var speed_current: int = speed_normal
 
+
 # Tiles #
 var current_tile_position: Vector2i
 var previous_tile_position: Vector2i
-var on_platform: bool
 
+
+# Collisions #
 var collision_value_current: int = 1
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -113,16 +121,23 @@ func _ready() -> void:
 	hitbox_damage = $"Damage Hitbox"
 	
 	body_collider = $"Body Collider"
-	
 	feet_collider = $"Feet Collider"
 	
 	shadow = $"Shadow"
 	
+	# Determine if the Character is on the ground, then set their collision value to 1 for proper on-ground collisions
+	if current_altitude == 0:
+		set_collision_value(1)
+	
+	# Otherwise, the Character is on a platform, so set their collision value to 3 for proper on-platform collisions
+	else:
+		set_collision_value(3)
+	
+	# Update the Character's center point based on their global position and their width and height based on the current sprite frame
+	update_location_points()
+	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
-	
-	# Update the (x,y) coordinates of the Character's location points
-	update_location_points()
 
 
 
@@ -138,10 +153,11 @@ func _process(delta: float) -> void:
 	# Determine if the Character's processing is not paused
 	if not paused:
 		
-		#process_fall()
-		
 		# Call the custom process function that subclasses may have defined manually
 		process(delta)
+		
+		# Update the (x,y) coordinates of the Character's locaiton point
+		update_location_points()
 
 
 
@@ -153,9 +169,6 @@ func _physics_process(delta: float) -> void:
 	
 		# Call the custom physics process function that subclasses may have defined manually
 		physics_process(delta)
-	
-	# Update the (x,y) coordinates of the Character's locaiton point
-	update_location_points()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -176,12 +189,12 @@ func update_location_points():
 		height = frame_texture.get_height()
 	
 	# Store the current coordinates for the center of this Character
-	center_point.x = position.x
-	center_point.y = position.y - height / 2
+	center_point.x = global_position.x
+	center_point.y = global_position.y - height / 2
 
 
 
-# Returns the name of the Food Buddy's FieldState Enum value based on the number it is associated with
+# Returns the name of a Character's Enum value based on the number it is associated with
 func get_enum_value_name(enum_target: Dictionary, enum_number: int) -> String:
 	
 	# Iterate over each enum name
@@ -215,6 +228,7 @@ func set_collision_value(new_collision_value: int):
 	set_collision_mask_value(new_collision_value, true)
 
 
+
 # Start the Character's falling
 func fall_start():
 	pass
@@ -244,7 +258,7 @@ func jump_start():
 	is_falling = false
 	
 	# Store the height that the jump is starting from as the Character's bottom point and also set that as the initial landing height
-	jump_start_height = position.y
+	jump_start_height = global_position.y
 	jump_landing_height = jump_start_height
 	
 	# Store an initial starter value for the peak height of the jump
@@ -254,18 +268,18 @@ func jump_start():
 	velocity.y -= jump_velocity
 	
 	# Set the Character's shadow's initial position to be 
-	shadow.position.y = jump_landing_height
+	shadow.global_position.y = jump_landing_height
 	
 	z_index = 1
 
 
 
-# Process the ascending portion of the jump (the portion of the jump in which the Player hasn't reached a peak height of the jump)
+# Process the ascending portion of the jump (the portion of the jump in which the Character hasn't reached a peak height of the jump)
 func jump_ascend(_delta: float):
 	
 	# Determine if the Character's feet are higher than the currently stored peak height of the jump, then update the peak height
-	if position.y < jump_peak_height:
-		jump_peak_height = position.y
+	if global_position.y < jump_peak_height:
+		jump_peak_height = global_position.y
 	
 	# Otherwise, the Character has reached the peak jump so they must be falling
 	else:
@@ -273,13 +287,14 @@ func jump_ascend(_delta: float):
 
 
 
-# Process the descending portion of the jump (the portion of the jump that occurs immediately after the Player reaches the peak height of the jump and begin to start falling)
+# Process the descending portion of the jump (the portion of the jump that occurs immediately after the Character reaches the peak height of the jump and begin to start falling)
 func jump_descend():
 	
 	# Determine if the Character's feet are lower than the height they were supposed to land at, then adjust them so they're at the proper height and end the jump
-	if position.y >= jump_landing_height:
-		position.y -= position.y - jump_landing_height
+	if global_position.y >= jump_landing_height:
+		global_position.y -= global_position.y - jump_landing_height
 		jump_end()
+
 
 
 # Processes the Character's jump
@@ -289,7 +304,7 @@ func jump_process(delta: float):
 	velocity.y += gravity * delta
 	
 	# Update the Shadow's position to be the difference between the jump's landing height and the Character's global y-coordinate, subtracted by the offset of the shadow
-	shadow.position.y = jump_landing_height - global_position.y - 22
+	shadow.global_position.y = jump_landing_height - global_position.y - 22
 	
 	# Determine if the Character is not falling, then process the jump's ascension
 	if !is_falling:
@@ -304,7 +319,7 @@ func jump_process(delta: float):
 # Ends the Character's jump
 func jump_end():
 	
-	shadow.position.y = jump_landing_height - global_position.y - 22
+	shadow.global_position.y = jump_landing_height - global_position.y - 22
 	is_jumping = false
 	is_falling = false
 	velocity.y = 0

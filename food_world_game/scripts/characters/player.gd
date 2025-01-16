@@ -1,6 +1,6 @@
 class_name Player
 
-extends Character
+extends GameCharacter
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -143,8 +143,8 @@ func _process(delta: float) -> void:
 		#print("Center X: " + str(center_point.x))
 		#print("Center Y: " + str(center_point.y))
 		#print(" ")
-		#print("Bottom X: " + str(position.x))
-		#print("Bottom Y: " + str(position.y))
+		#print("Bottom X: " + str(global_position.x))
+		#print("Bottom Y: " + str(global_position.y + height))
 		#print(" ")
 		#print("Tile X: " + str(current_tile_position.x))
 		#print("Tile Y: " + str(current_tile_position.y))
@@ -431,9 +431,9 @@ func update_movement_velocity(delta):
 		if direction_current_vertical != Direction.IDLE:
 			var position_shift = calculate_velocity(direction_current_vertical) * delta
 			if direction_current_vertical == Direction.UP:
-				position.y += position_shift
+				global_position.y += position_shift
 			else:
-				position.y -= position_shift
+				global_position.y -= position_shift
 			jump_landing_height += position_shift
 	
 	# Otherwise determine if the Player isn't falling, then see if they're moving vertically, then adjust the y-velocity

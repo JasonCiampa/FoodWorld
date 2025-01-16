@@ -1,6 +1,6 @@
 class_name InteractableCharacter
 
-extends Character
+extends GameCharacter
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ func interact_with_player(_player: Player, _characters_in_range: Array[Node2D]):
 
 
 # A custom function to execute the InteractableCharacter's logic for when a Character interacts with them
-func interact_with_character(_character: Character, _characters_in_range: Array[Node2D]):
+func interact_with_character(_character: GameCharacter, _characters_in_range: Array[Node2D]):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

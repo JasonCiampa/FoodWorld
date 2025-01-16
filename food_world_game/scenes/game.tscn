@@ -64,7 +64,7 @@ tile_set = ExtResource("3_0xyr8")
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 z_index = 0
-position = Vector2(1279, 980)
+position = Vector2(608, 548)
 collision_layer = 8
 collision_mask = 8
 metadata/_edit_group_ = true
@@ -77,16 +77,16 @@ wait_time = 1.0
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
-position = Vector2(-299, -106)
+position = Vector2(664, 465)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 position = Vector2(52, -50)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
-position = Vector2(1167, 999)
+position = Vector2(698, 711)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
-position = Vector2(1226, 1038)
+position = Vector2(664, 771)
 
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
@@ -100,6 +100,12 @@ position = Vector2(1226, 1038)
 [connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]
 [connection signal="use_ability_solo" from="Player" to="." method="_on_player_use_ability_solo"]
+[connection signal="die" from="Enemy" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy" to="." method="_on_character_killed_target"]
+[connection signal="move_towards_target" from="Enemy" to="." method="_on_character_move_towards_target"]
+[connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
 [connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
 [connection signal="die" from="Malick" to="." method="_on_food_buddy_die"]
 [connection signal="feet_collide_start" from="Malick" to="." method="_on_character_feet_collide_start"]

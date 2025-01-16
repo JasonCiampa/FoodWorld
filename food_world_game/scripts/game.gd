@@ -224,7 +224,7 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(subject: Character, target: Node2D, desired_distance: float) -> float:
+func move_towards_target(subject: GameCharacter, target: Node2D, desired_distance: float) -> float:
 	
 	# Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
 	if subject.center_point.x < target.center_point.x:

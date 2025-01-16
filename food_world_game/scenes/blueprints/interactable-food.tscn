@@ -1,8 +1,9 @@
 [gd_scene load_steps=11 format=3 uid="uid://dvn8r8xskq6g6"]
 
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="1_bryhj"]
-[ext_resource type="Script" path="res://scripts/blueprints/interactable-food.gd" id="1_r6q7m"]
+[ext_resource type="Script" path="res://scripts/blueprints/interactable-character.gd" id="1_r6q7m"]
 [ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="2_qj1nv"]
+
 
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdobk"]

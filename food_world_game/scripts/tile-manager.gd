@@ -80,7 +80,7 @@ func unload_tile(tile: Tile):
 
 
 # Process the Tile's designated callback function based on its type
-func execute_tile_callback(tile: Tile, character: Character):
+func execute_tile_callback(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Tile's type has a designated callback function to execute, then execute it
 	if tile.type in tile_callbacks.keys():
@@ -91,7 +91,7 @@ func execute_tile_callback(tile: Tile, character: Character):
 
 
 # Process the tiles nearby a given Character on the given Tilemap(s)
-func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: Character, tiles_out: int):
+func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: GameCharacter, tiles_out: int):
 	
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
 	character.previous_tile_position = character.current_tile_position
@@ -176,7 +176,7 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: Character, t
 
 
 # Returns the given Character's current altitude
-func get_character_altitude(character: Character):
+func get_character_altitude(character: GameCharacter):
 	
 	# Store a local reference to the Tile that the Character is currently standing on in the terrain tilemap (the only map with elevation... at least as of 1/14/25)
 	var current_tile = Tile.new(tilemap_terrain, character.current_tile_position)
@@ -277,7 +277,7 @@ func get_nearest_ledge_front(tile: Tile):
 
 
 # A callback function to be played when a Ledge Front Elevated Tile is being processed
-func tile_callback_ledge_front(tile: Tile, character: Character):
+func tile_callback_ledge_front(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -294,7 +294,7 @@ func tile_callback_ledge_front(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge Front Elevated Tile is being processed
-func tile_callback_ledge_front_elevated(tile: Tile, character: Character):
+func tile_callback_ledge_front_elevated(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -311,7 +311,7 @@ func tile_callback_ledge_front_elevated(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge Back Tile is being processed
-func tile_callback_ledge_back(tile: Tile, character: Character):
+func tile_callback_ledge_back(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -329,7 +329,7 @@ func tile_callback_ledge_back(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge Back Elevated Tile is being processed
-func tile_callback_ledge_back_elevated(tile: Tile, character: Character):
+func tile_callback_ledge_back_elevated(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -346,7 +346,7 @@ func tile_callback_ledge_back_elevated(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge Ground Tile is being processed
-func tile_callback_ledge_ground(tile: Tile, character: Character):
+func tile_callback_ledge_ground(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
 	if character.on_platform:
@@ -355,7 +355,7 @@ func tile_callback_ledge_ground(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ledge-Grass-Elevated Tile is being processed
-func tile_callback_ledge_ground_elevated(tile: Tile, character: Character):
+func tile_callback_ledge_ground_elevated(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is on the ground, then set this cell to have the y-sort origin necessary when the Character is on the ground
 	if !character.on_platform:
@@ -364,7 +364,7 @@ func tile_callback_ledge_ground_elevated(tile: Tile, character: Character):
 
 
 # A callback function to be played when a Ground Tile is being processed
-func tile_callback_ground(tile: Tile, character: Character):
+func tile_callback_ground(tile: Tile, character: GameCharacter):
 	
 	# Store a reference to the Tile in the same cell as the given tile but in the Terrain tilemap
 	var terrain_tile = tile.get_same_cell(tilemap_terrain)
@@ -390,7 +390,7 @@ func tile_callback_ground(tile: Tile, character: Character):
 
 
 # A callback function to be played when a NatureAsset Tile is being processed
-func tile_callback_nature_asset(_tile: Tile, character: Character):
+func tile_callback_nature_asset(_tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:

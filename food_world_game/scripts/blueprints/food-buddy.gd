@@ -41,11 +41,31 @@ FUSION  # Fusion with another Food Buddy
 var field_state_previous: FieldState
 var field_state_current: FieldState
 
+# A dictionary of callback functions that should repeatedly execute while the Food Buddy is in a given FieldState (none for PLAYER or FUSION because those are user-controlled)
+var field_state_callbacks: Dictionary = {
+	FieldState.FOLLOW: follow_field_state_callback,
+	FieldState.FORAGE: forage_field_state_callback,
+	FieldState.SOLO: solo_field_state_callback,
+}
+
 # Abilities #
-var ability_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var ability_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var ability_stamina_cost: Dictionary = { "Ability 1": [5, "Gradual"], "Ability 2": [10, "Gradual"] }
-var abilities: Dictionary = { "Ability 1": "use_ability1" }
+var ability_damage: Dictionary = { 
+	"Solo": 10, 
+	"Ability1": 15, 
+	"Ability2": 20 
+}
+
+var ability_range: Dictionary = { 
+	"Solo": 10, 
+	"Ability1": 15, 
+	"Ability2": 20 
+}
+
+var ability_stamina_cost: Dictionary = { 
+	"Ability 1": [5, "Gradual"], 
+	"Ability 2": [10, "Gradual"] 
+}
+
 
 # Inventory #
 var inventory: Array = []
@@ -85,14 +105,14 @@ func _process(delta: float) -> void:
 
 
 
-# Called every frame. Updates the Player's physics
+# Called every frame. Updates the Food Buddy's physics
 func _physics_process(delta: float) -> void:
 	
 	if not paused:
 		
-		# Determine if the Food Buddy is currently in the fighting field state, then execute their solo attack
-		if field_state_current == FieldState.SOLO:
-			use_solo_attack()
+		# Determine if the Food Buddy is currently in a FieldState that isn't user-controlled, then execute the FieldState's corresponding callback function
+		if field_state_current in field_state_callbacks.keys():
+			field_state_callbacks[field_state_current].call()
 		
 		# Adjust the Food Buddy's position based on its velocity
 		move_and_slide()
@@ -150,15 +170,32 @@ func physics_process(_delta: float) -> void:
 
 
 
-# Executes the logic for a Food Buddy's solo attack
-func use_solo_attack():
+# A callback function that should execute repeatedly while the Food Buddy is in the FOLLOW FieldState
+func follow_field_state_callback() -> void:
 	
-	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it. Otherwise, move the Food Buddy towards the Player while they look for a new target.
+	# Set the Player as the Food Buddy's target, then move towards them
+	target_player.emit(self)
+	move_towards_target.emit(self, target, 30)
+
+
+
+# A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState
+func forage_field_state_callback() -> void:
+	pass
+
+
+
+# A callback function that should execute repeatedly while the Food Buddy is in the SOLO FieldState
+func solo_field_state_callback() -> void:
+	
+	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it.
 	if target != null and target is Enemy and target.alive:
 		move_towards_target.emit(self, target, 10)
+	
+	# Otherwise, move the Food Buddy towards the Player while they look for a new target.
 	else:
 		target_player.emit(self)
-		move_towards_target.emit(self, target, 50)
+		move_towards_target.emit(self, target, 30)
 		
 		target_closest_enemy.emit(self)
 		
