@@ -32,7 +32,18 @@ var dialogue_moving_forwards: bool
 var line_displayed: bool
 
 # Script Directions #
-var script_directions: Dictionary = {"GAME": {"Direction": "", "Processing": false}, "DIALOGUE": {"Direction": "", "Processing": false}}
+var script_directions: Dictionary = {
+	"GAME": {
+		"Direction": "", 
+		"Processing": false
+	}, 
+	
+	"DIALOGUE": {
+		"Direction": "", 
+		"Processing": false
+	}
+}
+
 var game_direction: String
 var dialogue_direction: String
 
@@ -136,7 +147,7 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 	# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
 	characters_active = dialogue_characters
 	
-	# Store the Player as the Dialogue initator since this callback only activates when the Player triggers a Dialogue interaction
+	# Store the Player as the Dialogue initator since they are the only one who can (currently) start conversations (as of 1/19/25)
 	initiator = dialogue_initiator
 	
 	# Set line displayed as false to indicate that the current line hasn't been displayed yet

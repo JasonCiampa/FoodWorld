@@ -87,7 +87,7 @@ func physics_process(_delta: float) -> void:
 
 
 
-# A custom function to execute the Interactable's logic for when the Player interacts with them: Starts a conversation between this Food Citizen, the Player, and any other Characters that the logic of this function is designed to include
+# A custom function to execute the Food Citizen's logic for when the Player interacts with them
 func interact_with_player(player: Player, _characters_in_range: Array[Node2D]) -> Array[Node2D]:
 	
 	# Create a list that will store all of the Characters that should be involved in the conversation that is about to start

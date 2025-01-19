@@ -32,26 +32,42 @@ signal escape_menu
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-enum Direction { IDLE = 0, UP = -1, DOWN = 1,  LEFT = -1, RIGHT = 1 }
-
-enum FieldState 
-{ 
-SOLO,           # No Food Buddies equipped, can only use solo abilities (punch, kick, dropkick)
-BUDDY1,         # Food Buddy 1 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
-BUDDY2,         # Food Buddy 2 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
-FUSION          # Food Buddy Fusion equipped, can use fusion-based abilities (differ dependent on the Food Buddy Fusion)
+# Used to determine the Player's current direction of movement
+enum Direction { 
+	IDLE = 0, 
+	UP = -1, 
+	DOWN = 1,  
+	LEFT = -1, 
+	RIGHT = 1 
 }
 
 
-enum AttackKnockback { PUNCH = 25, KICK = 50}
+enum FieldState 
+{ 
+	SOLO,           # No Food Buddies equipped, can only use solo abilities (punch, kick, dropkick)
+	BUDDY1,         # Food Buddy 1 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
+	BUDDY2,         # Food Buddy 2 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
+	FUSION          # Food Buddy Fusion equipped, can use fusion-based abilities (differ dependent on the Food Buddy Fusion)
+}
 
-enum Ability { PUNCH = 1, KICK = 2}
+
+enum AttackKnockback { 
+	PUNCH = 25, 
+	KICK = 50
+}
+
+
+enum Ability { 
+	PUNCH = 1, 
+	KICK = 2
+}
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Behavior #
 var is_interacting: bool = false
 
 # Inventory #
@@ -71,7 +87,13 @@ var stamina_decreasing: bool = false
 var stamina_increasing: bool = false
 var stamina_regen_delay_active: bool = false
 var stamina_just_ran_out: bool = false
-var stamina_use: Dictionary = { "Sprint": 15, "Jump": 10, "Dodge": 30, "Punch": 5, "Kick": 10 }
+var stamina_use: Dictionary = { 
+	"Sprint": 15, 
+	"Jump": 10, 
+	"Dodge": 30, 
+	"Punch": 5, 
+	"Kick": 10 
+}
 
 # Speed #
 var speed_sprinting: int = 125
@@ -94,7 +116,12 @@ var is_dodging: bool
 # Field State #
 var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
-var attack_damage: Dictionary = { "Punch": 10, "Kick": 15 }
+
+# Abilities #
+var attack_damage: Dictionary = { 
+	"Punch": 10, 
+	"Kick": 15 
+}
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -175,6 +202,8 @@ func _process(delta: float) -> void:
 		#print("Z-Index: ", z_index)
 		#print("")
 
+
+
 # Called every frame. Updates the Player's physics
 func _physics_process(delta: float) -> void:
 	
@@ -200,10 +229,6 @@ func sprint_start(delta: float):
 func sprint_end():
 	is_sprinting = false
 	speed_current = speed_normal
-
-
-
-
 
 
 
@@ -242,6 +267,8 @@ func dodge_process(delta: float) -> bool:
 	# Return false to indicate that the Player was dodging from an idle position
 	return false
 
+
+
 # Calculates the Player's current velocity based on their movement input.
 func calculate_velocity(direction):
 	return direction * speed_current
@@ -260,6 +287,8 @@ func process_ability_use():
 	
 	# Determine if an ability was used, then trigger the signal that will use the correct ability based on the Player's current FieldState
 	if ability_number != 0:
+		
+		# Determine if the Player is using a solo attack, then launch the correct attack
 		if field_state_current == FieldState.SOLO:
 			if ability_number == 1:
 				use_ability_solo.emit(attack_damage["Punch"])
@@ -269,13 +298,16 @@ func process_ability_use():
 				use_ability_solo.emit(attack_damage["Kick"])
 				use_stamina(stamina_use["Kick"])
 				print("The Player used their kick attack!")
-			
+		
+		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
 			use_ability_buddy.emit(1, ability_number)
 		
+		# Otherwise, determine if the Player is using their second Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY2:
 			use_ability_buddy.emit(2, ability_number)
 		
+		# Otherwise, the Player is using their Food Buddy's Fusion ability, so launch the correct ability
 		else:
 			use_ability_buddy_fusion.emit(ability_number)
 
@@ -483,6 +515,7 @@ func update_field_state():
 
 # Toggles the Food Buddy FieldState Interface on/off
 func toggle_food_buddy_field_state_interface():
+	
 	# Determine if the Player is trying to adjust the Food Buddy's FieldState and if they're NOT in the FUSION FieldState, then emit the signal to the Game to trigger the FieldState Interface (can't let Food Buddy Fusion FieldStates to become out of sync, so this menu is disabled until the Player is out of the FUSION FieldState)
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
 		toggle_field_state_interface.emit()

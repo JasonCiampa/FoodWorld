@@ -4,7 +4,6 @@
 [ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_650dw"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="3_qplrx"]
 
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oj385"]
 size = Vector2(14, 6)
 
@@ -57,7 +56,6 @@ debug_color = Color(0, 0.619608, 1, 0.427451)
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-visible = false
 position = Vector2(0, -22.6)
 
 [node name="Damage Hitbox" type="Area2D" parent="."]

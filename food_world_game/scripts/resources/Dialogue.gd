@@ -156,7 +156,10 @@ func create_and_save_resource(txt_file_name: String):
 		
 		# Store the current line as the name of the conversation and create a variable to hold all the data for this conversation
 		var conversation_name = current_line
-		var conversation: Dictionary = {"GAME": {}, "DIALOGUE": {}}
+		var conversation: Dictionary = {
+			"GAME": {}, 
+			"DIALOGUE": {}
+		}
 		
 		# Create a key with each Character's name for the conversation and assign it an empty dictionary that will eventually hold their Dialogue
 		for character_name in character_names:
@@ -205,17 +208,5 @@ func create_and_save_resource(txt_file_name: String):
 	
 	# Close the txt_file now that we've finished parsing it
 	txt_file.close()
-
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-# ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

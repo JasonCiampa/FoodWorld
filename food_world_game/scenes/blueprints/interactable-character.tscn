@@ -4,8 +4,6 @@
 [ext_resource type="Script" path="res://scripts/blueprints/interactable-character.gd" id="1_r6q7m"]
 [ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="2_qj1nv"]
 
-
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdobk"]
 atlas = ExtResource("1_bryhj")
 region = Rect2(0, 0, 17, 22)

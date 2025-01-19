@@ -93,7 +93,6 @@ func process(active_food_buddies: Array[FoodBuddy]):
 	# Determine if the Food Buddy's current FieldState isn't PLAYER or FUSION, then let the user adjust the Food Buddy's FieldState through the interface (PLAYER and FUSION should be assigned based on '1', '2', and '3' keys)
 	if selected_food_buddy.field_state_current != FoodBuddy.FieldState.PLAYER and selected_food_buddy.field_state_current != FoodBuddy.FieldState.FUSION:
 		
-		
 		# Determine if the Player has pressed 'W', then decrement the FieldState value by 1
 		if Input.is_action_just_pressed("move_up"):
 			selected_food_buddy.field_state_current -= 1

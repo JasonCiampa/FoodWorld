@@ -291,7 +291,7 @@ func process_player_nearby_interactables():
 		if coords.distance_to(Vector2i(PLAYER.global_position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
 			
 			# Add the EnvironmentAsset Tile to the list of interactables since it is in-range of the Player
-			interactables.append(EnvironmentAsset.new())     # Use Tile data as parameters for the environemtasset's .new function (tile type (bush/tree/rock), coords, etc.)
+			#interactables.append(EnvironmentAsset.new())     # Use Tile data as parameters for the environmentasset's .new function (tile type (bush/tree/rock), coords, etc.)
 			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
 		
 		# Unload the Tile of this iteration

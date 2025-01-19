@@ -170,6 +170,8 @@ func physics_process(_delta: float) -> void:
 
 
 
+# FieldState Callbacks #
+
 # A callback function that should execute repeatedly while the Food Buddy is in the FOLLOW FieldState
 func follow_field_state_callback() -> void:
 	
@@ -209,7 +211,9 @@ func solo_field_state_callback() -> void:
 
 
 
-# A custom function to execute the Food Buddy's ability 1 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
+# Ability Functions #
+
+# A custom function to execute the Food Buddy's ability 1 that each Food Buddy subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
 func use_ability1():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	print(name + "'s Ability 1 has been triggered!")
@@ -217,7 +221,7 @@ func use_ability1():
 
 
 
-# A custom function to execute the Food Buddy's ability 2 that each Food Buddy subclass should personally define. This is called in the FoodBuddy class's "_on_player_use_ability_buddy()" callback function.
+# A custom function to execute the Food Buddy's ability 2 that each Food Buddy subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
 func use_ability2():
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	print(name + "'s Ability 2 has been triggered!")

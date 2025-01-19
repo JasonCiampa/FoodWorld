@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://duflla3k6fhg"]
 
-[ext_resource type="Script" path="res://scripts/blueprints/Character.gd" id="1_yyxwy"]
+[ext_resource type="Script" path="res://scripts/blueprints/game-character.gd" id="1_yyxwy"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_eu4yn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdobk"]

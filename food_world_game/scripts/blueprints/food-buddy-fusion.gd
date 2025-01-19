@@ -1,4 +1,4 @@
-extends InteractableCharacter
+extends FoodBuddy
 
 class_name FoodBuddyFusion
 
@@ -21,22 +21,9 @@ class_name FoodBuddyFusion
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Food Buddies #
+# Food Buddies Fused #
 var food_buddy1: FoodBuddy
 var food_buddy2: FoodBuddy
-
-# Abilities #
-var ability_damage: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var ability_range: Dictionary = { "Solo": 10, "Ability1": 15, "Ability2": 20 }
-var ability_stamina_cost: Dictionary = { "Ability 1": [5, "Gradual"], "Ability 2": [10, "Gradual"] }
-
-# Level and XP #
-var xp_current: int
-var xp_max: int
-
-# Inventory #
-var inventory: Array = []
-var inventory_size: int = 12
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -46,6 +33,8 @@ var inventory_size: int = 12
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	
+	self.name = "FoodBuddyFusion"
 	
 	ready()
 	
@@ -65,10 +54,14 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	
 	if not paused:
+		
+		# Adjust the Food Buddy's position based on its velocity
+		move_and_slide()
+		
+		# Call the custom "physics_process()" function that Food Buddy subclasses will define individually
 		physics_process(delta)
 	
 	update_location_points()
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -103,26 +96,27 @@ func physics_process(_delta: float) -> void:
 
 
 
-# A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define.
+# Ability Functions #
+
+# A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
 func use_ability1():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Ability 1 has been triggered!")
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print(name + "'s Ability 1 has been triggered!")
 	pass
 
 
 
-# A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define.
+# A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
 func use_ability2():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Ability 2 has been triggered!")
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	print(name + "'s Ability 2 has been triggered!")
 	pass
 
 
 
 # A custom function to execute the Food Buddy Fusion's special attack that each Food Buddy Fusion subclass should personally define.
 func use_special_attack():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY FUSION BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print("Food Buddy Fusion's Special Attack has been triggered!")
+	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	pass
 
 
