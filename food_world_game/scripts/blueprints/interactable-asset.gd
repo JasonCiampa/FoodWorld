@@ -5,11 +5,15 @@ extends Node2D
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# VisibleOnScreenNotifier #
+var on_screen_notifier: VisibleOnScreenNotifier2D
+
 # Hitbox #
 var hitbox_interaction: Area2D
 
 # Press 'E' To Interact Label #
 var label_e_to_interact: Label
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -35,8 +39,13 @@ var label_e_to_interact: Label
 func _ready() -> void:
 	
 	# Store references to the InteractableAsset's Nodes
+	on_screen_notifier = $"VisibleOnScreenNotifier2D"
 	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
+	
+	
+	print("Tile Object successfully loaded in at: " + str(global_position))
+
 
 
 

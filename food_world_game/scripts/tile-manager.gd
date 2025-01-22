@@ -9,6 +9,9 @@ class_name TileManager
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# A signal emitted to game.gd whenever a Tile's connected object is supposed to be loaded into the game
+signal tile_object_enter_game
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -401,15 +404,10 @@ func tile_callback_nature_asset(tile: Tile, character: GameCharacter):
 		character.feet_collider.disabled = false
 	
 	
-	# Determine if the nature asset tile doesn't have an actual nature object associated with it, then create one to associate with the tile
-	if tile.connected_object == null:
-		tile.data.set_custom_data("connected_object", EnvironmentAsset.new(tile.coords_local))
-		tile.connected_object = tile.data.get_custom_data("connected_object")
+	# Send a signal to the game to attempt to load the Tile Object into the Scene Tree
+	tile_object_enter_game.emit(tile)
 		
-	# Otherwise, the nature asset tile already is connected to an actual nature object, so return
-	else:
-		print(tile.connected_object.global_position)
-		return
+
 
 
 

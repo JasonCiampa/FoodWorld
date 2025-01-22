@@ -190,7 +190,7 @@ func update_location_points():
 	
 	# Store the current coordinates for the center of this Character
 	center_point.x = global_position.x
-	center_point.y = global_position.y - height / 2
+	center_point.y = global_position.y - (height / 2)
 
 
 

@@ -84,8 +84,8 @@ var xp_max: int
 func _ready() -> void:
 	super()
 	
-	# Set the Food Buddy's current field state to be fighting
-	field_state_current = FieldState.SOLO
+	# Set the Food Buddy's current field state to be forage (so that they don't move because it isn't coded yet, as of 1/22/25)
+	field_state_current = FieldState.FORAGE
 	
 	self.name = "FoodBuddy"
 	

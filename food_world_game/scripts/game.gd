@@ -79,6 +79,9 @@ func _ready() -> void:
 	GameTileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
 	GameTileManager.tilemap_environment = $"World Map/Town Center/Environment"
 	
+	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
+	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
+	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
@@ -725,3 +728,33 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 # Callback function that executes whenever the Enemy wants to use an ability: processes the ability against the Enemy's target
 func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
+
+
+
+
+
+
+# TILEMANAGER CALLBACKS #
+
+# Callback function that executes whenever the TileManager is attempting to load a Tile's connected object into the game: adds the connected object into the game's scene tree
+func _on_tile_object_enter_game(tile: Tile):
+	
+	# Iterate over every Interactable in the game to ensure that the Tile Object hasn't already been loaded into the game
+	for interactable in interactables:
+		
+		# Determine if the Interactable of this iteration already exists at the exact same location that a new Tile Object is trying to be created at
+		if Vector2i(interactable.global_position) == tile.coords_local:
+			
+			# Return to prevent a Tile Object from being created because one already exists
+			return
+	
+	# Create a Tile Object that corresponds to the Tile's type (tree, rock, bush, etc.) and set its location to be the same as the Tile's
+	#var tile_object = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
+	var tile_object = load("res://scenes/blueprints/interactable-asset.tscn").instantiate()
+	tile_object.global_position = tile.coords_local
+	
+	add_child(tile_object)
+	
+	# Unload the Tile Object
+	#tile_object.free()
+	#tile_object = null

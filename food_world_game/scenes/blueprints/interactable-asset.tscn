@@ -14,11 +14,10 @@ font_size = 7
 shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
 
-[node name="InteractableAsset" type="Node2D"]
+[node name="InteractableAsset" type="Node2D" groups=["interactables"]]
 script = ExtResource("1_p4pmh")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-visible = false
 position = Vector2(0, -22.6)
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
