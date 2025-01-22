@@ -278,27 +278,6 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 # Checks if the Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
 func process_player_nearby_interactables():
 	
-	# Store a list of the coordinates for every Tile in the environment tilemap
-	var tile_coords = GameTileManager.tilemap_environment.get_used_cells()
-	
-	# Iterate over each Tile's coordinates
-	for coords in tile_coords:
-		
-		# Create an instance of the Tile in the environment tilemap at the coords of this iteration
-		var tile = Tile.new(GameTileManager.tilemap_environment, coords)
-		
-		# Determine if the EnvironmentAsset Tile is within range of the Player (range equals the average of half the Player's height plus half the Player's width)
-		if coords.distance_to(Vector2i(PLAYER.global_position)) < ((PLAYER.width / 2 + PLAYER.height / 2) / 2):
-			
-			# Add the EnvironmentAsset Tile to the list of interactables since it is in-range of the Player
-			#interactables.append(EnvironmentAsset.new())     # Use Tile data as parameters for the environmentasset's .new function (tile type (bush/tree/rock), coords, etc.)
-			pass # Instantiate a new EnvironmentAsset Node (derived from Interactable) and set its position to be the exact coordinates of the 
-		
-		# Unload the Tile of this iteration
-		GameTileManager.unload_tile(tile)
-		tile = null
-	
-	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
 	if interactables.size() == 0:
 		return
@@ -719,7 +698,7 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 
 
 # Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
-func _on_food_buddy_killed_target() -> void:
+func _on_food_buddy_killed_target(character: GameCharacter) -> void:
 	# Increase XP for killing an enemy
 	pass
 

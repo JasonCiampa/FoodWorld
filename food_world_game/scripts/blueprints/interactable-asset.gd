@@ -1,4 +1,4 @@
-class_name Interactable
+class_name InteractableAsset
 
 extends Node2D
 
@@ -34,7 +34,7 @@ var label_e_to_interact: Label
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	# Store references to the InteractableCharacter's Nodes
+	# Store references to the InteractableAsset's Nodes
 	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
 
@@ -78,13 +78,13 @@ func physics_process(delta: float) -> void:
 
 
 
-# A custom function to execute the InteractableCharacter's logic for when the Player interacts with them
+# A custom function to execute the InteractableAsset's logic for when the Player interacts with them
 func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
 	pass
 
 
 
-# A custom function to execute the InteractableCharacter's logic for when a Character interacts with them
+# A custom function to execute the InteractableAsset's logic for when a Character interacts with them
 func interact_with_character(character: GameCharacter, characters_in_range: Array[Node2D]):
 	pass
 

@@ -390,7 +390,7 @@ func tile_callback_ground(tile: Tile, character: GameCharacter):
 
 
 # A callback function to be played when a NatureAsset Tile is being processed
-func tile_callback_nature_asset(_tile: Tile, character: GameCharacter):
+func tile_callback_nature_asset(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -399,6 +399,18 @@ func tile_callback_nature_asset(_tile: Tile, character: GameCharacter):
 		character.set_collision_value(1)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
+	
+	
+	# Determine if the nature asset tile doesn't have an actual nature object associated with it, then create one to associate with the tile
+	if tile.connected_object == null:
+		tile.data.set_custom_data("connected_object", EnvironmentAsset.new(tile.coords_local))
+		tile.connected_object = tile.data.get_custom_data("connected_object")
+		
+	# Otherwise, the nature asset tile already is connected to an actual nature object, so return
+	else:
+		print(tile.connected_object.global_position)
+		return
+
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

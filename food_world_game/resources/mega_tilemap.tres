@@ -1840,4 +1840,6 @@ terrain_set_9/terrain_0/name = "Garden Fences"
 terrain_set_9/terrain_0/color = Color(0.243137, 0.227451, 0.843137, 1)
 custom_data_layer_0/name = "tile_type"
 custom_data_layer_0/type = 4
+custom_data_layer_1/name = "connected_object"
+custom_data_layer_1/type = 24
 sources/0 = SubResource("TileSetAtlasSource_ob12f")
