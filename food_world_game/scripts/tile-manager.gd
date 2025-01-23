@@ -45,7 +45,8 @@ var tile_callbacks : Dictionary = {
 	
 	"ground" : tile_callback_ground,
 	
-	"nature_asset" : tile_callback_nature_asset
+	"environment_asset" : tile_callback_environment_asset,
+	"bush" : tile_callback_bush
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -392,8 +393,21 @@ func tile_callback_ground(tile: Tile, character: GameCharacter):
 
 
 
-# A callback function to be played when a NatureAsset Tile is being processed
-func tile_callback_nature_asset(tile: Tile, character: GameCharacter):
+# A callback function to be played when a EnvironmentAsset Tile is being processed (Trees and Rocks are currently the only EnvironmentAssets as of 1/23/25)
+func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
+	
+	# Determine if the Character is not jumping, then adjust their collision value
+	if !character.is_jumping:
+		
+		# Set the Character to collide with layer 1, enable their body collider, and disable their feet collider
+		character.set_collision_value(1)
+		character.body_collider.disabled = true
+		character.feet_collider.disabled = false
+
+
+
+# A callback function to be played when a Bush Tile is being processed (Bushes are not included with typical EnvironmentAssets because they need to be converted into objects, as they have their own behaviors. 1/23/25)
+func tile_callback_bush(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -404,9 +418,8 @@ func tile_callback_nature_asset(tile: Tile, character: GameCharacter):
 		character.feet_collider.disabled = false
 	
 	
-	# Send a signal to the game to attempt to load the Tile Object into the Scene Tree
+	# Send a signal to the game to attempt to load the Bush Tile into the Scene Tree
 	tile_object_enter_game.emit(tile)
-		
 
 
 

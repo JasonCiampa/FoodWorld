@@ -90,6 +90,7 @@ color = Color(0, 0, 0, 0.560784)
 polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
 
 [node name="Press \'E\' to Interact" type="Label" parent="."]
+visible = false
 z_index = 2
 offset_left = -34.0
 offset_top = -66.0

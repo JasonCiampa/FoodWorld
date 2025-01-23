@@ -30,10 +30,17 @@ var label_e_to_interact: Label
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var in_range: bool = false
+
+var center_point: Vector2
+
+var paused: bool = false
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -42,16 +49,15 @@ func _ready() -> void:
 	on_screen_notifier = $"VisibleOnScreenNotifier2D"
 	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
-	
-	
-	print("Tile Object successfully loaded in at: " + str(global_position))
-
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	
+	# Store the current coordinates for the center of this Interactable Asset (this isn't the actual center point, the height of the bush divided by 2 needs to be subtracted from the y position)
+	center_point.x = global_position.x
+	center_point.y = global_position.y
 
 
 
@@ -88,13 +94,13 @@ func physics_process(delta: float) -> void:
 
 
 # A custom function to execute the InteractableAsset's logic for when the Player interacts with them
-func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
+func interact_with_player(player: Player):
 	pass
 
 
 
 # A custom function to execute the InteractableAsset's logic for when a Character interacts with them
-func interact_with_character(character: GameCharacter, characters_in_range: Array[Node2D]):
+func interact_with_character(character: GameCharacter):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

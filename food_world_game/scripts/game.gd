@@ -166,7 +166,7 @@ func get_interactables_on_screen() -> Array[Node2D]:
 	
 	# Iterate over each Interactable currently loaded in the game
 	for interactable in interactables:
-
+		
 		# Determine if the Interactable is on-screen, then add them to a list of on-screen Interactables
 		if interactable.on_screen_notifier.is_on_screen():
 			interactables_on_screen.append(interactable)
@@ -445,19 +445,10 @@ func _on_player_interact() -> void:
 			# Trigger the interaction in the closest Interactable Character, then save the list of Characters that should be included in the Dialogue
 			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
 		
-		# Otherwise, determine if the closest Interactable is an EnvironmentAsset
-		elif closest_interactable_to_player is EnvironmentAsset:
-			
-			# Create a variable to store all of the in-range Interactable EnvironmentAsset after they're filtered out of from the non-EnvironmentAsset Interactables
-			var characters_in_range: Array[EnvironmentAsset] = []
-			
-			# Iterate over each Interactable and add the Interactable Characters that are in range of the Player to the previously created list
-			for interactable in interactables_on_screen:
-				
-				if interactable.in_range is EnvironmentAsset:
-					characters_in_range.append(interactable)
-			
-			closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range)
+		# Otherwise, determine if the closest Interactable is a Bush
+		elif closest_interactable_to_player is Bush:
+			closest_interactable_to_player.interact_with_player(PLAYER)
+			PLAYER.is_interacting = false
 
 
 
@@ -736,7 +727,7 @@ func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 
 # TILEMANAGER CALLBACKS #
 
-# Callback function that executes whenever the TileManager is attempting to load a Tile's connected object into the game: adds the connected object into the game's scene tree
+# Callback function that executes whenever the TileManager is attempting to load a Tile's Object form into the game: adds the Tile Object into the game's scene tree
 func _on_tile_object_enter_game(tile: Tile):
 	
 	# Iterate over every Interactable in the game to ensure that the Tile Object hasn't already been loaded into the game
@@ -749,12 +740,7 @@ func _on_tile_object_enter_game(tile: Tile):
 			return
 	
 	# Create a Tile Object that corresponds to the Tile's type (tree, rock, bush, etc.) and set its location to be the same as the Tile's
-	#var tile_object = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
-	var tile_object = load("res://scenes/blueprints/interactable-asset.tscn").instantiate()
+	var tile_object = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
 	tile_object.global_position = tile.coords_local
 	
 	add_child(tile_object)
-	
-	# Unload the Tile Object
-	#tile_object.free()
-	#tile_object = null

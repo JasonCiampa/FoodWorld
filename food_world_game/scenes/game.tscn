@@ -64,7 +64,7 @@ tile_set = ExtResource("3_0xyr8")
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 z_index = 0
-position = Vector2(608, 548)
+position = Vector2(613, 681)
 collision_layer = 8
 collision_mask = 8
 metadata/_edit_group_ = true

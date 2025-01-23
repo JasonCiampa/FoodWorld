@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://b5fs47kejmp3c"]
+
+[ext_resource type="Script" path="res://scripts/blueprints/bush.gd" id="1_cfnpf"]
+[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="1_vklee"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fmamn"]
+size = Vector2(51, 31)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ql5rl"]
+size = Vector2(45, 26)
+
+[sub_resource type="LabelSettings" id="LabelSettings_oli5r"]
+font = ExtResource("1_vklee")
+font_size = 7
+shadow_size = 0
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="Bush" type="Node2D" groups=["interactable-assets", "interactables"]]
+script = ExtResource("1_cfnpf")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+scale = Vector2(2.25, 1.3)
+
+[node name="Interaction Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
+shape = SubResource("RectangleShape2D_fmamn")
+
+[node name="Damage Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+shape = SubResource("RectangleShape2D_ql5rl")
+debug_color = Color(0.505887, 0, 0.044596, 0.42)
+
+[node name="Press \'E\' to Interact" type="Label" parent="."]
+visible = false
+z_index = 2
+offset_left = -45.0
+offset_top = -22.0
+offset_right = 125.0
+offset_bottom = -14.0
+text = "Press 'E' to Collect Berries"
+label_settings = SubResource("LabelSettings_oli5r")
+metadata/_edit_use_anchors_ = true

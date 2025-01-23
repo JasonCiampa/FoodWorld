@@ -1,4 +1,4 @@
-class_name EnvironmentAsset
+class_name Bush
 
 extends InteractableAsset
 
@@ -36,6 +36,8 @@ extends InteractableAsset
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -43,23 +45,6 @@ extends InteractableAsset
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Called when this class's '.new()' function is invoked
-func _init(coords: Vector2i):
-	self.global_position = coords
-
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass
-
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
-
 
 
 # Called every frame. Updates the Enemy's physics
@@ -75,8 +60,7 @@ func _physics_process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # A custom function to execute the EnvironmentAsset's logic for when the Player interacts with them
-func interact_with_player(player: Player, characters_in_range: Array[Node2D]):
-	
+func interact_with_player(player: Player):
 	print("berry retrieved")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
