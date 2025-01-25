@@ -461,11 +461,17 @@ func update_movement_velocity(delta):
 		jump_process(delta)
 		
 		if direction_current_vertical != Direction.IDLE:
+			
+			# Calculate the amount that the Player's position shifted vertically
 			var position_shift = calculate_velocity(direction_current_vertical) * delta
+			
 			if direction_current_vertical == Direction.UP:
 				global_position.y += position_shift
+				shadow.global_position.y -= position_shift
 			else:
 				global_position.y -= position_shift
+				shadow.global_position.y += position_shift
+			
 			jump_landing_height += position_shift
 	
 	# Otherwise determine if the Player isn't falling, then see if they're moving vertically, then adjust the y-velocity
@@ -475,6 +481,10 @@ func update_movement_velocity(delta):
 			velocity.y = calculate_velocity(direction_current_vertical)
 		else:
 			velocity.y = move_toward(velocity.y, 0, speed_current)
+	
+	# Determine if the Player isn't jumping and if the shadow hasn't already been reset to the correct global position
+	if !is_jumping and shadow.global_position.y != global_position.y:
+		shadow.global_position.y = global_position.y	# (I tried to put this line of code at the end of the 'jump_end' function in GameCharacter.gd, but it wouldn't always reset the shadow to the appropriate location when the code was there. It works fine here for whatever reason as of (1/25/25)
 
 
 # Updates the Player's current FieldState based on their key presses

@@ -118,6 +118,10 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: GameCharacte
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y)))
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y)))
 			
+			# Retrieve the coordinates for the Tiles above and below the Character's current Tile
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y + count)))
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y - count)))
+			
 			# Retrieve the coordinates for the Tiles diagonally above the Character's current Tile
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count)))
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count)))
@@ -405,6 +409,12 @@ func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
 		character.set_collision_value(1)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
+		character.z_index = 0
+	
+	else:
+		if character.jump_start_height > tile.coords_local.y + tile.data.y_sort_origin:
+			character.z_index = 1
+
 
 
 

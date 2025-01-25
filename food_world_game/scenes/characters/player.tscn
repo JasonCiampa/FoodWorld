@@ -344,10 +344,9 @@ shape = SubResource("RectangleShape2D_7pocc")
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
 [node name="Shadow" type="Polygon2D" parent="."]
-z_index = -1
-position = Vector2(0, -22)
-color = Color(0, 0, 0, 0.380392)
-polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
+y_sort_enabled = true
+color = Color(0, 0, 0, 0.572549)
+polygon = PackedVector2Array(-5, 2, -8, 1, -9, 0, -8, -2, -6, -3, 5, -3, 7, -2, 8, 0, 7, 1, 5, 2)
 
 [node name="Timers" type="Node" parent="."]
 

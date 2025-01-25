@@ -301,8 +301,7 @@ func jump_process(delta: float):
 	# Apply gravity to the Character
 	velocity.y += gravity * delta
 	
-	# Update the Shadow's position to be the difference between the jump's landing height and the Character's global y-coordinate, subtracted by the offset of the shadow
-	shadow.global_position.y = jump_landing_height - global_position.y - 22
+	shadow.global_position.y = jump_landing_height
 	
 	# Determine if the Character is not falling, then process the jump's ascension
 	if !is_falling:
@@ -317,7 +316,6 @@ func jump_process(delta: float):
 # Ends the Character's jump
 func jump_end():
 	
-	shadow.global_position.y = jump_landing_height - global_position.y - 22
 	is_jumping = false
 	is_falling = false
 	velocity.y = 0
@@ -328,6 +326,8 @@ func jump_end():
 		set_collision_value(1)
 	else:
 		set_collision_value(3)
+	
+	shadow.global_position.y = global_position.y
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
