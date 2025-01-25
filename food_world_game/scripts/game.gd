@@ -110,9 +110,9 @@ func _process(delta: float) -> void:
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 2)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 3)
 	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 2)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 3)
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.type)
@@ -692,7 +692,7 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 
 
 # Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
-func _on_food_buddy_killed_target(character: GameCharacter) -> void:
+func _on_food_buddy_killed_target(_character: GameCharacter) -> void:
 	# Increase XP for killing an enemy
 	pass
 

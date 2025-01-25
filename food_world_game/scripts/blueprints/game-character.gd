@@ -90,7 +90,7 @@ var jump_start_height: float
 var jump_start_tile: Tile
 var jump_end_tile: Tile
 
-var current_altitude: int = 0
+var current_altitude: int
 
 
 # Speed #
@@ -104,7 +104,7 @@ var previous_tile_position: Vector2i
 
 
 # Collisions #
-var collision_value_current: int = 1
+var collision_value_current: int = 32
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -269,8 +269,6 @@ func jump_start():
 	
 	# Set the Character's shadow's initial position to be 
 	shadow.global_position.y = jump_landing_height
-	
-	z_index = 1
 
 
 
@@ -330,8 +328,6 @@ func jump_end():
 		set_collision_value(1)
 	else:
 		set_collision_value(3)
-	
-	z_index = 0
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

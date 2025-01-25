@@ -60,7 +60,7 @@ func _physics_process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # A custom function to execute the EnvironmentAsset's logic for when the Player interacts with them
-func interact_with_player(player: Player):
+func interact_with_player(_player: Player):
 	print("berry retrieved")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

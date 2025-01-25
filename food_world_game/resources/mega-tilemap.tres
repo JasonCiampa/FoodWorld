@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://cngdqdr7a568a"]
 
-[ext_resource type="Texture2D" uid="uid://c5r3pi13nkbjj" path="res://images/floor_tiles/tile-spritesheet.png" id="1_576ia"]
+[ext_resource type="Texture2D" uid="uid://c5r3pi13nkbjj" path="res://images/floor_tiles/tile-spritesheet.png" id="1_blsmh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
-texture = ExtResource("1_576ia")
+texture = ExtResource("1_blsmh")
 0:0/next_alternative_id = 24
 0:0/0 = 0
 0:0/0/z_index = -1
@@ -101,7 +101,7 @@ texture = ExtResource("1_576ia")
 20:1/0 = 0
 21:1/0 = 0
 22:1/0 = 0
-22:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+22:1/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 23:1/0 = 0
 24:1/0 = 0
 25:1/0 = 0
@@ -376,9 +376,11 @@ texture = ExtResource("1_576ia")
 11:6/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, 7, 8, 7, 8, 8, -8, 8)
 11:6/0/physics_layer_3/polygon_0/points = PackedVector2Array(-8, 7, -8, 8, 8, 8, 8, 7)
 11:6/0/terrains_peering_bit/left_side = 0
+12:6/animation_columns = 3
+12:6/animation_frame_0/duration = 0.35
+12:6/animation_frame_1/duration = 0.35
+12:6/animation_frame_2/duration = 0.35
 12:6/0 = 0
-13:6/0 = 0
-14:6/0 = 0
 15:6/0 = 0
 15:6/0/y_sort_origin = 8
 15:6/0/terrain_set = 4
@@ -599,6 +601,7 @@ texture = ExtResource("1_576ia")
 6:8/0/y_sort_origin = -8
 6:8/0/terrain_set = 1
 6:8/0/terrain = 0
+6:8/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 6:8/0/terrains_peering_bit/right_side = 0
 6:8/0/terrains_peering_bit/bottom_side = 0
 6:8/0/terrains_peering_bit/left_side = 0
@@ -1730,7 +1733,6 @@ texture = ExtResource("1_576ia")
 11:10/animation_frame_1/duration = 0.25
 11:10/0 = 0
 11:10/0/y_sort_origin = 15
-11:10/0/physics_layer_1/polygon_0/points = PackedVector2Array(-17, 15, 14, 15, 14, 14, -17, 14)
 11:10/0/physics_layer_3/polygon_0/points = PackedVector2Array(-17, 14, -17, 15, 14, 15, 14, 14)
 11:10/0/custom_data_0 = "bush"
 14:10/size_in_atlas = Vector2i(3, 2)
@@ -1739,7 +1741,6 @@ texture = ExtResource("1_576ia")
 14:10/animation_frame_1/duration = 0.25
 14:10/0 = 0
 14:10/0/y_sort_origin = 15
-14:10/0/physics_layer_1/polygon_0/points = PackedVector2Array(-17, 15, 14, 15, 14, 14, -17, 14)
 14:10/0/physics_layer_3/polygon_0/points = PackedVector2Array(-17, 14, -17, 15, 14, 15, 14, 14)
 14:10/0/custom_data_0 = "bush"
 17:10/size_in_atlas = Vector2i(3, 2)
@@ -1748,7 +1749,6 @@ texture = ExtResource("1_576ia")
 17:10/animation_frame_1/duration = 0.25
 17:10/0 = 0
 17:10/0/y_sort_origin = 15
-17:10/0/physics_layer_1/polygon_0/points = PackedVector2Array(-16, 15, 15, 15, 15, 14, -16, 14)
 17:10/0/physics_layer_3/polygon_0/points = PackedVector2Array(-16, 14, 15, 14, 15, 15, -16, 15)
 17:10/0/custom_data_0 = "bush"
 20:10/size_in_atlas = Vector2i(3, 2)

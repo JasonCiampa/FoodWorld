@@ -276,7 +276,9 @@ func get_nearest_ledge_front(tile: Tile):
 		
 		# Determine if the Tile below is a ledge_front tile, then return the Tile
 		if tile_below.type == "ledge_front" or tile_below.type == "ledge_front_elevated":
-			return tile_below
+			break
+	
+	return tile_below
 
 
 
