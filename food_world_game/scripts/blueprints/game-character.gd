@@ -125,6 +125,17 @@ func _ready() -> void:
 	
 	shadow = $"Shadow"
 	
+	# Placing all names of signals here with a random function call so that the debugger stops yelling at me for "never explicitly using" the signal within its class.
+	target_player.is_null()
+	target_closest_food_buddy.is_null()
+	killed_target.is_null()
+	move_towards_target.is_null()
+	feet_collide_start.is_null()
+	update_altitude.is_null()
+	fall_starting.is_null()
+	fall_ending.is_null()
+	die.is_null()
+	
 	# Determine if the Character is on the ground, then set their collision value to 1 for proper on-ground collisions
 	if current_altitude == 0:
 		set_collision_value(1)

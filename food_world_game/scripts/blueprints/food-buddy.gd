@@ -38,8 +38,8 @@ FUSION  # Fusion with another Food Buddy
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Field State #
-var field_state_previous: FieldState
-var field_state_current: FieldState
+var field_state_previous: int
+var field_state_current: int
 
 # A dictionary of callback functions that should repeatedly execute while the Food Buddy is in a given FieldState (none for PLAYER or FUSION because those are user-controlled)
 var field_state_callbacks: Dictionary = {
