@@ -24,13 +24,12 @@ enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var all_tilemaps: Dictionary
+
 var tilemap_ground: TileMapLayer
 var tilemap_environment: TileMapLayer
 var tilemap_terrain: TileMapLayer
 
-var tilemap_pits: TileMapLayer
-var tilemap_water: TileMapLayer
-var tilemap_sky: TileMapLayer
 
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
@@ -412,9 +411,10 @@ func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
 		character.z_index = 0
 	
 	else:
+		
+		# Determine if the Character started their jump in front of the environment tile, then set their z-index to 1 so that they don't clip through the asset while jumping
 		if character.jump_start_height > tile.coords_local.y + tile.data.y_sort_origin:
 			character.z_index = 1
-
 
 
 

@@ -261,8 +261,8 @@ func fall_end():
 # Starts the Character's jump
 func jump_start():
 	
-	# Disable all collisions for this Character
-	set_collision_value(6)
+	# Set the Character to collide on layer 2 (EnvironmentAssets)
+	set_collision_value(2)
 	
 	# Enable jumping as the Character prepares to ascend and disable falling until they begin to descend
 	is_jumping = true
@@ -293,7 +293,6 @@ func jump_ascend(_delta: float):
 	# Otherwise, the Character has reached the peak jump so they must be falling
 	else:
 		is_falling = true
-
 
 
 # Process the descending portion of the jump (the portion of the jump that occurs immediately after the Character reaches the peak height of the jump and begin to start falling)

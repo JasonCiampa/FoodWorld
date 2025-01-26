@@ -24,6 +24,7 @@ var coords_local: Vector2i
 var coords_map: Vector2i
 var data: TileData
 var type: String
+var location: String
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,8 +43,10 @@ func _init(_tilemap: TileMapLayer, _coords_map: Vector2i):
 	# Determine if there is Tile data, then set the type of the Tile
 	if data != null:
 		self.type = data.get_custom_data("tile_type")
+		self.location = data.get_custom_data("location")
 	else:
 		self.type = ""
+		self.location = ""
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

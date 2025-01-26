@@ -74,10 +74,19 @@ func _ready() -> void:
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
+	
+	var world_tilemaps: Dictionary = {
+		"center" : [$"World Map/Town Center/Ground", $"World Map/Town Center/Terrain", $"World Map/Town Center/Environment"],
+		"sweets" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment"],
+		"garden" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment"]
+	}
+	
+	GameTileManager.all_tilemaps = world_tilemaps
+	
 	# Set the current TileMapLayers for the TileManager
-	GameTileManager.tilemap_ground = $"World Map/Town Center/Ground"
-	GameTileManager.tilemap_terrain = $"World Map/Town Center/Terrain"
-	GameTileManager.tilemap_environment = $"World Map/Town Center/Environment"
+	GameTileManager.tilemap_ground = world_tilemaps["center"][0]
+	GameTileManager.tilemap_terrain = world_tilemaps["center"][1]
+	GameTileManager.tilemap_environment = world_tilemaps["center"][2]
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
@@ -111,8 +120,8 @@ func _process(delta: float) -> void:
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 3)
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 3)
+	#GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
+	#GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 3)
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.type)
@@ -588,6 +597,7 @@ func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> voi
 	# Process the usage of the target Food Buddy's target ability
 	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number)
 	print(food_buddies_active[buddy_number - 1].name + " has used ability " + str(ability_number))
+
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability

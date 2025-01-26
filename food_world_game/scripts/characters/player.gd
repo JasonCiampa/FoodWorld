@@ -171,7 +171,7 @@ func _process(delta: float) -> void:
 		#print("Center Y: " + str(center_point.y))
 		#print(" ")
 		#print("Bottom X: " + str(global_position.x))
-		#print("Bottom Y: " + str(global_position.y + height))
+		#print("Bottom Y: " + str(global_position.y))
 		#print(" ")
 		#print("Tile X: " + str(current_tile_position.x))
 		#print("Tile Y: " + str(current_tile_position.y))
