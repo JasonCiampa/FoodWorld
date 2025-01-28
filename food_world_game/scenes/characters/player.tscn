@@ -296,7 +296,7 @@ size = Vector2(17, 35)
 size = Vector2(14, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7pocc"]
-size = Vector2(12, 2)
+size = Vector2(14, 2)
 
 [node name="Player" type="CharacterBody2D"]
 y_sort_enabled = true
@@ -308,6 +308,10 @@ script = ExtResource("1_2axk5")
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 position = Vector2(-0.5, -16.5)
 scale = Vector2(0.75, 1.65)
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.572549)
+polygon = PackedVector2Array(-5, 2, -8, 1, -9, 0, -8, -2, -6, -3, 5, -3, 7, -2, 8, 0, 7, 1, 5, 2)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ndqxf")
@@ -339,14 +343,9 @@ debug_color = Color(0, 0.619608, 1, 0.427451)
 
 [node name="Feet Collider" type="CollisionShape2D" parent="."]
 z_index = 1
-position = Vector2(-1, -1)
+position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_7pocc")
 debug_color = Color(0, 0.619608, 1, 0.427451)
-
-[node name="Shadow" type="Polygon2D" parent="."]
-y_sort_enabled = true
-color = Color(0, 0, 0, 0.572549)
-polygon = PackedVector2Array(-5, 1, -8, 0, -9, -1, -8, -3, -6, -4, 5, -4, 7, -3, 8, -1, 7, 0, 5, 1)
 
 [node name="Timers" type="Node" parent="."]
 

@@ -154,7 +154,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if current_altitude > 0:
+	if !is_jumping and current_altitude > 0:
 		on_platform = true
 	else:
 		on_platform = false
@@ -275,6 +275,8 @@ func jump_start():
 	
 	# Set the Character's shadow's initial position to be 
 	shadow.global_position.y = jump_landing_height
+	
+	on_platform = false
 
 
 
@@ -329,8 +331,10 @@ func jump_end():
 	
 	if current_altitude == 0:
 		set_collision_value(1)
+		on_platform = false
 	else:
 		set_collision_value(3)
+		on_platform = true
 	
 	shadow.global_position.y = global_position.y
 
