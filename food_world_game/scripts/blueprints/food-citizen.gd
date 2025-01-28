@@ -34,7 +34,7 @@ func _ready() -> void:
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
-	update_location_points()
+	update_dimensions()
 
 
 
@@ -57,7 +57,7 @@ func _physics_process(_delta: float) -> void:
 		#move_towards_target.emit(self, target, 40)
 		move_and_slide()
 	
-	update_location_points()
+	update_dimensions()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

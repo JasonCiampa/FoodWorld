@@ -61,7 +61,6 @@ var in_range: bool = false
 
 
 # Position and Size #
-var center_point: Vector2
 var width: float
 var height: float
 
@@ -145,7 +144,7 @@ func _ready() -> void:
 		set_collision_value(3)
 	
 	# Update the Character's center point based on their global position and their width and height based on the current sprite frame
-	update_location_points()
+	update_dimensions()
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -168,7 +167,7 @@ func _process(delta: float) -> void:
 		process(delta)
 		
 		# Update the (x,y) coordinates of the Character's locaiton point
-		update_location_points()
+		update_dimensions()
 
 
 
@@ -187,7 +186,7 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Calculates the location point of the Character by taking its current position and adjusting it by the width and height of the current Sprite frame to get the location coordinates
-func update_location_points():
+func update_dimensions():
 	
 	# Store a reference to the current Sprite frame of the Character's animation
 	var frame_texture: Texture2D = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
@@ -198,10 +197,6 @@ func update_location_points():
 		# Store the current width and height of the Character's current Sprite frame
 		width = frame_texture.get_width()
 		height = frame_texture.get_height()
-	
-	# Store the current coordinates for the center of this Character
-	center_point.x = global_position.x
-	center_point.y = global_position.y - (height / 2)
 
 
 

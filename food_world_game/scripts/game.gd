@@ -119,9 +119,9 @@ func _process(delta: float) -> void:
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 3)
-	#GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
-	#GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 3)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 2)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
+	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 2)
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.type)
@@ -216,14 +216,14 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 	
 	# Temporarily store the first target in the list of targets as the closest target, and also store it's distance from the subject
 	var target_closest = targets[0]
-	var target_closest_distance = subject.center_point.distance_to(target_closest.center_point)
+	var target_closest_distance = subject.global_position.distance_to(target_closest.global_position)
 	
 	
 	# Iterate over all of the targets in the given list
 	for target in targets:
 		
 		# Calculate and store the distance between the subject and the target of this iteration
-		var target_distance: float = subject.center_point.distance_to(target.center_point)
+		var target_distance: float = subject.global_position.distance_to(target.global_position)
 		
 		# Determine if the target's distance is closer than the closest target's distance, then set that target as the new closest target
 		if target_distance < target_closest_distance:
@@ -239,16 +239,16 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 func move_towards_target(subject: GameCharacter, target: Node2D, desired_distance: float) -> float:
 	
 	# Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
-	if subject.center_point.x < target.center_point.x:
+	if subject.global_position.x < target.global_position.x:
 		subject.velocity.x = subject.speed_current
 	
-	elif subject.center_point.x > target.center_point.x:
+	elif subject.global_position.x > target.global_position.x:
 		subject.velocity.x = -subject.speed_current
 	
-	if subject.center_point.y < target.center_point.y:
+	if subject.global_position.y < target.global_position.y:
 		subject.velocity.y = subject.speed_current
 	
-	elif subject.center_point.y > target.center_point.y:
+	elif subject.global_position.y > target.global_position.y:
 		subject.velocity.y = -subject.speed_current
 	
 	# Calculate the distance from the subject to the target
@@ -314,7 +314,7 @@ func process_player_nearby_interactables():
 			interactable.in_range = false
 		
 		# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
-		if interactable.center_point.distance_to(PLAYER.center_point) < closest_interactable_to_player.center_point.distance_to(PLAYER.center_point):
+		if interactable.global_position.distance_to(PLAYER.global_position) < closest_interactable_to_player.global_position.distance_to(PLAYER.global_position):
 			closest_interactable_to_player.label_e_to_interact.hide()
 			closest_interactable_to_player = interactable
 	
@@ -660,7 +660,7 @@ func _on_character_target_closest_food_buddy(character: CharacterBody2D) -> void
 	# Determine if the target exists, then set them as the Enemy's target and update the target distance
 	if target_closest != null and target_closest.alive:
 		character.target = target_closest
-		character.target_distance = character.center_point.distance_to(target_closest.center_point)
+		character.target_distance = character.global_position.distance_to(target_closest.global_position)
 	else:
 		character.target = null
 		character.target_distance = 0
@@ -694,7 +694,7 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
 	if target_closest != null and target_closest.alive:
 		food_buddy.target = target_closest
-		food_buddy.target_distance = food_buddy.center_point.distance_to(target_closest.center_point)
+		food_buddy.target_distance = food_buddy.global_position.distance_to(target_closest.global_position)
 	else:
 		food_buddy.target = null
 		food_buddy.target_distance = 0

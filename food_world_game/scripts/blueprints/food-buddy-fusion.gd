@@ -38,7 +38,7 @@ func _ready() -> void:
 	
 	ready()
 	
-	update_location_points()
+	update_dimensions()
 
 
 
@@ -61,7 +61,7 @@ func _physics_process(delta: float) -> void:
 		# Call the custom "physics_process()" function that Food Buddy subclasses will define individually
 		physics_process(delta)
 	
-	update_location_points()
+	update_dimensions()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

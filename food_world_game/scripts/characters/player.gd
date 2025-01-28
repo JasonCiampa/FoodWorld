@@ -134,7 +134,7 @@ func _ready() -> void:
 
 	sprite.play("test")
 	self.name = "Player"
-	update_location_points()
+	update_dimensions()
 
 
 
@@ -161,15 +161,12 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()
 	
-	update_location_points()
+	update_dimensions()
 	
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
 		#print(collision_value_current)
-		#print("Center X: " + str(center_point.x))
-		#print("Center Y: " + str(center_point.y))
-		#print(" ")
 		#print("Bottom X: " + str(global_position.x))
 		#print("Bottom Y: " + str(global_position.y))
 		#print(" ")

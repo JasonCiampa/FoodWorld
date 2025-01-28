@@ -346,7 +346,7 @@ debug_color = Color(0, 0.619608, 1, 0.427451)
 [node name="Shadow" type="Polygon2D" parent="."]
 y_sort_enabled = true
 color = Color(0, 0, 0, 0.572549)
-polygon = PackedVector2Array(-5, 2, -8, 1, -9, 0, -8, -2, -6, -3, 5, -3, 7, -2, 8, 0, 7, 1, 5, 2)
+polygon = PackedVector2Array(-5, 1, -8, 0, -9, -1, -8, -3, -6, -4, 5, -4, 7, -3, 8, -1, 7, 0, 5, 1)
 
 [node name="Timers" type="Node" parent="."]
 

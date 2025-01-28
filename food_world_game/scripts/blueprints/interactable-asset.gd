@@ -32,7 +32,6 @@ var label_e_to_interact: Label
 
 var in_range: bool = false
 
-var center_point: Vector2
 
 var paused: bool = false
 
@@ -54,10 +53,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	
-	# Store the current coordinates for the center of this Interactable Asset (this isn't the actual center point, the height of the bush divided by 2 needs to be subtracted from the y position)
-	center_point.x = global_position.x
-	center_point.y = global_position.y
+	pass
 
 
 

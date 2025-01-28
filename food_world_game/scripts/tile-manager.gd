@@ -94,7 +94,10 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 
 
 # Process the tiles nearby a given Character on the given Tilemap(s)
-func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: GameCharacter, tiles_out: int):
+func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: GameCharacter, tiles_above: int):
+	
+	# Note: tiles_above is the number of tiles that should be processed above the one that the Character is standing on
+	# 	Ex: if trying to process three tiles above the tile that the Character is standing on, tiles_above = 3
 	
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
 	character.previous_tile_position = character.current_tile_position
@@ -107,39 +110,34 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: GameCharacte
 	var x: int = character.current_tile_position.x
 	var y: int = character.current_tile_position.y
 	
-	# Iterate 'tiles_out' times so that all desired Tiles will be processed (lower tile_out values = less Tiles processed)
-	for count in range(1, tiles_out + 1):
+	
+	# Iterate over each of the tilemaps that should have their Tiles processed
+	for tilemap in tilemaps:
 		
-		# Iterate over each of the tilemaps that should have their Tiles processed
-		for tilemap in tilemaps:
+		# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x + 1, y + 1)))
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y + 1)))
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x - 1, y + 1)))
 		
-			# Retrieve the coordinates for the Tiles to the left and right of the Character's current Tile
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y)))
+		# Add the Tiles in the row including the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x + 1, y)))
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y)))
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x - 1, y)))
+		
+		# Add the Tiles in the row above the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x + 1, y - 1)))
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y - 1)))
+		tiles_to_process.append(Tile.new(tilemap, Vector2i(x - 1, y - 1)))
+		
+		# Iterate (tiles_above - 1) times to add extra rows of Tiles to process above the Character
+		for count in range(2, tiles_above + 1):
 			
-			# Retrieve the coordinates for the Tiles above and below the Character's current Tile
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y + count)))
+			# Note: Loop starts at 2 instead of 1 because one row above the Character is already processed automatically (y - 1), so the next row to be added must start at (y = 2).
+			
+			# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + 1, y - count)))
 			tiles_to_process.append(Tile.new(tilemap, Vector2i(x, y - count)))
-			
-			# Retrieve the coordinates for the Tiles diagonally above the Character's current Tile
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count)))
-			
-			# Retrieve the coordinates for the Tiles diagonally below the Character's current Tile
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y + count)))
-			tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y + count)))
-			
-			# Retrieve the coordinates for any remaining Tiles within range of the Character's current Tile (the range is determined by tiles_out)
-			for number in range(1, count):
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y - count + number)))
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y - count + number)))
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y - count)))
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y - count)))
-				
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count, y + count - number)))
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count, y + count - number)))
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x - count + number, y + count)))
-				tiles_to_process.append(Tile.new(tilemap, Vector2i(x + count - number, y + count)))
+			tiles_to_process.append(Tile.new(tilemap, Vector2i(x - 1, y - count)))
 	
 	
 	# Process each of the Tiles using their coordinates that were stored in the list
@@ -151,34 +149,6 @@ func process_nearby_tiles(tilemaps: Array[TileMapLayer], character: GameCharacte
 		# Unload the tile
 		tiles_to_process[tile].free()
 		tiles_to_process[tile] = null
-	
-	
-	# Iterate over each of the tilemaps that should have their Tiles processed
-	for tilemap in tilemaps:
-		
-		# Store references to the Tiles that are above and below the Tile that the Character is currently standing on
-		var tile_current = Tile.new(tilemap, character.current_tile_position)
-		var tile_above = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
-		var tile_below = Tile.new(tilemap, Vector2i(character.current_tile_position.x, character.current_tile_position.y + 1))
-		
-		# Determine if the Character is standing closer to the Tile above them than the Tile below them, then execute the above Tile's callback function
-		if character.global_position.distance_to(tile_above.coords_local) < character.global_position.distance_to(tile_below.coords_local):
-			execute_tile_callback(tile_above, character)
-		
-		# Otherwise the Character must be standing closer to the Tile below them, so execute the below Tile's callback function
-		else:
-			execute_tile_callback(tile_below, character)
-		
-		# Execute the callback function for the Tile that the Character is currently standing on
-		execute_tile_callback(tile_current, character)
-		
-		# Unload each of the Tiles
-		unload_tile(tile_current)
-		unload_tile(tile_above)
-		unload_tile(tile_below)
-		tile_current = null
-		tile_above = null
-		tile_below = null
 
 
 
@@ -295,10 +265,18 @@ func tile_callback_ledge_front(tile: Tile, character: GameCharacter):
 		character.set_collision_value(1)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
+	else:
+		tile_callback_ledge_ground(tile, character)
+		return
 	
 	# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
 	if character.on_platform:
 		tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map), 1)
+	
+	# Otherwise, the Character is on the ground, so determine if they are in front of the Tile and their z-index isn't already updated
+	else:
+		if character.z_index != 1 and character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
+			character.z_index = 1
 
 
 
@@ -313,10 +291,15 @@ func tile_callback_ledge_front_elevated(tile: Tile, character: GameCharacter):
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 	
+	
 	# Determine if the Character is on the ground, then set this cell to have the y-sort origin necessary when the Character is on the ground
 	if !character.on_platform:
 		tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
-
+	
+	# Otherwise, the Character is on a platform, so determine if they are in front of the Tile and their z-index isn't already updated
+	else:
+		if character.z_index != 1 and character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
+			character.z_index = 1
 
 
 # A callback function to be played when a Ledge Back Tile is being processed
@@ -332,9 +315,13 @@ func tile_callback_ledge_back(tile: Tile, character: GameCharacter):
 	
 	
 	# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
-	if character.on_platform:
+	if character.is_jumping or character.on_platform:
 		tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map), 1)
-
+	
+	# Otherwise, the Character is on the ground, so determine if they are behind the Tile and their z-index isn't already updated
+	else:
+		if character.z_index != 0 and character.global_position.y < tile.coords_local.y + tile.data.y_sort_origin:
+			character.z_index = 0
 
 
 # A callback function to be played when a Ledge Back Elevated Tile is being processed
@@ -353,12 +340,11 @@ func tile_callback_ledge_back_elevated(tile: Tile, character: GameCharacter):
 		tilemap_terrain.set_cell(tile.coords_map, 0, tilemap_terrain.get_cell_atlas_coords(tile.coords_map))
 
 
-
 # A callback function to be played when a Ledge Ground Tile is being processed
 func tile_callback_ledge_ground(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is on a platform, then set this cell to have the y-sort origin necessary when the Character is on the platform
-	if character.on_platform:
+	if character.is_jumping or character.on_platform:
 		tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 2)
 
 
@@ -367,7 +353,7 @@ func tile_callback_ledge_ground(tile: Tile, character: GameCharacter):
 func tile_callback_ledge_ground_elevated(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is on the ground, then set this cell to have the y-sort origin necessary when the Character is on the ground
-	if !character.on_platform:
+	if !character.is_jumping and !character.on_platform:
 		tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
 
 
@@ -428,6 +414,7 @@ func tile_callback_bush(tile: Tile, character: GameCharacter):
 		character.set_collision_value(1)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
+		character.z_index = 0
 	
 	
 	# Send a signal to the game to attempt to load the Bush Tile into the Scene Tree

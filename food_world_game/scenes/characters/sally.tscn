@@ -30,7 +30,7 @@ size = Vector2(16, 36)
 size = Vector2(14, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_14e6k"]
-size = Vector2(9, 2)
+size = Vector2(14, 2)
 
 [sub_resource type="LabelSettings" id="LabelSettings_v53cs"]
 font = ExtResource("3_e3mpv")
@@ -39,7 +39,6 @@ shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
 
 [node name="Sally" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
-y_sort_enabled = true
 collision_layer = 2
 collision_mask = 8
 platform_floor_layers = 0
@@ -50,7 +49,6 @@ position = Vector2(7.62939e-07, -16)
 scale = Vector2(0.8, 1.7)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 1
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_7pd1y")
 
@@ -83,7 +81,6 @@ shape = SubResource("RectangleShape2D_14e6k")
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
 [node name="Shadow" type="Polygon2D" parent="."]
-z_index = -1
 position = Vector2(0, -22)
 color = Color(0, 0, 0, 0.380392)
 polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
