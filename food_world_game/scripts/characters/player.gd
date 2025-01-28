@@ -141,7 +141,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if current_altitude > 0:
+	if !is_jumping and current_altitude > 0:
 		on_platform = true
 	else:
 		on_platform = false

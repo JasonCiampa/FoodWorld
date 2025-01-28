@@ -28,7 +28,6 @@ animations = [{
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 z_index = 1
-y_sort_enabled = true
 disable_mode = 1
 collision_layer = 8
 platform_floor_layers = 0
@@ -58,13 +57,11 @@ shape = SubResource("RectangleShape2D_kjxnu")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 
 [node name="Shadow" type="Polygon2D" parent="."]
-z_index = -1
 position = Vector2(0, -22)
 color = Color(0, 0, 0, 0.380392)
 polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 1
 position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_7s1h6")
 animation = &"new_animation"

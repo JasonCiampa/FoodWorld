@@ -30,7 +30,7 @@ size = Vector2(31, 59)
 size = Vector2(29, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_380in"]
-size = Vector2(18, 5)
+size = Vector2(28, 2)
 
 [sub_resource type="LabelSettings" id="LabelSettings_mfslr"]
 font = ExtResource("3_3jwwt")
@@ -47,6 +47,10 @@ script = ExtResource("1_bxh3n")
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 position = Vector2(0.5, -28)
 scale = Vector2(1.45, 2.85)
+
+[node name="Shadow" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.572549)
+polygon = PackedVector2Array(-5, 3, -8, 2, -10, 0, -9, -2, -6, -4, 5, -4, 8, -2, 9, 0, 7, 2, 5, 3)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(2, -28)
@@ -77,18 +81,12 @@ debug_color = Color(0, 0.619608, 1, 0.427451)
 
 [node name="Feet Collider" type="CollisionShape2D" parent="."]
 z_index = 1
-position = Vector2(0, 1.5)
+position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_380in")
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
-[node name="Shadow" type="Polygon2D" parent="."]
-position = Vector2(0, -22)
-color = Color(0, 0, 0, 0.560784)
-polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
-
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
-z_index = 2
 offset_left = -34.0
 offset_top = -66.0
 offset_right = 136.0

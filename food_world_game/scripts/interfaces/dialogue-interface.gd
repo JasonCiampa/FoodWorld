@@ -25,7 +25,7 @@ var active: bool = false
 var sleeping: bool = false
 
 # Dialogue State #
-var current_dialogue: DialogueResource
+var current_dialogue: Resource
 var characters_active: Array[Node2D]
 var initiator: Node2D
 var dialogue_moving_forwards: bool
