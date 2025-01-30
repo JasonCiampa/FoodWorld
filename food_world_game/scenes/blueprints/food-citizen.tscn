@@ -85,6 +85,7 @@ position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_46j58")
 
 [node name="Press \'E\' to Interact" type="Label" parent="."]
+z_index = 1
 offset_left = -35.0
 offset_top = -38.0
 offset_right = 135.0

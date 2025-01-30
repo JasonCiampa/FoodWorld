@@ -27,7 +27,7 @@ size = Vector2(28, 36)
 size = Vector2(16, 36)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v4miu"]
-size = Vector2(16, 6)
+size = Vector2(16, 9)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_14e6k"]
 size = Vector2(16, 2)
@@ -75,17 +75,20 @@ debug_color = Color(0.505887, 0, 0.044596, 0.42)
 
 [node name="Body Collider" type="CollisionShape2D" parent="."]
 z_index = 1
-position = Vector2(0, -13)
+position = Vector2(0, -13.5)
 shape = SubResource("RectangleShape2D_v4miu")
+disabled = true
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
 [node name="Feet Collider" type="CollisionShape2D" parent="."]
 z_index = 1
 shape = SubResource("RectangleShape2D_14e6k")
+disabled = true
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
+z_index = 1
 offset_left = -35.0
 offset_top = -42.0
 offset_right = 135.0

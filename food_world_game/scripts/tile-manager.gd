@@ -270,35 +270,31 @@ func tile_callback_ground(tile: Tile, _character: GameCharacter):
 # A callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: GameCharacter):
 	
-	if abs(tile.coords_local.x - character.global_position.x) > 8:
+	if abs(tile.coords_local.x - character.global_position.x) > 8 and character.global_position.y < tile.coords_local.y:
 		return
 	
 	# Determine if the Character is currently standing on a platform, then update their collision and z-index to behave accordingly while they are on the platform
 	if character.on_platform:
-		character.set_collision_value(3)
+		
+		character.set_collision_value(character.CollisionValues.PLATFORM)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
-		character.z_index = 0
 	
 	# Determine if the Character is currently jumping in mid-air, then update their collision and z-index to behave accordingly while they are in mid-air
 	elif character.is_jumping:
-		character.set_collision_value(2)
+		character.set_collision_value(character.CollisionValues.MIDAIR)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
-		character.z_index = 0
 	
 	# Otherwise, the Character is on the ground, so update their collision and z-index to behave accordingly while they are on the ground
 	else:
-		character.set_collision_value(1)
+		character.set_collision_value(character.CollisionValues.GROUND)
 		
 		# Determine if the given ledge Tile is a 'ledge_front', then update the Character's collision and z-index with respect to that Tile type
 		if tile.type == "ledge_front":
 			character.body_collider.disabled = true
 			character.feet_collider.disabled = false
-			
-			# Determine if the Character is standing below the Tile
-			if character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
-				character.z_index = 0
+		
 		
 		# Otherwise, the given ledge Tile is a 'ledge_back', so update the Character's collision and z-index with respect to that Tile type
 		else:
@@ -308,6 +304,9 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 			# Determine if the Character is standing below the Tile
 			if character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
 				character.z_index = -1
+				return
+		
+	character.z_index = 0
 
 
 
@@ -317,17 +316,11 @@ func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
 		
-		# Set the Character to collide with layer 1, enable their body collider, and disable their feet collider
-		character.set_collision_value(1)
+		# Set the Character to collide with the ground physics layer, enable their body collider, and disable their feet collider
+		character.set_collision_value(character.CollisionValues.GROUND)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 		character.z_index = 0
-	
-	else:
-		
-		# Determine if the Character started their jump in front of the environment tile, then set their z-index to 1 so that they don't clip through the asset while jumping
-		if character.jump_start_height > tile.coords_local.y + tile.data.y_sort_origin:
-			character.z_index = 1
 
 
 
@@ -337,11 +330,12 @@ func tile_callback_bush(tile: Tile, character: GameCharacter):
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
 		
-		# Set the Character to collide with layer 1, enable their body collider, and disable their feet collider
-		character.set_collision_value(1)
+		# Set the Character to collide with the ground physics layer, enable their body collider, and disable their feet collider
+		character.set_collision_value(character.CollisionValues.GROUND)
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 		character.z_index = 0
+
 	
 	
 	# Send a signal to the game to attempt to load the Bush Tile into the Scene Tree
