@@ -1,0 +1,79 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://d04sl1lw887rq"]
+
+[ext_resource type="Texture2D" uid="uid://c3on4c7ym50gk" path="res://images/building_tiles/exterior_building/collusiem.png" id="1_0lqbm"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
+texture = ExtResource("1_0lqbm")
+17:30/0 = 0
+17:30/0/y_sort_origin = -6
+16:31/0 = 0
+16:31/0/y_sort_origin = -6
+16:30/0 = 0
+16:30/0/y_sort_origin = -6
+17:32/0 = 0
+17:32/0/y_sort_origin = -6
+17:32/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+17:32/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+5:5/0 = 0
+5:5/0/z_index = 1
+17:33/0 = 0
+17:33/0/z_index = -1
+17:33/0/y_sort_origin = -100
+17:33/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+17:33/0/custom_data_0 = "door"
+
+[resource]
+physics_layer_0/collision_layer = 0
+physics_layer_0/collision_mask = 0
+physics_layer_1/collision_layer = 1
+physics_layer_2/collision_layer = 2
+physics_layer_2/collision_mask = 2
+physics_layer_3/collision_layer = 4
+physics_layer_3/collision_mask = 4
+physics_layer_4/collision_layer = 8
+physics_layer_4/collision_mask = 8
+physics_layer_5/collision_layer = 16
+physics_layer_5/collision_mask = 16
+physics_layer_6/collision_layer = 32
+physics_layer_6/collision_mask = 32
+physics_layer_7/collision_layer = 64
+physics_layer_7/collision_mask = 64
+physics_layer_8/collision_layer = 128
+physics_layer_8/collision_mask = 128
+physics_layer_9/collision_layer = 256
+physics_layer_9/collision_mask = 256
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "Dirt Wall0"
+terrain_set_0/terrain_0/color = Color(0.811765, 0, 0.411765, 1)
+terrain_set_1/mode = 0
+terrain_set_1/terrain_0/name = "DirtOnGrass 0"
+terrain_set_1/terrain_0/color = Color(0.610177, 0.671006, 0.933919, 1)
+terrain_set_2/mode = 0
+terrain_set_2/terrain_0/name = "PLUS ULTRA"
+terrain_set_2/terrain_0/color = Color(0.180966, 0.181336, 0.667683, 1)
+terrain_set_3/mode = 0
+terrain_set_3/terrain_0/name = "Cliff Cake"
+terrain_set_3/terrain_0/color = Color(0.441289, 0.663142, 0.264468, 1)
+terrain_set_4/mode = 0
+terrain_set_4/terrain_0/name = "Candy Fence"
+terrain_set_4/terrain_0/color = Color(0.781454, 0.691435, 2.31028e-06, 1)
+terrain_set_5/mode = 0
+terrain_set_5/terrain_0/name = "Cobblestone"
+terrain_set_5/terrain_0/color = Color(0.32549, 0.427451, 0.960784, 1)
+terrain_set_6/mode = 0
+terrain_set_6/terrain_0/name = "Fences"
+terrain_set_6/terrain_0/color = Color(0.352213, 0.619107, 0.135942, 1)
+terrain_set_7/mode = 0
+terrain_set_7/terrain_0/name = "Garden World Path"
+terrain_set_7/terrain_0/color = Color(0.65098, 0.188235, 0.172549, 1)
+terrain_set_8/mode = 0
+terrain_set_8/terrain_0/name = "Garden Cliffs"
+terrain_set_8/terrain_0/color = Color(0.800458, 0.451592, 0.152325, 1)
+terrain_set_9/mode = 0
+terrain_set_9/terrain_0/name = "Garden Fences"
+terrain_set_9/terrain_0/color = Color(0.243137, 0.227451, 0.843137, 1)
+custom_data_layer_0/name = "tile_type"
+custom_data_layer_0/type = 4
+custom_data_layer_1/name = "location"
+custom_data_layer_1/type = 4
+sources/0 = SubResource("TileSetAtlasSource_ob12f")

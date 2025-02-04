@@ -128,7 +128,7 @@ func _physics_process(delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # A custom function to execute the Food Buddy's logic for when the Player interacts with them: Starts a conversation between this Food Buddy, the Player, and the other Food Buddy (if the other Food Buddy is in range).
-func interact_with_player(player: Player, characters_in_range: Array[Node2D]) -> Array[Node2D]:
+func interact_with_player(player: Player, characters_in_range: Array[Node2D], _delta: float) -> Array[Node2D]:
 	
 	# Create a list to store all of the Characters involved in an interaction with the Player
 	var characters_to_involve: Array[Node2D] = [player]

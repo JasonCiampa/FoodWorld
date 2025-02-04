@@ -80,13 +80,13 @@ func physics_process(_delta: float) -> void:
 
 
 # A custom function to execute the InteractableCharacter's logic for when the Player interacts with them
-func interact_with_player(_player: Player, _characters_in_range: Array[Node2D]):
+func interact_with_player(_player: Player, _characters_in_range: Array[Node2D], _delta: float):
 	pass
 
 
 
 # A custom function to execute the InteractableCharacter's logic for when a Character interacts with them
-func interact_with_character(_character: GameCharacter, _characters_in_range: Array[Node2D]):
+func interact_with_character(_character: GameCharacter, _characters_in_range: Array[Node2D], _delta: float):
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

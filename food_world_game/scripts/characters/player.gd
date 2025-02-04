@@ -162,7 +162,7 @@ func _process(delta: float) -> void:
 		update_field_state()
 		
 		if Input.is_action_just_pressed("interact"):
-			interact.emit()
+			interact.emit(delta)
 	
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()

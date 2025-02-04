@@ -47,7 +47,7 @@ extends InteractableAsset
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-# Called every frame. Updates the Enemy's physics
+# Called every frame. Updates the Bush's physics
 func _physics_process(_delta: float) -> void:
 	pass
 
@@ -59,8 +59,8 @@ func _physics_process(_delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# A custom function to execute the EnvironmentAsset's logic for when the Player interacts with them
-func interact_with_player(_player: Player):
+# A custom function to execute the Bush's logic for when the Player interacts with them
+func interact_with_player(_player: Player, _delta: float):
 	print("berry retrieved")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,19 +71,19 @@ func interact_with_player(_player: Player):
 
 # ABSTRACT FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# A custom ready function that each Enemy subclass should personally define. This is called in the default Enemy class's '_ready()' function
+# A custom ready function that each Bush subclass should personally define. This is called in the default Bush class's '_ready()' function
 func ready():
 	pass
 
 
 
-# A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
+# A custom process function that each Bush subclass should personally define. This is called in the default Bush class's '_process()' function
 func process(_delta: float):
 	pass
 
 
 
-# A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
+# A custom physics_process function that each Bush subclass should personally define. This is called in the default Bush class's '_physics_process()' function
 func physics_process(_delta: float) -> void:
 	pass
 

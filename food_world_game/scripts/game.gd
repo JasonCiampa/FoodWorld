@@ -58,6 +58,14 @@ var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogu
 # Managers #
 var GameTileManager: TileManager = load("res://scripts/tile-manager.gd").new()
 
+var timer: Timer
+var screen_fading: bool = false
+var current_building: Building
+
+var exterior: TileMapLayer
+var interior: TileMapLayer
+
+var world_tilemaps: Dictionary
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -65,6 +73,8 @@ var GameTileManager: TileManager = load("res://scripts/tile-manager.gd").new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	timer = $Timer
 	
 	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(MALICK)
@@ -75,7 +85,7 @@ func _ready() -> void:
 	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
 	
-	var world_tilemaps: Dictionary = {
+	world_tilemaps = {
 		"center" : [$"World Map/Town Center/Ground", $"World Map/Town Center/Terrain", $"World Map/Town Center/Environment"],
 		"sweets" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment"],
 		"garden" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment"]
@@ -90,6 +100,9 @@ func _ready() -> void:
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
+	
+	exterior = $"World Map/Town Center/Building Exteriors"
+	interior = $"World Map/Town Center/Building Interiors"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -123,6 +136,7 @@ func _process(delta: float) -> void:
 	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
 	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 2)
 	
+	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, PLAYER.current_tile_position)
 	#print(temp_tile.type)
 	#GameTileManager.unload_tile(temp_tile)
@@ -138,6 +152,18 @@ func _process(delta: float) -> void:
 	# Determine if the FieldState Interface is active, then process it
 	if InterfaceFoodBuddyFieldState.active:
 		InterfaceFoodBuddyFieldState.process(food_buddies_active)
+	
+	if screen_fading:
+		fade_screen(delta)
+	
+	# Determine if the Player is currently in a Building and if they are entering/exiting
+	if current_building != null:
+		
+		if current_building.playerEntering:
+			_on_player_enter_building(current_building, delta)
+			
+		elif current_building.playerExiting:
+			_on_player_exit_building(current_building, delta)
 
 
 
@@ -429,7 +455,7 @@ func determine_player_location_world() -> World:
 # PLAYER CALLBACKS #
 
 # Callback function that executes whenever the Player presses 'E' to interact with something
-func _on_player_interact() -> void:
+func _on_player_interact(delta: float) -> void:
 	
 	var interactables_on_screen = get_interactables_on_screen()
 	
@@ -452,12 +478,14 @@ func _on_player_interact() -> void:
 					characters_in_range.append(interactable)
 			
 			# Trigger the interaction in the closest Interactable Character, then save the list of Characters that should be included in the Dialogue
-			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range))
+			_on_player_enable_dialogue_interface(closest_interactable_to_player.interact_with_player(PLAYER, characters_in_range, delta))
 		
-		# Otherwise, determine if the closest Interactable is a Bush
-		elif closest_interactable_to_player is Bush:
-			closest_interactable_to_player.interact_with_player(PLAYER)
+		# Otherwise, determine if the closest Interactable is a Bush or Building, then trigger the interaction with them
+		elif closest_interactable_to_player is Bush or Building:
+			closest_interactable_to_player.interact_with_player(PLAYER, delta)
 			PLAYER.is_interacting = false
+		
+			
 
 
 
@@ -754,3 +782,92 @@ func _on_tile_object_enter_game(tile: Tile):
 	tile_object.global_position = tile.coords_local
 	
 	add_child(tile_object)
+
+
+
+# BUILDING CALLBACKS #
+
+# Fades the screen to black for the given "fade out" parameter, then back to the game for the given "fade in" parameter
+func fade_screen(delta: float):
+	
+	if timer.is_stopped() and modulate.a > 0:
+		modulate.a = modulate.a - 0.7 * delta
+		
+		if modulate.a <= 0:
+			modulate.a = 0
+			timer.start(0.5)
+	
+	elif modulate.a == 0:
+		
+		if timer.is_stopped():
+			if !interior.visible:
+				interior.visible = true
+				interior.collision_enabled = true
+				exterior.visible = false
+				exterior.collision_enabled = false
+				world_tilemaps["center"][0].visible = false
+				world_tilemaps["center"][1].visible = false
+				world_tilemaps["center"][2].visible = false
+			else:
+				exterior.visible = true
+				exterior.collision_enabled = true
+				interior.visible = false
+				interior.collision_enabled = false
+				world_tilemaps["center"][0].visible = true
+				world_tilemaps["center"][1].visible = true
+				world_tilemaps["center"][2].visible = true
+				
+			timer.start(3)
+			modulate.a = modulate.a + 0.7 * delta
+	
+	else:
+		modulate.a = modulate.a + 0.7 * delta
+		
+		if modulate.a >= 1:
+			modulate.a = 1
+			screen_fading = false
+			timer.stop()
+
+
+
+# Callback function that executes whenever a Building is being entered by the Player: fades the screen to transition from exterior to interior and adjusts the Player's and Food Buddy's location to be positioned appropriately in the map
+func _on_player_enter_building(building: Building, delta: float):
+	
+	if current_building != building:
+		screen_fading = true
+		current_building = building
+	else:
+		
+		if screen_fading and modulate.a == 0:
+
+			PLAYER.global_position.y -= 100
+			food_buddies_active[0].global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y + 5)
+			food_buddies_active[1].global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y + 5)
+			
+			current_building.current_occupants.append(PLAYER)
+			current_building.current_occupants.append(food_buddies_active[0])
+			current_building.current_occupants.append(food_buddies_active[1])
+			
+			current_building.playerEntering = false
+
+
+
+# Callback function that executes whenever a Building is being exited by the Player: fades the screen to transition from interior to exterior and adjusts the Player's and Food Buddy's location to be positioned appropriately in the map
+func _on_player_exit_building(building: Building, delta: float):
+	
+	if !screen_fading:
+		screen_fading = true
+	else:
+		if screen_fading and modulate.a == 0:
+			PLAYER.global_position.y += 100
+			food_buddies_active[0].global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y - 5)
+			food_buddies_active[1].global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y - 5)
+			
+			# Remove the Player and their Food Buddies from the list of current occupants
+			for occupant in range(current_building.current_occupants.size() - 1, -1, -1):
+				if current_building.current_occupants[occupant] is Player or current_building.current_occupants[occupant] is FoodBuddy:
+					current_building.current_occupants.remove_at(occupant)
+			
+			current_building.playerExiting = false
+			
+			current_building = null
