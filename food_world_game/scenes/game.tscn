@@ -17,7 +17,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(550, 207)
+position = Vector2(-8, 321)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
@@ -74,5 +74,3 @@ position = Vector2(0, 239)
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
 [connection signal="player_enter" from="Building" to="." method="_on_player_enter_building"]
 [connection signal="player_exit" from="Building" to="." method="_on_player_exit_building"]
-
-[editable path="World Map"]
