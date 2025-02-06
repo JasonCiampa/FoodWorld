@@ -96,7 +96,7 @@ func ready():
 
 
 # A custom process function that each Building subclass should personally define. This is called in the default Building class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 

@@ -826,7 +826,7 @@ func fade_screen(delta: float):
 
 
 # Callback function that executes whenever a Building is being entered by the Player: fades the screen to transition from exterior to interior and adjusts the Player's and Food Buddy's location to be positioned appropriately in the map
-func _on_player_enter_building(building: Building, delta: float):
+func _on_player_enter_building(building: Building, _delta: float):
 	
 	if current_building != building:
 		screen_fading = true
@@ -848,7 +848,7 @@ func _on_player_enter_building(building: Building, delta: float):
 
 
 # Callback function that executes whenever a Building is being exited by the Player: fades the screen to transition from interior to exterior and adjusts the Player's and Food Buddy's location to be positioned appropriately in the map
-func _on_player_exit_building(building: Building, delta: float):
+func _on_player_exit_building(_building: Building, _delta: float):
 	
 	if !screen_fading:
 		screen_fading = true

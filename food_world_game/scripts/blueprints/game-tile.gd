@@ -22,7 +22,7 @@ enum MapType { GROUND = 0, TERRAIN = 1, ENVIRONMENT = 2}
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 var tilemap: TileMapLayer
-var map_type: MapType
+var map_type: int
 var coords_local: Vector2i
 var coords_map: Vector2i
 var data: TileData
