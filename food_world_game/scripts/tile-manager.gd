@@ -86,11 +86,7 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 	
 	# Determine if there is not any data for the given Tile in its associated Tilemap
 	if tile.type == "":
-		#print("Tile doesn't have data, oh no!")
-		#print("Current Tilemap: ", tile.tilemap)
-		#print("Tile Coords: ", tile.coords_local)
-		#print("Tile Coords MAP: ", tile.coords_map)
-		
+	
 		# Iterate over each world that contains Tilemaps
 		for world in world_tilemaps:
 			
@@ -105,27 +101,20 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 				tilemap_terrain = world_tilemaps[world][1]
 				tilemap_environment = world_tilemaps[world][2]
 				
-				print("Data found for tile: ", new_tile.type, " in world: ", world)
-				print("New Tilemap: ", new_tile.tilemap)
-				print("New Tile Coords: ", new_tile.coords_local, "\n")
-
 				return new_tile
 			
 			# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
 			else:
 				
 				# Unload the Tile and return from the function now that the world has been updated
-				#print("No data found in world: ", world)
 				unload_tile(new_tile)
 				new_tile = null
 		
 		# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
-		#print("No data found, removing tile!\n")
 		return null
 	
 	# Otherwise, the Tile already has data in its associated Tilemap, so return the tile without changes
 	else:
-		#print("Tile already has data!\n")
 		return tile
 
 
@@ -138,8 +127,7 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 	
 	# Determine if the updated Tile is not null and if the Tile's type has a designated callback function to execute, then execute it
 	if updated_tile and tile.type in tile_callbacks.keys():
-		#print("Type: ", tile.type, "\nLocation: ", tile.location)
-		#print("\n")
+		
 		# Call the callback function for this Tile to process it with respect to the given Character
 		tile_callbacks[tile.type].call(tile, character)
 

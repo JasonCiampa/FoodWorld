@@ -1,11 +1,9 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3 uid="uid://bla02og6gtxk4"]
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bla02og6gtxk4"]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue.gd" id="1_wbf2v"]
-
-
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_c5tjf"]
 
 [resource]
-script = ExtResource("1_wbf2v")
+script = ExtResource("1_c5tjf")
 conversations = {
 "Friendly-Banter-1": {
 "DIALOGUE": {
