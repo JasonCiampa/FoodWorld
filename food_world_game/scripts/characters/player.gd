@@ -140,6 +140,8 @@ func _ready() -> void:
 
 	sprite.play("test")
 	self.name = "Player"
+	body_collider.disabled = true
+	feet_collider.disabled = false
 	update_dimensions()
 
 
@@ -202,7 +204,6 @@ func _process(delta: float) -> void:
 		#print('Current Altitude: ', str(current_altitude))
 		#print('Current Z-Index: ', str(z_index))
 		#print('Current Collision Value: ', str(collision_value_current))
-		#print("Z-Index: ", z_index)
 		#print("")
 
 

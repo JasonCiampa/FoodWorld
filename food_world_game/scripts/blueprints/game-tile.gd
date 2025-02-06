@@ -14,12 +14,15 @@ class_name Tile
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+enum MapType { GROUND = 0, TERRAIN = 1, ENVIRONMENT = 2}
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 var tilemap: TileMapLayer
+var map_type: MapType
 var coords_local: Vector2i
 var coords_map: Vector2i
 var data: TileData
@@ -32,11 +35,12 @@ var location: String
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Called when this class's '.new()' function is invoked
-func _init(_tilemap: TileMapLayer, _coords_map: Vector2i):
+func _init(_tilemap: TileMapLayer, _map_type: int, _coords_map: Vector2i):
 	
 	self.tilemap = _tilemap
+	self.map_type = _map_type
 	self.coords_map = _coords_map
-	
+	self.coords_local = tilemap.map_to_local(coords_map)
 	set_data()
 	set_local_coords()
 	
@@ -78,7 +82,7 @@ func set_data() -> bool:
 
 
 # Attempts to fetch, store, and return the Tile in the cell with map coords equivalent this Tile's coords, but in a different Tilemap
-func get_same_cell(other_tilemap: TileMapLayer) -> Tile:
-	return Tile.new(other_tilemap, coords_map)
+func get_same_cell(other_tilemap: TileMapLayer, other_map_type: Tile.MapType) -> Tile:
+	return Tile.new(other_tilemap, other_map_type, coords_map)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

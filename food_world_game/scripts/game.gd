@@ -56,7 +56,7 @@ var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogu
 
 
 # Managers #
-var GameTileManager: TileManager = load("res://scripts/tile-manager.gd").new()
+var GameTileManager: TileManager
 
 var timer: Timer
 var screen_fading: bool = false
@@ -86,23 +86,19 @@ func _ready() -> void:
 	
 	
 	world_tilemaps = {
-		"center" : [$"World Map/Town Center/Ground", $"World Map/Town Center/Terrain", $"World Map/Town Center/Environment"],
-		"sweets" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment"],
-		"garden" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment"]
+		"center" : [$"World Map/World Center/Ground", $"World Map/World Center/Terrain", $"World Map/World Center/Environment"],
+		"sweets" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment"],
+		"garden" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment"]
 	}
 	
-	GameTileManager.all_tilemaps = world_tilemaps
-	
-	# Set the current TileMapLayers for the TileManager
-	GameTileManager.tilemap_ground = world_tilemaps["center"][0]
-	GameTileManager.tilemap_terrain = world_tilemaps["center"][1]
-	GameTileManager.tilemap_environment = world_tilemaps["center"][2]
+	# Create the instance of the Game's Tile Manager and pass it all of the tilemaps in the game
+	GameTileManager = load("res://scripts/tile-manager.gd").new(world_tilemaps)
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
 	
-	exterior = $"World Map/Town Center/Building Exteriors"
-	interior = $"World Map/Town Center/Building Interiors"
+	exterior = $"World Map/World Center/Building Exteriors"
+	interior = $"World Map/World Center/Building Interiors"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -132,12 +128,12 @@ func _process(delta: float) -> void:
 	interactables = get_tree().get_nodes_in_group("interactables")
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], PLAYER, 2)
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], MALICK, 3)
-	GameTileManager.process_nearby_tiles([GameTileManager.tilemap_ground, GameTileManager.tilemap_terrain, GameTileManager.tilemap_environment], SALLY, 2)
+	GameTileManager.process_nearby_tiles(PLAYER, 2)
+	#GameTileManager.process_nearby_tiles(MALICK, 3)
+	#GameTileManager.process_nearby_tiles(SALLY, 2)
 	
 	
-	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, PLAYER.current_tile_position)
+	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
 	#print(temp_tile.type)
 	#GameTileManager.unload_tile(temp_tile)
 	
@@ -782,7 +778,6 @@ func _on_tile_object_enter_game(tile: Tile):
 	tile_object.global_position = tile.coords_local
 	
 	add_child(tile_object)
-
 
 
 # BUILDING CALLBACKS #
