@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dtladpek8fvit"]
 
-[ext_resource type="Texture2D" uid="uid://bechpl65ituts" path="res://images/building_tiles/interior_building/colleseum.png" id="1_klvxw"]
+[ext_resource type="Texture2D" uid="uid://cjy26uaswkfe4" path="res://images/building_tiles/interior_building/collesium-colors.png" id="1_lniao"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
-texture = ExtResource("1_klvxw")
+texture = ExtResource("1_lniao")
 3:21/0 = 0
 3:21/0/z_index = -1
 3:21/0/y_sort_origin = -10
@@ -58,6 +58,20 @@ texture = ExtResource("1_klvxw")
 4:24/0/y_sort_origin = -10
 4:24/0/custom_data_0 = "ground"
 4:24/0/custom_data_1 = "center"
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
 
 [resource]
 physics_layer_0/collision_layer = 0

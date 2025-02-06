@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://d04sl1lw887rq"]
 
-[ext_resource type="Texture2D" uid="uid://c3on4c7ym50gk" path="res://images/building_tiles/exterior_building/collusiem.png" id="1_0lqbm"]
+[ext_resource type="Texture2D" uid="uid://cafejth6npd7x" path="res://images/building_tiles/exterior_building/collusiem-colors.png" id="1_j4tl1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
-texture = ExtResource("1_0lqbm")
+texture = ExtResource("1_j4tl1")
 17:30/0 = 0
 17:30/0/y_sort_origin = -6
 16:31/0 = 0
@@ -21,6 +21,20 @@ texture = ExtResource("1_0lqbm")
 17:33/0/y_sort_origin = -100
 17:33/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 17:33/0/custom_data_0 = "door"
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
 
 [resource]
 physics_layer_0/collision_layer = 0
