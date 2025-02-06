@@ -1,0 +1,23 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://cpd16w5nliast"]
+
+[ext_resource type="Texture2D" uid="uid://cu40rqlc5omw0" path="res://images/building_tiles/exterior_building/candy-castle-palet.png" id="1_djul2"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v6dlk"]
+texture = ExtResource("1_djul2")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+
+[resource]
+sources/1 = SubResource("TileSetAtlasSource_v6dlk")
