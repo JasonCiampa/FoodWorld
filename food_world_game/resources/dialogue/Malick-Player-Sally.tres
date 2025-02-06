@@ -1,11 +1,9 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://clqbmtwxuqk2h"]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue.gd" id="1_3bcbq"]
-
-
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_0opj2"]
 
 [resource]
-script = ExtResource("1_3bcbq")
+script = ExtResource("1_0opj2")
 conversations = {
 "Candy-Castle-Dungeon-1": {
 "DIALOGUE": {

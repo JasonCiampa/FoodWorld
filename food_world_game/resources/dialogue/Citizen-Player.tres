@@ -1,11 +1,9 @@
-[gd_resource type="Resource" script_class="Dialogue" load_steps=2 format=3]
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bub16mqk1nyob"]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue.gd" id="1_htsxu"]
-
-
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_qscsq"]
 
 [resource]
-script = ExtResource("1_htsxu")
+script = ExtResource("1_qscsq")
 conversations = {
 "Awkward-Greeting": {
 "Citizen": {

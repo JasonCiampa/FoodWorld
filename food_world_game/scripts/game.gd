@@ -129,8 +129,8 @@ func _process(delta: float) -> void:
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	GameTileManager.process_nearby_tiles(PLAYER, 2)
-	#GameTileManager.process_nearby_tiles(MALICK, 3)
-	#GameTileManager.process_nearby_tiles(SALLY, 2)
+	GameTileManager.process_nearby_tiles(MALICK, 3)
+	GameTileManager.process_nearby_tiles(SALLY, 2)
 	
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
