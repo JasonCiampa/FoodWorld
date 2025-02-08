@@ -37,6 +37,8 @@ signal player_exit
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var resource: Resource
+
 var usual_occupants: Array
 var current_occupants: Array
 
@@ -91,7 +93,9 @@ func interact_with_player(player: Player, delta: float):
 
 # A custom ready function that each Building subclass should personally define. This is called in the default Building class's '_ready()' function
 func ready():
-	pass
+	
+	# Set the global position of this Building based on the position saved in the resource
+	global_position = Vector2(0, 240)
 
 
 

@@ -86,9 +86,9 @@ func _ready() -> void:
 	
 	
 	world_tilemaps = {
-		"center" : [$"World Map/World Center/Ground", $"World Map/World Center/Terrain", $"World Map/World Center/Environment"],
-		"sweets" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment"],
-		"garden" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment"]
+		"center" : [$"World Map/World Center/Ground", $"World Map/World Center/Terrain", $"World Map/World Center/Environment", $"World Map/World Center/Building Interiors", $"World Map/World Center/Building Exteriors"],
+		"sweets" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment", $"World Map/Sweets World/Building Interiors", $"World Map/Sweets World/Building Exteriors"],
+		"garden" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment", $"World Map/Garden World/Building Interiors", $"World Map/Garden World/Building Exteriors"]
 	}
 	
 	# Create the instance of the Game's Tile Manager and pass it all of the tilemaps in the game
@@ -96,9 +96,6 @@ func _ready() -> void:
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
-	
-	exterior = $"World Map/World Center/Building Exteriors"
-	interior = $"World Map/World Center/Building Interiors"
 	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
@@ -773,10 +770,29 @@ func _on_tile_object_enter_game(tile: Tile):
 			# Return to prevent a Tile Object from being created because one already exists
 			return
 	
-	# Create a Tile Object that corresponds to the Tile's type (tree, rock, bush, etc.) and set its location to be the same as the Tile's
-	var tile_object = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
-	tile_object.global_position = tile.coords_local
 	
+	# Load and store the Tile Object
+	var tile_object: Node = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
+	
+	# Determine if the Tile Object is a building
+	if tile.type == "building":
+		
+		## Load in the Building's specific resource (name of Building, ex: "coliseum", stored in tile.location for Buildings, as tile.type is already used for 'building')
+		#tile_object.resource = load("res://resources/" + tile.location + ".tres")
+		
+		# Connect the Tile Object's signals to the game
+		tile_object.player_enter.connect(_on_player_enter_building)
+		tile_object.player_exit.connect(_on_player_enter_building)
+		
+		
+	# Otherwise, the Tile Object is not a building, so don't do anything extra because buildings process things differently
+	else:
+		
+		# Set the location of this normal Tile Object based directly on the position of the Tile it is being generated from
+		tile_object.global_position = tile.coords_local
+	
+	
+	# Add the Tile Object into the Game
 	add_child(tile_object)
 
 
@@ -785,34 +801,61 @@ func _on_tile_object_enter_game(tile: Tile):
 # Fades the screen to black for the given "fade out" parameter, then back to the game for the given "fade in" parameter
 func fade_screen(delta: float):
 	
+	# Determine if the timer is stopped and that the opacity isn't all the way down yet, then decrement the opacity further
 	if timer.is_stopped() and modulate.a > 0:
 		modulate.a = modulate.a - 0.7 * delta
 		
+		# Ensure the opacity doesn't go out of bounds, then start a 0.5 second delay until the fade back in occurs
 		if modulate.a <= 0:
 			modulate.a = 0
 			timer.start(0.5)
 	
+	# Otherwise, the opacity is all the way down, so...
 	elif modulate.a == 0:
 		
+		# Determine if the timer is stopped (meaning it is time to fade back in)
 		if timer.is_stopped():
-			if !interior.visible:
-				interior.visible = true
-				interior.collision_enabled = true
-				exterior.visible = false
-				exterior.collision_enabled = false
-				world_tilemaps["center"][0].visible = false
-				world_tilemaps["center"][1].visible = false
-				world_tilemaps["center"][2].visible = false
-			else:
-				exterior.visible = true
-				exterior.collision_enabled = true
-				interior.visible = false
-				interior.collision_enabled = false
-				world_tilemaps["center"][0].visible = true
-				world_tilemaps["center"][1].visible = true
-				world_tilemaps["center"][2].visible = true
+			
+			# Determine if the interiors of the buildings are currently not visible (meaning the player is entering from outside)
+			if !GameTileManager.tilemap_buildings_interior.visible:
 				
-			timer.start(3)
+				# Enable the interiors' visibility and collisions
+				GameTileManager.tilemap_buildings_interior.visible = true
+				GameTileManager.tilemap_buildings_interior.collision_enabled = true
+				
+				# Disable the exterior's visibility and collisions
+				GameTileManager.tilemap_buildings_exterior.visible = false
+				GameTileManager.tilemap_buildings_exterior.collision_enabled = false
+				
+				# Iterate over each Tilemap aside from the building-related Tilemaps
+				for tilemap in range(0, GameTileManager.tilemaps_active.size() - 2):
+					
+					# Disable the visibility and collisions of the outdoor tilemaps now that the player is going inside
+					GameTileManager.tilemaps_active[tilemap].visible = false
+					GameTileManager.tilemaps_active[tilemap].collision_enabled = false
+			
+			# Otherwise, the exteriors of the building are not currently visible (meaning the player is exiting from outside) 
+			else:
+				
+				# Enable the exteriors' visibility and collisions
+				GameTileManager.tilemap_buildings_exterior.visible = true
+				GameTileManager.tilemap_buildings_exterior.collision_enabled = true
+				
+				# Disable the interiors' visibility and collisions
+				GameTileManager.tilemap_buildings_interior.visible = false
+				GameTileManager.tilemap_buildings_interior.collision_enabled = false
+				
+				# Iterate over each Tilemap aside from the building-related Tilemaps
+				for tilemap in range(0, GameTileManager.tilemaps_active.size() - 2):
+					
+					# Enable the visibility and collisions of the outdoor tilemaps now that the player is going back outside
+					GameTileManager.tilemaps_active[tilemap].visible = true
+					GameTileManager.tilemaps_active[tilemap].collision_enabled = true
+			
+			# Start the timer for 100 seconds so this code doesn't break by thinking the timer is stopped when it shouldnt be affecting it anymore
+			timer.start(100)
+			
+			# Begin incrementing the opacity
 			modulate.a = modulate.a + 0.7 * delta
 	
 	else:

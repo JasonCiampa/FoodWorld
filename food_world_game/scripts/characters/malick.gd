@@ -48,6 +48,8 @@ func ready():
 	speed_current = speed_normal
 	
 	self.name = "Malick"
+	
+	set_collision_value(CollisionValues.GROUND)
 
 
 # A custom process function that is personally defined for Malick. This is called in the default FoodBuddy class's '_process()' function

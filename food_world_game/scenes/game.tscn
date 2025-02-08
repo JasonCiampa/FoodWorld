@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cihoalh5h5cik"]
+[gd_scene load_steps=8 format=3 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://b4edk42lcf0n8" path="res://scenes/characters/malick.tscn" id="5_184d6"]
 [ext_resource type="PackedScene" uid="uid://dtdrrty6qehha" path="res://scenes/blueprints/food-citizen.tscn" id="6_0yf05"]
 [ext_resource type="PackedScene" uid="uid://com21o63hyb7l" path="res://scenes/characters/sally.tscn" id="6_vh2pn"]
-[ext_resource type="PackedScene" uid="uid://d1odcn65vwjr3" path="res://scenes/blueprints/building.tscn" id="8_ylp0q"]
 
 [node name="Game" type="Node2D"]
 z_index = -1
@@ -17,27 +16,26 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-1967, 752)
+position = Vector2(571, 525)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
+visible = false
 z_index = 0
 position = Vector2(664, 465)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
+visible = false
 y_sort_enabled = true
 position = Vector2(16, -68)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
-position = Vector2(-1870, 711)
+position = Vector2(435, 576)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
-position = Vector2(-1934, 708)
+position = Vector2(747, 656)
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
-
-[node name="Building" parent="." instance=ExtResource("8_ylp0q")]
-position = Vector2(0, 239)
 
 [connection signal="die" from="Player" to="." method="_on_character_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
@@ -72,5 +70,3 @@ position = Vector2(0, 239)
 [connection signal="target_closest_food_buddy" from="Sally" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Sally" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
-[connection signal="player_enter" from="Building" to="." method="_on_player_enter_building"]
-[connection signal="player_exit" from="Building" to="." method="_on_player_exit_building"]

@@ -26,10 +26,13 @@ enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 
 var world_tilemaps: Dictionary
 
+var tilemaps_active: Array[TileMapLayer]
+
 var tilemap_ground: TileMapLayer
 var tilemap_environment: TileMapLayer
 var tilemap_terrain: TileMapLayer
-
+var tilemap_buildings_interior: TileMapLayer
+var tilemap_buildings_exterior: TileMapLayer
 
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
@@ -39,7 +42,9 @@ var tile_callbacks : Dictionary = {
 	"ledge_back" : tile_callback_ledge,
 	
 	"environment_asset" : tile_callback_environment_asset,
-	"bush" : tile_callback_bush
+	"bush" : tile_callback_bush,
+	
+	"building" : tile_callback_building
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,6 +74,16 @@ func _init(_world_tilemaps: Dictionary) -> void:
 	tilemap_ground = world_tilemaps["center"][0]
 	tilemap_terrain = world_tilemaps["center"][1]
 	tilemap_environment = world_tilemaps["center"][2]
+	tilemap_buildings_interior = world_tilemaps["center"][3]
+	tilemap_buildings_exterior = world_tilemaps["center"][4]
+	
+	tilemaps_active = [
+		tilemap_ground,
+		tilemap_terrain,
+		tilemap_environment,
+		tilemap_buildings_interior,
+		tilemap_buildings_exterior
+	]
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -100,6 +115,8 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 				tilemap_ground = world_tilemaps[world][0]
 				tilemap_terrain = world_tilemaps[world][1]
 				tilemap_environment = world_tilemaps[world][2]
+				tilemap_buildings_interior = world_tilemaps[world][3]
+				tilemap_buildings_exterior = world_tilemaps[world][4]
 				
 				return new_tile
 			
@@ -132,7 +149,6 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 		tile_callbacks[tile.type].call(tile, character)
 
 
-
 # Process the tiles nearby a given Character on the given Tilemap(s)
 func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
@@ -145,7 +161,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
 	# Create a list of Tile coordinates to process
 	var tiles_to_process: Array[Tile] = []
-	var tilemaps_to_process: Array[TileMapLayer] = [tilemap_ground, tilemap_terrain, tilemap_environment]
+	var tilemaps_to_process: Array[TileMapLayer] = [tilemap_ground, tilemap_terrain, tilemap_environment, tilemap_buildings_interior, tilemap_buildings_exterior]
 	
 	# Store a local reference to the x and y coordinates of the Character's current Tile position
 	var x: int = character.current_tile_position.x
@@ -345,13 +361,24 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 		
 		# Otherwise, the given ledge Tile is a 'ledge_back', so update the Character's collision and z-index with respect to that Tile type
 		else:
-			character.body_collider.disabled = false
-			character.feet_collider.disabled = true
 			
-			# Determine if the Character is standing below the Tile
-			if character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
-				character.z_index = -1
-				return
+			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
+			var tile_above = Tile.new(tilemap_ground, Tile.MapType.GROUND, tile.coords_map)
+			
+			if "ledge" not in tile_above.type:
+				character.body_collider.disabled = false
+				character.feet_collider.disabled = true
+			
+				# Determine if the Character is standing behind the Tile
+				if character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
+					character.z_index = -1
+					
+					unload_tile(tile_above)
+					tile_above = null
+					return
+			
+			unload_tile(tile_above)
+			tile_above = null
 		
 	character.z_index = 0
 
@@ -385,6 +412,14 @@ func tile_callback_bush(tile: Tile, character: GameCharacter):
 	
 	
 	# Send a signal to the game to attempt to load the Bush Tile into the Scene Tree
+	tile_object_enter_game.emit(tile)
+
+
+
+# A callback function to be played when a Building Tile is being processed
+func tile_callback_building(tile: Tile, character: GameCharacter):
+	
+	# Send a signal to the game to attempt to load the Building Tile into the Scene Tree
 	tile_object_enter_game.emit(tile)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

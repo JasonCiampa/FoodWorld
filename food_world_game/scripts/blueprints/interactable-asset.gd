@@ -48,6 +48,8 @@ func _ready() -> void:
 	on_screen_notifier = $"VisibleOnScreenNotifier2D"
 	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
+	
+	ready()
 
 
 

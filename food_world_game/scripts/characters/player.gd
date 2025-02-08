@@ -9,6 +9,7 @@ extends GameCharacter
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
 @onready var timer: Timer = $Timers/Timer
+@onready var camera_2d: Camera2D = $AnimatedSprite2D/Camera2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -149,6 +150,24 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	if Input.is_action_just_pressed("scroll_down"):
+		camera_2d.zoom.x -= 10 * delta
+		camera_2d.zoom.y -= 10 * delta
+		
+		if camera_2d.zoom.x < 2.5:
+			camera_2d.zoom.x = 2.5
+			camera_2d.zoom.y = 2.5
+		
+	elif Input.is_action_just_pressed("scroll_up"):
+		camera_2d.zoom.x += 10 * delta
+		camera_2d.zoom.y += 10 * delta
+		
+		if camera_2d.zoom.x > 7:
+			camera_2d.zoom.x = 7
+			camera_2d.zoom.y = 7
+		
+
+	
 	if !is_jumping and current_altitude > 0:
 		on_platform = true
 	else:
@@ -201,10 +220,10 @@ func _process(delta: float) -> void:
 		#print("On Platform: " + str(on_platform))
 		#print("Feet Disabled: " + str(feet_collider.disabled))
 		#print("Body Disabled: " + str(body_collider.disabled))
-		print('Current Altitude: ', str(current_altitude))
-		print('Current Z-Index: ', str(z_index))
-		print('Current Collision Value: ', str(collision_value_current))
-		print("")
+		#print('Current Altitude: ', str(current_altitude))
+		#print('Current Z-Index: ', str(z_index))
+		#print('Current Collision Value: ', str(collision_value_current))
+		#print("")
 
 
 

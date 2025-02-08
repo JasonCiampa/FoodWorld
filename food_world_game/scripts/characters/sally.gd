@@ -48,6 +48,8 @@ func ready():
 	speed_current = speed_normal
 	
 	self.name = "Sally"
+	
+	set_collision_value(CollisionValues.GROUND)
 
 
 # A custom process function that is personally defined for Sally. This is called in the default Food Buddy class's '_process()' function
