@@ -74,10 +74,13 @@ func interact_with_player(player: Player, delta: float):
 		player_enter.emit(self, delta)
 		playerEntering = true
 	
+	
 	# Otherwise, the Player is already one of the occupants of the house, so emit the player_enter signal because they're leaving by interacting with the door
 	else:
 		player_exit.emit(self, delta)
 		playerExiting = true
+	
+	
 	
 	
 		# start timer (2 seconds?), after timer fade back in to new tilemap
@@ -93,9 +96,7 @@ func interact_with_player(player: Player, delta: float):
 
 # A custom ready function that each Building subclass should personally define. This is called in the default Building class's '_ready()' function
 func ready():
-	
-	# Set the global position of this Building based on the position saved in the resource
-	global_position = Vector2(0, 240)
+	pass
 
 
 

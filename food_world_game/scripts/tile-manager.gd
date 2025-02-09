@@ -417,7 +417,7 @@ func tile_callback_bush(tile: Tile, character: GameCharacter):
 
 
 # A callback function to be played when a Building Tile is being processed
-func tile_callback_building(tile: Tile, character: GameCharacter):
+func tile_callback_building(tile: Tile, _character: GameCharacter):
 	
 	# Send a signal to the game to attempt to load the Building Tile into the Scene Tree
 	tile_object_enter_game.emit(tile)

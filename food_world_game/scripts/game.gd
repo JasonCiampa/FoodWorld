@@ -25,16 +25,15 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Enemies #
-@onready var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
+@onready var scene_tree = get_tree()
+
+# Node Groups #
+@onready var enemies: Array[Node] = scene_tree.get_nodes_in_group("enemies")
+@onready var food_citizens: Array[Node] = scene_tree.get_nodes_in_group("food_citizens")
+@onready var interactables: Array[Node] = scene_tree.get_nodes_in_group("interactables")
+@onready var interactable_assets: Array[Node] = scene_tree.get_nodes_in_group("interactable-assets")
 
 
-# Food Citizens #
-@onready var food_citizens: Array[Node] = get_tree().get_nodes_in_group("food_citizens")
-
-
-# Interactables #
-@onready var interactables: Array[Node] = get_tree().get_nodes_in_group("interactables")
 var closest_interactable_to_player: Node2D
 
 
@@ -120,9 +119,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	# Update the list of on-screen enemies, food citizens, and interactables
-	enemies = get_tree().get_nodes_in_group("enemies")
-	food_citizens = get_tree().get_nodes_in_group("food_citizens")
-	interactables = get_tree().get_nodes_in_group("interactables")
+	enemies = scene_tree.get_nodes_in_group("enemies")
+	food_citizens = scene_tree.get_nodes_in_group("food_citizens")
+	interactables = scene_tree.get_nodes_in_group("interactables")
+	interactable_assets = scene_tree.get_nodes_in_group("interactable-assets")
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	GameTileManager.process_nearby_tiles(PLAYER, 2)
@@ -761,28 +761,16 @@ func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 # Callback function that executes whenever the TileManager is attempting to load a Tile's Object form into the game: adds the Tile Object into the game's scene tree
 func _on_tile_object_enter_game(tile: Tile):
 	
-	# Iterate over every Interactable in the game to ensure that the Tile Object hasn't already been loaded into the game
-	for interactable in interactables:
-		
-		# Determine if the Interactable of this iteration already exists at the exact same location that a new Tile Object is trying to be created at
-		if Vector2i(interactable.global_position) == tile.coords_local:
-			
-			# Return to prevent a Tile Object from being created because one already exists
-			return
-	
-	
 	# Load and store the Tile Object
-	var tile_object: Node = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
+	var tile_object: Node2D = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
 	
 	# Determine if the Tile Object is a building
 	if tile.type == "building":
 		
-		## Load in the Building's specific resource (name of Building, ex: "coliseum", stored in tile.location for Buildings, as tile.type is already used for 'building')
-		#tile_object.resource = load("res://resources/" + tile.location + ".tres")
-		
 		# Connect the Tile Object's signals to the game
 		tile_object.player_enter.connect(_on_player_enter_building)
 		tile_object.player_exit.connect(_on_player_enter_building)
+		tile_object.global_position = tile.data.get_custom_data("global_position")
 		
 		
 	# Otherwise, the Tile Object is not a building, so don't do anything extra because buildings process things differently
@@ -792,8 +780,23 @@ func _on_tile_object_enter_game(tile: Tile):
 		tile_object.global_position = tile.coords_local
 	
 	
+	# Iterate over every Interactable in the game to ensure that the Tile Object hasn't already been loaded into the game
+	for interactable in interactable_assets:
+		
+		# Determine if the Interactable of this iteration already exists at the exact same location that a new Tile Object is trying to be created at
+		if interactable.global_position == tile_object.global_position:
+			
+			tile_object.free()
+			tile_object = null
+			
+			# Return to prevent a Tile Object from being created because one already exists
+			return
+	
+	print("Added new Tile Object!")
 	# Add the Tile Object into the Game
 	add_child(tile_object)
+	
+	tile_object = null
 
 
 # BUILDING CALLBACKS #
@@ -874,6 +877,7 @@ func _on_player_enter_building(building: Building, _delta: float):
 	if current_building != building:
 		screen_fading = true
 		current_building = building
+		# Freeze processing of everything except the game itself
 	else:
 		
 		if screen_fading and modulate.a == 0:
@@ -887,6 +891,7 @@ func _on_player_enter_building(building: Building, _delta: float):
 			current_building.current_occupants.append(food_buddies_active[1])
 			
 			current_building.playerEntering = false
+			current_building.label_e_to_interact.text = "Press 'E' to\nExit"
 
 
 
@@ -907,5 +912,7 @@ func _on_player_exit_building(_building: Building, _delta: float):
 					current_building.current_occupants.remove_at(occupant)
 			
 			current_building.playerExiting = false
+			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
 			current_building = null
+						

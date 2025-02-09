@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/blueprints/building.gd" id="1_u8mnd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_typ33"]
-size = Vector2(34.1, 32.185)
+size = Vector2(40, 32.5925)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lg5t3"]
 
@@ -24,7 +24,7 @@ position = Vector2(0, -22.6)
 position = Vector2(0, -20)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
-position = Vector2(0, 0.5)
+position = Vector2(0, 0.703751)
 shape = SubResource("RectangleShape2D_typ33")
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
