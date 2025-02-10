@@ -255,28 +255,51 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(subject: GameCharacter, target: Node2D, desired_distance: float) -> float:
+func move_towards_target(subject: GameCharacter, target: GameCharacter) -> float:
+	
+	# Determine if the subject doesn't have a current path to follow
+	if subject.current_path.size() == 0:
+		
+		# Generate a path for the subject and set the counter to 0 to position it at the beginning of the path
+		subject.current_path = GameTileManager.generate_path(subject, target.current_tile_position, 5)
+		subject.current_path_counter = 0
+	
+	var next_coords_on_path: Vector2i = subject.current_path[subject.current_path_counter]
 	
 	# Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
-	if subject.global_position.x < target.global_position.x:
+	if subject.current_tile_position.x < next_coords_on_path.x:
 		subject.velocity.x = subject.speed_current
-	
-	elif subject.global_position.x > target.global_position.x:
+	elif subject.current_tile_position.x > next_coords_on_path.x:
 		subject.velocity.x = -subject.speed_current
+	else:
+		subject.velocity.x = 0
 	
-	if subject.global_position.y < target.global_position.y:
+	if subject.current_tile_position.y < next_coords_on_path.y:
 		subject.velocity.y = subject.speed_current
-	
-	elif subject.global_position.y > target.global_position.y:
+	elif subject.current_tile_position.y > next_coords_on_path.y:
 		subject.velocity.y = -subject.speed_current
+	else:
+		subject.velocity.y = 0
+	
+	
+	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
+	subject.previous_tile_position = subject.current_tile_position
+	subject.current_tile_position = GameTileManager.tilemap_ground.local_to_map(subject.global_position)
+	
+	if subject.current_tile_position == next_coords_on_path:
+		subject.current_path_counter += 1
+		print(subject.current_path_counter)
+	
+		if subject.current_path_counter == subject.current_path.size():
+			print("Path over")
+			
+			subject.current_path = []
+			subject.current_path_counter = 0
+			subject.velocity.x = 0
+			subject.velocity.y = 0
 	
 	# Calculate the distance from the subject to the target
 	var target_distance = subject.global_position.distance_to(target.global_position)
-	
-	# Determine if the subject has approximately reached the desired distance away from the target, then make them stop moving
-	if target_distance <= desired_distance:
-		subject.velocity.x = 0
-		subject.velocity.y = 0
 	
 	# Return the distance from the subject to the target
 	return target_distance
@@ -659,8 +682,8 @@ func _on_character_target_player(character: CharacterBody2D) -> void:
 
 
 # Callback function that executes whenever the Character wants to move towards an enemy: moves the Character towards the given target
-func _on_character_move_towards_target(character: CharacterBody2D, target: Node2D, desired_distance: float) -> void:
-	character.target_distance = move_towards_target(character, target, desired_distance)
+func _on_character_move_towards_target(character: CharacterBody2D, target: Node2D) -> void:
+	character.target_distance = move_towards_target(character, target)
 
 
 

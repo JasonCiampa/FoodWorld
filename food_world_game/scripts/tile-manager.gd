@@ -135,6 +135,65 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 		return tile
 
 
+# Generates a path for a Character to follow towards a target.
+func generate_path(character: GameCharacter, target_position: Vector2i, tiles_in_path: int = 0):
+	
+	# Create a list that will store all of the coordinates of the Tile coordinates on the path
+	var tile_coords_path: Array[Vector2i] = []
+	
+	var starting_coords: Vector2i = character.current_tile_position
+	var ending_coords: Vector2i = target_position
+	
+	var coords: Vector2i = starting_coords
+	
+	# Create a Dictionary that will store Tilemaps and the locations of Tiles within them
+	var tiles_used: Dictionary = {
+		
+		tilemap_terrain: tilemap_terrain.get_used_cells(), 
+		tilemap_environment: tilemap_environment.get_used_cells(), 
+		tilemap_buildings_interior: tilemap_buildings_interior.get_used_cells(), 
+		tilemap_buildings_exterior: tilemap_buildings_exterior.get_used_cells()
+	
+	}
+	
+	
+	print(starting_coords)
+	print(ending_coords)
+	
+	# Determine if a path of fixed length should be generated
+	if tiles_in_path > 0:
+		
+		var x_change: int
+		var y_change: int
+		var adjusting_coords: bool
+		
+		for count in range(tiles_in_path):
+			
+			# Adjust position
+			if coords.x < ending_coords.x:
+				coords.x += character.Direction.RIGHT
+			elif coords.x > ending_coords.x:
+				coords.x += character.Direction.LEFT
+				
+			if coords.y < ending_coords.y:
+				coords.y += character.Direction.DOWN
+			elif coords.y > ending_coords.y:
+				coords.y += character.Direction.UP
+			
+			# Iterate over each tilemap in tiles_used
+			for tilemap in tiles_used:
+				
+				while coords in tiles_used[tilemap]:
+					coords.x += 1
+					coords.y += 1
+				
+			
+			tile_coords_path.append(coords)
+
+# A function that finds a valid tile for a Character to step on
+func find_valid_tile():
+	pass
+
 
 # Process the Tile's designated callback function based on its type
 func execute_tile_callback(tile: Tile, character: GameCharacter):
@@ -333,7 +392,7 @@ func tile_callback_ground(tile: Tile, _character: GameCharacter):
 # A callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: GameCharacter):
 
-	if abs(tile.coords_local.x - character.global_position.x) > 8 and character.global_position.y < tile.coords_local.y:
+	if abs(tile.coords_local.x - character.global_position.x) > 8:
 		return
 	
 	# Determine if the Character is currently standing on a platform, then update their collision and z-index to behave accordingly while they are on the platform
@@ -363,7 +422,7 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 		else:
 			
 			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
-			var tile_above = Tile.new(tilemap_ground, Tile.MapType.GROUND, tile.coords_map)
+			var tile_above = Tile.new(tilemap_ground, Tile.MapType.GROUND, Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
 			
 			if "ledge" not in tile_above.type:
 				character.body_collider.disabled = false
@@ -385,7 +444,7 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 
 
 # A callback function to be played when a EnvironmentAsset Tile is being processed (Trees and Rocks are currently the only EnvironmentAssets as of 1/23/25)
-func tile_callback_environment_asset(_tile: Tile, character: GameCharacter):
+func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:

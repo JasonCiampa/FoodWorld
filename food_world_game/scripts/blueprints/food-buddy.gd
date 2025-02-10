@@ -177,7 +177,8 @@ func follow_field_state_callback() -> void:
 	
 	# Set the Player as the Food Buddy's target, then move towards them
 	target_player.emit(self)
-	move_towards_target.emit(self, target, 30)
+	
+	move_towards_target.emit(self, target)
 
 
 
@@ -192,12 +193,12 @@ func solo_field_state_callback() -> void:
 	
 	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it.
 	if target != null and target is Enemy and target.alive:
-		move_towards_target.emit(self, target, 10)
+		move_towards_target.emit(self, target)
 	
 	# Otherwise, move the Food Buddy towards the Player while they look for a new target.
 	else:
 		target_player.emit(self)
-		move_towards_target.emit(self, target, 30)
+		move_towards_target.emit(self, target)
 		
 		target_closest_enemy.emit(self)
 		

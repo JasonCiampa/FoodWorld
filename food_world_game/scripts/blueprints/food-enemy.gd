@@ -81,7 +81,7 @@ func use_solo_attack():
 	
 	# Determine if the Enemy has a target currently, then move towards them. Otherwise, have the Enemy look for a new target.
 	if target != null and target.alive:
-		move_towards_target.emit(self, target, 10)
+		move_towards_target.emit(self, target)
 	else:
 		#target_player.emit(self)
 		#target_closest_food_buddy.emit(self)

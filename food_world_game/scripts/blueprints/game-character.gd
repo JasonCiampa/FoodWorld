@@ -47,6 +47,14 @@ signal die
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+enum Direction { 
+	IDLE = 0, 
+	UP = -1, 
+	DOWN = 1,  
+	LEFT = -1, 
+	RIGHT = 1 
+}
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -74,7 +82,8 @@ var alive: bool = true
 # Target #
 var target: Node2D = null
 var target_distance: float
-
+var current_path: Array[Vector2i]
+var current_path_counter: int
 
 # Jumping/Falling #
 var is_jumping: bool = false
@@ -104,6 +113,15 @@ var previous_tile_position: Vector2i
 
 # Collisions #
 var collision_value_current: int = 32
+
+
+# Previous Frame Movement Direction #
+var direction_previous_horizontal: float = 0
+var direction_previous_vertical: float = 0
+
+# Current Frame Movement Direction #
+var direction_current_horizontal: float = 0
+var direction_current_vertical: float = 0
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -16,7 +16,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-35, 393)
+position = Vector2(500, -1421)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 visible = false
@@ -29,7 +29,7 @@ y_sort_enabled = true
 position = Vector2(16, -68)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
-position = Vector2(391, 708)
+position = Vector2(476, -1510)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
 position = Vector2(703, 788)

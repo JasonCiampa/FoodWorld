@@ -33,15 +33,6 @@ signal escape_menu
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Used to determine the Player's current direction of movement
-enum Direction { 
-	IDLE = 0, 
-	UP = -1, 
-	DOWN = 1,  
-	LEFT = -1, 
-	RIGHT = 1 
-}
-
 
 enum FieldState 
 { 
@@ -105,14 +96,6 @@ var stamina_use: Dictionary = {
 # Speed #
 var speed_sprinting: int = 125
 var speed_dodging: int = 350
-
-# Previous Frame Movement Direction #
-var direction_previous_horizontal: float = 0
-var direction_previous_vertical: float = 0
-
-# Current Frame Movement Direction #
-var direction_current_horizontal: float = 0
-var direction_current_vertical: float = 0
 
 # Sprinting #
 var is_sprinting: bool

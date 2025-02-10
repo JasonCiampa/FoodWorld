@@ -54,7 +54,7 @@ func _physics_process(_delta: float) -> void:
 	if not paused:
 		
 		#target_player.emit(self)
-		#move_towards_target.emit(self, target, 40)
+		#move_towards_target.emit(self, target)
 		move_and_slide()
 	
 	update_dimensions()
