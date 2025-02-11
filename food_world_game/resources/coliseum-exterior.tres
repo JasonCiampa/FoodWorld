@@ -1,9 +1,6 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://d04sl1lw887rq"]
-
-[ext_resource type="Texture2D" uid="uid://cafejth6npd7x" path="res://images/building_tiles/exterior_building/collusiem-colors.png" id="1_j4tl1"]
+[gd_resource type="TileSet" load_steps=2 format=3 uid="uid://d04sl1lw887rq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
-texture = ExtResource("1_j4tl1")
 0:0/0 = 0
 0:0/0/custom_data_0 = "wall"
 0:0/0/custom_data_1 = "center"

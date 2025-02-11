@@ -1,9 +1,6 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dtladpek8fvit"]
-
-[ext_resource type="Texture2D" uid="uid://cjy26uaswkfe4" path="res://images/building_tiles/interior_building/collesium-colors.png" id="1_lniao"]
+[gd_resource type="TileSet" load_steps=2 format=3 uid="uid://dtladpek8fvit"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
-texture = ExtResource("1_lniao")
 0:0/0 = 0
 0:0/0/z_index = -1
 0:0/0/custom_data_0 = "ground"
