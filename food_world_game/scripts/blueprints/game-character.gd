@@ -82,8 +82,7 @@ var alive: bool = true
 # Target #
 var target: Node2D = null
 var target_distance: float
-var current_path: Array[Vector2i]
-var current_path_counter: int
+var current_path: Array[Array]
 
 # Jumping/Falling #
 var is_jumping: bool = false

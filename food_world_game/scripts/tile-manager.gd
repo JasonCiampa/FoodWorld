@@ -136,59 +136,64 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 
 
 # Generates a path for a Character to follow towards a target.
-func generate_path(character: GameCharacter, target_position: Vector2i, tiles_in_path: int = 0):
+func generate_path(character: GameCharacter, target: GameCharacter, tiles_in_path: int = 0) ->  Array[Array]:
+	#print("Path Generating...")
+	# Create a list that that will contain two-item lists of [coords_to_move_to, velocity_to_get_to_coords]
+	var path: Array[Array] = []
 	
-	# Create a list that will store all of the coordinates of the Tile coordinates on the path
-	var tile_coords_path: Array[Vector2i] = []
+	var starting_coords: Vector2 = character.global_position
+	var ending_coords: Vector2 = target.global_position
 	
-	var starting_coords: Vector2i = character.current_tile_position
-	var ending_coords: Vector2i = target_position
+	var current_coords: Vector2 = starting_coords
 	
-	var coords: Vector2i = starting_coords
+	var x_difference: int = abs(current_coords.x - ending_coords.x)
+	var y_difference: int = abs(current_coords.y - ending_coords.y)
 	
-	# Create a Dictionary that will store Tilemaps and the locations of Tiles within them
-	var tiles_used: Dictionary = {
-		
-		tilemap_terrain: tilemap_terrain.get_used_cells(), 
-		tilemap_environment: tilemap_environment.get_used_cells(), 
-		tilemap_buildings_interior: tilemap_buildings_interior.get_used_cells(), 
-		tilemap_buildings_exterior: tilemap_buildings_exterior.get_used_cells()
+	var velocity: Vector2
 	
-	}
+	var iterations: int
+	# While the Character is more than 32 px away from the target's position on either axis... (32 is the number so they are about two tiles away when they stop)
+	while (x_difference and y_difference > 32):
 	
-	
-	print(starting_coords)
-	print(ending_coords)
-	
-	# Determine if a path of fixed length should be generated
-	if tiles_in_path > 0:
-		
-		var x_change: int
-		var y_change: int
-		var adjusting_coords: bool
-		
-		for count in range(tiles_in_path):
+		# Determine if the Character is to the left of the target, then adjust the x-coord and set the x-velocity where the path will lead
+		if current_coords.x < ending_coords.x - 32:
+			current_coords.x += character.Direction.RIGHT * 16
+			velocity.x = character.Direction.RIGHT * character.speed_normal
 			
-			# Adjust position
-			if coords.x < ending_coords.x:
-				coords.x += character.Direction.RIGHT
-			elif coords.x > ending_coords.x:
-				coords.x += character.Direction.LEFT
-				
-			if coords.y < ending_coords.y:
-				coords.y += character.Direction.DOWN
-			elif coords.y > ending_coords.y:
-				coords.y += character.Direction.UP
-			
-			# Iterate over each tilemap in tiles_used
-			for tilemap in tiles_used:
-				
-				while coords in tiles_used[tilemap]:
-					coords.x += 1
-					coords.y += 1
-				
-			
-			tile_coords_path.append(coords)
+		# Otherwise, the Character is to the right of the target, so move them left
+		elif current_coords.x > ending_coords.x + 32:
+			current_coords.x += character.Direction.LEFT * 16
+			velocity.x = character.Direction.LEFT * character.speed_normal
+		
+		# Determine if the Character is above the target, then move them down
+		if current_coords.y < ending_coords.y - 32:
+			current_coords.y += character.Direction.DOWN * 16
+			velocity.y = character.Direction.DOWN * character.speed_normal
+		
+		# Otherwise, the Character is below the target, so move them up
+		elif current_coords.y > ending_coords.y + 32:
+			current_coords.y += character.Direction.UP * 16
+			velocity.y = character.Direction.UP * character.speed_normal
+		
+		# Append the velocity to get to those coords into the path
+		path.append([current_coords, velocity])
+		
+		# Store the difference between the Character and the target's x and y coordinates
+		x_difference = abs(current_coords.x - ending_coords.x)
+		y_difference = abs(current_coords.y - ending_coords.y)
+		
+		if x_difference and y_difference < 32:
+			break
+	
+	
+	# Put the path in reverse order so it can be worked through from back to front (easier to remove each node of the path that way)
+	path.reverse()
+	
+	#print("Path Generated!")
+	# Return the newly generated path
+	return path
+	
+
 
 # A function that finds a valid tile for a Character to step on
 func find_valid_tile():

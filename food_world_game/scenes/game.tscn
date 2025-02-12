@@ -16,7 +16,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(500, -1421)
+position = Vector2(319, -1467)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 visible = false
@@ -29,7 +29,7 @@ y_sort_enabled = true
 position = Vector2(16, -68)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
-position = Vector2(476, -1510)
+position = Vector2(484, -1516)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
 position = Vector2(703, 788)
@@ -70,3 +70,5 @@ one_shot = true
 [connection signal="target_closest_food_buddy" from="Sally" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Sally" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
+
+[editable path="World Map"]
