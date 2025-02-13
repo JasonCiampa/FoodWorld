@@ -1832,6 +1832,16 @@ texture = ExtResource("1_blsmh")
 21:14/0/physics_layer_9/polygon_0/points = PackedVector2Array(-31, 14, 31, 14, 29, 25, 20, 29, 5, 32, -5, 32, -14, 30, -24, 29, -29, 23)
 21:14/0/custom_data_0 = "environment_asset"
 21:14/0/custom_data_1 = "garden"
+13:0/size_in_atlas = Vector2i(2, 3)
+13:0/0 = 0
+15:0/size_in_atlas = Vector2i(2, 3)
+15:0/0 = 0
+17:0/size_in_atlas = Vector2i(2, 3)
+17:0/0 = 0
+19:0/size_in_atlas = Vector2i(2, 3)
+19:0/0 = 0
+21:0/size_in_atlas = Vector2i(2, 3)
+21:0/0 = 0
 
 [resource]
 physics_layer_0/collision_layer = 0
