@@ -80,9 +80,9 @@ var alive: bool = true
 
 
 # Target #
-var target: Node2D = null
+var target: GameCharacter = null
 var target_distance: float
-var current_path: Array[Array]
+var current_path: Array[Vector2i]
 
 # Jumping/Falling #
 var is_jumping: bool = false

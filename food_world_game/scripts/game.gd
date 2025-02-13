@@ -255,34 +255,77 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(character: GameCharacter, target: GameCharacter) -> float:
+func move_towards_target(subject: GameCharacter, target: GameCharacter) -> float:
+	var target_distance
 	
-	# Determine if the Character already has a path to follow
-	if character.current_path.size() != 0:
-		var next_node_index: int = character.current_path.size() - 1
+	# Determine if the subject doesn't have a current path to follow
+	if subject.current_path.size() == 0:
 		
-		# Set the velocity to the velocity that was stored for navigating to this path
-		character.velocity = character.current_path[next_node_index][1]
+		if subject.global_position.distance_to(target.global_position) > 32:
 		
-		# Store the difference in x and y coordinates between the Character and the next point in the path
-		var x_difference = abs(character.global_position.x - character.current_path[next_node_index][0].x)
-		var y_difference = abs(character.global_position.y - character.current_path[next_node_index][0].y)
+			# Generate a path for the subject and set the counter to 0 to position it at the beginning of the path
+			subject.current_path = GameTileManager.generate_path(subject, target.current_tile_position, 1)
 		
-		# Determine if the Character is less than 8 pixels away from the next point of the path on either axis (8 is chosen because its half of one tile, so the character should be 'close enough' to the node its moving towardssuch that it doesn't get completely stuck on rocks or trees)
-		if x_difference or y_difference < 8:
 		
-			# Remove the current node from the path so that the next one can be processed
-			character.current_path.remove_at(next_node_index)
+		# Calculate the distance from the subject to the target
+		target_distance = subject.global_position.distance_to(target.global_position)
+		
+		# Return the distance from the subject to the target
+		return target_distance
 	
-	# Otherwise, the Character needs a new path, so generate one
+	var next_coords_on_path: Vector2i = subject.current_path[subject.current_path.size() - 1]
+	
+	# Determine if the Character is to the left of the target, then set the x-velocity where the path will lead and set the Character's current horizontal movement direction to RIGHT
+	if subject.current_tile_position.x < next_coords_on_path.x:
+		subject.velocity.x = subject.speed_current
+		subject.direction_current_horizontal = subject.Direction.RIGHT
+	
+	# Otherwise, determine if the Character is to the left of the target, then set the x-velocity where the path will lead and set the Character's current horizontal movement direction to LEFT
+	elif subject.current_tile_position.x > next_coords_on_path.x:
+		subject.velocity.x = -subject.speed_current
+		subject.direction_current_horizontal = subject.Direction.LEFT
+	
+	# Otherwise, the Character isn't moving horizontally, so set the x-velocity to 0 and the Character's current horizontal movement direction to 0
 	else:
-		character.current_path = GameTileManager.generate_path(character, target)
-		
-		if character.current_path.size() > 0:
-			print(character.current_path)
+		subject.velocity.x = 0
+		subject.direction_current_horizontal = subject.Direction.IDLE
+	
+	
+	# Determine if the Character above the target, then set the y-velocity where the path will lead and set the Character's current vertical movement direction to DOWN
+	if subject.current_tile_position.y < next_coords_on_path.y:
+		subject.velocity.y = subject.speed_current
+		subject.direction_current_vertical = subject.Direction.DOWN
+	
+	# Otherwise, determine if the Character below the target, then set the y-velocity where the path will lead and set the Character's current vertical movement direction to DOWN
+	elif subject.current_tile_position.y > next_coords_on_path.y:
+		subject.velocity.y = -subject.speed_current
+		subject.direction_current_vertical = subject.Direction.UP
+	
+	# Otherwise, the Character isn't moving vertically, so set the y-velocity to 0 and the Character's current vertical movement direction to 0
+	else:
+		subject.velocity.y = 0
+		subject.direction_current_vertical = subject.Direction.IDLE
+	
+	
+	
+	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
+	subject.previous_tile_position = subject.current_tile_position
+	subject.current_tile_position = GameTileManager.tilemap_ground.local_to_map(subject.global_position)
+	
+	if subject.current_tile_position == next_coords_on_path:
+		print(subject.current_tile_position)
+		print(subject.current_path.size())
+		subject.current_path.remove_at(subject.current_path.size() - 1)
+	
+		if subject.current_path.size() == 0:
+			print("Path over")
+			
+			subject.current_path = []
+			subject.velocity.x = 0
+			subject.velocity.y = 0
 	
 	# Calculate the distance from the subject to the target
-	var target_distance = character.global_position.distance_to(target.global_position)
+	target_distance = subject.global_position.distance_to(target.global_position)
 	
 	# Return the distance from the subject to the target
 	return target_distance

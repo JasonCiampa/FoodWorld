@@ -136,64 +136,70 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 
 
 # Generates a path for a Character to follow towards a target.
-func generate_path(character: GameCharacter, target: GameCharacter, tiles_in_path: int = 0) ->  Array[Array]:
-	#print("Path Generating...")
-	# Create a list that that will contain two-item lists of [coords_to_move_to, velocity_to_get_to_coords]
-	var path: Array[Array] = []
+func generate_path(character: GameCharacter, target_position: Vector2i, tiles_in_path: int = 0):
 	
-	var starting_coords: Vector2 = character.global_position
-	var ending_coords: Vector2 = target.global_position
+	# Create a list that will store all of the coordinates of the Tile coordinates on the path
+	var tile_coords_path: Array[Vector2i] = []
 	
-	var current_coords: Vector2 = starting_coords
+	var starting_coords: Vector2i = character.current_tile_position
+	var ending_coords: Vector2i = target_position
 	
-	var x_difference: int = abs(current_coords.x - ending_coords.x)
-	var y_difference: int = abs(current_coords.y - ending_coords.y)
+	var coords: Vector2i = starting_coords
 	
-	var velocity: Vector2
+	# Create a Dictionary that will store Tilemaps and the locations of Tiles within them
+	var tiles_used: Dictionary = {
+		
+		tilemap_terrain: tilemap_terrain.get_used_cells(), 
+		tilemap_environment: tilemap_environment.get_used_cells(), 
+		tilemap_buildings_interior: tilemap_buildings_interior.get_used_cells(), 
+		tilemap_buildings_exterior: tilemap_buildings_exterior.get_used_cells()
 	
-	var iterations: int
-	# While the Character is more than 32 px away from the target's position on either axis... (32 is the number so they are about two tiles away when they stop)
-	while (x_difference and y_difference > 32):
+	}
 	
-		# Determine if the Character is to the left of the target, then adjust the x-coord and set the x-velocity where the path will lead
-		if current_coords.x < ending_coords.x - 32:
-			current_coords.x += character.Direction.RIGHT * 16
-			velocity.x = character.Direction.RIGHT * character.speed_normal
+	
+	# Determine if a path of fixed length should be generated
+	if tiles_in_path > 0:
+		
+		var x_change: int
+		var y_change: int
+		var adjusting_coords: bool
+		
+		for count in range(tiles_in_path):
 			
-		# Otherwise, the Character is to the right of the target, so move them left
-		elif current_coords.x > ending_coords.x + 32:
-			current_coords.x += character.Direction.LEFT * 16
-			velocity.x = character.Direction.LEFT * character.speed_normal
-		
-		# Determine if the Character is above the target, then move them down
-		if current_coords.y < ending_coords.y - 32:
-			current_coords.y += character.Direction.DOWN * 16
-			velocity.y = character.Direction.DOWN * character.speed_normal
-		
-		# Otherwise, the Character is below the target, so move them up
-		elif current_coords.y > ending_coords.y + 32:
-			current_coords.y += character.Direction.UP * 16
-			velocity.y = character.Direction.UP * character.speed_normal
-		
-		# Append the velocity to get to those coords into the path
-		path.append([current_coords, velocity])
-		
-		# Store the difference between the Character and the target's x and y coordinates
-		x_difference = abs(current_coords.x - ending_coords.x)
-		y_difference = abs(current_coords.y - ending_coords.y)
-		
-		if x_difference and y_difference < 32:
-			break
+			# Adjust position
+			if coords.x < ending_coords.x:
+				coords.x += character.Direction.RIGHT
+			elif coords.x > ending_coords.x:
+				coords.x += character.Direction.LEFT
+				
+			if coords.y < ending_coords.y:
+				coords.y += character.Direction.DOWN
+			elif coords.y > ending_coords.y:
+				coords.y += character.Direction.UP
+			
+			# Iterate over each tilemap in tiles_used
+			for tilemap in tiles_used:
+				
+				while coords in tiles_used[tilemap]:
+					
+					if coords.x < ending_coords.x:
+						coords.x += character.Direction.RIGHT
+					elif coords.x > ending_coords.x:
+						coords.x += character.Direction.LEFT
+						
+					if coords.y < ending_coords.y:
+						coords.y += character.Direction.DOWN
+					elif coords.y > ending_coords.y:
+						coords.y += character.Direction.UP
+			
+			tile_coords_path.append(coords)
+			
+			# If the Character will already be in range of the Character by this point, dont add any more tiles to the path
+			if abs(coords.x - ending_coords.x) < 2 and abs(coords.y - ending_coords.y) < 2:
+				break
 	
-	
-	# Put the path in reverse order so it can be worked through from back to front (easier to remove each node of the path that way)
-	path.reverse()
-	
-	#print("Path Generated!")
-	# Return the newly generated path
-	return path
-	
-
+	tile_coords_path.reverse()
+	return tile_coords_path
 
 # A function that finds a valid tile for a Character to step on
 func find_valid_tile():
@@ -459,6 +465,11 @@ func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 		character.z_index = 0
+	
+	if not character is Player:
+		temp(character, tile)
+
+
 
 
 
@@ -486,4 +497,105 @@ func tile_callback_building(tile: Tile, _character: GameCharacter):
 	# Send a signal to the game to attempt to load the Building Tile into the Scene Tree
 	tile_object_enter_game.emit(tile)
 
+
+#func temp2():
+	## Make a replacement Tile 2 tiles to the right of the Tile being looked at currently and 1 px lower
+	#replacement_tile = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x - tiles_away, tile.coords_map.y + 1))
+	#
+	## Determine if the Tile is not an environment asset, then break out of the loop because the Tile is clear of another Tile of this type (Tiles handle Tiles man)
+	#if replacement_tile.type != "environment_asset":
+		#pass
+
+func temp(character: GameCharacter, tile: Tile):
+	# Determine if the target is at the same height or above the Character, then generate a path for them to move toward them
+	if character.target.current_tile_position.y <= character.current_tile_position.y:
+		print("i am half me above")
+		character.current_path = generate_path(character, character.target.current_tile_position, 1)
+		return
+		
+	# Determine if the Character is above the Tile's bottom point
+	if character.global_position.y >= tile.coords_local.y + 8 and character.global_position.y <= tile.coords_local.y + 12:
+
+			
+		if character.global_position.x >= tile.coords_local.x - 16 and character.global_position.x <= tile.coords_local.x + 16:
+			
+			
+			# A reference to a Tile with coordinates that can replace the current path coordinates (because the current path leads into an environmentasset!)
+			var replacement_tile: Tile = null
+			var replacement_left_tile: Tile = null
+			var replacement_right_tile: Tile = null
+
+			# How many Tiles away from the starting Tile that the while loop is
+			var tiles_away: int = 2
+			
+			# References to the Tiles
+			var tile_left: Tile
+			var tile_right: Tile
+			
+			
+			# Otherwise, the target is below the Character, so determine if the Character should move right or left
+			while replacement_tile == null:
+				
+				tile_right = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x + tiles_away, tile.coords_map.y - 1))
+				tile_left = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x - tiles_away, tile.coords_map.y - 1))
+				
+				# Make a replacement Tile 2 tiles to the left of the Tile being looked at currently and 1 px lower
+				replacement_right_tile = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x + tiles_away, tile.coords_map.y))
+				
+				# Make a replacement Tile 2 tiles to the right of the Tile being looked at currently and 1 px lower
+				replacement_left_tile = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x - tiles_away, tile.coords_map.y))
+			
+			
+				if tile_right.type == "environment_asset" or replacement_right_tile.type == "environment_asset":
+					print("1. Right: ", tile_left.type)
+					print("2. Right: ", replacement_left_tile.type)
+					
+
+					replacement_right_tile = null
+				
+				if tile_left.type == "environment_asset" or replacement_left_tile.type == "environment_asset":
+					print("1. Left: ", tile_left.type)
+					print("2. Left: ", replacement_left_tile.type)
+					replacement_left_tile = null
+					
+				
+				# Determine if the right side has the tile to replace, then set the replacement tile to be the tile to the right
+				if replacement_right_tile == null and replacement_left_tile == null:
+					
+					# If neither simulation of Tile shifts worked, that means there must have been environment assets blocking both simulated Tiles. Repeat the loop one tile further out than before, and set the replacement_tile to null to keep the loop going
+					tiles_away += 2
+					replacement_tile = null
+				
+				elif replacement_right_tile != null:
+					print("ping", tile_right.type)
+					replacement_tile = replacement_right_tile
+					replacement_tile.coords_map.x += 1
+					break
+				
+				elif replacement_left_tile != null:
+					print("pong")
+					replacement_tile = replacement_left_tile
+					replacement_tile.coords_map.x -= 1
+					break
+				
+				# Determine if the Character is to the left of their target, then move them to the right
+				elif character.global_position.x <= character.target.global_position.x:
+					print()
+					replacement_tile = replacement_right_tile
+					replacement_tile.coords_map.x += 1
+					break
+					
+				# Otherwise, the Character is to the right of their target, so move them to the left
+				else:
+					replacement_tile = replacement_left_tile
+					replacement_tile.coords_map.x -= 1
+					break
+				
+				print("iteration complete\n")
+
+					
+			print("Tiles Away: ", tiles_away)
+			character.current_path = [Vector2i(replacement_tile.coords_map.x, replacement_tile.coords_map.y + 3), Vector2i(replacement_tile.coords_map.x, replacement_tile.coords_map.y)]
+			print(character.current_path[0])
+			print("")
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

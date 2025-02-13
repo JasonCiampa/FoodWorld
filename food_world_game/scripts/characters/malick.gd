@@ -44,7 +44,7 @@ func ready():
 	}
 	
 	# Set Malick's default speed and current speed
-	speed_normal = 20
+	speed_normal = 30
 	speed_current = speed_normal
 	
 	self.name = "Malick"
