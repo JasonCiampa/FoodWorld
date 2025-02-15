@@ -1,4 +1,4 @@
-extends Node2D
+extends TileMapLayer
 
 class_name TileManager
 
@@ -84,6 +84,60 @@ func _init(_world_tilemaps: Dictionary) -> void:
 		tilemap_buildings_interior,
 		tilemap_buildings_exterior
 	]
+	
+	var counter: int = 0
+	
+	# Iterate over every world that has tilemaps
+	for world in world_tilemaps:
+		
+		var tiles_used_ground: Array[Vector2i] = world_tilemaps[world][0].get_used_cells()
+		
+		# Iterate over each of the world's tilemaps except for the first (ground tilemap)
+		for tilemap in range(1, 3):
+			
+			# Store all of the tiles used by the tilemap of this iteration
+			var tiles_used_other_map: Array[Vector2i] = world_tilemaps[world][tilemap].get_used_cells()
+			
+			# Iterate over every tile in the ground map
+			for coords in tiles_used_ground:
+				
+				# Determine if the coords of that tile are also used in another tilemap
+				if coords in tiles_used_other_map:
+					
+					
+					# Create a reference to that specific tile in the ground map
+					var tile_ground = Tile.new(world_tilemaps[world][0], Tile.MapType.GROUND, coords)
+					var tile_other_map = Tile.new(world_tilemaps[world][tilemap], tilemap, coords)
+					
+					
+					if tile_other_map.width != null and tile_other_map.width > 1:
+						
+						for row in range(tile_other_map.width - 1):
+							
+							for col in range(tile_other_map.height - 1):
+								
+								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x + row, tile_ground.coords_map.y + col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
+								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x - row, tile_ground.coords_map.y - col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
+								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x + row, tile_ground.coords_map.y - col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
+								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x - row, tile_ground.coords_map.y + col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)	
+					
+					else:
+						world_tilemaps[world][0].set_cell(tile_ground.coords_map, 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
+					
+					# Destroy the reference to the Tile
+					unload_tile(tile_ground)
+					tile_ground = null
+					
+					# Destroy the reference to the Tile
+					unload_tile(tile_other_map)
+					tile_other_map = null
+			
+	
+		
+			
+
+				
+			
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -134,76 +188,6 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 	else:
 		return tile
 
-
-# Generates a path for a Character to follow towards a target.
-func generate_path(character: GameCharacter, target_position: Vector2i, tiles_in_path: int = 0):
-	
-	# Create a list that will store all of the coordinates of the Tile coordinates on the path
-	var tile_coords_path: Array[Vector2i] = []
-	
-	var starting_coords: Vector2i = character.current_tile_position
-	var ending_coords: Vector2i = target_position
-	
-	var coords: Vector2i = starting_coords
-	
-	# Create a Dictionary that will store Tilemaps and the locations of Tiles within them
-	var tiles_used: Dictionary = {
-		
-		tilemap_terrain: tilemap_terrain.get_used_cells(), 
-		tilemap_environment: tilemap_environment.get_used_cells(), 
-		tilemap_buildings_interior: tilemap_buildings_interior.get_used_cells(), 
-		tilemap_buildings_exterior: tilemap_buildings_exterior.get_used_cells()
-	
-	}
-	
-	
-	# Determine if a path of fixed length should be generated
-	if tiles_in_path > 0:
-		
-		var x_change: int
-		var y_change: int
-		var adjusting_coords: bool
-		
-		for count in range(tiles_in_path):
-			
-			# Adjust position
-			if coords.x < ending_coords.x:
-				coords.x += character.Direction.RIGHT
-			elif coords.x > ending_coords.x:
-				coords.x += character.Direction.LEFT
-				
-			if coords.y < ending_coords.y:
-				coords.y += character.Direction.DOWN
-			elif coords.y > ending_coords.y:
-				coords.y += character.Direction.UP
-			
-			# Iterate over each tilemap in tiles_used
-			for tilemap in tiles_used:
-				
-				while coords in tiles_used[tilemap]:
-					
-					if coords.x < ending_coords.x:
-						coords.x += character.Direction.RIGHT
-					elif coords.x > ending_coords.x:
-						coords.x += character.Direction.LEFT
-						
-					if coords.y < ending_coords.y:
-						coords.y += character.Direction.DOWN
-					elif coords.y > ending_coords.y:
-						coords.y += character.Direction.UP
-			
-			tile_coords_path.append(coords)
-			
-			# If the Character will already be in range of the Character by this point, dont add any more tiles to the path
-			if abs(coords.x - ending_coords.x) < 2 and abs(coords.y - ending_coords.y) < 2:
-				break
-	
-	tile_coords_path.reverse()
-	return tile_coords_path
-
-# A function that finds a valid tile for a Character to step on
-func find_valid_tile():
-	pass
 
 
 # Process the Tile's designated callback function based on its type
@@ -403,7 +387,7 @@ func tile_callback_ground(tile: Tile, _character: GameCharacter):
 # A callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: GameCharacter):
 
-	if abs(tile.coords_local.x - character.global_position.x) > 8:
+	if abs(tile.coords_local.x - character.global_position.x) > 8 and character.global_position.y < tile.coords_local.y:
 		return
 	
 	# Determine if the Character is currently standing on a platform, then update their collision and z-index to behave accordingly while they are on the platform
@@ -433,7 +417,7 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 		else:
 			
 			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
-			var tile_above = Tile.new(tilemap_ground, Tile.MapType.GROUND, Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
+			var tile_above = Tile.new(tilemap_ground, Tile.MapType.GROUND, tile.coords_map)
 			
 			if "ledge" not in tile_above.type:
 				character.body_collider.disabled = false
@@ -455,7 +439,7 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 
 
 # A callback function to be played when a EnvironmentAsset Tile is being processed (Trees and Rocks are currently the only EnvironmentAssets as of 1/23/25)
-func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
+func tile_callback_environment_asset(_tile: Tile, character: GameCharacter):
 	
 	# Determine if the Character is not jumping, then adjust their collision value
 	if !character.is_jumping:
@@ -465,11 +449,6 @@ func tile_callback_environment_asset(tile: Tile, character: GameCharacter):
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 		character.z_index = 0
-	
-	if not character is Player:
-		temp(character, tile)
-
-
 
 
 
@@ -498,104 +477,25 @@ func tile_callback_building(tile: Tile, _character: GameCharacter):
 	tile_object_enter_game.emit(tile)
 
 
-#func temp2():
-	## Make a replacement Tile 2 tiles to the right of the Tile being looked at currently and 1 px lower
-	#replacement_tile = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x - tiles_away, tile.coords_map.y + 1))
-	#
-	## Determine if the Tile is not an environment asset, then break out of the loop because the Tile is clear of another Tile of this type (Tiles handle Tiles man)
-	#if replacement_tile.type != "environment_asset":
-		#pass
 
-func temp(character: GameCharacter, tile: Tile):
-	# Determine if the target is at the same height or above the Character, then generate a path for them to move toward them
-	if character.target.current_tile_position.y <= character.current_tile_position.y:
-		print("i am half me above")
-		character.current_path = generate_path(character, character.target.current_tile_position, 1)
-		return
+func _use_tile_data_runtime_update(coords):
+	print("executed")
+	# Iterate over each world that has tilemaps
+	for world in world_tilemaps:
 		
-	# Determine if the Character is above the Tile's bottom point
-	if character.global_position.y >= tile.coords_local.y + 8 and character.global_position.y <= tile.coords_local.y + 12:
+		# Iterate over each tilemap in the world aside from the Ground tilemap (this script is attached to the Ground tilemaps, so the function is being called on them)
+		for tilemap in range(1, world_tilemaps[world]):
+			
+			# Determine if the coordinates are already being used by a tile in another tilemap, then return true to indicate this tile needs to update at runtime
+			if coords in world_tilemaps[world][tilemap].get_used_cells():
+				return true
+	
+	return false
 
-			
-		if character.global_position.x >= tile.coords_local.x - 16 and character.global_position.x <= tile.coords_local.x + 16:
-			
-			
-			# A reference to a Tile with coordinates that can replace the current path coordinates (because the current path leads into an environmentasset!)
-			var replacement_tile: Tile = null
-			var replacement_left_tile: Tile = null
-			var replacement_right_tile: Tile = null
 
-			# How many Tiles away from the starting Tile that the while loop is
-			var tiles_away: int = 2
-			
-			# References to the Tiles
-			var tile_left: Tile
-			var tile_right: Tile
-			
-			
-			# Otherwise, the target is below the Character, so determine if the Character should move right or left
-			while replacement_tile == null:
-				
-				tile_right = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x + tiles_away, tile.coords_map.y - 1))
-				tile_left = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x - tiles_away, tile.coords_map.y - 1))
-				
-				# Make a replacement Tile 2 tiles to the left of the Tile being looked at currently and 1 px lower
-				replacement_right_tile = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x + tiles_away, tile.coords_map.y))
-				
-				# Make a replacement Tile 2 tiles to the right of the Tile being looked at currently and 1 px lower
-				replacement_left_tile = Tile.new(tile.tilemap, tile.map_type, Vector2i(tile.coords_map.x - tiles_away, tile.coords_map.y))
-			
-			
-				if tile_right.type == "environment_asset" or replacement_right_tile.type == "environment_asset":
-					print("1. Right: ", tile_left.type)
-					print("2. Right: ", replacement_left_tile.type)
-					
+func _tile_data_runtime_update(coords, tile_data):
+	print("deal sealed")
+	# This tile was triggered to update at runtime because another tile from a different tilemap exists there, so disable navigation on this tile
+	tile_data.set_navigation_polygon(0, null)
 
-					replacement_right_tile = null
-				
-				if tile_left.type == "environment_asset" or replacement_left_tile.type == "environment_asset":
-					print("1. Left: ", tile_left.type)
-					print("2. Left: ", replacement_left_tile.type)
-					replacement_left_tile = null
-					
-				
-				# Determine if the right side has the tile to replace, then set the replacement tile to be the tile to the right
-				if replacement_right_tile == null and replacement_left_tile == null:
-					
-					# If neither simulation of Tile shifts worked, that means there must have been environment assets blocking both simulated Tiles. Repeat the loop one tile further out than before, and set the replacement_tile to null to keep the loop going
-					tiles_away += 2
-					replacement_tile = null
-				
-				elif replacement_right_tile != null:
-					print("ping", tile_right.type)
-					replacement_tile = replacement_right_tile
-					replacement_tile.coords_map.x += 1
-					break
-				
-				elif replacement_left_tile != null:
-					print("pong")
-					replacement_tile = replacement_left_tile
-					replacement_tile.coords_map.x -= 1
-					break
-				
-				# Determine if the Character is to the left of their target, then move them to the right
-				elif character.global_position.x <= character.target.global_position.x:
-					print()
-					replacement_tile = replacement_right_tile
-					replacement_tile.coords_map.x += 1
-					break
-					
-				# Otherwise, the Character is to the right of their target, so move them to the left
-				else:
-					replacement_tile = replacement_left_tile
-					replacement_tile.coords_map.x -= 1
-					break
-				
-				print("iteration complete\n")
-
-					
-			print("Tiles Away: ", tiles_away)
-			character.current_path = [Vector2i(replacement_tile.coords_map.x, replacement_tile.coords_map.y + 3), Vector2i(replacement_tile.coords_map.x, replacement_tile.coords_map.y)]
-			print(character.current_path[0])
-			print("")
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

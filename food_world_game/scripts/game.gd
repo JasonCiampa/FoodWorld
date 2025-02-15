@@ -255,77 +255,24 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(subject: GameCharacter, target: GameCharacter) -> float:
-	var target_distance
-	
-	# Determine if the subject doesn't have a current path to follow
-	if subject.current_path.size() == 0:
-		
-		if subject.global_position.distance_to(target.global_position) > 32:
-		
-			# Generate a path for the subject and set the counter to 0 to position it at the beginning of the path
-			subject.current_path = GameTileManager.generate_path(subject, target.current_tile_position, 1)
-		
-		
-		# Calculate the distance from the subject to the target
-		target_distance = subject.global_position.distance_to(target.global_position)
-		
-		# Return the distance from the subject to the target
-		return target_distance
-	
-	var next_coords_on_path: Vector2i = subject.current_path[subject.current_path.size() - 1]
-	
-	# Determine if the Character is to the left of the target, then set the x-velocity where the path will lead and set the Character's current horizontal movement direction to RIGHT
-	if subject.current_tile_position.x < next_coords_on_path.x:
-		subject.velocity.x = subject.speed_current
-		subject.direction_current_horizontal = subject.Direction.RIGHT
-	
-	# Otherwise, determine if the Character is to the left of the target, then set the x-velocity where the path will lead and set the Character's current horizontal movement direction to LEFT
-	elif subject.current_tile_position.x > next_coords_on_path.x:
-		subject.velocity.x = -subject.speed_current
-		subject.direction_current_horizontal = subject.Direction.LEFT
-	
-	# Otherwise, the Character isn't moving horizontally, so set the x-velocity to 0 and the Character's current horizontal movement direction to 0
-	else:
-		subject.velocity.x = 0
-		subject.direction_current_horizontal = subject.Direction.IDLE
+func move_towards_target(subject: GameCharacter, target: Node2D) -> float:
 	
 	
-	# Determine if the Character above the target, then set the y-velocity where the path will lead and set the Character's current vertical movement direction to DOWN
-	if subject.current_tile_position.y < next_coords_on_path.y:
-		subject.velocity.y = subject.speed_current
-		subject.direction_current_vertical = subject.Direction.DOWN
-	
-	# Otherwise, determine if the Character below the target, then set the y-velocity where the path will lead and set the Character's current vertical movement direction to DOWN
-	elif subject.current_tile_position.y > next_coords_on_path.y:
-		subject.velocity.y = -subject.speed_current
-		subject.direction_current_vertical = subject.Direction.UP
-	
-	# Otherwise, the Character isn't moving vertically, so set the y-velocity to 0 and the Character's current vertical movement direction to 0
-	else:
-		subject.velocity.y = 0
-		subject.direction_current_vertical = subject.Direction.IDLE
-	
-	
-	
-	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
-	subject.previous_tile_position = subject.current_tile_position
-	subject.current_tile_position = GameTileManager.tilemap_ground.local_to_map(subject.global_position)
-	
-	if subject.current_tile_position == next_coords_on_path:
-		print(subject.current_tile_position)
-		print(subject.current_path.size())
-		subject.current_path.remove_at(subject.current_path.size() - 1)
-	
-		if subject.current_path.size() == 0:
-			print("Path over")
-			
-			subject.current_path = []
-			subject.velocity.x = 0
-			subject.velocity.y = 0
+	## Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
+	#if subject.global_position.x < target.global_position.x:
+		#subject.velocity.x = subject.speed_current
+	#
+	#elif subject.global_position.x > target.global_position.x:
+		#subject.velocity.x = -subject.speed_current
+	#
+	#if subject.global_position.y < target.global_position.y:
+		#subject.velocity.y = subject.speed_current
+	#
+	#elif subject.global_position.y > target.global_position.y:
+		#subject.velocity.y = -subject.speed_current
 	
 	# Calculate the distance from the subject to the target
-	target_distance = subject.global_position.distance_to(target.global_position)
+	var target_distance = subject.global_position.distance_to(target.global_position)
 	
 	# Return the distance from the subject to the target
 	return target_distance

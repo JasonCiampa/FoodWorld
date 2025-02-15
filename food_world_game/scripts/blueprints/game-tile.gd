@@ -28,6 +28,8 @@ var coords_map: Vector2i
 var data: TileData
 var type: String
 var location: String
+var width: int
+var height: int
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -48,10 +50,13 @@ func _init(_tilemap: TileMapLayer, _map_type: int, _coords_map: Vector2i):
 	if data != null:
 		self.type = data.get_custom_data("tile_type")
 		self.location = data.get_custom_data("location")
+		self.width = data.get_custom_data("width")
+		self.height = data.get_custom_data("height")
 	else:
 		self.type = ""
 		self.location = ""
-
+		self.width = 0
+		self.height = 0
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

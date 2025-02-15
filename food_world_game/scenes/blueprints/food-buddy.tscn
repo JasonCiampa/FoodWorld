@@ -93,3 +93,14 @@ z_index = 1
 position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_0fflu")
 animation = &"new_animation"
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 4.0
+target_desired_distance = 32.0
+navigation_layers = 0
+path_postprocessing = 1
+debug_enabled = true
+debug_path_custom_color = Color(0.252755, 0.104298, 1, 1)
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true

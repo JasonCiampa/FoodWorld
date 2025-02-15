@@ -6,6 +6,9 @@ extends InteractableCharacter
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var navigation_agent: NavigationAgent2D
+var timer: Timer
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -83,6 +86,9 @@ var xp_max: int
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	
+	navigation_agent = $"NavigationAgent2D"
+	timer = $"Timer"
 	
 	# Set the Food Buddy's current field state to be forage (so that they don't move because it isn't coded yet, as of 1/22/25)
 	field_state_current = FieldState.FORAGE
@@ -175,10 +181,20 @@ func physics_process(_delta: float) -> void:
 # A callback function that should execute repeatedly while the Food Buddy is in the FOLLOW FieldState
 func follow_field_state_callback() -> void:
 	
-	# Set the Player as the Food Buddy's target, then move towards them
-	target_player.emit(self)
-	
-	move_towards_target.emit(self, target)
+	if timer.is_stopped():
+		timer.start(1)
+	else:
+		
+		# Set the Player as the Food Buddy's target, then move towards them
+		target_player.emit(self)
+		
+		navigation_agent.target_position = target.global_position
+		
+		var current_agent_position = global_position
+		var next_path_position = navigation_agent.get_next_path_position()
+		velocity = current_agent_position.direction_to(next_path_position) * speed_current
+		
+		move_towards_target.emit(self, target)
 
 
 
