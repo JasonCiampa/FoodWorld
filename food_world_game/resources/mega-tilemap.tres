@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://c5r3pi13nkbjj" path="res://images/floor_tiles/tile-spritesheet.png" id="1_blsmh"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_widww"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_3qlp6"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1thbk"]
 
@@ -12,7 +12,7 @@
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_653uv"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_3wrb0"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_j56um"]
 vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
@@ -54,7 +54,7 @@ agent_radius = 0.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_vkcv0"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_o1x1b"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_3cl4r"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_0xl2e"]
 
@@ -126,7 +126,7 @@ texture = ExtResource("1_blsmh")
 0:0/0 = 0
 0:0/0/z_index = -1
 0:0/0/y_sort_origin = -10
-0:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_widww")
+0:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_3qlp6")
 0:0/0/custom_data_0 = "ground"
 0:0/0/custom_data_1 = "center"
 0:0/0/custom_data_2 = 1
@@ -144,7 +144,7 @@ texture = ExtResource("1_blsmh")
 1:0/0 = 0
 1:0/0/z_index = -1
 1:0/0/y_sort_origin = -10
-1:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_3wrb0")
+1:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_j56um")
 1:0/0/custom_data_0 = "ground"
 1:0/0/custom_data_1 = "garden"
 1:0/0/custom_data_2 = 1
@@ -474,7 +474,7 @@ texture = ExtResource("1_blsmh")
 4:5/0 = 0
 4:5/0/z_index = -1
 4:5/0/y_sort_origin = -10
-4:5/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_o1x1b")
+4:5/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_3cl4r")
 4:5/0/custom_data_0 = "ground"
 4:5/0/custom_data_1 = "sweets"
 4:5/0/custom_data_2 = 1
@@ -2368,6 +2368,22 @@ texture = ExtResource("1_blsmh")
 17:15/0 = 0
 17:15/0/custom_data_2 = 3
 17:15/0/custom_data_3 = 4
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+1:6/0 = 0
+1:5/0 = 0
+3:5/0 = 0
+2:8/0 = 0
+22:6/0 = 0
+26:6/0 = 0
+9:12/0 = 0
+9:16/0 = 0
+26:14/0 = 0
+26:10/0 = 0
+28:2/0 = 0
 
 [resource]
 physics_layer_0/collision_layer = 0

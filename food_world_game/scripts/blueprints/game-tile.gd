@@ -73,7 +73,7 @@ func set_data() -> bool:
 	
 	# Get this Tile's data by locating it at the map coords on the tilemap
 	var tile_data = tilemap.get_cell_tile_data(coords_map)
-	
+		
 	# Determine if this Tile has any data, then store the data within the Tile and return true to indicate data was retrieved
 	if tile_data:
 		data = tile_data

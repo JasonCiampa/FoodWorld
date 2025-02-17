@@ -183,18 +183,26 @@ func follow_field_state_callback() -> void:
 	
 	if timer.is_stopped():
 		timer.start(1)
+		
 	else:
 		
 		# Set the Player as the Food Buddy's target, then move towards them
 		target_player.emit(self)
 		
-		navigation_agent.target_position = target.global_position
+		if global_position.distance_to(target.global_position) > 32:
 		
-		var current_agent_position = global_position
-		var next_path_position = navigation_agent.get_next_path_position()
-		velocity = current_agent_position.direction_to(next_path_position) * speed_current
+			navigation_agent.target_position = target.global_position
+			
+			var current_agent_position = global_position
+			var next_path_position = navigation_agent.get_next_path_position()
+			velocity = current_agent_position.direction_to(next_path_position) * speed_current
+			
+			move_towards_target.emit(self, target)
 		
-		move_towards_target.emit(self, target)
+		else:
+			velocity.x = 0
+			velocity.y = 0
+
 
 
 

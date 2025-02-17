@@ -85,8 +85,6 @@ func _init(_world_tilemaps: Dictionary) -> void:
 		tilemap_buildings_exterior
 	]
 	
-	var counter: int = 0
-	
 	# Iterate over every world that has tilemaps
 	for world in world_tilemaps:
 		
@@ -112,14 +110,10 @@ func _init(_world_tilemaps: Dictionary) -> void:
 					
 					if tile_other_map.width != null and tile_other_map.width > 1:
 						
-						for row in range(tile_other_map.width - 1):
+						for col in range(tile_other_map.width):
 							
-							for col in range(tile_other_map.height - 1):
-								
-								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x + row, tile_ground.coords_map.y + col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
-								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x - row, tile_ground.coords_map.y - col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
-								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x + row, tile_ground.coords_map.y - col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
-								world_tilemaps[world][0].set_cell(Vector2i(tile_ground.coords_map.x - row, tile_ground.coords_map.y + col), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)	
+							for row in range(tile_other_map.height):
+								world_tilemaps[world][0].set_cell(Vector2i((tile_ground.coords_map.x - int(tile_other_map.width / 2)) + col, (tile_ground.coords_map.y - int(tile_other_map.height / 2)) + row + 1), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
 					
 					else:
 						world_tilemaps[world][0].set_cell(tile_ground.coords_map, 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
@@ -131,13 +125,6 @@ func _init(_world_tilemaps: Dictionary) -> void:
 					# Destroy the reference to the Tile
 					unload_tile(tile_other_map)
 					tile_other_map = null
-			
-	
-		
-			
-
-				
-			
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -476,26 +463,5 @@ func tile_callback_building(tile: Tile, _character: GameCharacter):
 	# Send a signal to the game to attempt to load the Building Tile into the Scene Tree
 	tile_object_enter_game.emit(tile)
 
-
-
-func _use_tile_data_runtime_update(coords):
-	print("executed")
-	# Iterate over each world that has tilemaps
-	for world in world_tilemaps:
-		
-		# Iterate over each tilemap in the world aside from the Ground tilemap (this script is attached to the Ground tilemaps, so the function is being called on them)
-		for tilemap in range(1, world_tilemaps[world]):
-			
-			# Determine if the coordinates are already being used by a tile in another tilemap, then return true to indicate this tile needs to update at runtime
-			if coords in world_tilemaps[world][tilemap].get_used_cells():
-				return true
-	
-	return false
-
-
-func _tile_data_runtime_update(coords, tile_data):
-	print("deal sealed")
-	# This tile was triggered to update at runtime because another tile from a different tilemap exists there, so disable navigation on this tile
-	tile_data.set_navigation_polygon(0, null)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
