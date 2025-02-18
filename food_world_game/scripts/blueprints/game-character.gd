@@ -108,6 +108,7 @@ var speed_current: int = speed_normal
 # Tiles #
 var current_tile_position: Vector2i
 var previous_tile_position: Vector2i
+var current_tilemaps
 
 
 # Collisions #

@@ -28,12 +28,6 @@ var world_tilemaps: Dictionary
 
 var tilemaps_active: Array[TileMapLayer]
 
-var tilemap_ground: TileMapLayer
-var tilemap_environment: TileMapLayer
-var tilemap_terrain: TileMapLayer
-var tilemap_buildings_interior: TileMapLayer
-var tilemap_buildings_exterior: TileMapLayer
-
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
 	"ground" : tile_callback_ground,
@@ -70,20 +64,6 @@ func _physics_process(_delta: float) -> void:
 
 func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
-	
-	tilemap_ground = world_tilemaps["center"][0]
-	tilemap_terrain = world_tilemaps["center"][1]
-	tilemap_environment = world_tilemaps["center"][2]
-	tilemap_buildings_interior = world_tilemaps["center"][3]
-	tilemap_buildings_exterior = world_tilemaps["center"][4]
-	
-	tilemaps_active = [
-		tilemap_ground,
-		tilemap_terrain,
-		tilemap_environment,
-		tilemap_buildings_interior,
-		tilemap_buildings_exterior
-	]
 	
 	# Iterate over every world that has tilemaps
 	for world in world_tilemaps:
@@ -138,7 +118,7 @@ func unload_tile(tile: Tile):
 
 
 # Determine where the Character is in the world and send a signal to the game to update their location (returns TileMap to process)
-func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
+func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 	
 	# Determine if there is not any data for the given Tile in its associated Tilemap
 	if tile.type == "":
@@ -152,12 +132,9 @@ func update_tile_world_location(tile: Tile, _character: GameCharacter) -> Tile:
 			# Determine if the newly created Tile has data in the world of this iteration
 			if new_tile.type != "":
 				
-				# Update the TileManager's Current TileMap References to store the TileMaps from the world the newly created Tile is from
-				tilemap_ground = world_tilemaps[world][0]
-				tilemap_terrain = world_tilemaps[world][1]
-				tilemap_environment = world_tilemaps[world][2]
-				tilemap_buildings_interior = world_tilemaps[world][3]
-				tilemap_buildings_exterior = world_tilemaps[world][4]
+				character.current_tilemaps = world_tilemaps[world]
+				
+				
 				
 				return new_tile
 			
@@ -198,34 +175,32 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
 	character.previous_tile_position = character.current_tile_position
-	character.current_tile_position = tilemap_ground.local_to_map(character.global_position)
+	character.current_tile_position = character.current_tilemaps[Tile.MapType.GROUND].local_to_map(character.global_position)
 	
 	# Create a list of Tile coordinates to process
 	var tiles_to_process: Array[Tile] = []
-	var tilemaps_to_process: Array[TileMapLayer] = [tilemap_ground, tilemap_terrain, tilemap_environment, tilemap_buildings_interior, tilemap_buildings_exterior]
 	
 	# Store a local reference to the x and y coordinates of the Character's current Tile position
 	var x: int = character.current_tile_position.x
 	var y: int = character.current_tile_position.y
 	
-	
 	# Iterate over each of the tilemaps that should have their Tiles processed
-	for map_type in tilemaps_to_process.size():
+	for map_type in character.current_tilemaps.size():
 		
 		# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x + 1, y + 1)))
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x, y + 1)))
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x - 1, y + 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 1)))
 		
 		# Add the Tiles in the row including the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x + 1, y)))
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x, y)))
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x - 1, y)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y)))
 		
 		# Add the Tiles in the row above the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x + 1, y - 1)))
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x, y - 1)))
-		tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x - 1, y - 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - 1)))
 		
 		# Iterate (tiles_above - 1) times to add extra rows of Tiles to process above the Character
 		for count in range(2, tiles_above + 1):
@@ -233,9 +208,9 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 			# Note: Loop starts at 2 instead of 1 because one row above the Character is already processed automatically (y - 1), so the next row to be added must start at (y = 2).
 			
 			# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
-			tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x + 1, y - count)))
-			tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x, y - count)))
-			tiles_to_process.append(Tile.new(tilemaps_to_process[map_type], map_type, Vector2i(x - 1, y - count)))
+			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
+			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
+			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
 	
 	
 	# Process each of the Tiles using their coordinates that were stored in the list
@@ -254,10 +229,10 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 func get_character_altitude(character: GameCharacter):
 	
 	# Store a local reference to the Tile that the Character is currently standing on in the terrain tilemap (the only map with elevation... at least as of 1/14/25)
-	var current_tile = Tile.new(tilemap_terrain, Tile.MapType.TERRAIN, character.current_tile_position)
+	var current_tile = Tile.new(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN, character.current_tile_position)
 	
 	# Calculate and update the Character's current altitude
-	character.current_altitude = get_altitude(current_tile)
+	character.current_altitude = get_altitude(current_tile, character)
 	
 	unload_tile(current_tile)
 	current_tile = null
@@ -265,7 +240,7 @@ func get_character_altitude(character: GameCharacter):
 
 
 # A function used on any type of ledge tile to return its altitude
-func get_altitude(ledge_tile: Tile):
+func get_altitude(ledge_tile: Tile, character: GameCharacter):
 	
 	# Determine if the given Tile is not actually a ledge_tile, then return 0 because only Tiles with a 'ledge' typing have altitude
 	if !ledge_tile.type or "ledge" not in ledge_tile.type:
@@ -275,8 +250,8 @@ func get_altitude(ledge_tile: Tile):
 	if ledge_tile.type != "ledge_front":
 		
 		# Store a local reference to the closest ledge_front Tile, and store an altitude value equal to the height of that ledge_front Tile
-		var nearest_ledge_front = get_nearest_ledge_front(ledge_tile)
-		var altitude = get_ledge_height(nearest_ledge_front, 1)
+		var nearest_ledge_front = get_nearest_ledge_front(ledge_tile, character)
+		var altitude = get_ledge_height(nearest_ledge_front, 1, character)
 		
 		# Unload the ledge_front Tile
 		unload_tile(nearest_ledge_front)
@@ -287,24 +262,24 @@ func get_altitude(ledge_tile: Tile):
 	
 	# Otherwise the given ledge_tile is a ledge_front Tile, so return it's height as the altitude
 	else:
-		return get_ledge_height(ledge_tile, 1)
+		return get_ledge_height(ledge_tile, 1, character)
 
 
 
 # Determines the altitude of a given ledge_front Tile
-func get_ledge_height(ledge_front_tile: Tile, altitude_counter: int):
+func get_ledge_height(ledge_front_tile: Tile, altitude_counter: int, character: GameCharacter):
 	
 	# Store a reference to the Tile below the given ledge_front_tile
-	var tile_below = Tile.new(tilemap_terrain, Tile.MapType.TERRAIN, Vector2i(ledge_front_tile.coords_map.x, ledge_front_tile.coords_map.y + 1))
+	var tile_below = Tile.new(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN, Vector2i(ledge_front_tile.coords_map.x, ledge_front_tile.coords_map.y + 1))
 	
 	# Determine if the Tile below is a ledge_back, which would indicate there is a platform at a lower elevation than the ledge_front_tile, then try to get the ledge_front height from there with the altitude counter incremented to 2 now
 	if tile_below.type == "ledge_back":
 		
 		# Store a reference to the nearest ledge_front Tile
-		var nearest_ledge_front = get_nearest_ledge_front(tile_below)
+		var nearest_ledge_front = get_nearest_ledge_front(tile_below, character)
 		
 		# Set the altitude counter to equal the height of that ledge_front Tile
-		altitude_counter = get_ledge_height(nearest_ledge_front, altitude_counter + 1)
+		altitude_counter = get_ledge_height(nearest_ledge_front, altitude_counter + 1, character)
 		
 		unload_tile(nearest_ledge_front)
 		nearest_ledge_front = null
@@ -314,7 +289,7 @@ func get_ledge_height(ledge_front_tile: Tile, altitude_counter: int):
 	elif tile_below.type == "ledge_front" or tile_below.type == "ledge_wall":
 		
 		# Store the altitude counter value generated by the next recursive call of this function when the altitude counter incremented by 1
-		altitude_counter = get_ledge_height(tile_below, altitude_counter + 1)
+		altitude_counter = get_ledge_height(tile_below, altitude_counter + 1, character)
 	
 	
 	# Unload the tile_below
@@ -327,10 +302,10 @@ func get_ledge_height(ledge_front_tile: Tile, altitude_counter: int):
 
 
 # Gets a reference to the nearest ledge_front Tile
-func get_nearest_ledge_front(tile: Tile):
+func get_nearest_ledge_front(tile: Tile, character: GameCharacter):
 	
 	# Store a reference to the Tile below the given ledge_front_tile
-	var tile_below = Tile.new(tilemap_terrain, Tile.MapType.TERRAIN, Vector2i(tile.coords_map.x, tile.coords_map.y + 1))
+	var tile_below = Tile.new(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN, Vector2i(tile.coords_map.x, tile.coords_map.y + 1))
 	
 	# Continue checking the Tile beneath the tile_below until it is a ledge_front type
 	while not (tile_below.type == "ledge_front"):
@@ -343,7 +318,7 @@ func get_nearest_ledge_front(tile: Tile):
 		tile_below = null
 		
 		# Set a tile_below to be equal to the tile beneath the previous tile_below
-		tile_below = Tile.new(tilemap_terrain, Tile.MapType.TERRAIN, Vector2i(coords.x, coords.y + 1))
+		tile_below = Tile.new(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN, Vector2i(coords.x, coords.y + 1))
 		
 		# Determine if the Tile below is a ledge_front tile, then return the Tile
 		if tile_below.type == "ledge_front":
@@ -354,16 +329,16 @@ func get_nearest_ledge_front(tile: Tile):
 
 
 # A callback function to be played when a Ground Tile is being processed
-func tile_callback_ground(tile: Tile, _character: GameCharacter):
+func tile_callback_ground(tile: Tile, character: GameCharacter):
 	
 	# Store a reference to the Tile in the same cell as the given tile but in the Terrain tilemap
-	var terrain_tile = tile.get_same_cell(tilemap_terrain, Tile.MapType.TERRAIN)
+	var terrain_tile = tile.get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
 	
 	# Check if the Tile that is in the same cell coordinates in the terrain tilemap as this Tile in the ground tilemap is a 'ledge' Tile
 	if terrain_tile.type == "ledge_back":
 		
 		# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
-		tilemap_ground.set_cell(tile.coords_map, 0, tilemap_ground.get_cell_atlas_coords(tile.coords_map), 1)
+		character.current_tilemaps[Tile.MapType.GROUND].set_cell(tile.coords_map, 0, character.current_tilemaps[Tile.MapType.GROUND].get_cell_atlas_coords(tile.coords_map), 1)
 	
 	
 	# Unload the terrain Tile
@@ -404,7 +379,7 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 		else:
 			
 			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
-			var tile_above = Tile.new(tilemap_ground, Tile.MapType.GROUND, tile.coords_map)
+			var tile_above = Tile.new(character.current_tilemaps[Tile.MapType.GROUND], Tile.MapType.GROUND, tile.coords_map)
 			
 			if "ledge" not in tile_above.type:
 				character.body_collider.disabled = false

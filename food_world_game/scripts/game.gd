@@ -61,9 +61,6 @@ var timer: Timer
 var screen_fading: bool = false
 var current_building: Building
 
-var exterior: TileMapLayer
-var interior: TileMapLayer
-
 var world_tilemaps: Dictionary
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -96,6 +93,10 @@ func _ready() -> void:
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
 	
+
+	MALICK.current_tilemaps = world_tilemaps["center"]
+	SALLY.current_tilemaps = world_tilemaps["center"]
+	PLAYER.current_tilemaps = world_tilemaps["center"]	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
@@ -815,41 +816,44 @@ func fade_screen(delta: float):
 		# Determine if the timer is stopped (meaning it is time to fade back in)
 		if timer.is_stopped():
 			
+			var interior: TileMapLayer = PLAYER.current_tilemaps[Tile.MapType.BUILDINGS_INTERIOR]
+			var exterior: TileMapLayer = PLAYER.current_tilemaps[Tile.MapType.BUILDINGS_EXTERIOR]
+			
 			# Determine if the interiors of the buildings are currently not visible (meaning the player is entering from outside)
-			if !GameTileManager.tilemap_buildings_interior.visible:
+			if !interior.visible:
 				
 				# Enable the interiors' visibility and collisions
-				GameTileManager.tilemap_buildings_interior.visible = true
-				GameTileManager.tilemap_buildings_interior.collision_enabled = true
+				interior.visible = true
+				interior.collision_enabled = true
 				
 				# Disable the exterior's visibility and collisions
-				GameTileManager.tilemap_buildings_exterior.visible = false
-				GameTileManager.tilemap_buildings_exterior.collision_enabled = false
+				exterior.visible = false
+				exterior.collision_enabled = false
 				
 				# Iterate over each Tilemap aside from the building-related Tilemaps
-				for tilemap in range(0, GameTileManager.tilemaps_active.size() - 2):
+				for tilemap in range(0, PLAYER.current_tilemaps.size() - 2):
 					
 					# Disable the visibility and collisions of the outdoor tilemaps now that the player is going inside
-					GameTileManager.tilemaps_active[tilemap].visible = false
-					GameTileManager.tilemaps_active[tilemap].collision_enabled = false
+					PLAYER.current_tilemaps[tilemap].visible = false
+					PLAYER.current_tilemaps[tilemap].collision_enabled = false
 			
 			# Otherwise, the exteriors of the building are not currently visible (meaning the player is exiting from outside) 
 			else:
 				
 				# Enable the exteriors' visibility and collisions
-				GameTileManager.tilemap_buildings_exterior.visible = true
-				GameTileManager.tilemap_buildings_exterior.collision_enabled = true
+				exterior.visible = true
+				exterior.collision_enabled = true
 				
 				# Disable the interiors' visibility and collisions
-				GameTileManager.tilemap_buildings_interior.visible = false
-				GameTileManager.tilemap_buildings_interior.collision_enabled = false
+				interior.visible = false
+				interior.collision_enabled = false
 				
 				# Iterate over each Tilemap aside from the building-related Tilemaps
-				for tilemap in range(0, GameTileManager.tilemaps_active.size() - 2):
+				for tilemap in range(0, PLAYER.current_tilemaps.size() - 2):
 					
 					# Enable the visibility and collisions of the outdoor tilemaps now that the player is going back outside
-					GameTileManager.tilemaps_active[tilemap].visible = true
-					GameTileManager.tilemaps_active[tilemap].collision_enabled = true
+					PLAYER.current_tilemaps[tilemap].visible = true
+					PLAYER.current_tilemaps[tilemap].collision_enabled = true
 			
 			# Start the timer for 100 seconds so this code doesn't break by thinking the timer is stopped when it shouldnt be affecting it anymore
 			timer.start(100)
