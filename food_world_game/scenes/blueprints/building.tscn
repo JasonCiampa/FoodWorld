@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://d1odcn65vwjr3"]
 
-[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="1_c4lke"]
 [ext_resource type="Script" path="res://scripts/blueprints/building.gd" id="1_u8mnd"]
+[ext_resource type="FontFile" uid="uid://bd5l5b5l8hf7r" path="res://showcard-gothic-test.fnt" id="2_mhklv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_typ33"]
 size = Vector2(40, 32.5925)
@@ -9,7 +9,8 @@ size = Vector2(40, 32.5925)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lg5t3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6xljx"]
-font = ExtResource("1_c4lke")
+line_spacing = 1.0
+font = ExtResource("2_mhklv")
 font_size = 7
 shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
@@ -35,6 +36,7 @@ shape = SubResource("RectangleShape2D_lg5t3")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 
 [node name="Press \'E\' to Interact" type="Label" parent="."]
+visible = false
 z_index = 2
 offset_left = -85.0
 offset_top = -39.0

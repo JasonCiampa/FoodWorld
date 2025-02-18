@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cihoalh5h5cik"]
+[gd_scene load_steps=11 format=3 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://b4edk42lcf0n8" path="res://scenes/characters/malick.tscn" id="5_184d6"]
 [ext_resource type="PackedScene" uid="uid://dtdrrty6qehha" path="res://scenes/blueprints/food-citizen.tscn" id="6_0yf05"]
 [ext_resource type="PackedScene" uid="uid://com21o63hyb7l" path="res://scenes/characters/sally.tscn" id="6_vh2pn"]
+[ext_resource type="Texture2D" uid="uid://diaaj4e00nqeu" path="res://images/mallak.png" id="8_av51i"]
+[ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="9_80er3"]
+[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="10_e8sb8"]
 
 [node name="Game" type="Node2D"]
 z_index = -1
@@ -14,6 +17,7 @@ y_sort_enabled = true
 script = ExtResource("1_in6cb")
 
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
+visible = false
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
 position = Vector2(-2382, -1248)
@@ -29,13 +33,42 @@ y_sort_enabled = true
 position = Vector2(16, -68)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
+visible = false
 position = Vector2(-2428, -1325)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
+visible = false
 position = Vector2(-2258, -1320)
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2460.0
+offset_top = -1418.0
+offset_right = -2460.0
+offset_bottom = -1418.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/AspectRatioContainer"]
+layout_mode = 2
+texture = ExtResource("8_av51i")
+stretch_mode = 5
+
+[node name="TextureButton" type="TextureButton" parent="Control/AspectRatioContainer"]
+layout_mode = 2
+texture_normal = ExtResource("9_80er3")
+texture_pressed = ExtResource("10_e8sb8")
 
 [connection signal="die" from="Player" to="." method="_on_character_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]

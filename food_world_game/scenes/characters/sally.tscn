@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/characters/sally.gd" id="1_8jequ"]
 [ext_resource type="Texture2D" uid="uid://b3p4vw0y6gobx" path="res://images/characters/sally-the-sticky-mozzerela-stick.png" id="2_xocr1"]
-[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_e3mpv"]
+[ext_resource type="FontFile" uid="uid://bd5l5b5l8hf7r" path="res://showcard-gothic-test.fnt" id="3_o0xtr"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_7pd1y"]
 animations = [{
@@ -33,7 +33,7 @@ size = Vector2(16, 9)
 size = Vector2(16, 2)
 
 [sub_resource type="LabelSettings" id="LabelSettings_v53cs"]
-font = ExtResource("3_e3mpv")
+font = ExtResource("3_o0xtr")
 font_size = 7
 shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
@@ -91,9 +91,9 @@ debug_color = Color(0, 0.619608, 1, 0.427451)
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 z_index = 1
-offset_left = -35.0
+offset_left = -27.0
 offset_top = -42.0
-offset_right = 135.0
+offset_right = 143.0
 offset_bottom = -34.0
 text = "Press 'E' to Interact"
 label_settings = SubResource("LabelSettings_v53cs")

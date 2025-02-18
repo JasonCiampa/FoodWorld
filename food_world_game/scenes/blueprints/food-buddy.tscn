@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://c6y8ls1ofcp2y"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/food-buddy.gd" id="1_lus2v"]
-[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="3_650dw"]
+[ext_resource type="FontFile" uid="uid://bd5l5b5l8hf7r" path="res://showcard-gothic-test.fnt" id="2_kwp4u"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="3_qplrx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oj385"]
@@ -16,8 +16,9 @@ size = Vector2(9, 2)
 size = Vector2(34.1, 32.185)
 
 [sub_resource type="LabelSettings" id="LabelSettings_bep82"]
-font = ExtResource("3_650dw")
+font = ExtResource("2_kwp4u")
 font_size = 7
+outline_color = Color(1, 0, 0, 1)
 shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
 
@@ -79,11 +80,12 @@ position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_6oyta")
 
 [node name="Press \'E\' to Interact" type="Label" parent="."]
+visible = false
 z_index = 2
-offset_left = -35.0
-offset_top = -38.0
-offset_right = 135.0
-offset_bottom = -30.0
+offset_left = -27.0
+offset_top = -40.0
+offset_right = 143.0
+offset_bottom = -32.0
 text = "Press 'E' to Interact"
 label_settings = SubResource("LabelSettings_bep82")
 metadata/_edit_use_anchors_ = true

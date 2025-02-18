@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://b5fs47kejmp3c"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/bush.gd" id="1_cfnpf"]
-[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="1_vklee"]
+[ext_resource type="FontFile" uid="uid://bd5l5b5l8hf7r" path="res://showcard-gothic-test.fnt" id="2_xvkq3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fmamn"]
 size = Vector2(51, 31)
@@ -10,7 +10,7 @@ size = Vector2(51, 31)
 size = Vector2(45, 26)
 
 [sub_resource type="LabelSettings" id="LabelSettings_oli5r"]
-font = ExtResource("1_vklee")
+font = ExtResource("2_xvkq3")
 font_size = 7
 shadow_size = 0
 shadow_color = Color(0, 0, 0, 1)
@@ -35,9 +35,9 @@ debug_color = Color(0.505887, 0, 0.044596, 0.42)
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 z_index = 1
-offset_left = -45.0
+offset_left = -35.0
 offset_top = -22.0
-offset_right = 125.0
+offset_right = 135.0
 offset_bottom = -14.0
 text = "Press 'E' to Collect Berries"
 label_settings = SubResource("LabelSettings_oli5r")
