@@ -28,6 +28,8 @@ var world_tilemaps: Dictionary
 
 var tilemaps_active: Array[TileMapLayer]
 
+var tiles_used_environment: Array
+
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
 	"ground" : tile_callback_ground,
@@ -65,46 +67,41 @@ func _physics_process(_delta: float) -> void:
 func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
 	
-	# Iterate over every world that has tilemaps
 	for world in world_tilemaps:
 		
-		var tiles_used_ground: Array[Vector2i] = world_tilemaps[world][0].get_used_cells()
+		tiles_used_environment.append_array(world_tilemaps[world][Tile.MapType.ENVIRONMENT].get_used_cells())
+					
+		var unique_dict = {} 
 		
-		# Iterate over each of the world's tilemaps except for the first (ground tilemap)
-		for tilemap in range(1, 3):
+		for coords in tiles_used_environment:
+			unique_dict[coords] = true
 			
-			# Store all of the tiles used by the tilemap of this iteration
-			var tiles_used_other_map: Array[Vector2i] = world_tilemaps[world][tilemap].get_used_cells()
+		tiles_used_environment = unique_dict.keys()
+		
+		
+		# PATH FINDING 
+		for coords in range(tiles_used_environment.size() -1, 0, -1):
+		
+			# Determine if the ground Tile's coordinates are not occupied in the environment tilemap, then enable pathfinding for the tile
+			var environment_tile = Tile.new(world_tilemaps[world][Tile.MapType.ENVIRONMENT], Tile.MapType.ENVIRONMENT, tiles_used_environment[coords])
 			
-			# Iterate over every tile in the ground map
-			for coords in tiles_used_ground:
+			# Determine if the terrain Tile's width is set and is larger than 1
+			if environment_tile.width != null and environment_tile.width > 1:
 				
-				# Determine if the coords of that tile are also used in another tilemap
-				if coords in tiles_used_other_map:
+				# Iterate for each tile wide the Tile is
+				for col in range(environment_tile.width + 1):
 					
-					
-					# Create a reference to that specific tile in the ground map
-					var tile_ground = Tile.new(world_tilemaps[world][0], Tile.MapType.GROUND, coords)
-					var tile_other_map = Tile.new(world_tilemaps[world][tilemap], tilemap, coords)
-					
-					
-					if tile_other_map.width != null and tile_other_map.width > 1:
+					# Iterate for each tile tall the Tile is
+					for row in range(environment_tile.height):
 						
-						for col in range(tile_other_map.width):
-							
-							for row in range(tile_other_map.height):
-								world_tilemaps[world][0].set_cell(Vector2i((tile_ground.coords_map.x - int(tile_other_map.width / 2)) + col, (tile_ground.coords_map.y - int(tile_other_map.height / 2)) + row + 1), 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
+						# Append the coordinates of this sub-Tile into the list of Tiles not to process for path-finding
+						tiles_used_environment.append(Vector2i(tiles_used_environment[coords].x - int(environment_tile.width / 2) + col, tiles_used_environment[coords].y - int(environment_tile.height / 2) + row + 1))
 					
-					else:
-						world_tilemaps[world][0].set_cell(tile_ground.coords_map, 0, world_tilemaps[world][0].get_cell_atlas_coords(tile_ground.coords_map), 2)
-					
-					# Destroy the reference to the Tile
-					unload_tile(tile_ground)
-					tile_ground = null
-					
-					# Destroy the reference to the Tile
-					unload_tile(tile_other_map)
-					tile_other_map = null
+			else:
+				
+				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
+				tiles_used_environment.append(tiles_used_environment[coords])
+	
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -133,9 +130,7 @@ func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 			if new_tile.type != "":
 				
 				character.current_tilemaps = world_tilemaps[world]
-				
-				
-				
+			
 				return new_tile
 			
 			# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
@@ -213,11 +208,20 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
 	
 	
+
+			
 	# Process each of the Tiles using their coordinates that were stored in the list
 	for tile in range(tiles_to_process.size() - 1, -1, -1):
 		
 		# Execute the callback function associated with the type of Tile of this iteration
 		execute_tile_callback(tiles_to_process[tile], character)
+		
+		
+		if tiles_to_process[tile].map_type == Tile.MapType.GROUND:
+			
+			if tiles_to_process[tile].coords_map not in tiles_used_environment:
+				tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
+		
 		
 		# Unload the tile
 		tiles_to_process[tile].free()

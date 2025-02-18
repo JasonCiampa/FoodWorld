@@ -182,9 +182,6 @@ func physics_process(_delta: float) -> void:
 func follow_field_state_callback() -> void:
 	
 	if timer.is_stopped():
-		timer.start(1)
-		
-	else:
 		
 		# Set the Player as the Food Buddy's target, then move towards them
 		target_player.emit(self)
@@ -202,6 +199,8 @@ func follow_field_state_callback() -> void:
 		else:
 			velocity.x = 0
 			velocity.y = 0
+		
+		timer.start(0.1)
 
 
 

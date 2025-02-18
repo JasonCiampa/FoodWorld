@@ -1,10 +1,16 @@
-[gd_resource type="TileSet" load_steps=60 format=3 uid="uid://cngdqdr7a568a"]
+[gd_resource type="TileSet" load_steps=63 format=3 uid="uid://cngdqdr7a568a"]
 
 [ext_resource type="Texture2D" uid="uid://c5r3pi13nkbjj" path="res://images/floor_tiles/tile-spritesheet.png" id="1_blsmh"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_s08lh"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_31spg"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_1thbk"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_g2y46"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_pds6r"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_k8ii4"]
 
@@ -12,13 +18,15 @@
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_653uv"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_j56um"]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_melkr"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_3dduy"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_c8xbw"]
 vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
 agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_3dduy"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_jjh77"]
 
@@ -57,6 +65,12 @@ agent_radius = 0.0
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_3cl4r"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_0xl2e"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_8qxwm"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_b5m5s"]
 
@@ -122,34 +136,34 @@ agent_radius = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ob12f"]
 texture = ExtResource("1_blsmh")
-0:0/next_alternative_id = 25
+0:0/next_alternative_id = 27
 0:0/0 = 0
 0:0/0/z_index = -1
 0:0/0/y_sort_origin = -10
-0:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_s08lh")
+0:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_31spg")
 0:0/0/custom_data_0 = "ground"
 0:0/0/custom_data_1 = "center_grass"
 0:0/0/custom_data_2 = 1
 0:0/0/custom_data_3 = 1
 0:0/1 = 1
-0:0/1/y_sort_origin = -10
-0:0/1/navigation_layer_1/polygon = SubResource("NavigationPolygon_1thbk")
-0:0/1/custom_data_0 = "ledge_ground"
-0:0/1/custom_data_1 = "center"
-0:0/1/custom_data_2 = 1
-0:0/1/custom_data_3 = 1
+0:0/1/z_index = -1
+0:0/1/navigation_layer_1/polygon = SubResource("NavigationPolygon_g2y46")
 0:0/2 = 2
 0:0/2/z_index = -1
-1:0/next_alternative_id = 4
+0:0/2/navigation_layer_1/polygon = SubResource("NavigationPolygon_pds6r")
+0:0/26 = 26
+0:0/26/z_index = -1
+1:0/next_alternative_id = 6
 1:0/0 = 0
 1:0/0/z_index = -1
 1:0/0/y_sort_origin = -10
-1:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_j56um")
+1:0/0/navigation_layer_1/polygon = SubResource("NavigationPolygon_melkr")
 1:0/0/custom_data_0 = "ground"
 1:0/0/custom_data_1 = "garden"
 1:0/0/custom_data_2 = 1
 1:0/0/custom_data_3 = 1
 1:0/1 = 1
+1:0/1/z_index = -1
 1:0/1/y_sort_origin = -10
 1:0/1/navigation_layer_1/polygon = SubResource("NavigationPolygon_3dduy")
 1:0/1/custom_data_0 = "ledge_ground"
@@ -158,8 +172,11 @@ texture = ExtResource("1_blsmh")
 1:0/1/custom_data_3 = 1
 1:0/2 = 2
 1:0/2/z_index = -1
+1:0/2/navigation_layer_1/polygon = SubResource("NavigationPolygon_c8xbw")
 1:0/2/custom_data_2 = 1
 1:0/2/custom_data_3 = 1
+1:0/5 = 5
+1:0/5/z_index = -1
 7:0/0 = 0
 7:0/0/z_index = -1
 7:0/0/custom_data_1 = "sweets"
@@ -470,7 +487,7 @@ texture = ExtResource("1_blsmh")
 8:4/0 = 0
 8:4/0/z_index = -1
 8:4/0/custom_data_1 = "sweets"
-4:5/next_alternative_id = 4
+4:5/next_alternative_id = 6
 4:5/0 = 0
 4:5/0/z_index = -1
 4:5/0/y_sort_origin = -10
@@ -480,6 +497,7 @@ texture = ExtResource("1_blsmh")
 4:5/0/custom_data_2 = 1
 4:5/0/custom_data_3 = 1
 4:5/1 = 1
+4:5/1/z_index = -1
 4:5/1/y_sort_origin = -10
 4:5/1/navigation_layer_1/polygon = SubResource("NavigationPolygon_0xl2e")
 4:5/1/custom_data_0 = "ledge_ground"
@@ -488,6 +506,9 @@ texture = ExtResource("1_blsmh")
 4:5/1/custom_data_3 = 1
 4:5/2 = 2
 4:5/2/z_index = -1
+4:5/2/navigation_layer_1/polygon = SubResource("NavigationPolygon_8qxwm")
+4:5/5 = 5
+4:5/5/z_index = -1
 7:5/0 = 0
 7:5/0/z_index = -1
 7:5/0/custom_data_1 = "sweets"
@@ -2285,80 +2306,80 @@ texture = ExtResource("1_blsmh")
 13:0/size_in_atlas = Vector2i(2, 3)
 13:0/0 = 0
 13:0/0/y_sort_origin = 23
-13:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-13:0/0/custom_data_0 = "corn"
+13:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+13:0/0/custom_data_0 = "environment_asset"
 13:0/0/custom_data_1 = "garden"
 13:0/0/custom_data_2 = 2
 13:0/0/custom_data_3 = 3
 15:0/size_in_atlas = Vector2i(2, 3)
 15:0/0 = 0
 15:0/0/y_sort_origin = 23
-15:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-15:0/0/custom_data_0 = "corn"
+15:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+15:0/0/custom_data_0 = "environment_asset"
 15:0/0/custom_data_1 = "garden"
 15:0/0/custom_data_2 = 2
 15:0/0/custom_data_3 = 3
 17:0/size_in_atlas = Vector2i(2, 3)
 17:0/0 = 0
 17:0/0/y_sort_origin = 23
-17:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-17:0/0/custom_data_0 = "corn"
+17:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+17:0/0/custom_data_0 = "environment_asset"
 17:0/0/custom_data_1 = "garden"
 17:0/0/custom_data_2 = 2
 17:0/0/custom_data_3 = 3
 19:0/size_in_atlas = Vector2i(2, 3)
 19:0/0 = 0
 19:0/0/y_sort_origin = 23
-19:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-19:0/0/custom_data_0 = "corn"
+19:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+19:0/0/custom_data_0 = "environment_asset"
 19:0/0/custom_data_1 = "garden"
 19:0/0/custom_data_2 = 2
 19:0/0/custom_data_3 = 3
 21:0/size_in_atlas = Vector2i(2, 3)
 21:0/0 = 0
 21:0/0/y_sort_origin = 23
-21:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-9, 7, 8, 7, 8, 24, -9, 24)
-21:0/0/custom_data_0 = "corn"
+21:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_5/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_6/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_7/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_8/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/physics_layer_9/polygon_0/points = PackedVector2Array(-7, 7, 6, 7, 6, 24, -7, 24)
+21:0/0/custom_data_0 = "environment_asset"
 21:0/0/custom_data_1 = "garden"
 21:0/0/custom_data_2 = 2
 21:0/0/custom_data_3 = 3
