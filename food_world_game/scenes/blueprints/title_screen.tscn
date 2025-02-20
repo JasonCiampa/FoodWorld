@@ -1,0 +1,96 @@
+[gd_scene load_steps=7 format=3 uid="uid://cmi2lo6il6bie"]
+
+[ext_resource type="Texture2D" uid="uid://3rkpjj0lir5f" path="res://images/ui/title-screen.png" id="1_ciyuk"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="1_ox8yp"]
+[ext_resource type="Texture2D" uid="uid://c54nk86vx54oj" path="res://icon.svg" id="3_8lpld"]
+[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="4_nmvq0"]
+[ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="5_okbmx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_54gxj"]
+font = ExtResource("1_ox8yp")
+font_size = 96
+outline_size = 21
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="Background Container" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -540.0
+offset_right = 3840.0
+offset_bottom = 540.0
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Background Container"]
+layout_mode = 2
+texture = ExtResource("1_ciyuk")
+
+[node name="Text Container" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -472.5
+offset_right = 472.5
+offset_bottom = 126.0
+grow_horizontal = 2
+
+[node name="Label" type="Label" parent="Text Container"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Food world"
+label_settings = SubResource("LabelSettings_54gxj")
+
+[node name="Button Container" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -375.0
+offset_right = 300.0
+offset_bottom = 225.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(300, 0)
+
+[node name="TextureButton" type="TextureButton" parent="Button Container"]
+layout_mode = 2
+texture_normal = ExtResource("3_8lpld")
+texture_pressed = ExtResource("4_nmvq0")
+texture_hover = ExtResource("5_okbmx")
+
+[node name="Button Container2" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -30.0
+offset_right = 300.0
+offset_bottom = 570.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(300, 0)
+
+[node name="TextureButton" type="TextureButton" parent="Button Container2"]
+layout_mode = 2
+texture_normal = ExtResource("3_8lpld")
+texture_pressed = ExtResource("4_nmvq0")
+texture_hover = ExtResource("5_okbmx")

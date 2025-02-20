@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://c6y8ls1ofcp2y"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/food-buddy.gd" id="1_lus2v"]
-[ext_resource type="FontFile" uid="uid://bd5l5b5l8hf7r" path="res://showcard-gothic-test.fnt" id="2_kwp4u"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="2_bvhjx"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="3_qplrx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oj385"]
@@ -16,7 +16,7 @@ size = Vector2(9, 2)
 size = Vector2(34.1, 32.185)
 
 [sub_resource type="LabelSettings" id="LabelSettings_bep82"]
-font = ExtResource("2_kwp4u")
+font = ExtResource("2_bvhjx")
 font_size = 7
 outline_color = Color(1, 0, 0, 1)
 shadow_size = 0

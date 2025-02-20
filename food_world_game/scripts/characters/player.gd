@@ -206,8 +206,9 @@ func _process(delta: float) -> void:
 		#print('Current Altitude: ', str(current_altitude))
 		#print('Current Z-Index: ', str(z_index))
 		#print('Current Collision Value: ', str(collision_value_current))
-		#print("")
-
+		print("")
+		print("Camera Zoom X: ", camera_2d.zoom.x)
+		print("Camera Zoom Y: ", camera_2d.zoom.y)
 
 
 # Called every frame. Updates the Player's physics

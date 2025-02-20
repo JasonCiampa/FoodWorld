@@ -11,10 +11,15 @@ config_version=5
 [application]
 
 config/name="Food World"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="res://scenes/blueprints/title_screen.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 run/max_fps=120
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 
 [global_group]
 
@@ -24,6 +29,10 @@ food_citizens=""
 interactables="Nodes that can be interacted with by the Player"
 interactable-assets="All assets that can be interacted with in the game. This includes EnvironmentAssets such as trees, rocks, and bushes."
 interactable-characters="This includes all characters that can be interacted with by the Player."
+
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
 
 [input]
 
