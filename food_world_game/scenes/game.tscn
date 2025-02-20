@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cihoalh5h5cik"]
+[gd_scene load_steps=9 format=3 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
@@ -7,9 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://b4edk42lcf0n8" path="res://scenes/characters/malick.tscn" id="5_184d6"]
 [ext_resource type="PackedScene" uid="uid://dtdrrty6qehha" path="res://scenes/blueprints/food-citizen.tscn" id="6_0yf05"]
 [ext_resource type="PackedScene" uid="uid://com21o63hyb7l" path="res://scenes/characters/sally.tscn" id="6_vh2pn"]
-[ext_resource type="Texture2D" uid="uid://diaaj4e00nqeu" path="res://images/mallak.png" id="8_av51i"]
-[ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="9_80er3"]
-[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="10_e8sb8"]
+[ext_resource type="AudioStream" uid="uid://b6rpc2tn82c6w" path="res://music/WorldCenter.mp3" id="8_gwi8m"]
 
 [node name="Game" type="Node2D"]
 z_index = -1
@@ -19,76 +17,31 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-2378, -1400)
-
-[node name="Control" type="Control" parent="Player/AnimatedSprite2D" index="0"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -87.0
-offset_top = -33.0
-offset_right = -87.0
-offset_bottom = -33.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="TextureRect" type="TextureRect" parent="Player/AnimatedSprite2D/Control"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -164.5
-offset_top = -41.125
-offset_right = 164.5
-offset_bottom = 41.125
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("8_av51i")
-stretch_mode = 5
-
-[node name="TextureButton" type="TextureButton" parent="Player/AnimatedSprite2D/Control"]
-layout_mode = 2
-offset_right = 329.0
-offset_bottom = 82.25
-texture_normal = ExtResource("9_80er3")
-texture_pressed = ExtResource("10_e8sb8")
-stretch_mode = 5
-
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Player/AnimatedSprite2D/Control"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.416667
-anchor_top = -0.294118
-anchor_right = -0.416667
-anchor_bottom = -0.294118
-offset_right = 329.0
-offset_bottom = 185.0
-ratio = 4.0
-metadata/_edit_use_anchors_ = true
+position = Vector2(-3, 322)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
-visible = false
 z_index = 0
 position = Vector2(664, 465)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
-visible = false
 y_sort_enabled = true
 position = Vector2(16, -68)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
-visible = false
-position = Vector2(-2428, -1325)
+position = Vector2(-53, 397)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
-visible = false
-position = Vector2(-2258, -1320)
+position = Vector2(117, 402)
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Fade Timer" type="Timer" parent="."]
 one_shot = true
+
+[node name="Process Tiles Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="WorldCenter" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_gwi8m")
+parameters/looping = true
 
 [connection signal="die" from="Player" to="." method="_on_character_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
@@ -123,5 +76,3 @@ one_shot = true
 [connection signal="target_closest_food_buddy" from="Sally" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Sally" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
-
-[editable path="Player"]

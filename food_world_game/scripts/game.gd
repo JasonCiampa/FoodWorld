@@ -11,6 +11,9 @@ extends Node2D
 
 @onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick-sally.tscn").instantiate()
 
+@onready var MUSIC: AudioStreamPlayer = $WorldCenter
+
+
 var food_citizen = load("res://scenes/blueprints/food-citizen.tscn").instantiate()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,7 +60,8 @@ var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogu
 # Managers #
 var GameTileManager: TileManager
 
-var timer: Timer
+var timer_fade: Timer
+var timer_process_tiles: Timer
 var screen_fading: bool = false
 var current_building: Building
 
@@ -70,7 +74,8 @@ var world_tilemaps: Dictionary
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	timer = $Timer
+	timer_fade = $"Fade Timer"
+	timer_process_tiles = $"Process Tiles Timer"
 	
 	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(MALICK)
@@ -113,6 +118,9 @@ func _ready() -> void:
 	#
 	#for name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
+		
+	
+	MUSIC.play()
 
 
 
@@ -126,9 +134,12 @@ func _process(delta: float) -> void:
 	interactable_assets = scene_tree.get_nodes_in_group("interactable-assets")
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
-	GameTileManager.process_nearby_tiles(PLAYER, 2)
-	GameTileManager.process_nearby_tiles(MALICK, 3)
-	GameTileManager.process_nearby_tiles(SALLY, 2)
+	if timer_process_tiles.is_stopped():
+		GameTileManager.process_nearby_tiles(PLAYER, 2)
+		GameTileManager.process_nearby_tiles(MALICK, 3)
+		GameTileManager.process_nearby_tiles(SALLY, 2)
+		
+		timer_process_tiles.start(0.1)
 	
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
@@ -801,20 +812,20 @@ func _on_tile_object_enter_game(tile: Tile):
 # Fades the screen to black for the given "fade out" parameter, then back to the game for the given "fade in" parameter
 func fade_screen(delta: float):
 	
-	# Determine if the timer is stopped and that the opacity isn't all the way down yet, then decrement the opacity further
-	if timer.is_stopped() and modulate.a > 0:
+	# Determine if the timer_fade is stopped and that the opacity isn't all the way down yet, then decrement the opacity further
+	if timer_fade.is_stopped() and modulate.a > 0:
 		modulate.a = modulate.a - 0.7 * delta
 		
 		# Ensure the opacity doesn't go out of bounds, then start a 0.5 second delay until the fade back in occurs
 		if modulate.a <= 0:
 			modulate.a = 0
-			timer.start(0.5)
+			timer_fade.start(0.5)
 	
 	# Otherwise, the opacity is all the way down, so...
 	elif modulate.a == 0:
 		
-		# Determine if the timer is stopped (meaning it is time to fade back in)
-		if timer.is_stopped():
+		# Determine if the timer_fade is stopped (meaning it is time to fade back in)
+		if timer_fade.is_stopped():
 			
 			var interior: TileMapLayer = PLAYER.current_tilemaps[Tile.MapType.BUILDINGS_INTERIOR]
 			var exterior: TileMapLayer = PLAYER.current_tilemaps[Tile.MapType.BUILDINGS_EXTERIOR]
@@ -855,8 +866,8 @@ func fade_screen(delta: float):
 					PLAYER.current_tilemaps[tilemap].visible = true
 					PLAYER.current_tilemaps[tilemap].collision_enabled = true
 			
-			# Start the timer for 100 seconds so this code doesn't break by thinking the timer is stopped when it shouldnt be affecting it anymore
-			timer.start(100)
+			# Start the timer_fade for 100 seconds so this code doesn't break by thinking the timer_fade is stopped when it shouldnt be affecting it anymore
+			timer_fade.start(100)
 			
 			# Begin incrementing the opacity
 			modulate.a = modulate.a + 0.7 * delta
@@ -867,7 +878,7 @@ func fade_screen(delta: float):
 		if modulate.a >= 1:
 			modulate.a = 1
 			screen_fading = false
-			timer.stop()
+			timer_fade.stop()
 
 
 
