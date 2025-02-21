@@ -51,9 +51,9 @@ func _process(_delta: float) -> void:
 	#background.global_position.x -= move_speed_background * delta
 	#background_copy.global_position.x -= move_speed_background * delta
 	
-	if background.global_position.x <= -3840:
-		background.global_position.x = abs(background.global_position.x + 3840)
-		background_copy.global_position.x = background.global_position.x + 3840
+	#if background.global_position.x <= -3840:
+		#background.global_position.x = abs(background.global_position.x + 3840)
+		#background_copy.global_position.x = background.global_position.x + 3840
 
 func _physics_process(delta: float) -> void:
 	background.global_position.x -= move_speed_background * delta

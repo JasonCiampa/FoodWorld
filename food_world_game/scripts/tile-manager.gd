@@ -28,7 +28,8 @@ var world_tilemaps: Dictionary
 
 var tilemaps_active: Array[TileMapLayer]
 
-var tiles_used_environment: Array
+var tiles_occupied: Dictionary
+var tiles_enabled_navigation: Dictionary
 
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
@@ -67,10 +68,12 @@ func _physics_process(_delta: float) -> void:
 func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
 	
+	var tiles_used_environment: Array
+	
 	for world in world_tilemaps:
 		
 		tiles_used_environment.append_array(world_tilemaps[world][Tile.MapType.ENVIRONMENT].get_used_cells())
-					
+		
 		var unique_dict = {} 
 		
 		for coords in tiles_used_environment:
@@ -95,12 +98,11 @@ func _init(_world_tilemaps: Dictionary) -> void:
 					for row in range(environment_tile.height):
 						
 						# Append the coordinates of this sub-Tile into the list of Tiles not to process for path-finding
-						tiles_used_environment.append(Vector2i(tiles_used_environment[coords].x - int(environment_tile.width / 2) + col, tiles_used_environment[coords].y - int(environment_tile.height / 2) + row + 1))
-					
+						tiles_occupied.get_or_add(Vector2i(tiles_used_environment[coords].x - int(environment_tile.width / 2) + col, tiles_used_environment[coords].y - int(environment_tile.height / 2) + row + 1), true)
 			else:
 				
 				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
-				tiles_used_environment.append(tiles_used_environment[coords])
+				tiles_occupied.get_or_add(tiles_used_environment[coords], true)
 	
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -156,7 +158,7 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 	var updated_tile = update_tile_world_location(tile, character)
 	
 	# Determine if the updated Tile is not null and if the Tile's type has a designated callback function to execute, then execute it
-	if updated_tile and tile.type in tile_callbacks.keys():
+	if updated_tile and tile_callbacks.get(tile.type) != null:
 		
 		# Call the callback function for this Tile to process it with respect to the given Character
 		tile_callbacks[tile.type].call(tile, character)
@@ -209,7 +211,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
 	
 
-			
+	
 	# Process each of the Tiles using their coordinates that were stored in the list
 	for tile in range(tiles_to_process.size() - 1, -1, -1):
 		
@@ -219,9 +221,10 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 		
 		if tiles_to_process[tile].map_type == Tile.MapType.GROUND:
 			
-			if tiles_to_process[tile].coords_map not in tiles_used_environment:
+			# Determine if the tile is not occupied or already enabled for navigation, then enable navigation on it and add it to the list of tile coords enabled for navigation
+			if tiles_occupied.get(tiles_to_process[tile].coords_map) == null and tiles_enabled_navigation.get(tiles_to_process[tile].coords_map) == null:
 				tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
-		
+				tiles_enabled_navigation.get_or_add(tiles_to_process[tile].coords_map, true)
 		
 		# Unload the tile
 		tiles_to_process[tile].free()
@@ -353,8 +356,9 @@ func tile_callback_ground(tile: Tile, character: GameCharacter):
 # A callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: GameCharacter):
 
-	if abs(tile.coords_local.x - character.global_position.x) > 8 and character.global_position.y < tile.coords_local.y:
+	if abs(tile.coords_local.x - character.global_position.x) > 8:
 		return
+	
 	
 	# Determine if the Character is currently standing on a platform, then update their collision and z-index to behave accordingly while they are on the platform
 	if character.on_platform:
@@ -390,7 +394,7 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 				character.feet_collider.disabled = true
 			
 				# Determine if the Character is standing behind the Tile
-				if character.global_position.y > tile.coords_local.y + tile.data.y_sort_origin:
+				if character.current_tile_position != tile.coords_local:
 					character.z_index = -1
 					
 					unload_tile(tile_above)
