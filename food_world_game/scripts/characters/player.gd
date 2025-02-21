@@ -9,7 +9,8 @@ extends GameCharacter
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
 @onready var timer: Timer = $Timers/Timer
-@onready var camera_2d: Camera2D = $AnimatedSprite2D/Camera2D
+@onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,6 +66,8 @@ enum CollisionValues {
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var tests_ran: bool = false
+
 # Behavior #
 var is_interacting: bool = false
 
@@ -107,6 +110,8 @@ var is_dodging: bool
 var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
+var camera_default_zoom: float = 3.5
+
 # Abilities #
 var attack_damage: Dictionary = { 
 	"Punch": 10, 
@@ -121,7 +126,7 @@ var attack_damage: Dictionary = {
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
-
+	
 	sprite.play("test")
 	self.name = "Player"
 	body_collider.disabled = true
@@ -133,21 +138,25 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	if !tests_ran:
+		test(delta)
+		return
+	
 	if Input.is_action_just_pressed("scroll_down"):
-		camera_2d.zoom.x -= 10 * delta
-		camera_2d.zoom.y -= 10 * delta
+		camera.zoom.x -= 10 * delta
+		camera.zoom.y -= 10 * delta
 		
-		if camera_2d.zoom.x < 2.5:
-			camera_2d.zoom.x = 2.5
-			camera_2d.zoom.y = 2.5
+		if camera.zoom.x < 2.5:
+			camera.zoom.x = 2.5
+			camera.zoom.y = 2.5
 		
 	elif Input.is_action_just_pressed("scroll_up"):
-		camera_2d.zoom.x += 10 * delta
-		camera_2d.zoom.y += 10 * delta
+		camera.zoom.x += 10 * delta
+		camera.zoom.y += 10 * delta
 		
-		if camera_2d.zoom.x > 7:
-			camera_2d.zoom.x = 7
-			camera_2d.zoom.y = 7
+		if camera.zoom.x > 7:
+			camera.zoom.x = 7
+			camera.zoom.y = 7
 		
 
 	
@@ -206,9 +215,9 @@ func _process(delta: float) -> void:
 		#print('Current Altitude: ', str(current_altitude))
 		#print('Current Z-Index: ', str(z_index))
 		#print('Current Collision Value: ', str(collision_value_current))
-		#print("")
-		#print("Camera Zoom X: ", camera_2d.zoom.x)
-		#print("Camera Zoom Y: ", camera_2d.zoom.y)
+		print("")
+		print("Camera Zoom X: ", camera.zoom.x)
+		print("Camera Zoom Y: ", camera.zoom.y)
 
 
 # Called every frame. Updates the Player's physics
@@ -594,3 +603,43 @@ func update_stamina(delta):
 # Updates a stat chosen by the Player, increments level, resets current xp, refills hp, maybe increase max xp (harder to level up as you progress?)
 func level_up():
 	pass
+
+
+# Tests all of the functionality of the Player
+func test(delta: float):
+	
+	# SPRINT TESTS 
+	stamina_current = 100
+	Input.action_press("sprint")
+	Input.action_press("move")
+	
+	sprint_start(delta)
+	update_movement_animation()
+	
+	if animation_player.current_animation == "sprint_start":
+		print("Sprinting Test: Camera Zoom Out on Sprint - TRUE\n")
+	else:
+		print("Sprinting Test: Camera Zoom Out on Sprint - FALSE\n")
+	
+	if sprite.speed_scale > 1:
+		print("Sprinting Test: Sprite Speeds Up on Sprint - TRUE\n")
+	else:
+		print("Sprinting Test: Sprite Speeds Up on Sprint - FALSE\n")
+	
+	Input.action_release("sprint")
+	Input.action_release("move")
+	
+	sprint_end()
+	update_movement_animation()
+
+	if animation_player.current_animation == "sprint_end":
+		print("Sprinting Test: Camera Zoom In on Sprint End - TRUE\n")
+	else:
+		print("Sprinting Test: Camera Zoom In on Sprint End - FALSE\n")
+	
+	if sprite.speed_scale == 1:
+		print("Sprinting Test: Sprite Speeds Down on Sprint - TRUE\n\n")
+	else:
+		print("Sprinting Test: Sprite Speeds Down on Sprint - FALSE\n\n")
+	
+	tests_ran = true

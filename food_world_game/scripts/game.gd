@@ -28,6 +28,8 @@ enum World { SWEETS, GARDEN, COLISEUM, MEAT, SEAFOOD, JUNKFOOD, PERISHABLE, SPUD
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var test_cases_complete: bool = false
+
 @onready var scene_tree = get_tree()
 
 # Node Groups #
@@ -926,4 +928,3 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
 			current_building = null
-						
