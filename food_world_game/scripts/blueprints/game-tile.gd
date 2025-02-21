@@ -43,6 +43,7 @@ func _init(_tilemap: TileMapLayer, _map_type: int, _coords_map: Vector2i):
 	self.map_type = _map_type
 	self.coords_map = _coords_map
 	self.coords_local = tilemap.map_to_local(coords_map)
+
 	set_data()
 	set_local_coords()
 	

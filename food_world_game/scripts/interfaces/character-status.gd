@@ -1,20 +1,18 @@
+class_name StatusPanel
+
 extends Control
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var background: AspectRatioContainer
-var background_copy: AspectRatioContainer
-var text_title: AspectRatioContainer
-var button_play: TextureButton
-var button_quit: TextureButton
+var health_bar: TextureProgressBar
+var stamina_bar: TextureProgressBar
+var xp_bar: TextureProgressBar
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,8 +24,6 @@ var button_quit: TextureButton
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var move_speed_background: int = 50
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -35,38 +31,39 @@ var move_speed_background: int = 50
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	background = $"Background Container"
-	background_copy = $"Background Container 2"
+	health_bar = $"Health Bar Container/Health Bar"
+	stamina_bar = $"Stamina Bar Container/Stamina Bar"
+	xp_bar = $"XP Bar Container/XP Bar"
 	
-	text_title = $"Title Text Container"
+	health_bar.min_value = 0
+	stamina_bar.min_value = 0
+	xp_bar.min_value = 0
 	
-	button_play = $"Play Button Container/Play Button"
-	button_quit = $"Quit Button Container/Quit Button"
+	health_bar.max_value = 200
+	stamina_bar.max_value = 100
+	xp_bar.max_value = 50
+	
+	health_bar.value = 200
+	stamina_bar.value = 100
+	xp_bar.value = 50
+	
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	background.global_position.x -= move_speed_background * delta
-	background_copy.global_position.x -= move_speed_background * delta
-	
-	#if background.global_position.x <= -3840:
-		#background.global_position.x = abs(background.global_position.x + 3840)
-		#background_copy.global_position.x = background.global_position.x + 3840
+	if Input.is_action_just_pressed("jump"):
+		health_bar.value -= 20
+		stamina_bar.value -= 10
+		xp_bar.value -= 5
+
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-func _on_play_button_button_down() -> void:
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
-
-
-
-func _on_quit_button_button_down() -> void:
-	get_tree().quit()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3rkpjj0lir5f"
-path="res://.godot/imported/title-screen.png-6f9a7b65d1187a900af41f14022d0b20.ctex"
+uid="uid://bfxqbhqdanegm"
+path="res://.godot/imported/pokemon_info_cards.png-c85bc6d66ada6fe9f9b96ff8cdb4a6ae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/ui/title-screen.png"
-dest_files=["res://.godot/imported/title-screen.png-6f9a7b65d1187a900af41f14022d0b20.ctex"]
+source_file="res://images/ui/png/pokemon_info_cards.png"
+dest_files=["res://.godot/imported/pokemon_info_cards.png-c85bc6d66ada6fe9f9b96ff8cdb4a6ae.ctex"]
 
 [params]
 

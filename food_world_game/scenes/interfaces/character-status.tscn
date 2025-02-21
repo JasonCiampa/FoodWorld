@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=3 uid="uid://do46o8a68s06o"]
+
+[ext_resource type="Texture2D" uid="uid://dicdwk1l14tbp" path="res://images/ui/png/title-screen.png" id="1_2y357"]
+[ext_resource type="Script" path="res://scripts/interfaces/character-status.gd" id="1_kijuv"]
+[ext_resource type="Texture2D" uid="uid://bfxqbhqdanegm" path="res://images/ui/png/pokemon_info_cards.png" id="1_nrtfo"]
+[ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="2_up8ct"]
+[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="3_3xv37"]
+[ext_resource type="Texture2D" uid="uid://diaaj4e00nqeu" path="res://images/mallak.png" id="4_dgd20"]
+
+[node name="Character Status" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kijuv")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 3840.0
+offset_bottom = 1080.0
+texture = ExtResource("1_2y357")
+
+[node name="Status Container" type="AspectRatioContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Health Meters" type="TextureRect" parent="Status Container"]
+layout_mode = 2
+texture = ExtResource("1_nrtfo")
+
+[node name="Health Bar Container" type="AspectRatioContainer" parent="."]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 264.0
+offset_right = 192.0
+offset_bottom = 298.0
+scale = Vector2(5, 5)
+
+[node name="Health Bar" type="TextureProgressBar" parent="Health Bar Container"]
+layout_mode = 2
+value = 100.0
+texture_under = ExtResource("2_up8ct")
+texture_over = ExtResource("3_3xv37")
+texture_progress = ExtResource("4_dgd20")
+
+[node name="Stamina Bar Container" type="AspectRatioContainer" parent="."]
+layout_mode = 0
+offset_left = 988.0
+offset_top = 264.0
+offset_right = 1028.0
+offset_bottom = 304.0
+scale = Vector2(5, 5)
+
+[node name="Stamina Bar" type="TextureProgressBar" parent="Stamina Bar Container"]
+layout_mode = 2
+value = 100.0
+texture_under = ExtResource("2_up8ct")
+texture_over = ExtResource("3_3xv37")
+texture_progress = ExtResource("4_dgd20")
+
+[node name="XP Bar Container" type="AspectRatioContainer" parent="."]
+layout_mode = 0
+offset_left = 668.0
+offset_top = 264.0
+offset_right = 692.0
+offset_bottom = 298.0
+scale = Vector2(5, 5)
+
+[node name="XP Bar" type="TextureProgressBar" parent="XP Bar Container"]
+layout_mode = 2
+value = 100.0
+texture_under = ExtResource("2_up8ct")
+texture_over = ExtResource("3_3xv37")
+texture_progress = ExtResource("4_dgd20")

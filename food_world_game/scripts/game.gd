@@ -66,6 +66,8 @@ var screen_fading: bool = false
 var current_building: Building
 
 var world_tilemaps: Dictionary
+
+var musicStarted : bool = false
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -118,15 +120,16 @@ func _ready() -> void:
 	#
 	#for name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
-		
-	
-	MUSIC.play()
 
-
+	timer_fade.start(0.1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	if !musicStarted and timer_fade.is_stopped():
+		musicStarted = true
+		MUSIC.play()
+		
 	# Update the list of on-screen enemies, food citizens, and interactables
 	enemies = scene_tree.get_nodes_in_group("enemies")
 	food_citizens = scene_tree.get_nodes_in_group("food_citizens")
@@ -138,8 +141,7 @@ func _process(delta: float) -> void:
 		GameTileManager.process_nearby_tiles(PLAYER, 2)
 		GameTileManager.process_nearby_tiles(MALICK, 3)
 		GameTileManager.process_nearby_tiles(SALLY, 2)
-		
-		timer_process_tiles.start(0.1)
+	
 	
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
