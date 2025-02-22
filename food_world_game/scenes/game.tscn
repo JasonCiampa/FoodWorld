@@ -17,7 +17,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-3, 322)
+position = Vector2(4051, 512)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
@@ -28,10 +28,10 @@ y_sort_enabled = true
 position = Vector2(16, -68)
 
 [node name="Malick" parent="." instance=ExtResource("5_184d6")]
-position = Vector2(-53, 397)
+position = Vector2(4001, 587)
 
 [node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
-position = Vector2(117, 402)
+position = Vector2(4171, 592)
 
 [node name="Fade Timer" type="Timer" parent="."]
 one_shot = true

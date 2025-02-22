@@ -33,10 +33,10 @@ var test_cases_complete: bool = false
 @onready var scene_tree = get_tree()
 
 # Node Groups #
-@onready var enemies: Array[Node] = scene_tree.get_nodes_in_group("enemies")
-@onready var food_citizens: Array[Node] = scene_tree.get_nodes_in_group("food_citizens")
-@onready var interactables: Array[Node] = scene_tree.get_nodes_in_group("interactables")
-@onready var interactable_assets: Array[Node] = scene_tree.get_nodes_in_group("interactable-assets")
+var enemies: Array[Node]
+var food_citizens: Array[Node]
+var interactables: Array[Node]
+var interactable_assets: Dictionary
 
 
 var closest_interactable_to_player: Node2D
@@ -128,15 +128,18 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if !musicStarted and timer_fade.is_stopped():
-		musicStarted = true
-		MUSIC.play()
+	#if !musicStarted and timer_fade.is_stopped():
+		#musicStarted = true
+		#MUSIC.play()
 		
 	# Update the list of on-screen enemies, food citizens, and interactables
 	enemies = scene_tree.get_nodes_in_group("enemies")
 	food_citizens = scene_tree.get_nodes_in_group("food_citizens")
 	interactables = scene_tree.get_nodes_in_group("interactables")
-	interactable_assets = scene_tree.get_nodes_in_group("interactable-assets")
+	
+	for interactable_asset in scene_tree.get_nodes_in_group("interactable-assets"):
+		interactable_assets.get_or_add(interactable_asset.global_position, interactable_asset)
+	
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
@@ -773,42 +776,36 @@ func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 # Callback function that executes whenever the TileManager is attempting to load a Tile's Object form into the game: adds the Tile Object into the game's scene tree
 func _on_tile_object_enter_game(tile: Tile):
 	
-	# Load and store the Tile Object
-	var tile_object: Node2D = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
+	var tile_object_location: Vector2
 	
-	# Determine if the Tile Object is a building
 	if tile.type == "building":
+		tile_object_location = tile.data.get_custom_data("global_position")
 		
-		# Connect the Tile Object's signals to the game
-		tile_object.player_enter.connect(_on_player_enter_building)
-		tile_object.player_exit.connect(_on_player_enter_building)
-		tile_object.global_position = tile.data.get_custom_data("global_position")
-		
-		
-	# Otherwise, the Tile Object is not a building, so don't do anything extra because buildings process things differently
 	else:
+		tile_object_location = tile.coords_local
+	
+	# Determine if a Tile Object already exists at the location that this Tile Object is trying to be created at
+	if interactable_assets.get(tile_object_location) == null:
 		
-		# Set the location of this normal Tile Object based directly on the position of the Tile it is being generated from
-		tile_object.global_position = tile.coords_local
-	
-	
-	# Iterate over every Interactable in the game to ensure that the Tile Object hasn't already been loaded into the game
-	for interactable in interactable_assets:
+		# Load and store the Tile Object
+		var tile_object: Node2D = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
 		
-		# Determine if the Interactable of this iteration already exists at the exact same location that a new Tile Object is trying to be created at
-		if interactable.global_position == tile_object.global_position:
+		# Determine if the Tile Object is a building
+		if tile.type == "building":
 			
-			tile_object.free()
-			tile_object = null
-			
-			# Return to prevent a Tile Object from being created because one already exists
-			return
-	
-	print("Added new Tile Object!")
-	# Add the Tile Object into the Game
-	add_child(tile_object)
-	
-	tile_object = null
+			# Connect the Tile Object's signals to the game
+			tile_object.player_enter.connect(_on_player_enter_building)
+			tile_object.player_exit.connect(_on_player_enter_building)
+		
+		tile_object.global_position = tile_object_location
+		
+		print("Added new Tile Object!")
+		
+		# Add the Tile Object into the Game and list of Interactable Assets
+		add_child(tile_object)
+		interactable_assets.get_or_add(tile_object_location, tile_object)
+		
+		tile_object = null
 
 
 # BUILDING CALLBACKS #
