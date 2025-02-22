@@ -198,7 +198,6 @@ texture_hover = ExtResource("9_kxlkm")
 
 [node name="FoodWorldTheme" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_pltdg")
-autoplay = true
 parameters/looping = true
 
 [connection signal="button_down" from="Play Button Container/Play Button" to="." method="_on_play_button_button_down"]

@@ -110,7 +110,6 @@ var is_dodging: bool
 var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
-var camera_default_zoom: float = 3.5
 
 # Abilities #
 var attack_damage: Dictionary = { 
@@ -138,9 +137,10 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if !tests_ran:
-		test(delta)
-		return
+	## ENABLE/DISABLE THIS IF STATEMENT TO TOGGLE THE PLAYER'S TEST FUNCTION
+	#if !tests_ran:
+		#test(delta)
+		#return
 	
 	if Input.is_action_just_pressed("scroll_down"):
 		camera.zoom.x -= 10 * delta
@@ -215,9 +215,9 @@ func _process(delta: float) -> void:
 		#print('Current Altitude: ', str(current_altitude))
 		#print('Current Z-Index: ', str(z_index))
 		#print('Current Collision Value: ', str(collision_value_current))
-		print("")
-		print("Camera Zoom X: ", camera.zoom.x)
-		print("Camera Zoom Y: ", camera.zoom.y)
+		#print("")
+		#print("Camera Zoom X: ", camera.zoom.x)
+		#print("Camera Zoom Y: ", camera.zoom.y)
 
 
 # Called every frame. Updates the Player's physics
@@ -250,9 +250,10 @@ func sprint_end():
 
 # Starts the Player's dodge
 func dodge_start():
-	dodge_cooldown_timer.start()
-	dodge_timer.start()
-	is_dodging = true
+	if !is_jumping:
+		dodge_cooldown_timer.start()
+		dodge_timer.start()
+		is_dodging = true
 
 
 
@@ -270,6 +271,8 @@ func dodge_process(delta: float) -> bool:
 				velocity.x = calculate_velocity(Direction.LEFT)
 			else:
 				velocity.x = calculate_velocity(Direction.RIGHT)
+		else:
+			velocity.x = calculate_velocity(Direction.RIGHT)
 		
 		# Determine if the Player is facing forward or backward, then have them dodge in that direction from an idle position
 		if sprite.animation == "idle_front":
@@ -277,12 +280,21 @@ func dodge_process(delta: float) -> bool:
 		elif sprite.animation == "idle_back":
 			velocity.y = calculate_velocity(Direction.UP)
 		
+		else:
+			velocity.y = calculate_velocity(Direction.UP)
+		
+		
+		
 		# Return true to indicate that the Player was dodging from an idle position
 		return true
 	
 	# Return false to indicate that the Player was dodging from an idle position
 	return false
 
+
+func jump_start():
+	if !is_dodging:
+		super()
 
 
 # Calculates the Player's current velocity based on their movement input.
@@ -292,7 +304,7 @@ func calculate_velocity(direction):
 
 
 # Checks if a Player has used one of their abilities and processes their input to determine what signals to send and what values to update
-func process_ability_use():
+func process_ability_use() -> int:
 	var ability_number: int = 0
 	
 	# Determine if the Player left-clicked (ability 1) or right-clicked (ability 2) their mouse, then store the corresponding ability number in the variable
@@ -326,6 +338,8 @@ func process_ability_use():
 		# Otherwise, the Player is using their Food Buddy's Fusion ability, so launch the correct ability
 		else:
 			use_ability_buddy_fusion.emit(ability_number)
+	
+	return ability_number
 
 
 
@@ -387,7 +401,7 @@ func update_movement_animation():
 		
 		if Input.is_action_just_pressed("sprint"):
 			animation_player.play("start_sprinting")
-		elif Input.is_action_just_released("sprint"):
+		if Input.is_action_just_released("sprint"):
 			animation_player.play("stop_sprinting")
 		
 		if is_sprinting:
@@ -608,38 +622,140 @@ func level_up():
 # Tests all of the functionality of the Player
 func test(delta: float):
 	
-	# SPRINT TESTS 
-	stamina_current = 100
+	print("{ PLAYER MOVEMENT TESTS }\n")
+	
+	# SPRINT TESTS # -------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	# Triggers a simulated sprint to allow for start/during sprint testing #
 	Input.action_press("sprint")
 	Input.action_press("move")
 	
 	sprint_start(delta)
 	update_movement_animation()
 	
-	if animation_player.current_animation == "sprint_start":
-		print("Sprinting Test: Camera Zoom Out on Sprint - TRUE\n")
-	else:
-		print("Sprinting Test: Camera Zoom Out on Sprint - FALSE\n")
+	print("[Sprinting Test] Sprinting Speed is Current Speed:  ", speed_sprinting == speed_current)
+	print("[Sprinting Test] Camera Zoom Out on Sprint Start:   ", animation_player.assigned_animation == "start_sprinting")
+	print("[Sprinting Test] Sprite Speeds Up on Sprint Start:  ", sprite.speed_scale > 1)
+	print("[Sprinting Test] Stamina Depleting on Sprint Start: ", stamina_decreasing)
 	
-	if sprite.speed_scale > 1:
-		print("Sprinting Test: Sprite Speeds Up on Sprint - TRUE\n")
-	else:
-		print("Sprinting Test: Sprite Speeds Up on Sprint - FALSE\n")
 	
+	# Triggers the end of the simulated sprint to allow for stopping/stopped sprint testing #
 	Input.action_release("sprint")
 	Input.action_release("move")
 	
 	sprint_end()
 	update_movement_animation()
+	update_stamina(delta)
 
-	if animation_player.current_animation == "sprint_end":
-		print("Sprinting Test: Camera Zoom In on Sprint End - TRUE\n")
-	else:
-		print("Sprinting Test: Camera Zoom In on Sprint End - FALSE\n")
+	print("[Sprinting Test] Normal Speed is Current Speed:     ", speed_normal == speed_current)
+	print("[Sprinting Test] Camera Zoom In on Sprint End:      ", animation_player.assigned_animation == "stop_sprinting")
+	print("[Sprinting Test] Sprite Speeds Down on Sprint End:  ", sprite.speed_scale == 1)
+	print("[Sprinting Test] Stamina Stops Depleting on Sprint: ", !stamina_decreasing)
 	
-	if sprite.speed_scale == 1:
-		print("Sprinting Test: Sprite Speeds Down on Sprint - TRUE\n\n")
-	else:
-		print("Sprinting Test: Sprite Speeds Down on Sprint - FALSE\n\n")
+	
+	print("")
+	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	
+	# DODGE TESTS # --------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	# Triggers a simulated sprint to allow for start/during sprint testing #
+	Input.action_press("dodge")
+	Input.action_press("move")
+	
+	jump_start()
+	dodge_start()
+	print("[Dodging Test] Dodge Prevented If Already Jumping:  ", !is_dodging)
+	jump_end()
+	
+	dodge_start()
+	dodge_process(delta)
+	print("[Dodging Test] Dodging Triggers Velocity Update:    ", velocity.x != 0 or velocity.y != 0)
+	
+	jump_start()
+	update_movement_animation()
+	update_movement_velocity(delta)
+	
+	print("[Dodging Test] Camera Zoom In/Out Effect on Dodge:  ", animation_player.assigned_animation == "dodge")
+	print("[Dodging Test] Stamina Depleting Throughout Dodge:  ", stamina_decreasing)
+	
+	velocity = Vector2(0, 0)
+	
+	print("")
+	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	
+	# JUMP TESTS # ----------------------------------------------------------------------------------------------------------------------------------------------------  #
+
+	Input.action_press("dodge")
+	Input.action_press("jump")
+	update_movement_velocity(delta)
+	
+	print("[Jumping Test] Jump Prevented If Already Dodging:   ", !is_jumping)
+	
+	Input.action_press("jump")
+	update_movement_velocity(delta)
+	
+	print("[Jumping Test] Jump Propels Character Into Air:     ", velocity.y < 0)
+	print("[Jumping Test] Stamina Reduces Instantly on Jump:   ", stamina_current + stamina_use["Jump"] <= 100)
+	
+	velocity = Vector2(0, 0)
+	
+	print("")
+	
+	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	# STAMINA TESTS # ------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	stamina_current = 100
+	use_stamina(10)
+	print("[Stamina Test] Stamina Can Be Used Immediately:     ", stamina_current + 10 <= 100)
+	
+	stamina_current = 100
+	use_stamina_gradually(10, delta)
+	print("[Stamina Test] Stamina Can Be Used Gradually:       ", stamina_current + 10 > 100)
+	print("[Stamina Test] Stamina Delays Before Regenerating:  ", stamina_regen_delay_timer.is_stopped())
+	
+	stamina_current = 0
+	use_stamina(10)
+	use_stamina_gradually(10, delta)
+	print("[Stamina Test] Stamina Use Blocked When Not Enough: ", stamina_current == 0)
+	
+	
+	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	print("\n\n\n{ PLAYER ABILITY TESTS }\n")
+	
+	# PLAYER SOLO ABILITY TESTS # ------------------------------------------------------------------------------------------------------------------------------------- #
+	
+	stamina_current = 100
+	field_state_current = FieldState.SOLO
+	Input.action_press("ability2")
+	print("[Ability Test] Player Ability 2 On Right-Click:     ", process_ability_use() == 2)
+	print("[Ability Test] Player Ability 2 Depletes Stamina:   ", stamina_current < 100)
+	Input.action_release("ability2")
+	
+	stamina_current = 100
+	field_state_current = FieldState.BUDDY1
+	Input.action_press("ability2")
+	print("[Ability Test] Buddy Ability 2 On Right-Click:      ", process_ability_use() == 2)
+	print("[Ability Test] Buddy Ability 2 Depletes Stamina:    ", stamina_current < 100)
+	Input.action_release("ability2")
+	
+	stamina_current = 100
+	field_state_current = FieldState.SOLO
+	Input.action_press("ability1")
+	print("[Ability Test] Player Ability 1 On Left-Click:      ", process_ability_use() == 1)
+	print("[Ability Test] Player Ability 1 Depletes Stamina:   ", stamina_current < 100)
+	Input.action_release("ability1")
+	
+	stamina_current = 100
+	field_state_current = FieldState.BUDDY1
+	Input.action_press("ability1")
+	print("[Ability Test] Buddy Ability 1 On Left-Click:       ", process_ability_use() == 1)
+	print("[Ability Test] Buddy Ability 1 Depletes Stamina:    ", stamina_current < 100)
+	Input.action_release("ability1")
+	
+	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 	
 	tests_ran = true
