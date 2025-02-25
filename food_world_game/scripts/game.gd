@@ -13,6 +13,7 @@ extends Node2D
 
 @onready var MUSIC: AudioStreamPlayer = $WorldCenter
 
+var character_status: StatusPanel
 
 var food_citizen = load("res://scenes/blueprints/food-citizen.tscn").instantiate()
 
@@ -122,11 +123,35 @@ func _ready() -> void:
 	#
 	#for name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
-
+	
+	character_status = $"Player/Character Status"
+	character_status.health_bar_player.max_value = PLAYER.health_max
+	character_status.health_bar_player.value = PLAYER.health_current
+	
+	character_status.stamina_bar_player.max_value = PLAYER.stamina_max
+	character_status.stamina_bar_player.value = PLAYER.stamina_current
+	
+	character_status.xp_bar_player.max_value = PLAYER.xp_max
+	character_status.xp_bar_player.value = PLAYER.xp_current
+	
+	character_status.text_level_player.text = str("Lvl ", PLAYER.level_current)
+	
+	
+	character_status.text_name_foodbuddy1.text = food_buddies_active[0].name
+	character_status.health_bar_foodbuddy1.max_value = food_buddies_active[0].health_max
+	
+	character_status.text_name_foodbuddy2.text = food_buddies_active[1].name
+	character_status.health_bar_foodbuddy2.max_value = food_buddies_active[1].health_max
+	
 	timer_fade.start(0.1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	character_status.health_bar_player.value = PLAYER.health_current
+	character_status.stamina_bar_player.value = PLAYER.stamina_current
+	character_status.xp_bar_player.value = PLAYER.xp_current
+	
 	
 	#if !musicStarted and timer_fade.is_stopped():
 		#musicStarted = true
@@ -314,6 +339,17 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 			target.die.emit(target)
 			target.alive = false
 			attacker.killed_target.emit(attacker)
+			
+			if attacker is Player and target is Enemy:
+				attacker.xp_current += target.xp_drop
+				
+				if attacker.xp_current > attacker.xp_max:
+					pass
+					#attacker.level_up.emit()
+					# In level_up function in player OR callback in game:
+					#	- pull up interface that gives option to choose stat upgrade
+					#	- freeze all game until stat upgrade is selected
+					#	- upgrade stat, unfreeze game
 		
 		return true
 	

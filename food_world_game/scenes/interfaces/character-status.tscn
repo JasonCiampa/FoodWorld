@@ -1,11 +1,19 @@
-[gd_scene load_steps=7 format=3 uid="uid://do46o8a68s06o"]
+[gd_scene load_steps=9 format=3 uid="uid://do46o8a68s06o"]
 
-[ext_resource type="Texture2D" uid="uid://dicdwk1l14tbp" path="res://images/ui/png/title-screen.png" id="1_2y357"]
 [ext_resource type="Script" path="res://scripts/interfaces/character-status.gd" id="1_kijuv"]
-[ext_resource type="Texture2D" uid="uid://bfxqbhqdanegm" path="res://images/ui/png/pokemon_info_cards.png" id="1_nrtfo"]
-[ext_resource type="Texture2D" uid="uid://ddd3npwal426p" path="res://images/main-character.png" id="2_up8ct"]
-[ext_resource type="Texture2D" uid="uid://yti605qnf7jy" path="res://images/sally-the-sticky-mozzerela-stick.png" id="3_3xv37"]
-[ext_resource type="Texture2D" uid="uid://diaaj4e00nqeu" path="res://images/mallak.png" id="4_dgd20"]
+[ext_resource type="Texture2D" uid="uid://d3n5svd8hvnhh" path="res://images/ui/png/health-bar-player.png" id="2_5fvqm"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_cba4t"]
+[ext_resource type="Texture2D" uid="uid://eqsqwgnkaxd3" path="res://images/ui/png/player-health.png" id="4_im4g4"]
+[ext_resource type="Texture2D" uid="uid://bem6s3gi3hoxi" path="res://images/ui/png/player-stamina.png" id="5_w4485"]
+[ext_resource type="Texture2D" uid="uid://d22ctu6acpi1" path="res://images/ui/png/player-xp.png" id="6_or0kg"]
+[ext_resource type="Texture2D" uid="uid://cali72sodn0qd" path="res://images/ui/png/health-bar-buddy.png" id="7_gb87m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xg02t"]
+line_spacing = 10.0
+font = ExtResource("3_cba4t")
+font_size = 9
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
 
 [node name="Character Status" type="Control"]
 layout_mode = 3
@@ -16,62 +24,184 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_kijuv")
 
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 3840.0
-offset_bottom = 1080.0
-texture = ExtResource("1_2y357")
-
-[node name="Status Container" type="AspectRatioContainer" parent="."]
-layout_mode = 0
+[node name="Player Status" type="Control" parent="."]
+anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Health Meters" type="TextureRect" parent="Status Container"]
-layout_mode = 2
-texture = ExtResource("1_nrtfo")
-
-[node name="Health Bar Container" type="AspectRatioContainer" parent="."]
+[node name="Player Status Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
-offset_left = 168.0
-offset_top = 264.0
-offset_right = 192.0
-offset_bottom = 298.0
-scale = Vector2(5, 5)
+offset_left = -240.0
+offset_top = -161.0
+offset_right = 304.0
+offset_bottom = 47.0
+scale = Vector2(0.25, 0.25)
 
-[node name="Health Bar" type="TextureProgressBar" parent="Health Bar Container"]
+[node name="Player Status" type="TextureRect" parent="Player Status/Player Status Container"]
+layout_mode = 2
+texture = ExtResource("2_5fvqm")
+
+[node name="Player Health Container" type="AspectRatioContainer" parent="Player Status"]
+layout_mode = 0
+offset_left = -220.0
+offset_top = -143.0
+offset_right = 164.0
+offset_bottom = -127.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Player Health" type="TextureProgressBar" parent="Player Status/Player Health Container"]
 layout_mode = 2
 value = 100.0
-texture_under = ExtResource("2_up8ct")
-texture_over = ExtResource("3_3xv37")
-texture_progress = ExtResource("4_dgd20")
+texture_progress = ExtResource("4_im4g4")
 
-[node name="Stamina Bar Container" type="AspectRatioContainer" parent="."]
+[node name="Player Stamina Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
-offset_left = 988.0
-offset_top = 264.0
-offset_right = 1028.0
-offset_bottom = 304.0
-scale = Vector2(5, 5)
+offset_left = -220.0
+offset_top = -131.0
+offset_right = 164.0
+offset_bottom = -115.0
+scale = Vector2(0.25, 0.25)
 
-[node name="Stamina Bar" type="TextureProgressBar" parent="Stamina Bar Container"]
+[node name="Stamina Bar" type="TextureProgressBar" parent="Player Status/Player Stamina Container"]
 layout_mode = 2
 value = 100.0
-texture_under = ExtResource("2_up8ct")
-texture_over = ExtResource("3_3xv37")
-texture_progress = ExtResource("4_dgd20")
+texture_progress = ExtResource("5_w4485")
 
-[node name="XP Bar Container" type="AspectRatioContainer" parent="."]
+[node name="Player XP Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
-offset_left = 668.0
-offset_top = 264.0
-offset_right = 692.0
-offset_bottom = 298.0
-scale = Vector2(5, 5)
+offset_left = -220.0
+offset_top = -119.0
+offset_right = 164.0
+offset_bottom = -103.0
+scale = Vector2(0.25, 0.25)
 
-[node name="XP Bar" type="TextureProgressBar" parent="XP Bar Container"]
+[node name="XP Bar" type="TextureProgressBar" parent="Player Status/Player XP Container"]
 layout_mode = 2
 value = 100.0
-texture_under = ExtResource("2_up8ct")
-texture_over = ExtResource("3_3xv37")
-texture_progress = ExtResource("4_dgd20")
+texture_progress = ExtResource("6_or0kg")
+
+[node name="Player Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+layout_mode = 0
+offset_left = -237.0
+offset_top = -159.0
+offset_right = -183.0
+offset_bottom = -146.0
+
+[node name="Player Text" type="Label" parent="Player Status/Player Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Player"
+label_settings = SubResource("LabelSettings_xg02t")
+
+[node name="Level Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+layout_mode = 0
+offset_left = -168.0
+offset_top = -159.0
+offset_right = -124.0
+offset_bottom = -146.0
+alignment_horizontal = 0
+
+[node name="Level Text" type="Label" parent="Player Status/Level Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Lvl 1"
+label_settings = SubResource("LabelSettings_xg02t")
+
+[node name="FoodBuddy1 Status" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="FoodBuddy1 Status Container2" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
+layout_mode = 0
+offset_left = -70.0
+offset_top = -161.0
+offset_right = 474.0
+offset_bottom = -49.0
+scale = Vector2(0.25, 0.25)
+
+[node name="FoodBuddy1 Status" type="TextureRect" parent="FoodBuddy1 Status/FoodBuddy1 Status Container2"]
+layout_mode = 2
+texture = ExtResource("7_gb87m")
+
+[node name="FoodBuddy1 Health Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = -143.0
+offset_right = 334.0
+offset_bottom = -127.0
+scale = Vector2(0.25, 0.25)
+
+[node name="FoodBuddy1 Health" type="TextureProgressBar" parent="FoodBuddy1 Status/FoodBuddy1 Health Container"]
+layout_mode = 2
+value = 100.0
+texture_progress = ExtResource("4_im4g4")
+
+[node name="Name Text Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
+z_index = 4
+layout_mode = 0
+offset_left = -67.0
+offset_top = -159.0
+offset_right = 48.0
+offset_bottom = -146.0
+alignment_horizontal = 0
+
+[node name="Name Text" type="Label" parent="FoodBuddy1 Status/Name Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "buddy1"
+label_settings = SubResource("LabelSettings_xg02t")
+
+[node name="FoodBuddy2 Status" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="FoodBuddy2 Status Container3" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
+layout_mode = 0
+offset_left = 104.0
+offset_top = -161.0
+offset_right = 648.0
+offset_bottom = -49.0
+scale = Vector2(0.25, 0.25)
+
+[node name="FoodBuddy2 Status" type="TextureRect" parent="FoodBuddy2 Status/FoodBuddy2 Status Container3"]
+layout_mode = 2
+texture = ExtResource("7_gb87m")
+
+[node name="FoodBuddy2 Health Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
+layout_mode = 0
+offset_left = 124.0
+offset_top = -143.0
+offset_right = 508.0
+offset_bottom = -127.0
+scale = Vector2(0.25, 0.25)
+
+[node name="FoodBuddy2 Health" type="TextureProgressBar" parent="FoodBuddy2 Status/FoodBuddy2 Health Container"]
+layout_mode = 2
+value = 100.0
+texture_progress = ExtResource("4_im4g4")
+
+[node name="Name Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
+z_index = 4
+offset_left = 107.0
+offset_top = -159.0
+offset_right = 222.0
+offset_bottom = -146.0
+alignment_horizontal = 0
+
+[node name="Name Text" type="Label" parent="FoodBuddy2 Status/Name Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "buddy2"
+label_settings = SubResource("LabelSettings_xg02t")

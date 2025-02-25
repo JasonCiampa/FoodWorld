@@ -5,9 +5,16 @@ extends Control
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var health_bar: TextureProgressBar
-var stamina_bar: TextureProgressBar
-var xp_bar: TextureProgressBar
+var health_bar_player: TextureProgressBar
+var stamina_bar_player: TextureProgressBar
+var xp_bar_player: TextureProgressBar
+var text_level_player: Label
+
+var health_bar_foodbuddy1: TextureProgressBar
+var text_name_foodbuddy1: Label
+
+var health_bar_foodbuddy2: TextureProgressBar
+var text_name_foodbuddy2: Label
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -31,32 +38,27 @@ var xp_bar: TextureProgressBar
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	health_bar = $"Health Bar Container/Health Bar"
-	stamina_bar = $"Stamina Bar Container/Stamina Bar"
-	xp_bar = $"XP Bar Container/XP Bar"
+	health_bar_player = $"Player Status/Player Health Container/Player Health"
+	stamina_bar_player = $"Player Status/Player Stamina Container/Stamina Bar"
+	xp_bar_player = $"Player Status/Player XP Container/XP Bar"
+	text_level_player = $"Player Status/Level Text Container/Level Text"
 	
-	health_bar.min_value = 0
-	stamina_bar.min_value = 0
-	xp_bar.min_value = 0
+	health_bar_foodbuddy1 = $"FoodBuddy1 Status/FoodBuddy1 Health Container/FoodBuddy1 Health"
+	text_name_foodbuddy1 = $"FoodBuddy1 Status/Name Text Container/Name Text"
 	
-	health_bar.max_value = 200
-	stamina_bar.max_value = 100
-	xp_bar.max_value = 50
+	health_bar_foodbuddy2 = $"FoodBuddy2 Status/FoodBuddy2 Health Container/FoodBuddy2 Health"
+	text_name_foodbuddy2 = $"FoodBuddy2 Status/Name Text Container/Name Text"
 	
-	health_bar.value = 200
-	stamina_bar.value = 100
-	xp_bar.value = 50
+	health_bar_player.min_value = 0
+	stamina_bar_player.min_value = 0
+	xp_bar_player.min_value = 0
 	
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	
-	if Input.is_action_just_pressed("jump"):
-		health_bar.value -= 20
-		stamina_bar.value -= 10
-		xp_bar.value -= 5
+func _process(_delta: float) -> void:
+	pass
 
 
 
