@@ -240,7 +240,6 @@ func _physics_process(delta: float) -> void:
 func sprint_start(delta: float):
 	is_sprinting = true
 	speed_current = speed_sprinting
-	use_stamina_gradually(stamina_use["Sprint"], delta)
 
 
 # Ends the Player's sprint
@@ -261,9 +260,9 @@ func dodge_start():
 
 # Process the Player's dodge (returns true if Player is dodging from an idle position, false if not)
 func dodge_process(delta: float) -> bool:
-	speed_current = speed_dodging
-	use_stamina_gradually(stamina_use["Dodge"], delta)
 	
+	if use_stamina_gradually(stamina_use["Dodge"], delta):
+		speed_current = speed_dodging
 	# Determine if the Player is not currently moving in any direction (idle)
 	if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
 		
@@ -284,8 +283,6 @@ func dodge_process(delta: float) -> bool:
 		
 		else:
 			velocity.y = calculate_velocity(Direction.UP)
-		
-		
 		
 		# Return true to indicate that the Player was dodging from an idle position
 		return true
@@ -321,13 +318,13 @@ func process_ability_use() -> int:
 		# Determine if the Player is using a solo attack, then launch the correct attack
 		if field_state_current == FieldState.SOLO:
 			if ability_number == 1:
-				use_ability_solo.emit(attack_damage["Punch"])
-				use_stamina(stamina_use["Punch"])
-				print("The Player used their punch attack!")
+				if use_stamina(stamina_use["Punch"]):
+					use_ability_solo.emit(attack_damage["Punch"])
+					print("The Player used their punch attack!")
 			else:
-				use_ability_solo.emit(attack_damage["Kick"])
-				use_stamina(stamina_use["Kick"])
-				print("The Player used their kick attack!")
+				if use_stamina(stamina_use["Kick"]):
+					use_ability_solo.emit(attack_damage["Kick"])
+					print("The Player used their kick attack!")
 		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
@@ -450,13 +447,14 @@ func update_movement_velocity(delta):
 		
 		# Determine whether or not the Player is starting a jump, then trigger the jump
 		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
-			jump_start()
-			use_stamina(stamina_use["Jump"])
-		
+			
+			if use_stamina(stamina_use["Jump"]):
+				jump_start()
 		
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
 		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
-			sprint_start(delta)
+			if use_stamina_gradually(stamina_use["Sprint"], delta):
+				sprint_start(delta)
 		else:
 			sprint_end()
 		
@@ -565,22 +563,31 @@ func toggle_food_buddy_field_state_interface():
 
 
 # Depletes the Player's current stamina instantly by the given stamina use amount.
-func use_stamina(stamina_cost: int):
+func use_stamina(stamina_cost: int) -> bool:
+	
 	if stamina_current >= stamina_cost:
 		stamina_current -= stamina_cost
 		stamina_decreasing = true
 		stamina_increasing = false
 		stamina_regen_delay_timer.stop()
+		
+		return true
+	
+	return false
 
 
 
 # Depletes the Player's current stamina gradually over time by the given stamina use amount.
-func use_stamina_gradually(stamina_cost: int, delta: float):
+func use_stamina_gradually(stamina_cost: int, delta: float) -> bool:
 	if stamina_current > 0:
 		stamina_current -= stamina_cost * delta
 		stamina_decreasing = true
 		stamina_increasing = false
 		stamina_regen_delay_timer.stop()
+		
+		return true
+	
+	return false
 
 
 
