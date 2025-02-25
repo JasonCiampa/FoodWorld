@@ -192,6 +192,7 @@ texture_progress = ExtResource("4_im4g4")
 
 [node name="Name Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 z_index = 4
+layout_mode = 0
 offset_left = 107.0
 offset_top = -159.0
 offset_right = 222.0

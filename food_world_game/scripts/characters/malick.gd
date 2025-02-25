@@ -37,6 +37,8 @@ enum CollisionValues {
 # A custom ready function that is personally defined for Malick. This is called in the default Food Buddy class's '_ready()' function
 func ready():
 	
+	health_texture_path = "res://images/ui/png/dan-health.png"
+	
 	# Set the stamina cost for each of Malick's two abilities
 	ability_stamina_cost = { 
 		"Ability 1": [5, "Gradual"], 

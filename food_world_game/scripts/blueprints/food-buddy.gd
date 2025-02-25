@@ -40,6 +40,8 @@ FUSION  # Fusion with another Food Buddy
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var health_texture_path: String
+
 # Field State #
 var field_state_previous: int
 var field_state_current: int

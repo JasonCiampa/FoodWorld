@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsoqoyq0py5tw"
-path="res://.godot/imported/candy-castle.png-144c4dc82a32f72ffe6ad3ad2079d25c.ctex"
+uid="uid://brdu0r1mmhvuv"
+path="res://.godot/imported/dialoge-selection-back.png-9b1685e3683bdf4777111535f995e9cf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/candy-castle.png"
-dest_files=["res://.godot/imported/candy-castle.png-144c4dc82a32f72ffe6ad3ad2079d25c.ctex"]
+source_file="res://images/ui/png/dialoge-selection-back.png"
+dest_files=["res://.godot/imported/dialoge-selection-back.png-9b1685e3683bdf4777111535f995e9cf.ctex"]
 
 [params]
 

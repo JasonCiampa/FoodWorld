@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://casv8dtnub8qn"
-path="res://.godot/imported/corn-field.png-52fe21e647b8306aa4ac92b5df2bad92.ctex"
+uid="uid://bp40n6kwu5cyp"
+path="res://.godot/imported/food-buddy-selection-link-test.png-ba4d27fdb17b419f7ac5edf9459a70fb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/corn-field.png"
-dest_files=["res://.godot/imported/corn-field.png-52fe21e647b8306aa4ac92b5df2bad92.ctex"]
+source_file="res://images/ui/png/food-buddy-selection-link-test.png"
+dest_files=["res://.godot/imported/food-buddy-selection-link-test.png-ba4d27fdb17b419f7ac5edf9459a70fb.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1jx8svdn8wfy"
-path="res://.godot/imported/coliseum.png-d483bc7fc39515bc8695424e27faaded.ctex"
+uid="uid://cllg7kgni42ts"
+path="res://.godot/imported/dialoge-selection-scroll.png-2217177e11a978f5c289bb0e94a8e57d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/coliseum.png"
-dest_files=["res://.godot/imported/coliseum.png-d483bc7fc39515bc8695424e27faaded.ctex"]
+source_file="res://images/ui/png/dialoge-selection-scroll.png"
+dest_files=["res://.godot/imported/dialoge-selection-scroll.png-2217177e11a978f5c289bb0e94a8e57d.ctex"]
 
 [params]
 

@@ -139,10 +139,11 @@ func _ready() -> void:
 	
 	character_status.text_name_foodbuddy1.text = food_buddies_active[0].name
 	character_status.health_bar_foodbuddy1.max_value = food_buddies_active[0].health_max
+	character_status.health_bar_foodbuddy1.texture_progress = load(food_buddies_active[0].health_texture_path)
 	
 	character_status.text_name_foodbuddy2.text = food_buddies_active[1].name
 	character_status.health_bar_foodbuddy2.max_value = food_buddies_active[1].health_max
-	
+	character_status.health_bar_foodbuddy2.texture_progress = load(food_buddies_active[1].health_texture_path)
 	timer_fade.start(0.1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
