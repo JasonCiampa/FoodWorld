@@ -218,13 +218,34 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 		# Execute the callback function associated with the type of Tile of this iteration
 		execute_tile_callback(tiles_to_process[tile], character)
 		
-		
+		# Determine if the Tile is a default ground tile (not an alternative tile)
 		if tiles_to_process[tile].map_type == Tile.MapType.GROUND:
 			
-			# Determine if the tile is not occupied or already enabled for navigation, then enable navigation on it and add it to the list of tile coords enabled for navigation
+			# Determine if the Tile is not occupied or already enabled for navigation, then enable navigation on it by switching to an alternative tile and add it to the list of tile coords enabled for navigation
 			if tiles_occupied.get(tiles_to_process[tile].coords_map) == null and tiles_enabled_navigation.get(tiles_to_process[tile].coords_map) == null:
-				tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
-				tiles_enabled_navigation.get_or_add(tiles_to_process[tile].coords_map, true)
+								
+				# Determine if the tile isn't already an alternative tile, then replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
+				if tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 0:
+					
+					var terrain_tile = tiles_to_process[tile].get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
+					
+					if "ledge" not in terrain_tile.type:
+						
+						if get_altitude(terrain_tile, character) == character.current_altitude:
+							
+							# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
+							tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
+							
+							# Add the tile to the enabled navigation tiles list
+							tiles_enabled_navigation.get_or_add(tiles_to_process[tile].coords_map, true)
+					
+					# Unload the tile
+					terrain_tile.free()
+					terrain_tile = null
+				
+				# Otherwise, the tile is already an alternative tile used to make the character appear behind it, so replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears behind it
+				elif tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 1:
+					tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
 		
 		# Unload the tile
 		tiles_to_process[tile].free()
@@ -347,7 +368,6 @@ func tile_callback_ground(tile: Tile, character: GameCharacter):
 		# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
 		character.current_tilemaps[Tile.MapType.GROUND].set_cell(tile.coords_map, 0, character.current_tilemaps[Tile.MapType.GROUND].get_cell_atlas_coords(tile.coords_map), 1)
 	
-	
 	# Unload the terrain Tile
 	unload_tile(terrain_tile)
 	terrain_tile = null
@@ -355,10 +375,6 @@ func tile_callback_ground(tile: Tile, character: GameCharacter):
 
 # A callback function to be played when a Ledge Tile is being processed
 func tile_callback_ledge(tile: Tile, character: GameCharacter):
-
-	if abs(tile.coords_local.x - character.global_position.x) > 8:
-		return
-	
 	
 	# Determine if the Character is currently standing on a platform, then update their collision and z-index to behave accordingly while they are on the platform
 	if character.on_platform:
@@ -386,7 +402,10 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 		# Otherwise, the given ledge Tile is a 'ledge_back', so update the Character's collision and z-index with respect to that Tile type
 		else:
 			
-			# Set this current ground tile to be a ledge_ground tile because the tile on the terrain map is a ledge
+			if abs(tile.coords_local.x - character.global_position.x) > 8 and abs(tile.coords_local.y - character.global_position.y) > 8:
+				character.z_index = 0
+				return
+			
 			var tile_above = Tile.new(character.current_tilemaps[Tile.MapType.GROUND], Tile.MapType.GROUND, tile.coords_map)
 			
 			if "ledge" not in tile_above.type:
