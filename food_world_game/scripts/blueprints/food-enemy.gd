@@ -24,6 +24,8 @@ signal use_ability
 # Abilities #
 var ability1_damage: int = 10
 
+var xp_drop: int = 20
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -83,7 +85,7 @@ func use_solo_attack():
 	if target != null and target.alive:
 		move_towards_target.emit(self, target)
 	else:
-		#target_player.emit(self)
+		target_player.emit(self)
 		#target_closest_food_buddy.emit(self)
 		return
 		

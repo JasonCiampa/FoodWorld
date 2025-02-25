@@ -76,8 +76,9 @@ var inventory: Array = []
 var inventory_size: int = 12
 
 # Level and XP #
-var xp_current: int
-var xp_max: int
+var xp_current: int = 13
+var xp_max: int = 100
+var level_current: int
 
 # Stamina #
 var stamina_previous: float = 0
@@ -126,6 +127,7 @@ var attack_damage: Dictionary = {
 func _ready() -> void:
 	super()
 	
+	health_current = 200
 	sprite.play("test")
 	self.name = "Player"
 	body_collider.disabled = true
