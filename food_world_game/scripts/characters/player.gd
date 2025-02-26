@@ -11,8 +11,6 @@ extends GameCharacter
 @onready var timer: Timer = $Timers/Timer
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
 
-var feet_detector: Area2D
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -119,8 +117,6 @@ var attack_damage: Dictionary = {
 	"Kick": 15 
 }
 
-var jump_enabled: bool = true
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -129,9 +125,6 @@ var jump_enabled: bool = true
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
-	
-	feet_detector = $"Feet Detector"
-	feet_collider = $"Feet Detector/Feet Collider"
 	
 	health_current = 200
 	sprite.play("test")
@@ -166,7 +159,6 @@ func _process(delta: float) -> void:
 			camera.zoom.x = 7
 			camera.zoom.y = 7
 		
-
 	
 	if !is_jumping and current_altitude > 0:
 		on_platform = true
@@ -300,6 +292,20 @@ func dodge_process(delta: float) -> bool:
 func jump_start():
 	if !is_dodging:
 		super()
+		
+		# Set the Player to be in midair
+		set_collision_value(CollisionValues.MIDAIR)
+
+
+func jump_end():
+	super()
+	
+	if current_altitude == 0:
+		set_collision_value(CollisionValues.GROUND)
+		on_platform = false
+	else:
+		set_collision_value(CollisionValues.PLATFORM)
+		on_platform = true
 
 
 # Calculates the Player's current velocity based on their movement input.
@@ -479,8 +485,8 @@ func update_movement_velocity(delta):
 		
 		if direction_current_vertical != Direction.IDLE:
 			
-			# Calculate the amount that the Player's position shifted vertically (only use the normal speed regar
-			var position_shift = speed_normal * direction_current_vertical * delta
+			# Calculate the amount that the Player's position shifted vertically
+			var position_shift = calculate_velocity(direction_current_vertical) * delta
 			
 			if direction_current_vertical == Direction.UP:
 				global_position.y += position_shift
@@ -756,26 +762,3 @@ func test(delta: float):
 	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 	
 	tests_ran = true
-
-
-
-
-
-func _on_feet_detector_body_entered(body: Node2D) -> void:
-	if body is TileMapLayer:
-		
-		if body.name == "Environment":
-			jump_enabled = false
-			print("jump disabled")
-			
-			if is_jumping and direction_current_vertical == Direction.DOWN:
-				jump_end()
-				velocity.y = 0
-
-
-func _on_feet_detector_body_exited(body: Node2D) -> void:
-	if body is TileMapLayer:
-		
-		if body.name == "Environment":
-			jump_enabled = true
-			print("jump enabled")

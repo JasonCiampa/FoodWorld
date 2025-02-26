@@ -2079,6 +2079,7 @@ texture = ExtResource("1_blsmh")
 17:15/animation_frame_0/duration = 0.2
 17:15/animation_frame_1/duration = 0.2
 17:15/0 = 0
+17:15/0/y_sort_origin = 24
 17:15/0/physics_layer_1/polygon_0/points = PackedVector2Array(-14, 31, -10, 20, 11, 20, 15, 31)
 17:15/0/physics_layer_2/polygon_0/points = PackedVector2Array(-11, 25, -10, 20, 11, 20, 12, 25)
 17:15/0/physics_layer_3/polygon_0/points = PackedVector2Array(-10, 20, 11, 20, 15, 31, -14, 31)
