@@ -94,8 +94,8 @@ var jump_peak_height: float
 var jump_landing_height: float
 var jump_start_height: float
 
-var jump_start_tile: Tile
-var jump_end_tile: Tile
+var jump_start_tile: Vector2i
+var jump_end_tile: Vector2i
 
 var current_altitude: int
 
@@ -285,6 +285,8 @@ func jump_start():
 	jump_start_height = global_position.y
 	jump_landing_height = jump_start_height
 	
+	jump_start_tile = current_tile_position
+	
 	# Store an initial starter value for the peak height of the jump
 	jump_peak_height = jump_landing_height + 1
 	
@@ -316,6 +318,16 @@ func jump_descend():
 	# Determine if the Character's feet are lower than the height they were supposed to land at, then adjust them so they're at the proper height and end the jump
 	if global_position.y >= jump_landing_height:
 		global_position.y -= global_position.y - jump_landing_height
+		var tile_center = current_tilemaps[0].map_to_local(current_tile_position)
+		
+		
+		
+		if abs(global_position.y - tile_center.y) > 2:
+			print(abs(global_position.y - tile_center.y))
+			global_position.y = tile_center.y
+			
+			
+			
 		jump_end()
 
 

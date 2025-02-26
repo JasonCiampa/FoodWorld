@@ -11,6 +11,7 @@ extends GameCharacter
 @onready var timer: Timer = $Timers/Timer
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
 
+var feet_detector: Area2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -118,6 +119,8 @@ var attack_damage: Dictionary = {
 	"Kick": 15 
 }
 
+var jump_enabled: bool = true
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -126,6 +129,9 @@ var attack_damage: Dictionary = {
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	
+	feet_detector = $"Feet Detector"
+	feet_collider = $"Feet Detector/Feet Collider"
 	
 	health_current = 200
 	sprite.play("test")
@@ -211,13 +217,13 @@ func _process(delta: float) -> void:
 		#print("Jump Timer: " + str(jump_timer.time_left))
 		#print("Jump Landing Height: " + str(jump_landing_height))
 		#print("Falling: " + str(is_falling))
-		print("On Platform: " + str(on_platform))
-		print("Feet Disabled: " + str(feet_collider.disabled))
-		print("Body Disabled: " + str(body_collider.disabled))
-		print('Current Altitude: ', str(current_altitude))
-		print('Current Z-Index: ', str(z_index))
-		print('Current Collision Value: ', str(collision_value_current))
-		print("")
+		#print("On Platform: " + str(on_platform))
+		#print("Feet Disabled: " + str(feet_collider.disabled))
+		#print("Body Disabled: " + str(body_collider.disabled))
+		#print('Current Altitude: ', str(current_altitude))
+		#print('Current Z-Index: ', str(z_index))
+		#print('Current Collision Value: ', str(collision_value_current))
+		#print("")
 		#print("Camera Zoom X: ", camera.zoom.x)
 		#print("Camera Zoom Y: ", camera.zoom.y)
 
@@ -237,7 +243,7 @@ func _physics_process(delta: float) -> void:
 
 
 # Starts the Player's sprint
-func sprint_start(delta: float):
+func sprint_start():
 	is_sprinting = true
 	speed_current = speed_sprinting
 
@@ -342,25 +348,6 @@ func process_ability_use() -> int:
 
 
 
-# CHECK OUT THIS LINK WHEN IT COMES TIME TO DO MOVEMENT WORK https://forum.godotengine.org/t/what-is-causing-my-collision2d-to-stick-to-each-others/1404
-# Checks if the Player collided with a CharacterBody2D, and if so, pushes the CharacterBody2D with power determined by the Player's current speed
-func check_collide_and_push():
-	
-	# Iterate for the number of collisions that occured after move_and_slide() was called
-	for i in get_slide_collision_count():
-		
-		# Store references for the collision itself and the entity that was collided with
-		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		
-		# Determine if the entity who the collision occurred with was a RigidBody2D, then apply the push force
-		if collider is CharacterBody2D:
-			pass
-			#collider.velocity.x = 50	<-- This works for CharacterBody2Ds
-			#collider.apply_central_impulse(-collision.get_normal() * 2) <-- This works for RigidBody2Ds
-
-
-
 # Updates the Player Sprite's animation depending on which direction the Player was/is traveling.
 func update_movement_animation():
 	
@@ -446,7 +433,7 @@ func update_movement_velocity(delta):
 	if stamina_current > 0:
 		
 		# Determine whether or not the Player is starting a jump, then trigger the jump
-		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
+		if jump_enabled and Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			
 			if use_stamina(stamina_use["Jump"]):
 				jump_start()
@@ -454,7 +441,7 @@ func update_movement_velocity(delta):
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
 		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
 			if use_stamina_gradually(stamina_use["Sprint"], delta):
-				sprint_start(delta)
+				sprint_start()
 		else:
 			sprint_end()
 		
@@ -492,8 +479,8 @@ func update_movement_velocity(delta):
 		
 		if direction_current_vertical != Direction.IDLE:
 			
-			# Calculate the amount that the Player's position shifted vertically
-			var position_shift = calculate_velocity(direction_current_vertical) * delta
+			# Calculate the amount that the Player's position shifted vertically (only use the normal speed regar
+			var position_shift = speed_normal * direction_current_vertical * delta
 			
 			if direction_current_vertical == Direction.UP:
 				global_position.y += position_shift
@@ -639,8 +626,9 @@ func test(delta: float):
 	Input.action_press("sprint")
 	Input.action_press("move")
 	
-	sprint_start(delta)
+	sprint_start()
 	update_movement_animation()
+	update_movement_velocity(delta)
 	
 	print("[Sprinting Test] Sprinting Speed is Current Speed:  ", speed_sprinting == speed_current)
 	print("[Sprinting Test] Camera Zoom Out on Sprint Start:   ", animation_player.assigned_animation == "start_sprinting")
@@ -768,3 +756,26 @@ func test(delta: float):
 	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 	
 	tests_ran = true
+
+
+
+
+
+func _on_feet_detector_body_entered(body: Node2D) -> void:
+	if body is TileMapLayer:
+		
+		if body.name == "Environment":
+			jump_enabled = false
+			print("jump disabled")
+			
+			if is_jumping and direction_current_vertical == Direction.DOWN:
+				jump_end()
+				velocity.y = 0
+
+
+func _on_feet_detector_body_exited(body: Node2D) -> void:
+	if body is TileMapLayer:
+		
+		if body.name == "Environment":
+			jump_enabled = true
+			print("jump enabled")

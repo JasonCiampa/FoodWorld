@@ -23,6 +23,12 @@ position = Vector2(381, 606)
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 1
 
+[node name="Malick" parent="." instance=ExtResource("5_184d6")]
+position = Vector2(329, 675)
+
+[node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
+position = Vector2(499, 680)
+
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
 position = Vector2(664, 465)
@@ -30,12 +36,6 @@ position = Vector2(664, 465)
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 y_sort_enabled = true
 position = Vector2(16, -68)
-
-[node name="Malick" parent="." instance=ExtResource("5_184d6")]
-position = Vector2(329, 675)
-
-[node name="Sally" parent="." instance=ExtResource("6_vh2pn")]
-position = Vector2(499, 680)
 
 [node name="Fade Timer" type="Timer" parent="."]
 one_shot = true
@@ -57,13 +57,6 @@ parameters/looping = true
 [connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
 [connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]
 [connection signal="use_ability_solo" from="Player" to="." method="_on_player_use_ability_solo"]
-[connection signal="die" from="Enemy" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Enemy" to="." method="_on_character_move_towards_target"]
-[connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
-[connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
 [connection signal="die" from="Malick" to="." method="_on_food_buddy_die"]
 [connection signal="feet_collide_start" from="Malick" to="." method="_on_character_feet_collide_start"]
 [connection signal="killed_target" from="Malick" to="." method="_on_food_buddy_killed_target"]
@@ -80,3 +73,10 @@ parameters/looping = true
 [connection signal="target_closest_food_buddy" from="Sally" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Sally" to="." method="_on_character_target_player"]
 [connection signal="use_ability_solo" from="Sally" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="die" from="Enemy" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy" to="." method="_on_character_killed_target"]
+[connection signal="move_towards_target" from="Enemy" to="." method="_on_character_move_towards_target"]
+[connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
+[connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]

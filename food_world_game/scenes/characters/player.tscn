@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=33 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -298,6 +298,9 @@ size = Vector2(14, 6)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7pocc"]
 size = Vector2(14, 2)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d2eg7"]
+size = Vector2(16, 4)
+
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 0
 collision_mask = 0
@@ -346,6 +349,12 @@ position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_7pocc")
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
+[node name="Feet Detector" type="Area2D" parent="."]
+
+[node name="Feet Collider" type="CollisionShape2D" parent="Feet Detector"]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_d2eg7")
+
 [node name="Timers" type="Node" parent="."]
 
 [node name="Dodge Timer" type="Timer" parent="Timers"]
@@ -366,3 +375,6 @@ one_shot = true
 
 [node name="Jump Timer" type="Timer" parent="Timers"]
 one_shot = true
+
+[connection signal="body_entered" from="Feet Detector" to="." method="_on_feet_detector_body_entered"]
+[connection signal="body_exited" from="Feet Detector" to="." method="_on_feet_detector_body_exited"]
