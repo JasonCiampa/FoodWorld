@@ -63,5 +63,23 @@ func process(_delta: float):
 # A custom physics_process function that is personally defined for Malick. This is called in the default FoodBuddy class's '_physics_process()' function
 func physics_process(_delta: float) -> void:
 	pass
+
+
+
+func jump_start():
+	super()
+		
+	# Set Malick to be in midair
+	set_collision_value(CollisionValues.MIDAIR)
+
+func jump_end():
+	super()
 	
+	if current_altitude == 0:
+		set_collision_value(CollisionValues.GROUND)
+		on_platform = false
+	else:
+		set_collision_value(CollisionValues.PLATFORM)
+		on_platform = true
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

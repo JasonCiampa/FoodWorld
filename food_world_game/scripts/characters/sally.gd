@@ -36,6 +36,7 @@ enum CollisionValues {
 
 # A custom ready function that is personally defined for Sally. This is called in the default Food Buddy class's '_ready()' function
 func ready():
+	jump_velocity = 200
 	
 	health_texture_path = "res://images/ui/png/link-health.png"
 	
@@ -63,5 +64,24 @@ func process(_delta: float):
 # A custom physics_process function that is personally defined for Sally. This is called in the default FoodBuddy class's '_physics_process()' function
 func physics_process(_delta: float) -> void:
 	pass
+
+
+
+func jump_start():
+	super()
+	
+	# Set Sally to be in midair
+	set_collision_value(CollisionValues.MIDAIR)
+
+
+func jump_end():
+	super()
+	
+	if current_altitude == 0:
+		set_collision_value(CollisionValues.GROUND)
+		on_platform = false
+	else:
+		set_collision_value(CollisionValues.PLATFORM)
+		on_platform = true
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dvn8r8xskq6g6"]
+[gd_scene load_steps=12 format=3 uid="uid://dvn8r8xskq6g6"]
 
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="1_bryhj"]
 [ext_resource type="Script" path="res://scripts/blueprints/interactable-character.gd" id="1_r6q7m"]
@@ -29,6 +29,9 @@ size = Vector2(14, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_irp4t"]
 size = Vector2(9, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f570y"]
+size = Vector2(10, 4)
 
 [sub_resource type="LabelSettings" id="LabelSettings_jkl21"]
 font = ExtResource("2_qj1nv")
@@ -83,6 +86,11 @@ position = Vector2(0, -22)
 color = Color(0, 0, 0, 0.380392)
 polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 5, 24, 0, 24, -5, 24, -7, 23, -8, 22)
 
+[node name="Feet Sensor" type="Area2D" parent="."]
+
+[node name="Feet Shape" type="CollisionShape2D" parent="Feet Sensor"]
+shape = SubResource("RectangleShape2D_f570y")
+
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 z_index = 2
 offset_left = -35.0
@@ -92,3 +100,6 @@ offset_bottom = -30.0
 text = "Press 'E' to Interact"
 label_settings = SubResource("LabelSettings_jkl21")
 metadata/_edit_use_anchors_ = true
+
+[connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
+[connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]

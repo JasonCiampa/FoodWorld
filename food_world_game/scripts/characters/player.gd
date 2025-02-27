@@ -11,7 +11,6 @@ extends GameCharacter
 @onready var timer: Timer = $Timers/Timer
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
 
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -160,7 +159,6 @@ func _process(delta: float) -> void:
 			camera.zoom.x = 7
 			camera.zoom.y = 7
 		
-
 	
 	if !is_jumping and current_altitude > 0:
 		on_platform = true
@@ -211,13 +209,13 @@ func _process(delta: float) -> void:
 		#print("Jump Timer: " + str(jump_timer.time_left))
 		#print("Jump Landing Height: " + str(jump_landing_height))
 		#print("Falling: " + str(is_falling))
-		print("On Platform: " + str(on_platform))
-		print("Feet Disabled: " + str(feet_collider.disabled))
-		print("Body Disabled: " + str(body_collider.disabled))
-		print('Current Altitude: ', str(current_altitude))
-		print('Current Z-Index: ', str(z_index))
-		print('Current Collision Value: ', str(collision_value_current))
-		print("")
+		#print("On Platform: " + str(on_platform))
+		#print("Feet Disabled: " + str(feet_collider.disabled))
+		#print("Body Disabled: " + str(body_collider.disabled))
+		#print('Current Altitude: ', str(current_altitude))
+		#print('Current Z-Index: ', str(z_index))
+		#print('Current Collision Value: ', str(collision_value_current))
+		#print("")
 		#print("Camera Zoom X: ", camera.zoom.x)
 		#print("Camera Zoom Y: ", camera.zoom.y)
 
@@ -237,10 +235,9 @@ func _physics_process(delta: float) -> void:
 
 
 # Starts the Player's sprint
-func sprint_start(delta: float):
+func sprint_start():
 	is_sprinting = true
 	speed_current = speed_sprinting
-	use_stamina_gradually(stamina_use["Sprint"], delta)
 
 
 # Ends the Player's sprint
@@ -261,9 +258,9 @@ func dodge_start():
 
 # Process the Player's dodge (returns true if Player is dodging from an idle position, false if not)
 func dodge_process(delta: float) -> bool:
-	speed_current = speed_dodging
-	use_stamina_gradually(stamina_use["Dodge"], delta)
 	
+	if use_stamina_gradually(stamina_use["Dodge"], delta):
+		speed_current = speed_dodging
 	# Determine if the Player is not currently moving in any direction (idle)
 	if (direction_current_horizontal == Direction.IDLE) and (direction_current_vertical == Direction.IDLE):
 		
@@ -285,8 +282,6 @@ func dodge_process(delta: float) -> bool:
 		else:
 			velocity.y = calculate_velocity(Direction.UP)
 		
-		
-		
 		# Return true to indicate that the Player was dodging from an idle position
 		return true
 	
@@ -297,6 +292,20 @@ func dodge_process(delta: float) -> bool:
 func jump_start():
 	if !is_dodging:
 		super()
+		
+		# Set the Player to be in midair
+		set_collision_value(CollisionValues.MIDAIR)
+
+
+func jump_end():
+	super()
+	
+	if current_altitude == 0:
+		set_collision_value(CollisionValues.GROUND)
+		on_platform = false
+	else:
+		set_collision_value(CollisionValues.PLATFORM)
+		on_platform = true
 
 
 # Calculates the Player's current velocity based on their movement input.
@@ -321,13 +330,13 @@ func process_ability_use() -> int:
 		# Determine if the Player is using a solo attack, then launch the correct attack
 		if field_state_current == FieldState.SOLO:
 			if ability_number == 1:
-				use_ability_solo.emit(attack_damage["Punch"])
-				use_stamina(stamina_use["Punch"])
-				print("The Player used their punch attack!")
+				if use_stamina(stamina_use["Punch"]):
+					use_ability_solo.emit(attack_damage["Punch"])
+					print("The Player used their punch attack!")
 			else:
-				use_ability_solo.emit(attack_damage["Kick"])
-				use_stamina(stamina_use["Kick"])
-				print("The Player used their kick attack!")
+				if use_stamina(stamina_use["Kick"]):
+					use_ability_solo.emit(attack_damage["Kick"])
+					print("The Player used their kick attack!")
 		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
@@ -342,25 +351,6 @@ func process_ability_use() -> int:
 			use_ability_buddy_fusion.emit(ability_number)
 	
 	return ability_number
-
-
-
-# CHECK OUT THIS LINK WHEN IT COMES TIME TO DO MOVEMENT WORK https://forum.godotengine.org/t/what-is-causing-my-collision2d-to-stick-to-each-others/1404
-# Checks if the Player collided with a CharacterBody2D, and if so, pushes the CharacterBody2D with power determined by the Player's current speed
-func check_collide_and_push():
-	
-	# Iterate for the number of collisions that occured after move_and_slide() was called
-	for i in get_slide_collision_count():
-		
-		# Store references for the collision itself and the entity that was collided with
-		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		
-		# Determine if the entity who the collision occurred with was a RigidBody2D, then apply the push force
-		if collider is CharacterBody2D:
-			pass
-			#collider.velocity.x = 50	<-- This works for CharacterBody2Ds
-			#collider.apply_central_impulse(-collision.get_normal() * 2) <-- This works for RigidBody2Ds
 
 
 
@@ -449,14 +439,15 @@ func update_movement_velocity(delta):
 	if stamina_current > 0:
 		
 		# Determine whether or not the Player is starting a jump, then trigger the jump
-		if Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
-			jump_start()
-			use_stamina(stamina_use["Jump"])
-		
+		if jump_enabled and Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
+			
+			if use_stamina(stamina_use["Jump"]):
+				jump_start()
 		
 		# Determine whether or not the Player is sprinting, then trigger the sprinting state
 		if Input.is_action_pressed("sprint") and Input.is_action_pressed("move"):
-			sprint_start(delta)
+			if use_stamina_gradually(stamina_use["Sprint"], delta):
+				sprint_start()
 		else:
 			sprint_end()
 		
@@ -565,22 +556,31 @@ func toggle_food_buddy_field_state_interface():
 
 
 # Depletes the Player's current stamina instantly by the given stamina use amount.
-func use_stamina(stamina_cost: int):
+func use_stamina(stamina_cost: int) -> bool:
+	
 	if stamina_current >= stamina_cost:
 		stamina_current -= stamina_cost
 		stamina_decreasing = true
 		stamina_increasing = false
 		stamina_regen_delay_timer.stop()
+		
+		return true
+	
+	return false
 
 
 
 # Depletes the Player's current stamina gradually over time by the given stamina use amount.
-func use_stamina_gradually(stamina_cost: int, delta: float):
+func use_stamina_gradually(stamina_cost: int, delta: float) -> bool:
 	if stamina_current > 0:
 		stamina_current -= stamina_cost * delta
 		stamina_decreasing = true
 		stamina_increasing = false
 		stamina_regen_delay_timer.stop()
+		
+		return true
+	
+	return false
 
 
 
@@ -632,8 +632,9 @@ func test(delta: float):
 	Input.action_press("sprint")
 	Input.action_press("move")
 	
-	sprint_start(delta)
+	sprint_start()
 	update_movement_animation()
+	update_movement_velocity(delta)
 	
 	print("[Sprinting Test] Sprinting Speed is Current Speed:  ", speed_sprinting == speed_current)
 	print("[Sprinting Test] Camera Zoom Out on Sprint Start:   ", animation_player.assigned_animation == "start_sprinting")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://b4edk42lcf0n8"]
+[gd_scene load_steps=13 format=4 uid="uid://b4edk42lcf0n8"]
 
 [ext_resource type="Script" path="res://scripts/characters/malick.gd" id="1_bxh3n"]
 [ext_resource type="Texture2D" uid="uid://ckhyrlqirvbvs" path="res://images/characters/mallak.png" id="2_23d6t"]
@@ -30,6 +30,9 @@ size = Vector2(29, 17)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_380in"]
 size = Vector2(28, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ubhwi"]
+size = Vector2(31, 4)
 
 [sub_resource type="Image" id="Image_oo4gj"]
 data = {
@@ -982,6 +985,12 @@ shape = SubResource("RectangleShape2D_380in")
 disabled = true
 debug_color = Color(0, 0.619608, 1, 0.427451)
 
+[node name="Feet Sensor" type="Area2D" parent="."]
+
+[node name="Feet Shape" type="CollisionShape2D" parent="Feet Sensor"]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_ubhwi")
+
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 z_index = 1
@@ -1003,3 +1012,6 @@ debug_path_custom_color = Color(0.252755, 0.104298, 1, 1)
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
+
+[connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
+[connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]

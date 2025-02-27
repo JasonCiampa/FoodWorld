@@ -107,6 +107,11 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	if !is_jumping and current_altitude > 0:
+		on_platform = true
+	else:
+		on_platform = false
+	
 	if not paused:
 		# Call the custom "update()" function that Food Buddy subclasses will define individually
 		process(delta)
@@ -117,6 +122,9 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	
 	if not paused:
+		# Determine if the Player is jumping, then process their jump and ignore movement input for the y-axis
+		if is_jumping:
+			jump_process(delta)
 		
 		# Determine if the Food Buddy is currently in a FieldState that isn't user-controlled, then execute the FieldState's corresponding callback function
 		if field_state_current in field_state_callbacks.keys():

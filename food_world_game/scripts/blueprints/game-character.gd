@@ -19,6 +19,9 @@ var hitbox_damage: Area2D
 var body_collider: CollisionShape2D
 var feet_collider: CollisionShape2D
 
+# Sensors #
+var feet_sensor: Area2D
+
 # Shadow #
 var shadow: Polygon2D
 
@@ -89,13 +92,11 @@ var is_jumping: bool = false
 var is_falling: bool = false
 var on_platform: bool = false
 
+var jump_enabled: bool = true
 var jump_velocity: int = 200
 var jump_peak_height: float
 var jump_landing_height: float
 var jump_start_height: float
-
-var jump_start_tile: Tile
-var jump_end_tile: Tile
 
 var current_altitude: int
 
@@ -142,6 +143,8 @@ func _ready() -> void:
 	
 	shadow = $"Shadow"
 	
+	feet_sensor = $"Feet Sensor"
+	
 	# Placing all names of signals here with a random function call so that the debugger stops yelling at me for "never explicitly using" the signal within its class.
 	target_player.is_null()
 	target_closest_food_buddy.is_null()
@@ -177,7 +180,6 @@ func _process(delta: float) -> void:
 	else:
 		on_platform = false
 	
-	
 	# Determine if the Character's processing is not paused
 	if not paused:
 		
@@ -192,6 +194,10 @@ func _process(delta: float) -> void:
 # Called every frame. Updates the Enemy's physics
 func _physics_process(delta: float) -> void:
 	
+	# Determine if the Player is jumping, then process their jump and ignore movement input for the y-axis
+	if is_jumping:
+		jump_process(delta)
+		
 	# Determine if the Character's processing is not paused
 	if not paused:
 	
@@ -274,9 +280,6 @@ func fall_end():
 # Starts the Character's jump
 func jump_start():
 	
-	# Set the Character to collide on layer 2 (EnvironmentAssets)
-	set_collision_value(2)
-	
 	# Enable jumping as the Character prepares to ascend and disable falling until they begin to descend
 	is_jumping = true
 	is_falling = false
@@ -310,12 +313,21 @@ func jump_ascend(_delta: float):
 		is_falling = true
 
 
+
 # Process the descending portion of the jump (the portion of the jump that occurs immediately after the Character reaches the peak height of the jump and begin to start falling)
 func jump_descend():
 	
 	# Determine if the Character's feet are lower than the height they were supposed to land at, then adjust them so they're at the proper height and end the jump
 	if global_position.y >= jump_landing_height:
-		global_position.y -= global_position.y - jump_landing_height
+		
+		var tile_center = current_tilemaps[0].map_to_local(current_tile_position)
+		#global_position.y = tile_center.y
+		## Determine if the distance between the character's landing coordinate and the center of the tile they're landing on is 4 or more
+		#if abs(global_position.y - tile_center.y) >= 3.9:
+			#
+			## Center the character's y-coordinate in the tile they're standing on because their adjusted y-coordinate from before might have caused a collision error
+			#global_position.y = tile_center.y
+			
 		jump_end()
 
 
@@ -347,14 +359,50 @@ func jump_end():
 	
 	update_altitude.emit(self)
 	
-	if current_altitude == 0:
-		set_collision_value(1)
-		on_platform = false
-	else:
-		set_collision_value(3)
-		on_platform = true
-	
 	shadow.global_position.y = global_position.y
+
+
+
+# A callback function that will execute whenever the character's feet begin touching a body with a collider
+func _on_feet_sensor_body_entered(body: Node2D) -> void:
+	
+	# Determine if the colliding body is part of a TileMapLayer
+	if body is TileMapLayer:
+		
+		# Determine if this is an Environment TileMapLayer, then disable jumping for this character while they're in direct collision with a tile
+		if body.name == "Environment":
+			print("jump disabled")
+			jump_enabled = false
+			
+			# Determine if the character is jumping and moving downwards, then end the jump so they can't move through the environmentasset
+			if is_jumping and direction_current_vertical == Direction.DOWN:
+				jump_end()
+				velocity.y = 0
+		
+		# Otherwise, determine if this is a Terrain TileMapLayer, then 
+		if body.name == "Terrain":
+			print("colliding with terrain")
+			
+			if !is_jumping and not (self is Player):
+				jump_start()
+
+
+# A callback function that will execute whenever the character's feet stop touching a body with a collider
+func _on_feet_sensor_body_exited(body: Node2D) -> void:
+	
+	# Determine if the colliding body is part of a TileMapLayer
+	if body is TileMapLayer:
+		
+		# Determine if this is an Environment TileMapLayer, then enable jumping for this character now that they're no longer colliding with a tile
+		if body.name == "Environment":
+			print("jump enabled")
+			jump_enabled = true
+			
+		# Otherwise, determine if this is a Terrain TileMapLayer, then 
+		elif body.name == "Terrain":
+			print("done colliding with terrain")
+			
+			
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
