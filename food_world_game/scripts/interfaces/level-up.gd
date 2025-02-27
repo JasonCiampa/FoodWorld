@@ -1,24 +1,24 @@
-class_name StatusPanel
-
 extends Control
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var health_bar_player: TextureProgressBar
-var stamina_bar_player: TextureProgressBar
-var xp_bar_player: TextureProgressBar
-var text_level_player: Label
+var text_level_up: Label
+var text_choose_upgrade: Label
 
-var health_bar_foodbuddy1: TextureProgressBar
-var text_name_foodbuddy1: Label
+var button_health: TextureButton
+var text_health: Label
 
-var health_bar_foodbuddy2: TextureProgressBar
-var text_name_foodbuddy2: Label
+var button_stamina: TextureButton
+var text_stamina: Label
+
+var button_power: TextureButton
+var text_power: Label
 
 var player: Player
 var foodbuddy1: FoodBuddy
 var foodbuddy2: FoodBuddy
+var character_status: StatusPanel
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,32 +42,24 @@ var foodbuddy2: FoodBuddy
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	health_bar_player = $"Player Status/Player Health Container/Player Health"
-	stamina_bar_player = $"Player Status/Player Stamina Container/Stamina Bar"
-	xp_bar_player = $"Player Status/Player XP Container/XP Bar"
-	text_level_player = $"Player Status/Level Text Container/Level Text"
 	
-	health_bar_foodbuddy1 = $"FoodBuddy1 Status/FoodBuddy1 Health Container/FoodBuddy1 Health"
-	text_name_foodbuddy1 = $"FoodBuddy1 Status/Name Text Container/Name Text"
+	text_level_up = $"Level-Up/Level-up Text Container/Level-up Text"
+	text_choose_upgrade = $"Choose Upgrade/Choose Upgrade Container/Choose Upgrade Text"
 	
-	health_bar_foodbuddy2 = $"FoodBuddy2 Status/FoodBuddy2 Health Container/FoodBuddy2 Health"
-	text_name_foodbuddy2 = $"FoodBuddy2 Status/Name Text Container/Name Text"
+	button_health = $"Health/Health Button Container/Health Button"
+	text_health = $"Health/Health Text Container/Health Text"
 	
-	health_bar_player.min_value = 0
-	stamina_bar_player.min_value = 0
-	xp_bar_player.min_value = 0
+	button_stamina = $"Stamina/Stamina Button Container/Stamina Button"
+	text_stamina = $"Stamina/Stamina Text Container/Stamina Text"
 	
+	button_power = $"Power/Power Button Container/Power Button"
+	text_power = $"Power/Power Text Container/Power Text"
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	health_bar_player.value = player.health_current
-	stamina_bar_player.value = player.stamina_current
-	xp_bar_player.value = player.xp_current
-	
-	health_bar_foodbuddy1.value = foodbuddy1.health_current
-	health_bar_foodbuddy2.value = foodbuddy2.health_current
+	pass
 
 
 
@@ -77,29 +69,44 @@ func _process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Sets the given values as the ones to use for the UI components
-func setValues(_player: Player, _foodbuddy1: FoodBuddy, _foodbuddy2: FoodBuddy):
+func setValues(_player: Player, _foodbuddy1: FoodBuddy, _foodbuddy2: FoodBuddy, _character_status: StatusPanel):
 	
 	player = _player
 	foodbuddy1 = _foodbuddy1
 	foodbuddy2 = _foodbuddy2
+	character_status = _character_status
+
+
+
+func _on_health_button_button_down() -> void:
+	player.health_max += 5
+	foodbuddy1.health_max += 5
+	foodbuddy2.health_max += 5
 	
-	health_bar_player.max_value = player.health_max
-	health_bar_player.value = player.health_current
+	player.health_current = player.health_max
+	foodbuddy1.health_current = foodbuddy1.health_max
+	foodbuddy2.health_current = foodbuddy2.health_max
 	
-	stamina_bar_player.max_value = player.stamina_max
-	stamina_bar_player.value = player.stamina_current
+	character_status.health_bar_player.max_value = player.health_max
+	character_status.health_bar_foodbuddy1.max_value = foodbuddy1.health_max
+	character_status.health_bar_foodbuddy2.max_value = foodbuddy2.health_max
+	print(player.health_current)
+
+
+func _on_stamina_button_button_down() -> void:
+	player.stamina_max += 5
+	print(player.stamina_max)
 	
-	xp_bar_player.max_value = player.xp_max
-	xp_bar_player.value = player.xp_current
+	player.stamina_max += 5
+	player.stamina_current = player.stamina_max
 	
-	text_level_player.text = str("Lvl ", player.level_current)
-	
-	text_name_foodbuddy1.text = foodbuddy1.name
-	health_bar_foodbuddy1.max_value = foodbuddy1.health_max
-	health_bar_foodbuddy1.texture_progress = load(foodbuddy1.health_texture_path)
-	
-	text_name_foodbuddy2.text = foodbuddy2.name
-	health_bar_foodbuddy2.max_value = foodbuddy2.health_max
-	health_bar_foodbuddy2.texture_progress = load(foodbuddy2.health_texture_path)
+	character_status.stamina_bar_player.max_value = player.stamina_max
+
+
+
+func _on_power_button_button_down() -> void:
+	player.attack_damage["Kick"] = player.attack_damage["Kick"] + 3
+	player.attack_damage["Punch"] = player.attack_damage["Punch"] + 3
+	print(player.attack_damage)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
