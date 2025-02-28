@@ -1,4 +1,4 @@
-class_name StatusPanel
+class_name CharacterStatusInterface
 
 extends Control
 

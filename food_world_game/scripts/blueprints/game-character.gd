@@ -321,12 +321,12 @@ func jump_descend():
 	if global_position.y >= jump_landing_height:
 		
 		var tile_center = current_tilemaps[0].map_to_local(current_tile_position)
-		#global_position.y = tile_center.y
-		## Determine if the distance between the character's landing coordinate and the center of the tile they're landing on is 4 or more
-		#if abs(global_position.y - tile_center.y) >= 3.9:
-			#
-			## Center the character's y-coordinate in the tile they're standing on because their adjusted y-coordinate from before might have caused a collision error
-			#global_position.y = tile_center.y
+		
+		# Determine if the distance between the character's landing coordinate and the center of the tile they're landing on is 4 or more
+		if abs(global_position.y - tile_center.y) >= 3.9:
+			
+			# Center the character's y-coordinate in the tile they're standing on because their adjusted y-coordinate from before might have caused a collision error
+			global_position.y = tile_center.y
 			
 		jump_end()
 

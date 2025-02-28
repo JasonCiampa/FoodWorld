@@ -75,9 +75,9 @@ var inventory: Array = []
 var inventory_size: int = 12
 
 # Level and XP #
-var xp_current: int = 13
-var xp_max: int = 100
-var level_current: int
+var xp_current: int = 0
+var xp_max: int = 50
+var level_current: int = 1
 
 # Stamina #
 var stamina_previous: float = 0
@@ -137,7 +137,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
+
 	## ENABLE/DISABLE THIS IF STATEMENT TO TOGGLE THE PLAYER'S TEST FUNCTION
 	#if !tests_ran:
 		#test(delta)
@@ -181,6 +181,7 @@ func _process(delta: float) -> void:
 		escape_menu.emit()
 	
 	update_dimensions()
+	
 	
 	# DEBUG #
 	if timer.time_left == 0:

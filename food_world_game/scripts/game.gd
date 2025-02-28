@@ -57,8 +57,8 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food-buddy-field-state-interface.tscn").instantiate()
 var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogue-interface.tscn").instantiate()
 
-var character_status: StatusPanel
-var level_up: Control
+var InterfaceCharacterStatus: CharacterStatusInterface
+var InterfaceLevelUp: LevelUpInterface
 
 # Managers #
 var GameTileManager: TileManager
@@ -124,11 +124,11 @@ func _ready() -> void:
 	#for name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
 	
-	character_status = $"Player/Character Status"
-	level_up = $"Player/Level-up"
+	InterfaceCharacterStatus = $"Player/Character Status"
+	InterfaceLevelUp = $"Player/Level-up"
 	
-	character_status.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1])
-	level_up.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1], character_status)
+	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1])
+	InterfaceLevelUp.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1], InterfaceCharacterStatus)
 	
 	timer_fade.start(0.1)
 
@@ -174,7 +174,7 @@ func _process(delta: float) -> void:
 		InterfaceFoodBuddyFieldState.process(food_buddies_active)
 	
 	if screen_fading:
-		fade_screen(delta)
+		fade_screen(0, delta)
 	
 	# Determine if the Player is currently in a Building and if they are entering/exiting
 	if current_building != null:
@@ -326,13 +326,9 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 			if attacker is Player and target is Enemy:
 				attacker.xp_current += target.xp_drop
 				
-				if attacker.xp_current > attacker.xp_max:
-					pass
-					#attacker.level_up.emit()
-					# In level_up function in player OR callback in game:
-					#	- pull up interface that gives option to choose stat upgrade
-					#	- freeze all game until stat upgrade is selected
-					#	- upgrade stat, unfreeze game
+				if attacker.xp_current >= attacker.xp_max:
+					
+					InterfaceLevelUp.start_level_up(get_all_assets_on_screen())
 		
 		return true
 	
@@ -830,19 +826,19 @@ func _on_tile_object_enter_game(tile: Tile):
 # BUILDING CALLBACKS #
 
 # Fades the screen to black for the given "fade out" parameter, then back to the game for the given "fade in" parameter
-func fade_screen(delta: float):
+func fade_screen(final_opacity: float, delta: float):
 	
 	# Determine if the timer_fade is stopped and that the opacity isn't all the way down yet, then decrement the opacity further
-	if timer_fade.is_stopped() and modulate.a > 0:
+	if timer_fade.is_stopped() and modulate.a > final_opacity:
 		modulate.a = modulate.a - 0.7 * delta
 		
 		# Ensure the opacity doesn't go out of bounds, then start a 0.5 second delay until the fade back in occurs
-		if modulate.a <= 0:
-			modulate.a = 0
+		if modulate.a <= final_opacity:
+			modulate.a = final_opacity
 			timer_fade.start(0.5)
 	
 	# Otherwise, the opacity is all the way down, so...
-	elif modulate.a == 0:
+	elif modulate.a == final_opacity:
 		
 		# Determine if the timer_fade is stopped (meaning it is time to fade back in)
 		if timer_fade.is_stopped():
@@ -862,7 +858,7 @@ func fade_screen(delta: float):
 				exterior.collision_enabled = false
 				
 				# Iterate over each Tilemap aside from the building-related Tilemaps
-				for tilemap in range(0, PLAYER.current_tilemaps.size() - 2):
+				for tilemap in range(final_opacity, PLAYER.current_tilemaps.size() - 2):
 					
 					# Disable the visibility and collisions of the outdoor tilemaps now that the player is going inside
 					PLAYER.current_tilemaps[tilemap].visible = false
@@ -946,3 +942,17 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
 			current_building = null
+
+
+
+	
+	
+	
+func _on_level_up_ended() -> void:
+	
+	if PLAYER.xp_current >= PLAYER.xp_max and PLAYER.level_current != 15:
+		InterfaceLevelUp.start_level_up(get_all_assets_on_screen())
+	else:
+		# Pause all of the characters' processing while the interface is active
+		for subject in get_all_assets_on_screen():
+			subject.paused = false
