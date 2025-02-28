@@ -184,7 +184,6 @@ func _on_health_button_button_down() -> void:
 
 func _on_stamina_button_button_down() -> void:
 	player.stamina_max += 5
-	print(player.stamina_max)
 	
 	player.stamina_max += 5
 	player.stamina_current = player.stamina_max
@@ -219,7 +218,6 @@ func _on_power_button_button_down() -> void:
 	
 	self.visible = false
 	self.process_mode = Node.PROCESS_MODE_DISABLED
-	print(player.attack_damage)
 	
 	for tilemap in player.current_tilemaps:
 		tilemap.modulate.a = 1
@@ -246,5 +244,3 @@ func _on_animator_current_animation_changed(name: String) -> void:
 		button_health.disabled = false
 		button_stamina.disabled = false
 		button_power.disabled = false
-	
-	print(name)

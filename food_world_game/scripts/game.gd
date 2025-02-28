@@ -956,3 +956,5 @@ func _on_level_up_ended() -> void:
 		# Pause all of the characters' processing while the interface is active
 		for subject in get_all_assets_on_screen():
 			subject.paused = false
+		
+		InterfaceLevelUp.animator.play("RESET")
