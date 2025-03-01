@@ -65,6 +65,7 @@ var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogu
 var InterfaceCharacterStatus: CharacterStatusInterface
 var InterfaceLevelUp: LevelUpInterface
 var InterfaceFoodBuddySelection: FoodBuddySelectInterface
+var InterfaceGameOver: GameOverInterface
 
 # Managers #
 var GameTileManager: TileManager
@@ -139,10 +140,12 @@ func _ready() -> void:
 	InterfaceCharacterStatus = $"Player/Character Status"
 	InterfaceLevelUp = $"Player/Level-up"
 	InterfaceFoodBuddySelection = $"Player/Food Buddy Select"
+	InterfaceGameOver = $"Player/Game Over"
 	
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 	InterfaceLevelUp.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp)
+	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	
 	timer_fade.start(0.1)
 
@@ -613,7 +616,7 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 func _on_player_toggle_field_state_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
+	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
@@ -628,7 +631,7 @@ func _on_player_toggle_field_state_interface() -> void:
 func _on_player_toggle_select_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddyFieldState.active:
+	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddyFieldState.active or InterfaceGameOver.visible:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
@@ -642,7 +645,7 @@ func _on_player_toggle_select_interface() -> void:
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
+	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
 		return
 	
 	# Enable the Dialogue Interface
@@ -692,11 +695,21 @@ func _on_player_killed_target() -> void:
 
 
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
-func _on_player_die(player: Player) -> void:
-	remove_child(player)
+func _on_player_die() -> void:
+	InterfaceGameOver.game_over(get_all_assets_on_screen(), InterfaceCharacterStatus)
 	print("Player has died!")
+	
+	InterfaceCharacterStatus.visible = false
+	InterfaceDialogue.visible = false
+	InterfaceFoodBuddyFieldState.visible = false
+	InterfaceFoodBuddySelection.visible = false
+	InterfaceLevelUp.visible = false
 
-
+	InterfaceCharacterStatus.process_mode = Node.PROCESS_MODE_DISABLED
+	InterfaceDialogue.process_mode = Node.PROCESS_MODE_DISABLED
+	InterfaceFoodBuddyFieldState.process_mode = Node.PROCESS_MODE_DISABLED
+	InterfaceFoodBuddySelection.process_mode = Node.PROCESS_MODE_DISABLED
+	InterfaceLevelUp.process_mode = Node.PROCESS_MODE_DISABLED
 
 
 # CHARACTER CALLBACKS

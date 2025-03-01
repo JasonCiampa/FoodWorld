@@ -1,0 +1,547 @@
+[gd_scene load_steps=13 format=3 uid="uid://d38wm4mn2bqw6"]
+
+[ext_resource type="Script" path="res://scripts/interfaces/game-over-interface.gd" id="1_i630n"]
+[ext_resource type="Texture2D" uid="uid://csi4wcdix364u" path="res://images/ui/png/game-over.png" id="2_8ymnu"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="5_tv877"]
+[ext_resource type="Texture2D" uid="uid://dr3tipdytirm0" path="res://images/ui/png/button-normal.png" id="6_vl58s"]
+[ext_resource type="Texture2D" uid="uid://cyqnu8jfir83v" path="res://images/ui/png/button-click.png" id="7_akbjb"]
+[ext_resource type="Texture2D" uid="uid://qpthqkahbyb4" path="res://images/ui/png/button-hover.png" id="8_r4xhy"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mechp"]
+font = ExtResource("5_tv877")
+font_size = 105
+outline_size = 21
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_54gxj"]
+font = ExtResource("5_tv877")
+font_size = 42
+outline_size = 7
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_1olir"]
+resource_name = "enter_UI"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background Container:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.03333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Purged Text Container:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.8, 3.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Respawn Button/Respawn Text Container:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(3.6, 4.93333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Respawn Button/Respawn Button Container:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(3.6, 4.93333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Title Button/Title Text Container:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(3.6, 4.93333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Title Button/Title Button Container:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(3.6, 4.93333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Quit Button/Quit Text Container:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(3.6, 4.93333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Quit Button/Quit Button Container:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(3.6, 4.93333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(1, 1, 1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Purged Text Container:z_index")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [-1]
+}
+
+[sub_resource type="Animation" id="Animation_yj7xt"]
+resource_name = "stay_UI"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background Container:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Purged Text Container:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Respawn Button/Respawn Text Container:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Respawn Button/Respawn Button Container:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Title Button/Title Text Container:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Title Button/Title Button Container:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Quit Button/Quit Text Container:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Quit Button/Quit Button Container:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_dv3xk"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background Container:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Purged Text Container:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Respawn Button/Respawn Text Container:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Respawn Button/Respawn Button Container:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Title Button/Title Text Container:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Title Button/Title Button Container:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Quit Button/Quit Text Container:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Quit Button/Quit Button Container:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Purged Text Container:z_index")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6g4aw"]
+_data = {
+"RESET": SubResource("Animation_dv3xk"),
+"enter_UI": SubResource("Animation_1olir"),
+"stay_UI": SubResource("Animation_yj7xt")
+}
+
+[node name="Game Over" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+size_flags_horizontal = 4
+script = ExtResource("1_i630n")
+
+[node name="Background Container" type="AspectRatioContainer" parent="."]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.094
+anchor_right = -0.094
+offset_left = -1207.52
+offset_top = -111.0
+offset_right = 2632.48
+offset_bottom = 969.0
+grow_horizontal = 2
+scale = Vector2(1.2, 1.2)
+ratio = 2.0
+
+[node name="Background" type="TextureRect" parent="Background Container"]
+z_index = -1
+layout_mode = 2
+texture = ExtResource("2_8ymnu")
+
+[node name="Purged Text Container" type="AspectRatioContainer" parent="."]
+modulate = Color(0, 0, 0, 1)
+z_index = 5
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.099
+anchor_right = -0.099
+offset_left = 633.08
+offset_top = 34.0
+offset_right = 1667.08
+offset_bottom = 173.0
+grow_horizontal = 2
+pivot_offset = Vector2(772.5, 0)
+
+[node name="Purged Text" type="Label" parent="Purged Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "you were purged"
+label_settings = SubResource("LabelSettings_mechp")
+
+[node name="Respawn Button" type="Control" parent="."]
+layout_mode = 1
+anchor_left = -0.131
+offset_left = 251.52
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Respawn Text Container" type="AspectRatioContainer" parent="Respawn Button"]
+modulate = Color(0, 0, 0, 1)
+z_index = 4
+layout_mode = 2
+offset_left = 253.0
+offset_top = 927.0
+offset_right = 418.0
+offset_bottom = 983.0
+grow_horizontal = 2
+pivot_offset = Vector2(161.5, 0)
+
+[node name="Respawn Text" type="Label" parent="Respawn Button/Respawn Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Respawn"
+label_settings = SubResource("LabelSettings_54gxj")
+
+[node name="Respawn Button Container" type="AspectRatioContainer" parent="Respawn Button"]
+modulate = Color(0, 0, 0, 1)
+z_index = 3
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 59.0
+offset_top = 888.0
+offset_right = 572.0
+offset_bottom = 1022.0
+grow_horizontal = 2
+pivot_offset = Vector2(256.5, 0)
+
+[node name="Respawn Button" type="TextureButton" parent="Respawn Button/Respawn Button Container"]
+z_index = 2
+layout_mode = 2
+texture_normal = ExtResource("6_vl58s")
+texture_pressed = ExtResource("7_akbjb")
+texture_hover = ExtResource("8_r4xhy")
+
+[node name="Title Button" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Title Text Container" type="AspectRatioContainer" parent="Title Button"]
+modulate = Color(0, 0, 0, 1)
+z_index = 4
+layout_mode = 0
+offset_left = 728.0
+offset_top = 927.0
+offset_right = 1193.0
+offset_bottom = 983.0
+pivot_offset = Vector2(232.5, 0)
+
+[node name="Title Text" type="Label" parent="Title Button/Title Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "To Title"
+label_settings = SubResource("LabelSettings_54gxj")
+
+[node name="Title Button Container" type="AspectRatioContainer" parent="Title Button"]
+modulate = Color(0, 0, 0, 1)
+z_index = 3
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 683.5
+offset_top = 888.0
+offset_right = 1196.5
+offset_bottom = 982.0
+grow_horizontal = 2
+pivot_offset = Vector2(256.5, 0)
+
+[node name="Title Button" type="TextureButton" parent="Title Button/Title Button Container"]
+z_index = 2
+layout_mode = 2
+texture_normal = ExtResource("6_vl58s")
+texture_pressed = ExtResource("7_akbjb")
+texture_hover = ExtResource("8_r4xhy")
+
+[node name="Quit Button" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Quit Text Container" type="AspectRatioContainer" parent="Quit Button"]
+modulate = Color(0, 0, 0, 1)
+z_index = 4
+layout_mode = 0
+offset_left = 1387.0
+offset_top = 927.0
+offset_right = 1757.0
+offset_bottom = 983.0
+pivot_offset = Vector2(185, 0)
+
+[node name="Quit Text" type="Label" parent="Quit Button/Quit Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Quit Game"
+label_settings = SubResource("LabelSettings_54gxj")
+
+[node name="Quit Button Container" type="AspectRatioContainer" parent="Quit Button"]
+modulate = Color(0, 0, 0, 1)
+z_index = 3
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 1288.0
+offset_top = 888.0
+offset_right = 1801.0
+offset_bottom = 982.0
+grow_horizontal = 2
+pivot_offset = Vector2(256.5, 0)
+
+[node name="Quit Button" type="TextureButton" parent="Quit Button/Quit Button Container"]
+z_index = 2
+layout_mode = 2
+texture_normal = ExtResource("6_vl58s")
+texture_pressed = ExtResource("7_akbjb")
+texture_hover = ExtResource("8_r4xhy")
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6g4aw")
+}
+
+[connection signal="button_down" from="Respawn Button/Respawn Button Container/Respawn Button" to="." method="_on_respawn_button_button_down"]
+[connection signal="button_down" from="Title Button/Title Button Container/Title Button" to="." method="_on_title_button_button_down"]
+[connection signal="button_down" from="Quit Button/Quit Button Container/Quit Button" to="." method="_on_quit_button_button_down"]

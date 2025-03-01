@@ -144,6 +144,9 @@ func _process(delta: float) -> void:
 		#test(delta)
 		#return
 	
+	if Input.is_key_pressed(KEY_0):
+		die.emit()
+	
 	if Input.is_action_just_pressed("scroll_down"):
 		camera.zoom.x -= 10 * delta
 		camera.zoom.y -= 10 * delta
