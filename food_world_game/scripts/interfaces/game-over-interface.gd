@@ -77,7 +77,7 @@ func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _Interfa
 	InterfaceCharacterStatus = _InterfaceCharacterStatus
 
 
-func game_over(freeze_subjects: Array[Node2D], InterfaceCharacterStatus: CharacterStatusInterface):
+func game_over(freeze_subjects: Array[Node2D]):
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:

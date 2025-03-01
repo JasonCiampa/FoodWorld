@@ -696,7 +696,7 @@ func _on_player_killed_target() -> void:
 
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
 func _on_player_die() -> void:
-	InterfaceGameOver.game_over(get_all_assets_on_screen(), InterfaceCharacterStatus)
+	InterfaceGameOver.game_over(get_all_assets_on_screen())
 	print("Player has died!")
 	
 	InterfaceCharacterStatus.visible = false
