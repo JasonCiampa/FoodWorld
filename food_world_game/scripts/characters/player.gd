@@ -554,6 +554,7 @@ func toggle_food_buddy_field_state_interface():
 	
 	# Determine if the Player is trying to adjust the Food Buddy's FieldState
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
+		print("HE")
 		toggle_field_state_interface.emit()
 
 

@@ -25,6 +25,8 @@ var active: bool = false
 var selected_food_buddy: FoodBuddy
 var unselected_food_buddy: FoodBuddy
 
+var freeze_subjects: Array[Node2D]
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -52,8 +54,12 @@ func _physics_process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Enables the Food Buddy FieldState Interface and freezes the updating for the given subjects while the Interface is active
-func enable(freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy]):
-
+func enable(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy]):
+	
+	freeze_subjects = _freeze_subjects
+	freeze_subjects.append(food_buddies_active[0])
+	freeze_subjects.append(food_buddies_active[1])
+	
 	# Set Food Buddy 1 as the currently selected Food Buddy in the interface and Food Buddy 2 as the unselected Food Buddy (these are the first two subjects to freeze in the given list)
 	selected_food_buddy = food_buddies_active[0]
 	unselected_food_buddy = food_buddies_active[1]
@@ -83,6 +89,10 @@ func disable(unfreeze_subjects: Array[Node2D]):
 	
 	# Unpause all of the characters' processing now that the interface is no longer active
 	for subject in unfreeze_subjects:
+		subject.paused = false
+	
+	# Pause all of the characters' processing while the interface is active
+	for subject in freeze_subjects:
 		subject.paused = false
 
 

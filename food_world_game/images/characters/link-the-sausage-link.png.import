@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://diaaj4e00nqeu"
-path="res://.godot/imported/mallak.png-fdddd91c76d92debcedda4f38cc6b50e.ctex"
+uid="uid://05wvuenbupbl"
+path="res://.godot/imported/link-the-sausage-link.png-452a0d51867a61c1aa848310d5ebd1f9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/mallak.png"
-dest_files=["res://.godot/imported/mallak.png-fdddd91c76d92debcedda4f38cc6b50e.ctex"]
+source_file="res://images/characters/link-the-sausage-link.png"
+dest_files=["res://.godot/imported/link-the-sausage-link.png-452a0d51867a61c1aa848310d5ebd1f9.ctex"]
 
 [params]
 

@@ -6,10 +6,14 @@ extends Node2D
 @onready var PLAYER: Player = $Player
 @onready var ENEMY: Enemy = $Enemy
 
-@onready var MALICK: FoodBuddy = $Malick
-@onready var SALLY: FoodBuddy = $Sally
+#@onready var MALICK: FoodBuddy = $Malick
+#@onready var SALLY: FoodBuddy = $Sally
+@onready var LINK: FoodBuddy = $Link
+@onready var DAN: FoodBuddy = $Dan
+@onready var BRITTANY: FoodBuddy = $Brittany
 
-@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick-sally.tscn").instantiate()
+
+#@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick-sally.tscn").instantiate()
 
 @onready var MUSIC: AudioStreamPlayer = $WorldCenter
 
@@ -85,14 +89,15 @@ func _ready() -> void:
 	timer_process_tiles = $"Process Tiles Timer"
 	
 	# Add Malick and Sally into the active Food Buddies list
-	food_buddies_active.append(MALICK)
-	food_buddies_active.append(SALLY)
+	food_buddies_active.append(LINK)
+	food_buddies_active.append(BRITTANY)
 	
-	food_buddies_inactive.append(SALLY)
-	
-	# Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
-	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
-	food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
+	food_buddies_inactive.append(DAN)
+
+	#
+	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
+	#FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
+	#food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
 	
 	world_tilemaps = {
@@ -108,9 +113,12 @@ func _ready() -> void:
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
 	
 
-	MALICK.current_tilemaps = world_tilemaps["center"]
-	SALLY.current_tilemaps = world_tilemaps["center"]
-	PLAYER.current_tilemaps = world_tilemaps["center"]	
+	#MALICK.current_tilemaps = world_tilemaps["center"]
+	#SALLY.current_tilemaps = world_tilemaps["center"]
+	LINK.current_tilemaps = world_tilemaps["center"]
+	DAN.current_tilemaps = world_tilemaps["center"]
+	BRITTANY.current_tilemaps = world_tilemaps["center"]
+	PLAYER.current_tilemaps = world_tilemaps["center"]
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
@@ -158,8 +166,8 @@ func _process(delta: float) -> void:
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
 		GameTileManager.process_nearby_tiles(PLAYER, 2)
-		GameTileManager.process_nearby_tiles(MALICK, 3)
-		GameTileManager.process_nearby_tiles(SALLY, 2)
+		GameTileManager.process_nearby_tiles(food_buddies_active[0], 1)
+		GameTileManager.process_nearby_tiles(food_buddies_active[1], 2)
 	
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
@@ -605,7 +613,7 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 func _on_player_toggle_field_state_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
+	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
@@ -618,18 +626,15 @@ func _on_player_toggle_field_state_interface() -> void:
 
 # Callback function that executes whenever the Player wants to trigger the Food Buddy FieldState updating interface: opens/closes the interface depending on the interface's current state
 func _on_player_toggle_select_interface() -> void:
-	print("in")
+	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
 	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddyFieldState.active:
-		print("out")
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
 	if InterfaceFoodBuddySelection.visible:
 		InterfaceFoodBuddySelection.end_selecting()
-		print("end selecting")
 	else:
-		print("start selecting")
 		InterfaceFoodBuddySelection.start_selecting(get_all_assets_on_screen())
 
 
@@ -637,7 +642,7 @@ func _on_player_toggle_select_interface() -> void:
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if InterfaceDialogue.visible or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
+	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
 		return
 	
 	# Enable the Dialogue Interface
@@ -718,7 +723,6 @@ func _on_character_move_towards_target(character: CharacterBody2D, target: Node2
 func _on_character_killed_target(character: CharacterBody2D) -> void:
 	character.target = null
 	character.target_distance = 0
-	# Increase XP for killing a target
 
 
 
@@ -769,13 +773,6 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 	else:
 		food_buddy.target = null
 		food_buddy.target_distance = 0
-
-
-
-# Callback function that executes whenever the Food Buddy has killed their target: sets the Food Buddy's target to null
-func _on_food_buddy_killed_target(_character: GameCharacter) -> void:
-	# Increase XP for killing an enemy
-	pass
 
 
 

@@ -100,7 +100,6 @@ func start_selecting(freeze_subjects: Array[Node2D]):
 	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
-	print("hello?!?")
 	animator.queue("stay_UI")
 	
 	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!

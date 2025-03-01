@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://yti605qnf7jy"
-path="res://.godot/imported/sally-the-sticky-mozzerela-stick.png-ce77ad84beb5c3f5029850fbe516ed42.ctex"
+uid="uid://trysq5a10mgh"
+path="res://.godot/imported/brittany-the-berry-robot.png-ec0ae52151a3f607153f7f8808ded016.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/sally-the-sticky-mozzerela-stick.png"
-dest_files=["res://.godot/imported/sally-the-sticky-mozzerela-stick.png-ce77ad84beb5c3f5029850fbe516ed42.ctex"]
+source_file="res://images/characters/brittany-the-berry-robot.png"
+dest_files=["res://.godot/imported/brittany-the-berry-robot.png-ec0ae52151a3f607153f7f8808ded016.ctex"]
 
 [params]
 

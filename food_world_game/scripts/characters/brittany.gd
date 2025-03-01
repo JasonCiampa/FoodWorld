@@ -14,9 +14,9 @@ extends FoodBuddy
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 enum CollisionValues {
-	GROUND = 4,
-	MIDAIR = 5,
-	PLATFORM = 6
+	GROUND = 7,
+	MIDAIR = 8,
+	PLATFORM = 9
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,34 +34,34 @@ enum CollisionValues {
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# A custom ready function that is personally defined for Malick. This is called in the default Food Buddy class's '_ready()' function
+# A custom ready function that is personally defined for Brittany. This is called in the default Food Buddy class's '_ready()' function
 func ready():
 	
 	health_texture_path = "res://images/ui/png/dan-health.png"
 	
 	
-	# Set the stamina cost for each of Malick's two abilities
+	# Set the stamina cost for each of Brittany's two abilities
 	ability_stamina_cost = { 
 		"Ability 1": [5, "Gradual"], 
 		"Ability 2": [25, "Instant"] 
 	}
 	
-	# Set Malick's default speed and current speed
-	speed_normal = 30
+	# Set Brittany's default speed and current speed
+	speed_normal = 45
 	speed_current = speed_normal
 	
-	self.name = "Malick"
+	self.name = "Brittany"
 	
 	set_collision_value(CollisionValues.GROUND)
 
 
-# A custom process function that is personally defined for Malick. This is called in the default FoodBuddy class's '_process()' function
+# A custom process function that is personally defined for Brittany. This is called in the default FoodBuddy class's '_process()' function
 func process(_delta: float):
 	pass
 
 
 
-# A custom physics_process function that is personally defined for Malick. This is called in the default FoodBuddy class's '_physics_process()' function
+# A custom physics_process function that is personally defined for Brittany. This is called in the default FoodBuddy class's '_physics_process()' function
 func physics_process(_delta: float) -> void:
 	pass
 
@@ -70,7 +70,7 @@ func physics_process(_delta: float) -> void:
 func jump_start():
 	super()
 		
-	# Set Malick to be in midair
+	# Set Brittany to be in midair
 	set_collision_value(CollisionValues.MIDAIR)
 
 func jump_end():
