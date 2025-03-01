@@ -20,6 +20,7 @@ signal toggle_buddy_equipped
 signal toggle_buddy_fusion_equipped
 
 signal toggle_field_state_interface
+signal toggle_select_interface
 
 signal use_ability_solo
 signal use_ability_buddy
@@ -166,6 +167,7 @@ func _process(delta: float) -> void:
 		on_platform = false
 	
 	toggle_food_buddy_field_state_interface()
+	toggle_food_buddy_selection_interface()
 	
 	if not paused:
 		process_ability_use()
@@ -550,9 +552,18 @@ func update_field_state():
 # Toggles the Food Buddy FieldState Interface on/off
 func toggle_food_buddy_field_state_interface():
 	
-	# Determine if the Player is trying to adjust the Food Buddy's FieldState and if they're NOT in the FUSION FieldState, then emit the signal to the Game to trigger the FieldState Interface (can't let Food Buddy Fusion FieldStates to become out of sync, so this menu is disabled until the Player is out of the FUSION FieldState)
+	# Determine if the Player is trying to adjust the Food Buddy's FieldState
 	if Input.is_action_just_pressed("toggle_buddy_field_state"):
 		toggle_field_state_interface.emit()
+
+
+
+# Toggles the Food Buddy Selection Interface on/off
+func toggle_food_buddy_selection_interface():
+	
+	# If 'TAB' is pressed, end the selecting of Food Buddies
+	if Input.is_action_just_pressed("toggle_buddy_selection"):
+		toggle_select_interface.emit()
 
 
 

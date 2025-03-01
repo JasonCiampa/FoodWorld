@@ -1,0 +1,144 @@
+[gd_scene load_steps=6 format=3 uid="uid://bfdx6617hncsy"]
+
+[ext_resource type="Script" path="res://scripts/interfaces/food-buddy-select-interface.gd" id="1_g6c6n"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="1_xiblw"]
+[ext_resource type="Texture2D" uid="uid://bp40n6kwu5cyp" path="res://images/ui/png/food-buddy-selection-link-test.png" id="3_x5hal"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_pqhe1"]
+line_spacing = 10.0
+font = ExtResource("1_xiblw")
+font_size = 96
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_y4tdj"]
+font = ExtResource("1_xiblw")
+font_size = 64
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Food Buddy Select" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_g6c6n")
+
+[node name="Select Food Buddy" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="Select Food Buddy Text Container" type="AspectRatioContainer" parent="Select Food Buddy"]
+layout_mode = 0
+offset_left = 190.5
+offset_top = 250.0
+offset_right = 1729.5
+offset_bottom = 376.0
+pivot_offset = Vector2(769.5, 0)
+
+[node name="Select Food Buddy Text" type="Label" parent="Select Food Buddy/Select Food Buddy Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "select food buddy"
+label_settings = SubResource("LabelSettings_pqhe1")
+
+[node name="Active Food Buddy" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -77.0
+offset_right = 40.0
+offset_bottom = -37.0
+
+[node name="Active Food Buddy Text Container" type="AspectRatioContainer" parent="Active Food Buddy"]
+layout_mode = 0
+offset_left = -317.0
+offset_top = 764.0
+offset_right = 1141.0
+offset_bottom = 935.0
+pivot_offset = Vector2(729, 0)
+
+[node name="Active Food Buddy Text" type="Label" parent="Active Food Buddy/Active Food Buddy Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Active 
+Food Buddies"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Inactive Food Buddy" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -77.0
+offset_right = 40.0
+offset_bottom = -37.0
+
+[node name="Inactive Food Buddy Text Container" type="AspectRatioContainer" parent="Inactive Food Buddy"]
+layout_mode = 0
+offset_left = 842.0
+offset_top = 764.0
+offset_right = 2300.0
+offset_bottom = 935.0
+pivot_offset = Vector2(729, 0)
+
+[node name="Inactive Food Buddy Text" type="Label" parent="Inactive Food Buddy/Inactive Food Buddy Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Inactive 
+Food Buddy"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Active Buddy Circle 1" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Active Buddy Circle Button Container" type="AspectRatioContainer" parent="Active Buddy Circle 1"]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 886.0
+offset_right = 126.0
+offset_bottom = 926.0
+scale = Vector2(12, 12)
+
+[node name="Active Buddy Circle Button" type="TextureButton" parent="Active Buddy Circle 1/Active Buddy Circle Button Container"]
+layout_mode = 2
+texture_normal = ExtResource("3_x5hal")
+
+[node name="Active Buddy Circle Text Container" type="AspectRatioContainer" parent="Active Buddy Circle 1"]
+offset_left = -317.0
+offset_top = 1168.0
+offset_right = 1141.0
+offset_bottom = 1339.0
+pivot_offset = Vector2(729, 0)
+
+[node name="Active Food Buddy Text" type="Label" parent="Active Buddy Circle 1/Active Buddy Circle Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "link"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Active Buddy Circle 2" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Inactive Buddy Circle" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

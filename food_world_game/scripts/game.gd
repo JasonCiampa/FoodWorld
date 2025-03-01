@@ -54,11 +54,13 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 
 # Interfaces #
+
 var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food-buddy-field-state-interface.tscn").instantiate()
 var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogue-interface.tscn").instantiate()
 
 var InterfaceCharacterStatus: CharacterStatusInterface
 var InterfaceLevelUp: LevelUpInterface
+var InterfaceFoodBuddySelection: FoodBuddySelectInterface
 
 # Managers #
 var GameTileManager: TileManager
@@ -85,6 +87,8 @@ func _ready() -> void:
 	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(MALICK)
 	food_buddies_active.append(SALLY)
+	
+	food_buddies_inactive.append(SALLY)
 	
 	# Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
 	FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
@@ -126,9 +130,11 @@ func _ready() -> void:
 	
 	InterfaceCharacterStatus = $"Player/Character Status"
 	InterfaceLevelUp = $"Player/Level-up"
+	InterfaceFoodBuddySelection = $"Player/Food Buddy Select"
 	
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1])
 	InterfaceLevelUp.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1], InterfaceCharacterStatus)
+	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus)
 	
 	timer_fade.start(0.1)
 
@@ -154,7 +160,6 @@ func _process(delta: float) -> void:
 		GameTileManager.process_nearby_tiles(PLAYER, 2)
 		GameTileManager.process_nearby_tiles(MALICK, 3)
 		GameTileManager.process_nearby_tiles(SALLY, 2)
-	
 	
 	
 	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
@@ -600,7 +605,7 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 func _on_player_toggle_field_state_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.active:
+	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
@@ -611,11 +616,28 @@ func _on_player_toggle_field_state_interface() -> void:
 
 
 
+# Callback function that executes whenever the Player wants to trigger the Food Buddy FieldState updating interface: opens/closes the interface depending on the interface's current state
+func _on_player_toggle_select_interface() -> void:
+	print("in")
+	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
+	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddyFieldState.active:
+		print("out")
+		return
+	
+	# Determine if the Field State interface is active/inactive, then disable/enable it
+	if InterfaceFoodBuddySelection.visible:
+		InterfaceFoodBuddySelection.end_selecting()
+		print("end selecting")
+	else:
+		print("start selecting")
+		InterfaceFoodBuddySelection.start_selecting(get_all_assets_on_screen())
+
+
 # Callback function that executes whenever the Player wants to enable the Dialogue interface
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
-	# Determine if the Dialogue Interface is already active or if the Food Buddy FieldState Interface is active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.active:
+	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
+	if InterfaceDialogue.visible or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible:
 		return
 	
 	# Enable the Dialogue Interface
@@ -668,8 +690,6 @@ func _on_player_killed_target() -> void:
 func _on_player_die(player: Player) -> void:
 	remove_child(player)
 	print("Player has died!")
-
-
 
 
 
@@ -942,19 +962,3 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
 			current_building = null
-
-
-
-	
-	
-	
-func _on_level_up_ended() -> void:
-	
-	if PLAYER.xp_current >= PLAYER.xp_max and PLAYER.level_current != 15:
-		InterfaceLevelUp.start_level_up(get_all_assets_on_screen())
-	else:
-		# Pause all of the characters' processing while the interface is active
-		for subject in get_all_assets_on_screen():
-			subject.paused = false
-		
-		InterfaceLevelUp.animator.play("RESET")

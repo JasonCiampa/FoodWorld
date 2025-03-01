@@ -1,0 +1,566 @@
+[gd_scene load_steps=12 format=3 uid="uid://bfdx6617hncsy"]
+
+[ext_resource type="Script" path="res://scripts/interfaces/food-buddy-select-interface.gd" id="1_g6c6n"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="1_xiblw"]
+[ext_resource type="Texture2D" uid="uid://bp40n6kwu5cyp" path="res://images/ui/png/food-buddy-selection-link-test.png" id="3_x5hal"]
+[ext_resource type="Texture2D" uid="uid://c56du830fv46b" path="res://images/ui/png/food-buddy-selection-dan.png" id="4_6et25"]
+[ext_resource type="Texture2D" uid="uid://c5fnxvdvem4ig" path="res://images/ui/png/food-buddy-selection-brittany.png" id="5_8cnbo"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_pqhe1"]
+line_spacing = 10.0
+font = ExtResource("1_xiblw")
+font_size = 96
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_y4tdj"]
+font = ExtResource("1_xiblw")
+font_size = 64
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_20ih4"]
+resource_name = "enter_UI"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Select Food Buddy/Select Food Buddy Text Container:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.241667, 0.4, 0.566667, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Active Food Buddies/Active Food Buddies Text Container:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Inactive Food Buddy/Inactive Food Buddy Text Container:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Active Buddy Circle 1/Active Buddy Circle Button Container:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Active Buddy Circle 2/Active Buddy Circle Button Container:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Inactive Buddy Circle/Inactive Buddy Circle Button Container:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Active Buddy Circle 1/Active Buddy Circle Text Container:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Active Buddy Circle 2/Active Buddy Circle Text Container:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Inactive Buddy Circle/Inactive Buddy Circle Text Container:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_5t2qn"]
+resource_name = "stay_UI"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Select Food Buddy/Select Food Buddy Text Container:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Active Food Buddies/Active Food Buddies Text Container:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Inactive Food Buddy/Inactive Food Buddy Text Container:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Active Buddy Circle 1/Active Buddy Circle Button Container:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Active Buddy Circle 2/Active Buddy Circle Button Container:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Inactive Buddy Circle/Inactive Buddy Circle Button Container:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Active Buddy Circle 1/Active Buddy Circle Text Container:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Active Buddy Circle 2/Active Buddy Circle Text Container:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Inactive Buddy Circle/Inactive Buddy Circle Text Container:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_y0yhb"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Select Food Buddy/Select Food Buddy Text Container:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Active Food Buddies/Active Food Buddies Text Container:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Inactive Food Buddy/Inactive Food Buddy Text Container:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Active Buddy Circle 1/Active Buddy Circle Button Container:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Active Buddy Circle 2/Active Buddy Circle Button Container:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Inactive Buddy Circle/Inactive Buddy Circle Button Container:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Active Buddy Circle 1/Active Buddy Circle Text Container:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Active Buddy Circle 2/Active Buddy Circle Text Container:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Inactive Buddy Circle/Inactive Buddy Circle Text Container:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_iahoi"]
+_data = {
+"RESET": SubResource("Animation_y0yhb"),
+"enter_UI": SubResource("Animation_20ih4"),
+"stay_UI": SubResource("Animation_5t2qn")
+}
+
+[node name="Food Buddy Select" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_g6c6n")
+
+[node name="Select Food Buddy" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="Select Food Buddy Text Container" type="AspectRatioContainer" parent="Select Food Buddy"]
+layout_mode = 0
+offset_left = 190.5
+offset_top = 250.0
+offset_right = 1729.5
+offset_bottom = 376.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(769.5, 0)
+
+[node name="Select Food Buddy Text" type="Label" parent="Select Food Buddy/Select Food Buddy Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "select food buddy"
+label_settings = SubResource("LabelSettings_pqhe1")
+
+[node name="Active Food Buddies" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -77.0
+offset_right = 40.0
+offset_bottom = -37.0
+
+[node name="Active Food Buddies Text Container" type="AspectRatioContainer" parent="Active Food Buddies"]
+layout_mode = 0
+offset_left = -317.0
+offset_top = 753.0
+offset_right = 1141.0
+offset_bottom = 924.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(729, 0)
+
+[node name="Active Food Buddies Text" type="Label" parent="Active Food Buddies/Active Food Buddies Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Active 
+Food Buddies"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Inactive Food Buddy" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -77.0
+offset_right = 40.0
+offset_bottom = -37.0
+
+[node name="Inactive Food Buddy Text Container" type="AspectRatioContainer" parent="Inactive Food Buddy"]
+layout_mode = 0
+offset_left = 842.0
+offset_top = 753.0
+offset_right = 2300.0
+offset_bottom = 924.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(729, 0)
+
+[node name="Inactive Food Buddy Text" type="Label" parent="Inactive Food Buddy/Inactive Food Buddy Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Inactive 
+Food Buddy"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Active Buddy Circle 1" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Active Buddy Circle Button Container" type="AspectRatioContainer" parent="Active Buddy Circle 1"]
+layout_mode = 0
+offset_left = 199.0
+offset_top = 996.0
+offset_right = 239.0
+offset_bottom = 1036.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(10, 11)
+
+[node name="Active Buddy Circle Button" type="TextureButton" parent="Active Buddy Circle 1/Active Buddy Circle Button Container"]
+layout_mode = 2
+disabled = true
+texture_normal = ExtResource("3_x5hal")
+
+[node name="Active Buddy Circle Text Container" type="AspectRatioContainer" parent="Active Buddy Circle 1"]
+offset_left = -517.0
+offset_top = 1136.0
+offset_right = 941.0
+offset_bottom = 1307.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(729, 0)
+
+[node name="Active Food Buddy Text" type="Label" parent="Active Buddy Circle 1/Active Buddy Circle Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "link"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Active Buddy Circle 2" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Active Buddy Circle Button Container" type="AspectRatioContainer" parent="Active Buddy Circle 2"]
+layout_mode = 0
+offset_left = 600.0
+offset_top = 996.0
+offset_right = 640.0
+offset_bottom = 1036.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(10, 11)
+
+[node name="Active Buddy Circle Button" type="TextureButton" parent="Active Buddy Circle 2/Active Buddy Circle Button Container"]
+layout_mode = 2
+disabled = true
+texture_normal = ExtResource("4_6et25")
+
+[node name="Active Buddy Circle Text Container" type="AspectRatioContainer" parent="Active Buddy Circle 2"]
+offset_left = -109.0
+offset_top = 1136.0
+offset_right = 1349.0
+offset_bottom = 1307.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(729, 0)
+
+[node name="Active Food Buddy Text" type="Label" parent="Active Buddy Circle 2/Active Buddy Circle Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Dan"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Inactive Buddy Circle" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Inactive Buddy Circle Button Container" type="AspectRatioContainer" parent="Inactive Buddy Circle"]
+offset_left = 1555.0
+offset_top = 996.0
+offset_right = 1595.0
+offset_bottom = 1036.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(10, 11)
+
+[node name="Inactive Buddy Circle Button" type="TextureButton" parent="Inactive Buddy Circle/Inactive Buddy Circle Button Container"]
+layout_mode = 2
+disabled = true
+texture_normal = ExtResource("5_8cnbo")
+
+[node name="Inactive Buddy Circle Text Container" type="AspectRatioContainer" parent="Inactive Buddy Circle"]
+offset_left = 846.0
+offset_top = 1136.0
+offset_right = 2304.0
+offset_bottom = 1307.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(729, 0)
+
+[node name="Inactive Food Buddy Text" type="Label" parent="Inactive Buddy Circle/Inactive Buddy Circle Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "brittany"
+label_settings = SubResource("LabelSettings_y4tdj")
+horizontal_alignment = 1
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_iahoi")
+}
+
+[connection signal="button_down" from="Active Buddy Circle 1/Active Buddy Circle Button Container/Active Buddy Circle Button" to="." method="_on_active_buddy1_button_down"]
+[connection signal="button_down" from="Active Buddy Circle 2/Active Buddy Circle Button Container/Active Buddy Circle Button" to="." method="_on_active_buddy2_button_down"]
+[connection signal="button_down" from="Inactive Buddy Circle/Inactive Buddy Circle Button Container/Inactive Buddy Circle Button" to="." method="_on_inactive_buddy_button_button_down"]
+[connection signal="current_animation_changed" from="Animator" to="." method="_on_animator_current_animation_changed"]
