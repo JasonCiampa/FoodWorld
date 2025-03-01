@@ -140,9 +140,9 @@ func _ready() -> void:
 	InterfaceLevelUp = $"Player/Level-up"
 	InterfaceFoodBuddySelection = $"Player/Food Buddy Select"
 	
-	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1])
-	InterfaceLevelUp.setValues(PLAYER, food_buddies_active[0], food_buddies_active[1], InterfaceCharacterStatus)
-	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus)
+	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
+	InterfaceLevelUp.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
+	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp)
 	
 	timer_fade.start(0.1)
 

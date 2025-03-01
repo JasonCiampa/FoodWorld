@@ -17,6 +17,7 @@ var health_bar_foodbuddy2: TextureProgressBar
 var text_name_foodbuddy2: Label
 
 var player: Player
+var active_food_buddies: Array[FoodBuddy]
 var foodbuddy1: FoodBuddy
 var foodbuddy2: FoodBuddy
 
@@ -77,11 +78,12 @@ func _process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Sets the given values as the ones to use for the UI components
-func setValues(_player: Player, _foodbuddy1: FoodBuddy, _foodbuddy2: FoodBuddy):
+func setValues(_player: Player, food_buddies_active: Array[FoodBuddy]):
 	
 	player = _player
-	foodbuddy1 = _foodbuddy1
-	foodbuddy2 = _foodbuddy2
+	active_food_buddies = food_buddies_active
+	foodbuddy1 = active_food_buddies[0]
+	foodbuddy2 = active_food_buddies[1]
 	
 	health_bar_player.max_value = player.health_max
 	health_bar_player.value = player.health_current

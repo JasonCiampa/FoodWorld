@@ -17,6 +17,7 @@ var animator: AnimationPlayer
 
 var player: Player
 var InterfaceCharacterStatus: CharacterStatusInterface
+var InterfaceLevelUp: LevelUpInterface
 var frozen_subjects: Array[Node2D]
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,12 +36,15 @@ var frozen_subjects: Array[Node2D]
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var selected_active_foodbuddy
-var selected_inactive_foodbuddy
+var selected_active_foodbuddy: FoodBuddy
+var selected_inactive_foodbuddy: FoodBuddy
 
-var active_foodbuddy1
-var active_foodbuddy2
-var inactive_foodbuddy
+var active_food_buddies: Array[FoodBuddy]
+var active_foodbuddy1: FoodBuddy
+var active_foodbuddy2: FoodBuddy
+
+var inactive_foodbuddy: FoodBuddy
+var inactive_food_buddies: Array[FoodBuddy]
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -73,19 +77,32 @@ func _process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Sets the given values as the ones to use for the UI components
-func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_buddies_inactive: Array[FoodBuddy], _InterfaceCharacterStatus: CharacterStatusInterface):
+func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_buddies_inactive: Array[FoodBuddy], _InterfaceCharacterStatus: CharacterStatusInterface, _InterfaceLevelUp: LevelUpInterface):
 	
 	player = _player
+	
 	active_foodbuddy1 = _food_buddies_active[0]
 	active_foodbuddy2 = _food_buddies_active[1]
+	active_food_buddies = _food_buddies_active
+	
 	inactive_foodbuddy = _food_buddies_inactive[0]
+	inactive_food_buddies = _food_buddies_inactive
+	
 	InterfaceCharacterStatus = _InterfaceCharacterStatus
+	InterfaceLevelUp = _InterfaceLevelUp
+	
+	button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path)
+	text_active_buddy1.text = active_foodbuddy1.name
+	
+	button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path)
+	text_active_buddy2.text = active_foodbuddy2.name
+	
+	button_inactive_buddy.texture_normal = load(inactive_foodbuddy.select_circle_texture_path)
+	text_inactive_buddy.text = inactive_foodbuddy.name
 
 
 
 func start_selecting(freeze_subjects: Array[Node2D]):
-	
-	print("begin selecting!")
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
@@ -124,6 +141,7 @@ func start_selecting(freeze_subjects: Array[Node2D]):
 			tilemap.modulate.a = 0.25
 
 
+
 func end_selecting():
 	
 	# Pause all of the characters' processing while the interface is active
@@ -159,9 +177,6 @@ func end_selecting():
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
 func _on_animator_current_animation_changed(animation_name: String) -> void:
 	
 	if animation_name == "stay_UI":
@@ -171,14 +186,147 @@ func _on_animator_current_animation_changed(animation_name: String) -> void:
 
 
 func _on_active_buddy1_button_down() -> void:
-	print("1")
-	pass # Replace with function body.
+	
+	# Determine if the active Food Buddy 1 is already selected, then unselect it
+	if active_foodbuddy1 == selected_active_foodbuddy:
+		selected_active_foodbuddy = null
+	
+	# Otherwise, determine if an inactive Food Buddy has not been selected yet, then set this Food Buddy as the selected active Food Buddy
+	elif selected_inactive_foodbuddy == null:
+		selected_active_foodbuddy = active_foodbuddy1
+	
+	# Otherwise, there is a selected inactive Food Buddy, and this active Food Buddy 1 is being selected to swap with the inactive buddy, so do that
+	else:
+		
+		# Make a temp variable to store the currently active Food Buddy 1 before its swap out
+		var temp: FoodBuddy = active_foodbuddy1
+		
+		# Update the active and inactive food buddy lists
+		active_food_buddies[0] = inactive_foodbuddy
+		inactive_food_buddies[0] = temp
+		
+		# Update the values of this interface
+		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp)
+		
+		# Update the Character Status Interface
+		InterfaceCharacterStatus.setValues(player, active_food_buddies)
+		
+		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
+		
+		# Update the locations of the Food Buddies in-game
+		var temp_position: Vector2 = inactive_food_buddies[0].global_position
+		inactive_food_buddies[0].global_position = active_food_buddies[0].global_position
+		active_food_buddies[0].global_position = temp_position
+		
+		active_food_buddies[0].process_mode = Node.PROCESS_MODE_INHERIT
+		inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
+		
+		# Clear variables
+		temp = null
+		selected_inactive_foodbuddy = null
+		selected_active_foodbuddy = null
+
 
 
 func _on_active_buddy2_button_down() -> void:
-	print("2")
-	pass # Replace with function body.
+	
+	# Determine if the active Food Buddy 2 is already selected, then unselect it
+	if active_foodbuddy2 == selected_active_foodbuddy:
+		selected_active_foodbuddy = null
+	
+	# Otherwise, determine if an inactive Food Buddy has not been selected yet, then set this Food Buddy as the selected active Food Buddy
+	elif selected_inactive_foodbuddy == null:
+		selected_active_foodbuddy = active_foodbuddy2
+	
+	# Otherwise, there is a selected inactive Food Buddy, and this active Food Buddy 1 is being selected to swap with the inactive buddy, so do that
+	else:
+		
+		# Make a temp variable to store the currently active Food Buddy 1 before its swap out
+		var temp: FoodBuddy = active_foodbuddy2
+		
+		# Update the active and inactive food buddy lists
+		active_food_buddies[1] = inactive_foodbuddy
+		inactive_food_buddies[0] = temp
+		
+		# Update the values of this interface
+		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp)
+		
+		# Update the Character Status Interface
+		InterfaceCharacterStatus.setValues(player, active_food_buddies)
+		
+		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
+		
+		# Update the locations of the Food Buddies in-game
+		var temp_position: Vector2 = inactive_food_buddies[0].global_position
+		inactive_food_buddies[0].global_position = active_food_buddies[1].global_position
+		active_food_buddies[1].global_position = temp_position
+		
+		active_food_buddies[1].process_mode = Node.PROCESS_MODE_INHERIT
+		inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
+		
+		# Clear variables
+		temp = null
+		selected_inactive_foodbuddy = null
+		selected_active_foodbuddy = null
+
+
 
 func _on_inactive_buddy_button_button_down() -> void:
-	print("3")
-	pass # Replace with function body.
+	
+	# Determine if the inactive Food Buddy is already selected, then unselect it
+	if inactive_foodbuddy == selected_inactive_foodbuddy:
+		selected_inactive_foodbuddy = null
+	
+	# Otherwise, determine if an active Food Buddy has not been selected yet, then set this Food Buddy as the selected inactive Food Buddy
+	elif selected_active_foodbuddy == null:
+		selected_inactive_foodbuddy = inactive_foodbuddy
+	
+	# Otherwise, there is a selected active Food Buddy, and this inactive Food Buddy is being selected to swap with the active buddy, so do that
+	else:
+		
+		# Make a temp variable to store the currently active Food Buddy 1 before its swap out
+		var temp: FoodBuddy
+		var temp_position: Vector2
+		
+		# Update the active and inactive food buddy lists
+		if selected_active_foodbuddy == active_foodbuddy1:
+			temp = active_foodbuddy1
+			active_food_buddies[0] = inactive_foodbuddy
+			
+			inactive_food_buddies[0] = temp
+			
+			# Update the locations of the Food Buddies in-game
+			temp_position = inactive_food_buddies[0].global_position
+			inactive_food_buddies[0].global_position = active_food_buddies[0].global_position
+			active_food_buddies[0].global_position = temp_position
+			
+			active_food_buddies[0].process_mode = Node.PROCESS_MODE_INHERIT
+			inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
+		
+		else:
+			temp = active_foodbuddy2
+			active_food_buddies[1] = inactive_foodbuddy
+		
+			inactive_food_buddies[0] = temp
+			
+			# Update the locations of the Food Buddies in-game
+			temp_position = inactive_food_buddies[0].global_position
+			inactive_food_buddies[0].global_position = active_food_buddies[1].global_position
+			active_food_buddies[1].global_position = temp_position
+			
+			active_food_buddies[1].process_mode = Node.PROCESS_MODE_INHERIT
+			inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
+		
+		# Update the values of this interface
+		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp)
+		
+		# Update the Character Status Interface
+		InterfaceCharacterStatus.setValues(player, active_food_buddies)
+		
+		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
+		
+		
+		# Clear variables
+		temp = null
+		selected_inactive_foodbuddy = null
+		selected_active_foodbuddy = null

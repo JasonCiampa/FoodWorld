@@ -38,7 +38,7 @@ enum CollisionValues {
 func ready():
 	
 	health_texture_path = "res://images/ui/png/dan-health.png"
-	
+	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-dan.png"
 	
 	# Set the stamina cost for each of Dan's two abilities
 	ability_stamina_cost = { 

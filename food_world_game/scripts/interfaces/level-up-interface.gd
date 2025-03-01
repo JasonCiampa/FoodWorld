@@ -20,6 +20,7 @@ var text_power: Label
 var animator: AnimationPlayer
 
 var player: Player
+var active_food_buddies: Array[FoodBuddy]
 var foodbuddy1: FoodBuddy
 var foodbuddy2: FoodBuddy
 var InterfaceCharacterStatus: CharacterStatusInterface
@@ -77,11 +78,12 @@ func _process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Sets the given values as the ones to use for the UI components
-func setValues(_player: Player, _foodbuddy1: FoodBuddy, _foodbuddy2: FoodBuddy, _InterfaceCharacterStatus: CharacterStatusInterface):
+func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _InterfaceCharacterStatus: CharacterStatusInterface):
 	
 	player = _player
-	foodbuddy1 = _foodbuddy1
-	foodbuddy2 = _foodbuddy2
+	active_food_buddies = _food_buddies_active
+	foodbuddy1 = active_food_buddies[0]
+	foodbuddy2 = active_food_buddies[1]
 	InterfaceCharacterStatus = _InterfaceCharacterStatus
 
 

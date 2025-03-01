@@ -37,8 +37,8 @@ enum CollisionValues {
 # A custom ready function that is personally defined for Brittany. This is called in the default Food Buddy class's '_ready()' function
 func ready():
 	
-	health_texture_path = "res://images/ui/png/dan-health.png"
-	
+	health_texture_path = "res://images/ui/png/brittany-health.png"
+	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-brittany.png"
 	
 	# Set the stamina cost for each of Brittany's two abilities
 	ability_stamina_cost = { 
