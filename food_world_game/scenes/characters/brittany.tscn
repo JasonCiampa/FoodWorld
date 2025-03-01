@@ -938,7 +938,6 @@ shadow_color = Color(0, 0, 0, 1)
 script = ExtResource("1_3xxkd")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-visible = false
 position = Vector2(7.62939e-07, -21.736)
 scale = Vector2(0.8, 3.06666)
 rect = Rect2(-17.29, -7.26, 35, 15)

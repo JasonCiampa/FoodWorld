@@ -88,7 +88,7 @@ func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _Interfa
 
 
 
-func start_level_up(freeze_subjects: Array[Node2D]):
+func start(freeze_subjects: Array[Node2D]):
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
@@ -152,9 +152,9 @@ func start_level_up(freeze_subjects: Array[Node2D]):
 
 
 
-func end_level_up():
+func end():
 	if player.xp_current >= player.xp_max and player.level_current != 15:
-		start_level_up(frozen_subjects)
+		start(frozen_subjects)
 	else:
 		# Pause all of the characters' processing while the interface is active
 		for subject in frozen_subjects:
@@ -195,7 +195,7 @@ func _on_health_button_button_down() -> void:
 	InterfaceCharacterStatus.health_bar_foodbuddy1.max_value = foodbuddy1.health_max
 	InterfaceCharacterStatus.health_bar_foodbuddy2.max_value = foodbuddy2.health_max
 	
-	end_level_up()
+	end()
 
 
 func _on_stamina_button_button_down() -> void:
@@ -206,14 +206,14 @@ func _on_stamina_button_button_down() -> void:
 	
 	InterfaceCharacterStatus.stamina_bar_player.max_value = player.stamina_max
 	
-	end_level_up()
+	end()
 
 
 func _on_power_button_button_down() -> void:
 	player.attack_damage["Kick"] = player.attack_damage["Kick"] + 3
 	player.attack_damage["Punch"] = player.attack_damage["Punch"] + 3
 	
-	end_level_up()
+	end()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

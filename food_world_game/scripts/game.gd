@@ -59,11 +59,12 @@ var food_buddy_fusions_locked: Array[FoodBuddyFusion]
 
 # Interfaces #
 
-var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface = load("res://scenes/interfaces/food-buddy-field-state-interface.tscn").instantiate()
+
 var InterfaceDialogue: DialogueInterface = load("res://scenes/interfaces/dialogue-interface.tscn").instantiate()
 
 var InterfaceCharacterStatus: CharacterStatusInterface
 var InterfaceLevelUp: LevelUpInterface
+var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface
 var InterfaceFoodBuddySelection: FoodBuddySelectInterface
 var InterfaceGameOver: GameOverInterface
 
@@ -139,12 +140,14 @@ func _ready() -> void:
 	
 	InterfaceCharacterStatus = $"Player/Character Status"
 	InterfaceLevelUp = $"Player/Level-up"
+	InterfaceFoodBuddyFieldState = $"Player/Food Buddy Field State"
 	InterfaceFoodBuddySelection = $"Player/Food Buddy Select"
 	InterfaceGameOver = $"Player/Game Over"
 	
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 	InterfaceLevelUp.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
-	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp)
+	InterfaceFoodBuddyFieldState.setValues(PLAYER, food_buddies_active)
+	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	
 	timer_fade.start(0.1)
@@ -161,6 +164,7 @@ func _process(delta: float) -> void:
 	enemies = scene_tree.get_nodes_in_group("enemies")
 	food_citizens = scene_tree.get_nodes_in_group("food_citizens")
 	interactables = scene_tree.get_nodes_in_group("interactables")
+	
 	
 	for interactable_asset in scene_tree.get_nodes_in_group("interactable-assets"):
 		interactable_assets.get_or_add(interactable_asset.global_position, interactable_asset)
@@ -184,10 +188,6 @@ func _process(delta: float) -> void:
 	# Determine if the Dialogue Interface is active, then process it
 	if InterfaceDialogue.active:
 		InterfaceDialogue.process(delta)
-	
-	# Determine if the FieldState Interface is active, then process it
-	if InterfaceFoodBuddyFieldState.active:
-		InterfaceFoodBuddyFieldState.process(food_buddies_active)
 	
 	if screen_fading:
 		fade_screen(0, delta)
@@ -344,7 +344,7 @@ func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
 				
 				if attacker.xp_current >= attacker.xp_max:
 					
-					InterfaceLevelUp.start_level_up(get_all_assets_on_screen())
+					InterfaceLevelUp.start(get_all_assets_on_screen())
 		
 		return true
 	
@@ -620,10 +620,10 @@ func _on_player_toggle_field_state_interface() -> void:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
-	if InterfaceFoodBuddyFieldState.active:
-		InterfaceFoodBuddyFieldState.disable(get_all_assets_on_screen())
+	if InterfaceFoodBuddyFieldState.visible:
+		InterfaceFoodBuddyFieldState.end()
 	else:
-		InterfaceFoodBuddyFieldState.enable(get_all_assets_on_screen(), food_buddies_active)
+		InterfaceFoodBuddyFieldState.start(get_all_assets_on_screen(), food_buddies_active)
 
 
 
@@ -631,14 +631,14 @@ func _on_player_toggle_field_state_interface() -> void:
 func _on_player_toggle_select_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceFoodBuddyFieldState.active or InterfaceGameOver.visible:
+	if InterfaceDialogue.active or InterfaceLevelUp.visible or InterfaceGameOver.visible or InterfaceFoodBuddyFieldState.visible:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
 	if InterfaceFoodBuddySelection.visible:
-		InterfaceFoodBuddySelection.end_selecting()
+		InterfaceFoodBuddySelection.end()
 	else:
-		InterfaceFoodBuddySelection.start_selecting(get_all_assets_on_screen())
+		InterfaceFoodBuddySelection.start(get_all_assets_on_screen())
 
 
 # Callback function that executes whenever the Player wants to enable the Dialogue interface

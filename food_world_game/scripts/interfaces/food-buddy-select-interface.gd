@@ -18,6 +18,7 @@ var animator: AnimationPlayer
 var player: Player
 var InterfaceCharacterStatus: CharacterStatusInterface
 var InterfaceLevelUp: LevelUpInterface
+var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface
 var frozen_subjects: Array[Node2D]
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -77,7 +78,7 @@ func _process(_delta: float) -> void:
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Sets the given values as the ones to use for the UI components
-func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_buddies_inactive: Array[FoodBuddy], _InterfaceCharacterStatus: CharacterStatusInterface, _InterfaceLevelUp: LevelUpInterface):
+func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_buddies_inactive: Array[FoodBuddy], _InterfaceCharacterStatus: CharacterStatusInterface, _InterfaceLevelUp: LevelUpInterface, _InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface):
 	
 	player = _player
 	
@@ -90,6 +91,7 @@ func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_bu
 	
 	InterfaceCharacterStatus = _InterfaceCharacterStatus
 	InterfaceLevelUp = _InterfaceLevelUp
+	InterfaceFoodBuddyFieldState = _InterfaceFoodBuddyFieldState
 	
 	button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path)
 	text_active_buddy1.text = active_foodbuddy1.name
@@ -102,7 +104,7 @@ func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_bu
 
 
 
-func start_selecting(freeze_subjects: Array[Node2D]):
+func start(freeze_subjects: Array[Node2D]):
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
@@ -142,7 +144,7 @@ func start_selecting(freeze_subjects: Array[Node2D]):
 
 
 
-func end_selecting():
+func end():
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
@@ -206,12 +208,12 @@ func _on_active_buddy1_button_down() -> void:
 		inactive_food_buddies[0] = temp
 		
 		# Update the values of this interface
-		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp)
+		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 		
 		# Update the Character Status Interface
 		InterfaceCharacterStatus.setValues(player, active_food_buddies)
-		
 		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
+		InterfaceFoodBuddyFieldState.setValues(player, active_food_buddies)
 		
 		# Update the locations of the Food Buddies in-game
 		var temp_position: Vector2 = inactive_food_buddies[0].global_position
@@ -249,12 +251,12 @@ func _on_active_buddy2_button_down() -> void:
 		inactive_food_buddies[0] = temp
 		
 		# Update the values of this interface
-		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp)
+		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 		
 		# Update the Character Status Interface
 		InterfaceCharacterStatus.setValues(player, active_food_buddies)
-		
 		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
+		InterfaceFoodBuddyFieldState.setValues(player, active_food_buddies)
 		
 		# Update the locations of the Food Buddies in-game
 		var temp_position: Vector2 = inactive_food_buddies[0].global_position
@@ -318,12 +320,12 @@ func _on_inactive_buddy_button_button_down() -> void:
 			inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
 		
 		# Update the values of this interface
-		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp)
+		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 		
 		# Update the Character Status Interface
 		InterfaceCharacterStatus.setValues(player, active_food_buddies)
-		
 		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
+		InterfaceFoodBuddyFieldState.setValues(player, active_food_buddies)
 		
 		
 		# Clear variables

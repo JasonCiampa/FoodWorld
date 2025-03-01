@@ -55,7 +55,6 @@ offset_bottom = 932.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Food Buddy Field State" parent="Player" instance=ExtResource("8_mcufm")]
-visible = false
 z_index = 1
 offset_left = -243.0
 offset_top = -160.0
@@ -70,7 +69,7 @@ position = Vector2(382, 560)
 position = Vector2(348, 597)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(295, 556)
+position = Vector2(482, 684)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
@@ -153,3 +152,5 @@ parameters/looping = true
 [connection signal="target_player" from="Enemy3" to="." method="_on_character_target_player"]
 [connection signal="update_altitude" from="Enemy3" to="." method="_on_character_update_altitude"]
 [connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
+
+[editable path="Player/Food Buddy Field State"]
