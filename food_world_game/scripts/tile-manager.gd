@@ -83,7 +83,7 @@ func _init(_world_tilemaps: Dictionary) -> void:
 		
 		
 		# PATH FINDING 
-		for coords in range(tiles_used_environment.size() -1, 0, -1):
+		for coords in range(tiles_used_environment.size() -1, -1, -1):
 		
 			# Determine if the ground Tile's coordinates are not occupied in the environment tilemap, then enable pathfinding for the tile
 			var environment_tile = Tile.new(world_tilemaps[world][Tile.MapType.ENVIRONMENT], Tile.MapType.ENVIRONMENT, tiles_used_environment[coords])

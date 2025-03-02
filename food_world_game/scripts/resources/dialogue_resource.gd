@@ -28,6 +28,7 @@ var current_line: String
 var current_line_number: int
 var current_speaker_name: String
 var furthest_line_reached: int
+var starting_line_number: int
 
 # All Conversations Between Characters in this Dialogue #
 @export var conversations: Dictionary
@@ -110,6 +111,7 @@ func prepare_dialogue(conversation_name: String):
 	
 	# Set the furthest line reached value equal to whatever the current line number is and store the first line as the current line
 	furthest_line_reached = current_line_number
+	starting_line_number = current_line_number
 	current_line = conversation_current[current_speaker_name][current_line_number]
 
 

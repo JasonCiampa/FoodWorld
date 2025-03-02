@@ -1,13 +1,13 @@
-Brittany-Dan-Player
+﻿Brittany-Dan-Player
 
 
-Team-Meeting
+Team Meeting
 1. PLAY: player_level=|>=|2
-2. PLAY_WHEN: now
+2. PLAY_WHEN: user
 
 
 3. Player: Brittany, we have to find more berries for your sauna.
-4. Player: We’re starting to run low on juice boxes.
+4. Player: We're starting to run low on juice boxes.
 
 
 5. Dan: Yeah, we used a lot of them against those rotten foods.
@@ -22,14 +22,14 @@ Team-Meeting
 10. Dan: The place is practically hopping with berries!
 
 
-11. Player: Great, let’s make our way there.
+11. Player: Great, let's make our way there.
 
 
 
 
-Close-Call
+Close Call
 1. PLAY: player_level=|>=|3
-2. PLAY_WHEN: now
+2. PLAY_WHEN: user
 
 
 3. Dan: Jeez! Those guys nearly had us!
@@ -39,7 +39,7 @@ Close-Call
 5. Player: What?
 
 
-6. Brittany: Yeah… what?
+6. Brittany: Yeah... what?
 
 
 7. Dan: I think I jellied my dough.
@@ -55,7 +55,122 @@ Close-Call
 11. Brittany: Oh. Gotcha.
 
 
-12. Player: I think that’s the human equivalent of peeing your pants.
+12. Player: I think that's the human equivalent of peeing your pants.
 
 
 13. Dan: What are pants?
+
+
+
+
+Favorite Color
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Brittany: Dan, what's your favorite color?
+
+
+4. Dan: Probably orange. What about yours?
+
+
+5. Brittany: Mine is blue.
+
+
+6. Player: That seems a bit biased considering you're blue.
+
+
+7. Brittany: I'm blue BECAUSE it's my favorite color. It's not my favorite color because I'm blue.
+
+
+8. Player: So you chose your own color?
+
+
+9. Brittany: Yep.
+
+
+10. Player: I'm not buying it.
+
+
+11. Brittany: Well what's your favorite color then?
+
+
+12. Player: I like pink.
+
+
+13. Dan: I'm pink!
+
+
+
+
+Bouncy Berries
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Player: Hey Brittany, how are we looking on juice?
+
+
+4. Brittany: We're running pretty low right now, but we've got some berries in my sauna right now.
+
+
+5. Player: Tell them to hurry up in there, we need that juice to make more juice boxes.
+
+
+6. Brittany: Woah woah woah, slow your roll there chief.
+7. Brittany: A berry's sauna experience is not to be disrupted. It's a sacred time.
+
+
+8. Dan: What's so special about the sauna?
+
+
+9. Brittany: Well you see, berries regenerate their juice over time.
+10. Brittany: The more juice a berry has, the heavier it ends up being.
+11. Brittany: Berries love to hop around, but as they accumulate more juice, it becomes harder to bounce with their extra weight.
+12. Brittany:  The sauna allows them to reset their bodies and get back to doing what they love.
+13. Brittany: Berries deeply look forward to it, so there's no way we can rush them.
+
+
+14. Player: Interesting. I wonder how high they can hop right after being done in the sauna.
+
+
+
+
+
+
+
+
+Ingrown Sprinkle
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Dan: OUCH!
+
+
+4. Brittany: Woah- what's the matter Dan?!
+
+
+5. Player: Are you okay?!
+
+
+6. Dan: Yeah, I think I've just got an ingrown sprinkle. The thing jabbed me good.
+7. Dan: I just gotta pop it out real quick, hold on...
+
+
+8. Player: Hey! Watch it! You sent that sprinkle flying right at me!
+
+
+9. Dan: Oh no! Did it hit you?!
+
+
+10. Player: No, it didn't, but-
+
+
+11. Dan: Thank goodness, no harm no foul then!
+
+
+12. Brittany: Um- yeah foul! You almost impaled him with your-
+
+
+13. Dan: No harm no foul!

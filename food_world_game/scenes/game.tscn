@@ -11,7 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://b6rpc2tn82c6w" path="res://music/WorldCenter.mp3" id="8_gwi8m"]
 [ext_resource type="PackedScene" uid="uid://oldpeuxuhha0" path="res://scenes/interfaces/food-buddy-field-state-interface.tscn" id="8_mcufm"]
 [ext_resource type="PackedScene" uid="uid://do46o8a68s06o" path="res://scenes/interfaces/character-status-interface.tscn" id="9_6pngf"]
-[ext_resource type="PackedScene" uid="uid://gey6ihfygnoo" path="res://scenes/interfaces/dialogue-interface.tscn" id="9_7rgo0"]
+[ext_resource type="PackedScene" uid="uid://dyl1v55egc7pm" path="res://scenes/interfaces/dialogue-interface.tscn" id="9_7rgo0"]
 [ext_resource type="PackedScene" uid="uid://1r6edy1t7kho" path="res://scenes/characters/link.tscn" id="9_t4o2x"]
 [ext_resource type="PackedScene" uid="uid://cufwqkidanpu1" path="res://scenes/characters/dan.tscn" id="10_14ky5"]
 [ext_resource type="PackedScene" uid="uid://da5ns6vxli514" path="res://scenes/characters/brittany.tscn" id="11_8vviu"]

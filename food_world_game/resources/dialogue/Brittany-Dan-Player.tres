@@ -1,13 +1,41 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://82yc1dq7t81"]
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cwharxec5pwb8"]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_siw6n"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_xbdq5"]
 
 [resource]
-script = ExtResource("1_siw6n")
+script = ExtResource("1_xbdq5")
 conversations = {
-"Close-Call": {
+"Bouncy Berries": {
 "Brittany": {
-6: "Yeah… what?",
+4: "We're running pretty low right now, but we've got some berries in my sauna right now.",
+6: "Woah woah woah, slow your roll there chief.",
+7: "A berry's sauna experience is not to be disrupted. It's a sacred time.",
+9: "Well you see, berries regenerate their juice over time.",
+10: "The more juice a berry has, the heavier it ends up being.",
+11: "Berries love to hop around, but as they accumulate more juice, it becomes harder to bounce with their extra weight.",
+12: " The sauna allows them to reset their bodies and get back to doing what they love.",
+13: "Berries deeply look forward to it, so there's no way we can rush them."
+},
+"DIALOGUE": {},
+"Dan": {
+8: "What's so special about the sauna?"
+},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+3: "Hey Brittany, how are we looking on juice?",
+5: "Tell them to hurry up in there, we need that juice to make more juice boxes.",
+14: "Interesting. I wonder how high they can hop right after being done in the sauna."
+}
+},
+"Close Call": {
+"Brittany": {
+6: "Yeah... what?",
 11: "Oh. Gotcha."
 },
 "DIALOGUE": {},
@@ -29,10 +57,64 @@ conversations = {
 "Player": {
 5: "What?",
 8: "What does that mean?",
-12: "I think that’s the human equivalent of peeing your pants."
+12: "I think that's the human equivalent of peeing your pants."
 }
 },
-"Team-Meeting": {
+"Favorite Color": {
+"Brittany": {
+3: "Dan, what's your favorite color?",
+5: "Mine is blue.",
+7: "I'm blue BECAUSE it's my favorite color. It's not my favorite color because I'm blue.",
+9: "Yep.",
+11: "Well what's your favorite color then?"
+},
+"DIALOGUE": {},
+"Dan": {
+4: "Probably orange. What about yours?",
+13: "I'm pink!"
+},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+6: "That seems a bit biased considering you're blue.",
+8: "So you chose your own color?",
+10: "I'm not buying it.",
+12: "I like pink."
+}
+},
+"Ingrown Sprinkle": {
+"Brittany": {
+4: "Woah- what's the matter Dan?!",
+12: "Um- yeah foul! You almost impaled him with your-"
+},
+"DIALOGUE": {},
+"Dan": {
+3: "OUCH!",
+6: "Yeah, I think I've just got an ingrown sprinkle. The thing jabbed me good.",
+7: "I just gotta pop it out real quick, hold on...",
+9: "Oh no! Did it hit you?!",
+11: "Thank goodness, no harm no foul then!",
+13: "No harm no foul!"
+},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+5: "Are you okay?!",
+8: "Hey! Watch it! You sent that sprinkle flying right at me!",
+10: "No, it didn't, but-"
+}
+},
+"Team Meeting": {
 "Brittany": {
 7: "I agree, we should find more berries. My sauna is empty right now!",
 8: "The problem is, this area is pretty scarce on berry bushes."
@@ -49,39 +131,39 @@ conversations = {
 1: "player_level=|>=|2"
 },
 "PLAY_WHEN": {
-2: "now"
+2: "user"
 },
 "Player": {
 3: "Brittany, we have to find more berries for your sauna.",
-4: "We’re starting to run low on juice boxes.",
-11: "Great, let’s make our way there."
+4: "We're starting to run low on juice boxes.",
+11: "Great, let's make our way there."
 }
 }
 }
 conversation_current = {
 "Brittany": {
-6: "Yeah… what?",
-11: "Oh. Gotcha."
+4: "Woah- what's the matter Dan?!",
+12: "Um- yeah foul! You almost impaled him with your-"
 },
 "DIALOGUE": {},
 "Dan": {
-3: "Jeez! Those guys nearly had us!",
-4: "I think I jellied my dough.",
-7: "I think I jellied my dough.",
-9: "I think some of my jelly spilled out from my dough.",
-10: "When I get scared I leak a little.",
-13: "What are pants?"
+3: "OUCH!",
+6: "Yeah, I think I've just got an ingrown sprinkle. The thing jabbed me good.",
+7: "I just gotta pop it out real quick, hold on...",
+9: "Oh no! Did it hit you?!",
+11: "Thank goodness, no harm no foul then!",
+13: "No harm no foul!"
 },
 "GAME": {},
 "PLAY": {
-1: "player_level=|>=|0"
+1: "player_level=|>=|1"
 },
 "PLAY_WHEN": {
-2: "now"
+2: "user"
 },
 "Player": {
-5: "What?",
-8: "What does that mean?",
-12: "I think that’s the human equivalent of peeing your pants."
+5: "Are you okay?!",
+8: "Hey! Watch it! You sent that sprinkle flying right at me!",
+10: "No, it didn't, but-"
 }
 }

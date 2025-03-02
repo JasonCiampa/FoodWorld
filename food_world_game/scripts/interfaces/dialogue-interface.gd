@@ -8,11 +8,21 @@ class_name DialogueInterface
 var text_textbox: Label
 var text_character_name: Label
 
+var text_conversation1_name: Label
+var text_conversation2_name: Label
+var text_conversation3_name: Label
+
+
 var image_character: TextureRect
 
 var button_next: TextureButton
 var button_back: TextureButton
 var button_exit: TextureButton
+
+
+var button_conversation1: TextureButton
+var button_conversation2: TextureButton
+var button_conversation3: TextureButton
 
 var animator: AnimationPlayer
 
@@ -81,9 +91,18 @@ var dialogue_direction: String
 func _ready() -> void:
 	text_character_name = $"Textbox/Textbox Character Name Container/Textbox Character Name Text"
 	text_textbox = $"Textbox/Textbox Text Container/Textbox Text"
+	
+	text_conversation1_name = $"Conversation Options/Conversation/Conversation Text Container/Conversation Text"
+	text_conversation2_name = $"Conversation Options/Conversation 2/Conversation Text Container/Conversation Text"
+	text_conversation3_name = $"Conversation Options/Conversation 3/Conversation Text Container/Conversation Text"
+	
+	button_conversation1 = $"Conversation Options/Conversation/Conversation Button Container/Conversation Button"
+	button_conversation2 = $"Conversation Options/Conversation 2/Conversation Button Container/Conversation Button"
+	button_conversation3 = $"Conversation Options/Conversation 3/Conversation Button Container/Conversation Button"
+	
 	image_character = $"Textbox/Textbox Character Image Container2/Textbox Character Image" 
 	button_next = $"Next/Next Button Container/Next Button"
-	button_back = $"Back/Back Button Container/Previous Button"
+	button_back = $"Back/Back Button Container/Back Button"
 	button_exit = $"Exit/Exit Button Container/Exit Button"
 	animator = $"Animator"
 	char_delay_timer = $"Char Delay Timer"
@@ -92,6 +111,17 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	
+	if !player.is_interacting:
+		if !animator.is_playing():
+			self.visible = false
+			self.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		return
+	
+	if current_dialogue == null:
+		return
+	
 	
 	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
 	if script_directions["GAME"]["Processing"]:
@@ -179,6 +209,11 @@ func setValues(_player: Player):
 # Enables and prepares the Dialogue Interface and freezes the updating for the given subjects while the Interface is active
 func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
 	
+	button_conversation1.disabled = false
+	button_conversation2.disabled = false
+	button_conversation3.disabled = false
+	
+	
 	# Create an empty Array that will hold Character names
 	var character_names: Array[String] = []
 	
@@ -245,8 +280,7 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 				elif "user" in current_dialogue.conversations[conversation]["PLAY_WHEN"][keys[0]]:
 					
 					# Determine if this conversation hasn't been played yet, then set it as the conversation that will be played
-					if conversations_played.get(conversation_name) == null:
-						conversations_played.get_or_add(conversation_name, 1)
+					if conversations_played.get(conversation) == null:
 						conversation_name = conversation
 						break
 					
@@ -254,36 +288,106 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 					else:
 						conversation_options.append(conversation)
 	
-	
-	print("CONVO OPTIONS: ", conversation_options)
-	
+	# Determine if no conversation was automatically selected
 	if conversation_name == "":
-		player.is_interacting = false
-		return
+		
+		# Determine if there are conversation options for the user to manually select
+		if conversation_options.size() > 0:
+			current_dialogue.current_speaker_name = ""
+			text_character_name.text = ""
+			current_char_string = ""
+			current_char_index = 0
+		
+			# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
+			characters_active = dialogue_characters
+			
+			# Set line displayed as false to indicate that the current line hasn't been displayed yet
+			line_displayed = false
+			
+			# Create a string that will hold each of the character's names separated by commas
+			var characters_string: String
+			
+			# Iterate over each character name
+			for character in range(character_names.size() - 1, -1, -1):
+				
+				# If the character's name is player, remove the name from the list
+				if character_names[character] == "Player":
+					character_names.remove_at(character)
+			
+			if character_names.size() == 2:
+				# Set the dialogue's current line to instruct the user to select a convo to have with the characters
+				current_dialogue.current_line = "Select a conversation listed above to have with " + character_names[0] + " and " + character_names[1] + "."
+			
+			else:
+				
+				# Iterate over each character name
+				for character in range(0, character_names.size()):
+					
+					# Determine that this isn't the last character, then add a comma when adding their name to the string
+					if character != character_names.size() - 1:
+						characters_string = characters_string + character_names[character] + ", "
+						
+					# Otherwise, this is the last character, so add "and" and a "."
+					else:
+						characters_string = characters_string + "and " + character_names[character] + "."
+				
+				# Set the dialogue's current line to instruct the user to select a convo to have with the characters
+				current_dialogue.current_line = "Select a conversation listed above to have with " + characters_string
+			
+			text_conversation1_name.text = conversation_options[0].replace("-", " ")
+			
+			if conversation_options.size() > 1:
+				text_conversation2_name.text = conversation_options[1].replace("-", " ")
+			else:
+				text_conversation2_name.text = ""
+				button_conversation2.disabled = true
+			
+			if conversation_options.size() > 2:
+				text_conversation3_name.text = conversation_options[2].replace("-", " ")
+			else:
+				text_conversation3_name.text = ""
+				button_conversation3.disabled = true
+			
+			# Animate the UI onto the screen, then have it stay in place
+			animator.play("enter_UI")
+			animator.queue("enter_selection_UI")
+			animator.queue("stay_UI")
+		
+		# Otherwise, there are no automatically playing conversations and none for the user to play for this group of characters, so return and set them to be not interacting anymore
+		else:
+			player.is_interacting = false
+			return
 	
-	# Determine if this conversation hasn't been played yet, then add it to the list of conversations that have been played now that it has for the first time
-	if conversations_played.get(conversation_name) == null:
-		conversations_played.get_or_add(conversation_name, 1)
-	
-	# Otherwise, this conversation has played before but is playing again, so increment the number of times it has played by 1
+	# Otherwise, a conversation was automatically selected or manually passed into the start() call
 	else:
-		conversations_played.get_or_add(conversation_name, conversations_played.get(conversation_name) + 1)
+		
+		# Remove any conversation options there were
+		conversation_options.clear()
+		
+		# Determine if this conversation hasn't been played yet, then add it to the list of conversations that have been played now that it has for the first time
+		if conversations_played.get(conversation_name) == null:
+			conversations_played.get_or_add(conversation_name, 1)
+		
+		# Otherwise, this conversation has played before but is playing again, so increment the number of times it has played by 1
+		else:
+			conversations_played.get_or_add(conversation_name, conversations_played.get(conversation_name) + 1)
+			
+		# Prepare the conversation in the dialogue resource
+		current_dialogue.prepare_dialogue(conversation_name)
+		text_character_name.text = current_dialogue.current_speaker_name
+		current_char_string = ""
+		current_char_index = 0
+		
+		# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
+		characters_active = dialogue_characters
+		
+		# Set line displayed as false to indicate that the current line hasn't been displayed yet
+		line_displayed = false
+		
+		# Animate the UI onto the screen, then have it stay in place
+		animator.play("enter_UI")
+		animator.queue("stay_UI")
 	
-	
-	# Prepare the conversation in the dialogue resource
-	current_dialogue.prepare_dialogue(conversation_name)
-	text_character_name.text = current_dialogue.current_speaker_name
-	current_char_string = ""
-	current_char_index = 0
-	
-	
-	# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
-	characters_active = dialogue_characters
-	
-	# Set line displayed as false to indicate that the current line hasn't been displayed yet
-	line_displayed = false
-	
-	# Enable the Dialogue Interface
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
@@ -294,18 +398,15 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 	# Set the UI to be visible and processing
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
-	
-	# Animate the UI onto the screen, then have it stay in place
-	animator.play("enter_UI")
-	animator.queue("stay_UI")
 
 
 # Disables the Dialogue Interface
 func end():
+	conversation_options.clear()
 	
 	# Disable the Dialogue Interface and reset all of its values
 	current_dialogue = null
-	characters_active = []
+	#characters_active = []
 	line_displayed = false
 	current_char_index = 0
 	current_char_string = ""
@@ -314,17 +415,21 @@ func end():
 	text_textbox.text = ""
 	
 	
+	button_conversation1.disabled = true
+	button_conversation2.disabled = true
+	button_conversation3.disabled = true
+	button_next.disabled = true
+	button_back.disabled = true
+	button_exit.disabled = true
+	
+	
 	player.is_interacting = false
 	
 	# Unpause all of the characters' processing now that the interface is no longer active
 	for subject in frozen_subjects:
 		subject.paused = false
 	
-	# Set the UI to be invisible and not processing
-	self.visible = false
-	self.process_mode = Node.PROCESS_MODE_DISABLED
-	
-	animator.play("RESET")
+	animator.queue("RESET")
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -356,11 +461,33 @@ func play_parse_player_level(condition: String):
 	
 	elif operator == "!=":
 		return player.level_current != int(value)
-	
-	
+
 
 # Adjust the current line in the Dialogue forwards, flag the line to be displayed, and store the current direction of Dialogue
 func _on_next_button_down() -> void:
+	
+	# Determine if there are more than three conversation options and that the last option isn't already set
+	if conversation_options.size() > 3 and conversation_options[conversation_options.size() - 1] != text_conversation3_name.text:
+		
+		# Iterate over each conversation option until you reach the option stored in the first UI button
+		for conversation in range(0, conversation_options.size()):
+			
+			# Determine if the conversation of this iteration is the same conversation stored in the first UI button, then shift the buttons so that the next conversation option moves into the first UI button
+			if conversation_options[conversation] == text_conversation1_name.text:
+				text_conversation1_name.text = conversation_options[conversation + 1]
+				text_conversation2_name.text = conversation_options[conversation + 2]
+				text_conversation3_name.text = conversation_options[conversation + 3]
+				
+				if conversation + 3 == conversation_options.size() - 1:
+					button_next.disabled = true
+					button_back.disabled = false
+				else:
+					button_back.disabled = false
+					button_next.disabled = false
+				
+				break
+		
+		return
 	
 	if current_dialogue.adjust_current_line(true):
 		line_displayed = false
@@ -369,9 +496,43 @@ func _on_next_button_down() -> void:
 		current_char_index = 0
 		current_char_string = ""
 		
+		# If the line is not adjusted forward, disable the next button because there is no other lines
+		if !current_dialogue.adjust_current_line(true):
+			button_back.disabled = false
+			button_next.disabled = true
+		else:
+			button_back.disabled = false
+			button_next.disabled = false
+			current_dialogue.adjust_current_line(false)
+		
+		
 
 # Adjust the current line in the Dialogue backwards, flag the line to be displayed, and store the current direction of Dialogue
-func _on_previous_button_down() -> void:
+func _on_back_button_down() -> void:
+	
+	# Determine if there are more than three conversation options and that the first option isn't already set
+	if conversation_options.size() > 3 and conversation_options[0] != text_conversation1_name.text:
+		
+		# Iterate over each conversation option until you reach the option stored in the first UI button
+		for conversation in range(0, conversation_options.size()):
+			
+			# Determine if the conversation of this iteration is the same conversation stored in the third UI button, then shift the buttons so that the previous conversation option moves into the third UI button
+			if conversation_options[conversation] == text_conversation3_name.text:
+				text_conversation1_name.text = conversation_options[conversation - 3]
+				text_conversation2_name.text = conversation_options[conversation - 2]
+				text_conversation3_name.text = conversation_options[conversation - 1]
+				
+				if conversation - 3 == 0:
+					button_back.disabled = true
+					button_next.disabled = false
+				else:
+					button_back.disabled = false
+					button_next.disabled = false
+				
+				break
+		
+		return
+	
 	if current_dialogue.adjust_current_line(false):
 		line_displayed = false
 		dialogue_moving_forwards = false
@@ -381,7 +542,73 @@ func _on_previous_button_down() -> void:
 		
 		current_char_index = 0
 		current_char_string = ""
+		
+		if current_dialogue.current_line_number == current_dialogue.starting_line_number:
+			button_back.disabled = true
+			button_next.disabled = false
+		else:
+			button_back.disabled = false
+			button_next.disabled = false
 
 
 func _on_exit_button_down() -> void:
+
+	
 	end()
+
+
+func select_conversation(conversation_name: String):
+	button_conversation1.disabled = true
+	button_conversation2.disabled = true
+	button_conversation3.disabled = true
+	
+	button_next.disabled = false
+	
+	conversation_options.clear()
+	
+	animator.play("exit_selection_UI")
+	
+	# Determine if this conversation hasn't been played yet, then add it to the list of conversations that have been played now that it has for the first time
+	if conversations_played.get(conversation_name) == null:
+		conversations_played.get_or_add(conversation_name, 1)
+	
+	# Otherwise, this conversation has played before but is playing again, so increment the number of times it has played by 1
+	else:
+		conversations_played.get_or_add(conversation_name, conversations_played.get(conversation_name) + 1)
+	
+	
+	# Prepare the conversation in the dialogue resource
+	current_dialogue.prepare_dialogue(conversation_name)
+	text_character_name.text = current_dialogue.current_speaker_name
+	text_textbox.text = ""
+	current_char_string = ""
+	current_char_index = 0
+	
+	# Set line displayed as false to indicate that the current line hasn't been displayed yet
+	line_displayed = false
+
+
+
+func _on_conversation1_button_down() -> void:
+	select_conversation(text_conversation1_name.text)
+
+func _on_conversation2_button_down() -> void:
+	select_conversation(text_conversation2_name.text)
+
+func _on_conversation3_button_down() -> void:
+	select_conversation(text_conversation3_name.text)
+
+
+func _on_animator_current_animation_changed(animation_name: String) -> void:
+	
+	if animation_name == "stay_UI":
+		
+		if conversation_options.size() == 0:
+			button_back.disabled = true
+			button_next.disabled = false
+		
+		elif conversation_options.size() > 3:
+			button_back.disabled = true
+			button_next.disabled = false
+		
+		button_exit.disabled = false

@@ -126,14 +126,7 @@ func _ready() -> void:
 	
 	## Add the Food Citizen to the Game's SceneTree
 	#add_child(food_citizen)
-	
-	# CREATE NEW DIALOGUE RESOURCE CODE
-	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
-	#
-	#var temp = ["Brittany-Dan-Player"]
-	#
-	#for name in temp:
-		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
+
 	
 	InterfaceCharacterStatus = $"Player/Character Status"
 	InterfaceLevelUp = $"Player/Level-up"
@@ -148,6 +141,15 @@ func _ready() -> void:
 	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	InterfaceDialogue.setValues(PLAYER)
+	
+	## CREATE NEW DIALOGUE RESOURCE CODE
+	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
+	#
+	#var temp = ["Brittany-Dan-Player"]
+	#
+	#for character_name in temp:
+		#InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
+	
 	
 	timer_fade.start(0.1)
 
