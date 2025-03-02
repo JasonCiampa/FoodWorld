@@ -1,9 +1,22 @@
-extends Node2D
+extends Control
 
 class_name DialogueInterface
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+var text_textbox: Label
+var text_character_name: Label
+
+var image_character: TextureRect
+
+var button_next: TextureButton
+var button_back: TextureButton
+var button_exit: TextureButton
+
+var animator: AnimationPlayer
+
+var char_delay_timer: Timer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -22,9 +35,8 @@ class_name DialogueInterface
 
 var player: Player
 
-# Interface State #
-var active: bool = false
-var sleeping: bool = false
+var frozen_subjects: Array[Node2D]
+
 
 var conversations_played: Dictionary
 
@@ -32,9 +44,11 @@ var conversations_played: Dictionary
 var conversation_options: Array
 var current_dialogue: Resource
 var characters_active: Array[Node2D]
-var initiator: Node2D
 var dialogue_moving_forwards: bool
 var line_displayed: bool
+
+var current_char_index: int
+var current_char_string: String = ""
 
 
 # Script Directions #
@@ -65,13 +79,86 @@ var dialogue_direction: String
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	text_character_name = $"Textbox/Textbox Character Name Container/Textbox Character Name Text"
+	text_textbox = $"Textbox/Textbox Text Container/Textbox Text"
+	image_character = $"Textbox/Textbox Character Image Container2/Textbox Character Image" 
+	button_next = $"Next/Next Button Container/Next Button"
+	button_back = $"Back/Back Button Container/Previous Button"
+	button_exit = $"Exit/Exit Button Container/Exit Button"
+	animator = $"Animator"
+	char_delay_timer = $"Char Delay Timer"
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
+	
+	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
+	if script_directions["GAME"]["Processing"]:
+		
+		# Process Game Direction
+		print("Game Instruction: " + script_directions["GAME"]["Direction"])
+		
+		# If Game Direction is done being processed, set the Game value in the processing dictionary to false and remove the Game Direction from the direction dictionary
+		script_directions["GAME"]["Processing"] = false
+		script_directions["GAME"]["Direction"] = ""
+		
+		return
+	
+	
+	# Determine if the Dialogue Interface is currently processing a Dialogue Direction from the Dialogue Resource, then continue processing it
+	if script_directions["DIALOGUE"]["Processing"]:
+		
+		# Process Dialogue Direction
+		print("Dialogue Instruction: " + script_directions["DIALOGUE"]["Direction"])
+		
+		# If Dialogue Direction is done being processed, set the Dialogue value in the processing dictionary to false and remove the Dialogue Direction from the direction dictionary
+		script_directions["DIALOGUE"]["Processing"] = false
+		script_directions["DIALOGUE"]["Direction"] = ""
+		
+		return
+	
+	
+	# Determine if the current line of Dialogue is a Game or Dialogue Direction, then set the interface to appropriately handle the direction
+	if current_dialogue.current_speaker_name == "PLAY" or current_dialogue.current_speaker_name == "PLAY_WHEN":
+		
+		current_dialogue.adjust_current_line(true)
+	
+	
+	
+	elif current_dialogue.current_speaker_name == "GAME" or current_dialogue.current_speaker_name == "DIALOGUE":
+	
+		# Determine if the Dialogue is moving forwards, then store the Game Direction, advance the line to the the actual Dialogue, and begin processing the Game Direction
+		if dialogue_moving_forwards:
+			script_directions[current_dialogue.current_speaker_name]["Direction"] = current_dialogue.current_line
+			script_directions[current_dialogue.current_speaker_name]["Processing"] = true
+			current_dialogue.adjust_current_line(true)
+			
+		# The Dialogue is moving backwards which means no Game Directions need to be executed, so adjust the current line backwards
+		else:
+			current_dialogue.adjust_current_line(false)
+		
+		# Return so that the new current line can be processed appropriately
+		return
+	
+	
+	# Determine if the current line of Dialogue hasn't been displayed, then display it
+	if not line_displayed and not animator.current_animation == "enter_UI":
+		
+		if char_delay_timer.is_stopped():
+			current_char_index = current_char_index + 1
+			
+			if current_char_index == current_dialogue.current_line.length():
+				
+				# If all of the characters of the current line have been displayed:
+				line_displayed = true
+				text_textbox.text = current_dialogue.current_line
+			
+			current_char_string = current_dialogue.current_line.substr(0, current_char_index)
+			
+			text_textbox.text = current_char_string
+			
+			char_delay_timer.start(0.04)
 
 
 
@@ -84,36 +171,13 @@ func _physics_process(_delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Puts the Dialogue Interface to sleep so that it will not process Dialogue and Player Input until it wakes
-func sleep():
-	
-	# Determine if the Dialogue Interface is not already asleep, then play an animation to put it so sleep
-	if not sleeping:
-		pass
-		# Play an animation to hide the Dialogue Interface
-	
-	# Set the interface to be sleeping so it remains active but none of the Dialogue is updated
-	sleeping = true
-
-
-
-# Wakes up the Dialogue Interface so that it will begin processing Dialogue and Player Input again
-func wake():
-	
-	# Determine if the Dialogue Interface is asleep, then play an animation to wake it
-	if sleeping:
-		pass
-		# Play an animation to show the Dialogue Interface
-	
-	# Set the interface to not be sleeping so it starts updating Dialogue again
-	sleeping = false
+func setValues(_player: Player):
+	player = _player
 
 
 
 # Enables and prepares the Dialogue Interface and freezes the updating for the given subjects while the Interface is active
-func start(_player: Player, dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
-	
-	player = _player
+func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Create an empty Array that will hold Character names
 	var character_names: Array[String] = []
@@ -138,6 +202,10 @@ func start(_player: Player, dialogue_characters: Array[Node2D], dialogue_initiat
 	
 	# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
 	current_dialogue = load("res://resources/dialogue/" + file_name + ".tres")
+	
+	if current_dialogue == null:
+		return
+	
 	
 	# Determine if a conversation name was not specified, then attempt to automatically select one
 	if conversation_name == "":
@@ -170,28 +238,8 @@ func start(_player: Player, dialogue_characters: Array[Node2D], dialogue_initiat
 				# Determine if the conversation should play now
 				if "now" in current_dialogue.conversations[conversation]["PLAY_WHEN"][keys[0]]:
 					
-					print("oh yeah im jaking it")
 					conversation_name = conversation
 					break
-					
-					# THE COMMENTED OUT CODE BELOW WAS A WORK IN PROGRESS TOWARDS AN "UNLESS" CONDITION, WHICH BASICALLY SAYS PLAY THIS CONVERSATION NOW UNLESS THIS CONDITION IS TRUE, IN WHICH CASE LET THE USER DECIDE WHEN TO PLAY THE CONVO
-					# THIS MAY NOT BE NECESSARY
-					## Store the "unless" condition attached to the "now" (if there is one)
-					#var unless = conversation["PLAY_WHEN"].get_slice('=', 1)
-					#
-					#if unless.length() == 0:
-						#conversation_name = conversation
-						#break
-					#
-					#else:
-						#
-						## Trigger a callback function to process the play condition, and determine if it evaluates to false
-						#if not play_parser[callback].call(conversation["PLAY_WHEN"].substr(callback.length() + 1)):
-							#
-							## The condition was false so the conversation shouldn't play
-							#play_conditions_true = false
-							#
-							#break
 				
 				# Otherwise, this conversation doesn't need to be played now, so add the conversation name to a list of conversation options for the user to select from later (if no conversation auto-plays)
 				elif "user" in current_dialogue.conversations[conversation]["PLAY_WHEN"][keys[0]]:
@@ -209,6 +257,10 @@ func start(_player: Player, dialogue_characters: Array[Node2D], dialogue_initiat
 	
 	print("CONVO OPTIONS: ", conversation_options)
 	
+	if conversation_name == "":
+		player.is_interacting = false
+		return
+	
 	# Determine if this conversation hasn't been played yet, then add it to the list of conversations that have been played now that it has for the first time
 	if conversations_played.get(conversation_name) == null:
 		conversations_played.get_or_add(conversation_name, 1)
@@ -220,106 +272,60 @@ func start(_player: Player, dialogue_characters: Array[Node2D], dialogue_initiat
 	
 	# Prepare the conversation in the dialogue resource
 	current_dialogue.prepare_dialogue(conversation_name)
+	text_character_name.text = current_dialogue.current_speaker_name
+	current_char_string = ""
+	current_char_index = 0
+	
 	
 	# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
 	characters_active = dialogue_characters
-	
-	# Store the Player as the Dialogue initator since they are the only one who can (currently) start conversations (as of 1/19/25)
-	initiator = dialogue_initiator
 	
 	# Set line displayed as false to indicate that the current line hasn't been displayed yet
 	line_displayed = false
 	
 	# Enable the Dialogue Interface
-	active = true
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
 		subject.paused = true
+	
+	frozen_subjects = freeze_subjects
+	
+	# Set the UI to be visible and processing
+	self.visible = true
+	self.process_mode = Node.PROCESS_MODE_INHERIT
+	
+	# Animate the UI onto the screen, then have it stay in place
+	animator.play("enter_UI")
+	animator.queue("stay_UI")
 
 
 # Disables the Dialogue Interface
-func end(unfreeze_subjects: Array[Node2D]):
+func end():
 	
 	# Disable the Dialogue Interface and reset all of its values
 	current_dialogue = null
 	characters_active = []
-	initiator = null
 	line_displayed = false
-	active = false
+	current_char_index = 0
+	current_char_string = ""
+	
+	text_character_name.text = ""
+	text_textbox.text = ""
+	
+	
+	player.is_interacting = false
 	
 	# Unpause all of the characters' processing now that the interface is no longer active
-	for subject in unfreeze_subjects:
+	for subject in frozen_subjects:
 		subject.paused = false
+	
+	# Set the UI to be invisible and not processing
+	self.visible = false
+	self.process_mode = Node.PROCESS_MODE_DISABLED
+	
+	animator.play("RESET")
 
-
-
-# Processes all of the logic involved for the Dialogue Interface
-func process(_delta: float):
-	
-	# Determine if the Dialogue Interface is currently processing a Game Direction from the Dialogue Resource, then continue processing it
-	if script_directions["GAME"]["Processing"]:
-		
-		# Process Game Direction
-		print("Game Instruction: " + script_directions["GAME"]["Direction"])
-		
-		# If Game Direction is done being processed, set the Game value in the processing dictionary to false and remove the Game Direction from the direction dictionary, and wake up the Dialogue Interface
-		script_directions["GAME"]["Processing"] = false
-		script_directions["GAME"]["Direction"] = ""
-		wake()
-		return
-	
-	
-	# Determine if the Dialogue Interface is currently processing a Dialogue Direction from the Dialogue Resource, then continue processing it
-	if script_directions["DIALOGUE"]["Processing"]:
-		
-		# Process Dialogue Direction
-		print("Dialogue Instruction: " + script_directions["DIALOGUE"]["Direction"])
-		
-		# If Dialogue Direction is done being processed, set the Dialogue value in the processing dictionary to false and remove the Dialogue Direction from the direction dictionary
-		script_directions["DIALOGUE"]["Processing"] = false
-		script_directions["DIALOGUE"]["Direction"] = ""
-		
-		return
-	
-	
-	# Determine if the current line of Dialogue is a Game or Dialogue Direction, then set the interface to appropriately handle the direction
-	if current_dialogue.current_speaker_name == "GAME" or current_dialogue.current_speaker_name == "DIALOGUE":
-		
-		# Determine if the Dialogue is moving forwards, then store the Game Direction, advance the line to the the actual Dialogue, and begin processing the Game Direction
-		if dialogue_moving_forwards:
-			script_directions[current_dialogue.current_speaker_name]["Direction"] = current_dialogue.current_line
-			script_directions[current_dialogue.current_speaker_name]["Processing"] = true
-			current_dialogue.adjust_current_line(true)
-			
-		# The Dialogue is moving backwards which means no Game Directions need to be executed, so adjust the current line backwards
-		else:
-			current_dialogue.adjust_current_line(false)
-		
-		# Return so that the new current line can be processed appropriately
-		return
-	
-	
-	# Determine if the current line of Dialogue hasn't been displayed, then display it
-	if not line_displayed:
-		
-		# Iterate over characters of String and print them out (like I did in the Pokemon Game)
-		print("[" + str(current_dialogue.current_line_number) + "]  " + current_dialogue.current_speaker_name + ": " + current_dialogue.current_line)
-		
-		# If all of the characters of the current line have been displayed:
-		line_displayed = true
-		
-	else:
-		# Detect if the Player has tried to move backwards or forwards with the Dialogue, then adjust the current line in the Dialogue, flag the line to be displayed, and store the current direction of Dialogue
-		if Input.is_action_just_pressed("ability1"):
-			if current_dialogue.adjust_current_line(false):
-				line_displayed = false
-				dialogue_moving_forwards = false
-		
-		elif Input.is_action_just_pressed("ability2"):
-			if current_dialogue.adjust_current_line(true):
-				line_displayed = false
-				dialogue_moving_forwards = true
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -332,10 +338,6 @@ func play_parse_player_level(condition: String):
 	
 	var operator: String = condition.get_slice("|", 0)
 	var value: String = condition.get_slice("|", 1)
-	
-	print("Player Level Current", player.level_current)
-	print("Operator: ", operator)
-	print("Value: ", value)
 	
 	if operator == ">":
 		return player.level_current > int(value)
@@ -356,3 +358,30 @@ func play_parse_player_level(condition: String):
 		return player.level_current != int(value)
 	
 	
+
+# Adjust the current line in the Dialogue forwards, flag the line to be displayed, and store the current direction of Dialogue
+func _on_next_button_down() -> void:
+	
+	if current_dialogue.adjust_current_line(true):
+		line_displayed = false
+		dialogue_moving_forwards = true
+		text_character_name.text = current_dialogue.current_speaker_name
+		current_char_index = 0
+		current_char_string = ""
+		
+
+# Adjust the current line in the Dialogue backwards, flag the line to be displayed, and store the current direction of Dialogue
+func _on_previous_button_down() -> void:
+	if current_dialogue.adjust_current_line(false):
+		line_displayed = false
+		dialogue_moving_forwards = false
+		
+		if current_dialogue.current_speaker_name != "PLAY" and current_dialogue.current_speaker_name != "PLAY_WHEN":
+			text_character_name.text = current_dialogue.current_speaker_name
+		
+		current_char_index = 0
+		current_char_string = ""
+
+
+func _on_exit_button_down() -> void:
+	end()

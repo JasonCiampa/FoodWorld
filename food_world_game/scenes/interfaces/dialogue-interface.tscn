@@ -1,7 +1,562 @@
-[gd_scene load_steps=2 format=3 uid="uid://gey6ihfygnoo"]
+[gd_scene load_steps=13 format=3 uid="uid://gey6ihfygnoo"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/dialogue-interface.gd" id="1_7an0b"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="2_a3qod"]
+[ext_resource type="Texture2D" uid="uid://bqaj7ivftup1f" path="res://images/ui/png/food-buddy-feildstate-normal.png" id="3_he8fw"]
+[ext_resource type="Texture2D" uid="uid://blnyfq7j6m1n1" path="res://images/ui/png/food-buddy-feildstate-click.png" id="4_uml8e"]
+[ext_resource type="Texture2D" uid="uid://ce7rctow50wbl" path="res://images/ui/png/text-box.png" id="5_nyue3"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_4a5rx"]
+line_spacing = 15.0
+font = ExtResource("2_a3qod")
+font_size = 36
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
 
-[node name="Dialogue Interface" type="Node2D"]
+[sub_resource type="LabelSettings" id="LabelSettings_hhycm"]
+font = ExtResource("2_a3qod")
+font_size = 28
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_71h6c"]
+font = ExtResource("2_a3qod")
+font_size = 32
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_jppug"]
+resource_name = "enter_UI"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Textbox/Textbox Image Container:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.241667, 0.4, 0.566667, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Textbox/Textbox Text Container:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.241667, 0.4, 0.566667, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Textbox/Textbox Character Name Container:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.766667, 1.00833, 1.16667, 1.33333, 1.51667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Exit/Exit Button Container:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.9, 1.125, 1.28333, 1.45, 1.63333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Exit/Exit Button Text Container:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.9, 1.14167, 1.3, 1.46667, 1.65),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Back/Back Button Container:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(1.03333, 1.25833, 1.41666, 1.58333, 1.76666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Back/Back Button Text Container:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.03333, 1.275, 1.43333, 1.6, 1.78333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Next/Next Button Container:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.16667, 1.39167, 1.55, 1.71667, 1.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Next/Next Button Text Container:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.16667, 1.40833, 1.56667, 1.73333, 1.91667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.2, 1.2), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_otlxt"]
+resource_name = "stay_UI"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Textbox/Textbox Image Container:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Textbox/Textbox Text Container:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Textbox/Textbox Character Name Container:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Exit/Exit Button Container:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Exit/Exit Button Text Container:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Back/Back Button Container:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Back/Back Button Text Container:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Next/Next Button Container:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, 12)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Next/Next Button Text Container:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_8v5ib"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Textbox/Textbox Image Container:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Textbox/Textbox Text Container:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Textbox/Textbox Character Name Container:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Exit/Exit Button Container:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Exit/Exit Button Text Container:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Back/Back Button Container:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Back/Back Button Text Container:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Next/Next Button Container:scale")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Next/Next Button Text Container:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jrtsv"]
+_data = {
+"RESET": SubResource("Animation_8v5ib"),
+"enter_UI": SubResource("Animation_jppug"),
+"stay_UI": SubResource("Animation_otlxt")
+}
+
+[node name="Dialogue Interface" type="Control"]
+process_mode = 4
+visible = false
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_7an0b")
+
+[node name="Textbox" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Textbox Image Container" type="AspectRatioContainer" parent="Textbox"]
+layout_mode = 0
+offset_left = 151.0
+offset_top = 724.0
+offset_right = 1767.0
+offset_bottom = 1028.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(808, 152)
+
+[node name="Textbox Image" type="TextureRect" parent="Textbox/Textbox Image Container"]
+layout_mode = 2
+texture = ExtResource("5_nyue3")
+
+[node name="Textbox Text Container" type="AspectRatioContainer" parent="Textbox"]
+layout_mode = 0
+offset_left = 514.0
+offset_top = 753.0
+offset_right = 1714.0
+offset_bottom = 999.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(600, 123)
+alignment_horizontal = 0
+
+[node name="Textbox Text" type="Label" parent="Textbox/Textbox Text Container"]
+z_index = 3
+custom_minimum_size = Vector2(1200, 246)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+label_settings = SubResource("LabelSettings_4a5rx")
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Textbox Character Name Container" type="AspectRatioContainer" parent="Textbox"]
+offset_left = 34.0
+offset_top = 776.0
+offset_right = 607.0
+offset_bottom = 818.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(286.5, 21)
+
+[node name="Textbox Character Name Text" type="Label" parent="Textbox/Textbox Character Name Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "character"
+label_settings = SubResource("LabelSettings_hhycm")
+horizontal_alignment = 1
+
+[node name="Textbox Character Image Container2" type="AspectRatioContainer" parent="Textbox"]
+offset_left = 215.0
+offset_top = 836.0
+offset_right = 423.0
+offset_bottom = 980.0
+pivot_offset = Vector2(808, 152)
+
+[node name="Textbox Character Image" type="TextureRect" parent="Textbox/Textbox Character Image Container2"]
+layout_mode = 2
+
+[node name="Next" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Next Button Text Container" type="AspectRatioContainer" parent="Next"]
+offset_left = 1540.0
+offset_top = 1064.0
+offset_right = 1744.0
+offset_bottom = 1106.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(102, 21)
+
+[node name="Next Text" type="Label" parent="Next/Next Button Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "next"
+label_settings = SubResource("LabelSettings_71h6c")
+horizontal_alignment = 1
+
+[node name="Next Button Container" type="AspectRatioContainer" parent="Next"]
+layout_mode = 0
+offset_left = 1631.0
+offset_top = 1081.0
+offset_right = 1652.0
+offset_bottom = 1088.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(10.5, 3.5)
+
+[node name="Next Button" type="TextureButton" parent="Next/Next Button Container"]
+layout_mode = 2
+texture_normal = ExtResource("3_he8fw")
+texture_pressed = ExtResource("4_uml8e")
+
+[node name="Back" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Back Button Text Container" type="AspectRatioContainer" parent="Back"]
+offset_left = 1242.0
+offset_top = 1064.0
+offset_right = 1503.0
+offset_bottom = 1106.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(102, 21)
+
+[node name="Previous Text" type="Label" parent="Back/Back Button Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "back"
+label_settings = SubResource("LabelSettings_71h6c")
+horizontal_alignment = 1
+
+[node name="Back Button Container" type="AspectRatioContainer" parent="Back"]
+offset_left = 1363.0
+offset_top = 1081.0
+offset_right = 1384.0
+offset_bottom = 1088.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(10.5, 3.5)
+
+[node name="Previous Button" type="TextureButton" parent="Back/Back Button Container"]
+layout_mode = 2
+texture_normal = ExtResource("3_he8fw")
+texture_pressed = ExtResource("4_uml8e")
+
+[node name="Exit" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Exit Button Text Container" type="AspectRatioContainer" parent="Exit"]
+offset_left = 145.0
+offset_top = 1064.0
+offset_right = 406.0
+offset_bottom = 1106.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(102, 21)
+
+[node name="Exit Text" type="Label" parent="Exit/Exit Button Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "exit"
+label_settings = SubResource("LabelSettings_71h6c")
+horizontal_alignment = 1
+
+[node name="Exit Button Container" type="AspectRatioContainer" parent="Exit"]
+offset_left = 266.0
+offset_top = 1081.0
+offset_right = 287.0
+offset_bottom = 1088.0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset = Vector2(10.5, 3.5)
+
+[node name="Exit Button" type="TextureButton" parent="Exit/Exit Button Container"]
+layout_mode = 2
+texture_normal = ExtResource("3_he8fw")
+texture_pressed = ExtResource("4_uml8e")
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_jrtsv")
+}
+
+[node name="Char Delay Timer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="button_down" from="Next/Next Button Container/Next Button" to="." method="_on_next_button_down"]
+[connection signal="button_down" from="Back/Back Button Container/Previous Button" to="." method="_on_previous_button_down"]
+[connection signal="button_down" from="Exit/Exit Button Container/Exit Button" to="." method="_on_exit_button_down"]
