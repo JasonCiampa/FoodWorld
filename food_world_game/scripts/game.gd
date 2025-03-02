@@ -130,10 +130,10 @@ func _ready() -> void:
 	## Add the Food Citizen to the Game's SceneTree
 	#add_child(food_citizen)
 	
-	## CREATE NEW DIALOGUE RESOURCE CODE
-	#InterfaceDialogue.current_dialogue = load("res://dialogue.tres")
+	# CREATE NEW DIALOGUE RESOURCE CODE
+	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
 	#
-	#var temp = ["Malick-Player-Sally", "Malick-Player", "Citizen-Player", "Player-Sally"]
+	#var temp = ["Brittany-Dan-Player"]
 	#
 	#for name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(name)
@@ -535,8 +535,8 @@ func _on_player_escape_menu() -> void:
 		_on_player_disable_dialogue_interface()
 		PLAYER.is_interacting = false
 	
-	if InterfaceFoodBuddyFieldState.active:
-		InterfaceFoodBuddyFieldState.disable(get_all_assets_on_screen())
+	if InterfaceFoodBuddyFieldState.visible:
+		InterfaceFoodBuddyFieldState.end()
 
 
 
@@ -645,11 +645,11 @@ func _on_player_toggle_select_interface() -> void:
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.active or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
+	if InterfaceDialogue.active or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
 		return
 	
 	# Enable the Dialogue Interface
-	InterfaceDialogue.enable(characters, PLAYER, get_all_assets_on_screen(), conversation_name)
+	InterfaceDialogue.start(PLAYER, characters, PLAYER, get_all_assets_on_screen(), conversation_name)
 
 
 
@@ -658,7 +658,7 @@ func _on_player_disable_dialogue_interface():
 	
 	# Determine if the Dialogue Interface is active, then disable it
 	if InterfaceDialogue.active:
-		InterfaceDialogue.disable(get_all_assets_on_screen())
+		InterfaceDialogue.end(get_all_assets_on_screen())
 
 
 

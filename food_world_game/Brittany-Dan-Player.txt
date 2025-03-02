@@ -1,0 +1,61 @@
+Brittany-Dan-Player
+
+
+Team-Meeting
+1. PLAY: player_level=|>=|2
+2. PLAY_WHEN: now
+
+
+3. Player: Brittany, we have to find more berries for your sauna.
+4. Player: We’re starting to run low on juice boxes.
+
+
+5. Dan: Yeah, we used a lot of them against those rotten foods.
+6. Dan: They just keep coming! So many of them!
+
+
+7. Brittany: I agree, we should find more berries. My sauna is empty right now!
+8. Brittany: The problem is, this area is pretty scarce on berry bushes.
+
+
+9. Dan: The sugar forest has tons of berry bushes.
+10. Dan: The place is practically hopping with berries!
+
+
+11. Player: Great, let’s make our way there.
+
+
+
+
+Close-Call
+1. PLAY: player_level=|>=|3
+2. PLAY_WHEN: now
+
+
+3. Dan: Jeez! Those guys nearly had us!
+4. Dan: I think I jellied my dough.
+
+
+5. Player: What?
+
+
+6. Brittany: Yeah… what?
+
+
+7. Dan: I think I jellied my dough.
+
+
+8. Player: What does that mean?
+
+
+9. Dan: I think some of my jelly spilled out from my dough.
+10. Dan: When I get scared I leak a little.
+
+
+11. Brittany: Oh. Gotcha.
+
+
+12. Player: I think that’s the human equivalent of peeing your pants.
+
+
+13. Dan: What are pants?

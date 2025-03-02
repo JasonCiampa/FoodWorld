@@ -20,16 +20,22 @@ class_name DialogueInterface
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var player: Player
+
 # Interface State #
 var active: bool = false
 var sleeping: bool = false
 
+var conversations_played: Dictionary
+
 # Dialogue State #
+var conversation_options: Array
 var current_dialogue: Resource
 var characters_active: Array[Node2D]
 var initiator: Node2D
 var dialogue_moving_forwards: bool
 var line_displayed: bool
+
 
 # Script Directions #
 var script_directions: Dictionary = {
@@ -42,6 +48,11 @@ var script_directions: Dictionary = {
 		"Direction": "", 
 		"Processing": false
 	}
+}
+
+
+var play_parser: Dictionary = {
+	"player_level" : play_parse_player_level
 }
 
 var game_direction: String
@@ -100,7 +111,9 @@ func wake():
 
 
 # Enables and prepares the Dialogue Interface and freezes the updating for the given subjects while the Interface is active
-func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
+func start(_player: Player, dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, freeze_subjects: Array[Node2D], conversation_name: String = "") -> void:
+	
+	player = _player
 	
 	# Create an empty Array that will hold Character names
 	var character_names: Array[String] = []
@@ -126,23 +139,87 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 	# Load in the Dialogue Resource File, make the Dialogue Resource prepare the conversation that corresponds to the given conversation name, then store it into the Dialogue Interface
 	current_dialogue = load("res://resources/dialogue/" + file_name + ".tres")
 	
-	# Determine if a conversation name was specified, then load the specified conversation
-	if conversation_name != "":
-		current_dialogue.prepare_dialogue(conversation_name)
-	
-	# Otherwise, determine if a conversation should play automatically or if options should be presented to the Player to select from
-	else:
-		# Iterate through the appropriate and proper lists of conversations in the Dialogue Resource (based on Player location and other game state variables)
-		# Check Play conditions to see if a conversation should be played
-		# If it shouldn't be played, move on and repeat
-		# If it should be played, check if it should be played now or be saved as an option to play
-		# If it should be played now, set it as the conversation name and prepare the dialogue to play
-		# If it should be saved as option, save it and then continue checking play conditions and repeating the process
+	# Determine if a conversation name was not specified, then attempt to automatically select one
+	if conversation_name == "":
 		
-		# Create a new instance of a Random Number Generator, and use it to randomly select one of the two conversations that currently exist for each combination of Player and Food Buddy
-		var rng = RandomNumberGenerator.new()
-		var random_conversation_name: String = current_dialogue.conversations.keys()[rng.randi_range(0, 1)]
-		current_dialogue.prepare_dialogue(random_conversation_name)
+		# Iterate over every possible conversation included in this dialogue resource
+		for conversation in current_dialogue.conversations:
+			
+			var play_conditions_true: bool = true
+			
+			# Iterate over all of the play conditions in the conversation
+			for play_condition in current_dialogue.conversations[conversation]["PLAY"].keys():
+				
+				# Parse out the callback function to trigger that will process the play condition
+				var callback = current_dialogue.conversations[conversation]["PLAY"][play_condition].get_slice('=', 0)
+				
+				# Trigger a callback function to process the play condition, and determine if it evaluates to false
+				if not play_parser[callback].call(current_dialogue.conversations[conversation]["PLAY"][play_condition].substr(callback.length() + 2)):
+					
+					# The condition was false so the conversation shouldn't play
+					play_conditions_true = false
+					
+					break
+			
+			# Determine if the conversation's play conditions evaluated to true, then determine when the conversation should play
+			if play_conditions_true:
+				
+				# Store a reference to the list of keys that play_when has (this is actually just a list with a single key, because play_when only needs one value (now or user) (as of 3/1/25)
+				var keys = current_dialogue.conversations[conversation]["PLAY_WHEN"].keys()
+				
+				# Determine if the conversation should play now
+				if "now" in current_dialogue.conversations[conversation]["PLAY_WHEN"][keys[0]]:
+					
+					print("oh yeah im jaking it")
+					conversation_name = conversation
+					break
+					
+					# THE COMMENTED OUT CODE BELOW WAS A WORK IN PROGRESS TOWARDS AN "UNLESS" CONDITION, WHICH BASICALLY SAYS PLAY THIS CONVERSATION NOW UNLESS THIS CONDITION IS TRUE, IN WHICH CASE LET THE USER DECIDE WHEN TO PLAY THE CONVO
+					# THIS MAY NOT BE NECESSARY
+					## Store the "unless" condition attached to the "now" (if there is one)
+					#var unless = conversation["PLAY_WHEN"].get_slice('=', 1)
+					#
+					#if unless.length() == 0:
+						#conversation_name = conversation
+						#break
+					#
+					#else:
+						#
+						## Trigger a callback function to process the play condition, and determine if it evaluates to false
+						#if not play_parser[callback].call(conversation["PLAY_WHEN"].substr(callback.length() + 1)):
+							#
+							## The condition was false so the conversation shouldn't play
+							#play_conditions_true = false
+							#
+							#break
+				
+				# Otherwise, this conversation doesn't need to be played now, so add the conversation name to a list of conversation options for the user to select from later (if no conversation auto-plays)
+				elif "user" in current_dialogue.conversations[conversation]["PLAY_WHEN"][keys[0]]:
+					
+					# Determine if this conversation hasn't been played yet, then set it as the conversation that will be played
+					if conversations_played.get(conversation_name) == null:
+						conversations_played.get_or_add(conversation_name, 1)
+						conversation_name = conversation
+						break
+					
+					# Otherwise this conversation has already played once, so let the user determine if they want to play it again
+					else:
+						conversation_options.append(conversation)
+	
+	
+	print("CONVO OPTIONS: ", conversation_options)
+	
+	# Determine if this conversation hasn't been played yet, then add it to the list of conversations that have been played now that it has for the first time
+	if conversations_played.get(conversation_name) == null:
+		conversations_played.get_or_add(conversation_name, 1)
+	
+	# Otherwise, this conversation has played before but is playing again, so increment the number of times it has played by 1
+	else:
+		conversations_played.get_or_add(conversation_name, conversations_played.get(conversation_name) + 1)
+	
+	
+	# Prepare the conversation in the dialogue resource
+	current_dialogue.prepare_dialogue(conversation_name)
 	
 	# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
 	characters_active = dialogue_characters
@@ -161,9 +238,8 @@ func enable(dialogue_characters: Array[Node2D], dialogue_initiator: Node2D, free
 		subject.paused = true
 
 
-
 # Disables the Dialogue Interface
-func disable(unfreeze_subjects: Array[Node2D]):
+func end(unfreeze_subjects: Array[Node2D]):
 	
 	# Disable the Dialogue Interface and reset all of its values
 	current_dialogue = null
@@ -246,3 +322,37 @@ func process(_delta: float):
 				dialogue_moving_forwards = true
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# PLAY PARSER #
+
+# Parses the play instruction with this format: 'PLAY: player_level=|>=|1'
+func play_parse_player_level(condition: String):
+	
+	var operator: String = condition.get_slice("|", 0)
+	var value: String = condition.get_slice("|", 1)
+	
+	print("Player Level Current", player.level_current)
+	print("Operator: ", operator)
+	print("Value: ", value)
+	
+	if operator == ">":
+		return player.level_current > int(value)
+	
+	elif operator == ">=":
+		return player.level_current >= int(value)
+	
+	elif operator == "<":
+		return player.level_current < int(value)
+	
+	elif operator == "<=":
+		return player.level_current <= int(value)
+	
+	elif operator == "==":
+		return player.level_current == int(value)
+	
+	elif operator == "!=":
+		return player.level_current != int(value)
+	
+	

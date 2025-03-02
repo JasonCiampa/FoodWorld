@@ -101,7 +101,7 @@ func prepare_dialogue(conversation_name: String):
 		for character_name in conversation_current:
 		
 			# Determine if the Character name isn't actually a Play, Game, or Dialogue instruction
-			if character_name != "PLAY" and character_name != "GAME" and character_name != "DIALOGUE":
+			if character_name != "PLAY" and character_name != "PLAY_WHEN" and character_name != "GAME" and character_name != "DIALOGUE":
 				
 				# Determine if this character has the line that matches the line number, then set that character as the current speaker and break out of the for loop
 				if conversation_current[character_name].get(current_line_number) != null:
@@ -156,7 +156,9 @@ func create_and_save_resource(txt_file_name: String):
 		var conversation_name = current_line
 		var conversation: Dictionary = {
 			"GAME": {}, 
-			"DIALOGUE": {}
+			"DIALOGUE": {},
+			"PLAY": {},
+			"PLAY_WHEN": {},
 		}
 		
 		# Create a key with each Character's name for the conversation and assign it an empty dictionary that will eventually hold their Dialogue
@@ -188,21 +190,24 @@ func create_and_save_resource(txt_file_name: String):
 			# Store the next line of the text file as the current line. This should be a line of Dialogue from the current conversation, or the name of the next conversation, or maybe the end of the file
 			current_line = txt_file.get_line()
 			
+			
 			# If the new current line is the end of the file, end the algorithm
 			if txt_file.eof_reached():
 				break
 			
 			# If the new current line is an empty line, move it onto the next line over and over until it isn't on an empty line
 			while current_line == "":
-				current_line = txt_file.get_line()	
+				
+				current_line = txt_file.get_line()
+		
 		
 		# Add the conversation that was just parsed and stored in the previous while loop into the Resource's Dictionary of conversations with this conversation's name as the key
 		conversations[conversation_name] = conversation
 		conversation_current = conversations[conversation_name]
-		
-		
+	
+	
 	# Save this Resource with it's file name in the Dialogue folder
-	ResourceSaver.save(self, "res://dialogue/" + file_name + ".tres")
+	ResourceSaver.save(self, "res://resources/dialogue/" + file_name + ".tres")
 	
 	# Close the txt_file now that we've finished parsing it
 	txt_file.close()
