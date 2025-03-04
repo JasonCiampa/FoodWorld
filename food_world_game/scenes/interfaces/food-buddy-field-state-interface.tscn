@@ -1,8 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://oldpeuxuhha0"]
+[gd_scene load_steps=13 format=3 uid="uid://oldpeuxuhha0"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/food-buddy-field-state-interface.gd" id="1_yca3t"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="2_1e4c2"]
 [ext_resource type="Texture2D" uid="uid://bqaj7ivftup1f" path="res://images/ui/png/food-buddy-feildstate-normal.png" id="5_4pp11"]
+[ext_resource type="Texture2D" uid="uid://b44b8q3jdciqe" path="res://images/ui/png/food-buddy-feildstate-hover.png" id="5_rojl5"]
+[ext_resource type="Texture2D" uid="uid://bqnbk84qeck06" path="res://images/ui/png/food-buddy-feildstate-disabled.png" id="6_slwoq"]
 [ext_resource type="Texture2D" uid="uid://blnyfq7j6m1n1" path="res://images/ui/png/food-buddy-feildstate-click.png" id="6_sp81h"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_pqhe1"]
@@ -668,7 +670,9 @@ pivot_offset = Vector2(10, 4)
 [node name="Buddy 1 SOLO State Button" type="TextureButton" parent="Buddy 1 Field States/Buddy 1 SOLO State/Buddy 1 SOLO State Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("5_4pp11")
-texture_disabled = ExtResource("6_sp81h")
+texture_pressed = ExtResource("6_sp81h")
+texture_hover = ExtResource("5_rojl5")
+texture_disabled = ExtResource("6_slwoq")
 
 [node name="Buddy 1 FOLLOW State" type="Control" parent="Buddy 1 Field States"]
 layout_mode = 3
@@ -706,7 +710,9 @@ pivot_offset = Vector2(10, 4)
 [node name="Buddy 1 FOLLOW State Button" type="TextureButton" parent="Buddy 1 Field States/Buddy 1 FOLLOW State/Buddy 1 FOLLOW State Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("5_4pp11")
-texture_disabled = ExtResource("6_sp81h")
+texture_pressed = ExtResource("6_sp81h")
+texture_hover = ExtResource("5_rojl5")
+texture_disabled = ExtResource("6_slwoq")
 
 [node name="Buddy 1 FORAGE State" type="Control" parent="Buddy 1 Field States"]
 layout_mode = 3
@@ -744,7 +750,9 @@ pivot_offset = Vector2(10, 4)
 [node name="Buddy 1 FORAGE State Button" type="TextureButton" parent="Buddy 1 Field States/Buddy 1 FORAGE State/Buddy 1 FORAGE State Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("5_4pp11")
-texture_disabled = ExtResource("6_sp81h")
+texture_pressed = ExtResource("6_sp81h")
+texture_hover = ExtResource("5_rojl5")
+texture_disabled = ExtResource("6_slwoq")
 
 [node name="Buddy 2 Field States" type="Control" parent="."]
 layout_mode = 3
@@ -806,7 +814,9 @@ pivot_offset = Vector2(10, 4)
 [node name="Buddy 2 SOLO State Button" type="TextureButton" parent="Buddy 2 Field States/Buddy 2 SOLO State/Buddy 2 SOLO State Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("5_4pp11")
-texture_disabled = ExtResource("6_sp81h")
+texture_pressed = ExtResource("6_sp81h")
+texture_hover = ExtResource("5_rojl5")
+texture_disabled = ExtResource("6_slwoq")
 
 [node name="Buddy 2 FOLLOW State" type="Control" parent="Buddy 2 Field States"]
 layout_mode = 3
@@ -844,7 +854,9 @@ pivot_offset = Vector2(10, 4)
 [node name="Buddy 2 FOLLOW State Button" type="TextureButton" parent="Buddy 2 Field States/Buddy 2 FOLLOW State/Buddy 2 FOLLOW State Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("5_4pp11")
-texture_disabled = ExtResource("6_sp81h")
+texture_pressed = ExtResource("6_sp81h")
+texture_hover = ExtResource("5_rojl5")
+texture_disabled = ExtResource("6_slwoq")
 
 [node name="Buddy 2 FORAGE State" type="Control" parent="Buddy 2 Field States"]
 layout_mode = 3
@@ -882,7 +894,9 @@ pivot_offset = Vector2(10, 4)
 [node name="Buddy 2 FORAGE State State Button" type="TextureButton" parent="Buddy 2 Field States/Buddy 2 FORAGE State/Buddy 2 FORAGE State Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("5_4pp11")
-texture_disabled = ExtResource("6_sp81h")
+texture_pressed = ExtResource("6_sp81h")
+texture_hover = ExtResource("5_rojl5")
+texture_disabled = ExtResource("6_slwoq")
 
 [node name="Animator" type="AnimationPlayer" parent="."]
 libraries = {
