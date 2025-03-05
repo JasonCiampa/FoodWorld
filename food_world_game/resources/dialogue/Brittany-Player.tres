@@ -1,0 +1,62 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_lb652"]
+
+[resource]
+script = ExtResource("1_lb652")
+conversations = {
+"Feeling Blue": {
+"Brittany": {
+3: "*Sigh*",
+5: "Yeah, I'm just feeling a little blue.",
+7: "Wh-?",
+8: "You?",
+9: "What's so funny?",
+11: "That I'm WHAT?!",
+13: "No, of course it wasn't a pun.",
+14: "There'd be nothing funny about that."
+},
+"DIALOGUE": {},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+4: "Are you alright, Brittany?",
+6: "Hahah, I get it, good one.",
+10: "You- uh- you said you're feeling blue, and it's just that you're-",
+12: "You're blue! You are literally blue! I thought it was a pun!",
+15: "Ok, my bad. Jeez."
+}
+}
+}
+conversation_current = {
+"Brittany": {
+3: "*Sigh*",
+5: "Yeah, I'm just feeling a little blue.",
+7: "Wh-?",
+8: "You?",
+9: "What's so funny?",
+11: "That I'm WHAT?!",
+13: "No, of course it wasn't a pun.",
+14: "There'd be nothing funny about that."
+},
+"DIALOGUE": {},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+4: "Are you alright, Brittany?",
+6: "Hahah, I get it, good one.",
+10: "You- uh- you said you're feeling blue, and it's just that you're-",
+12: "You're blue! You are literally blue! I thought it was a pun!",
+15: "Ok, my bad. Jeez."
+}
+}

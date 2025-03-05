@@ -1,0 +1,26 @@
+﻿Link-Player
+
+
+Side Effects
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Player: Link, are you sure you're okay with me using you like nunchucks?
+4. Player: I wouldn't want to do it if it hurts you.
+
+
+5. Link: No, I'm totally fine with it!
+6. Link: Sure, sometimes everything goes dark for a second.
+7. Link: But it always goes light again... eventually!
+
+
+8. Player: Oh, I- uh...
+9. Player: Well, that's probably not great, Link.
+
+
+10. Link: Nah, it's actually pretty normal!
+11. Link: I'm narcoleptic.
+
+
+12. Player: Oh. Alright, that makes sense then. I think.

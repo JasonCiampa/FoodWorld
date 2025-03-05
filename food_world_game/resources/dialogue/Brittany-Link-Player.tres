@@ -1,0 +1,68 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_c0yt7"]
+
+[resource]
+script = ExtResource("1_c0yt7")
+conversations = {
+"Grease Juice": {
+"Brittany": {
+5: "No, I don't think that'll be necessary.",
+9: "Maybe, but I don't think anyone would enjoy it aside from Link.",
+12: "My juice has actual nutrition. Yours is basically sweat."
+},
+"DIALOGUE": {},
+"GAME": {},
+"Link": {
+3: "Brittany, if we're ever running low on juice, feel free to use my grease!",
+4: "It's quite nutritious and has a kick to it!",
+10: "What?! Now that's just rude. You can't knock it till you've tried it!",
+11: "Why do we always gotta drink YOUR kind of juice, Brittany? Why?!",
+16: "We'd better!!"
+},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+6: "Well, you never really know right?",
+7: "What if we get trapped somewhere and can't forage any berries?",
+8: "Could we survive on Link's grease if we had to?",
+13: "Oh jeez, well when you put it like that it's a hard no from me.",
+14: "Link, I don't think we'll need to consume your grease. ",
+15: "Maybe we can use it for something else down the line."
+}
+}
+}
+conversation_current = {
+"Brittany": {
+5: "No, I don't think that'll be necessary.",
+9: "Maybe, but I don't think anyone would enjoy it aside from Link.",
+12: "My juice has actual nutrition. Yours is basically sweat."
+},
+"DIALOGUE": {},
+"GAME": {},
+"Link": {
+3: "Brittany, if we're ever running low on juice, feel free to use my grease!",
+4: "It's quite nutritious and has a kick to it!",
+10: "What?! Now that's just rude. You can't knock it till you've tried it!",
+11: "Why do we always gotta drink YOUR kind of juice, Brittany? Why?!",
+16: "We'd better!!"
+},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+6: "Well, you never really know right?",
+7: "What if we get trapped somewhere and can't forage any berries?",
+8: "Could we survive on Link's grease if we had to?",
+13: "Oh jeez, well when you put it like that it's a hard no from me.",
+14: "Link, I don't think we'll need to consume your grease. ",
+15: "Maybe we can use it for something else down the line."
+}
+}

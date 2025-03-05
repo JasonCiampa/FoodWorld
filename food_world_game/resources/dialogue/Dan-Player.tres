@@ -1,0 +1,62 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_xujcy"]
+
+[resource]
+script = ExtResource("1_xujcy")
+conversations = {
+"Fastest Roll": {
+"DIALOGUE": {},
+"Dan": {
+4: "Hmm...",
+5: "Probably while making my escape after my world renowned coliseum heist.",
+7: "Most certainly!",
+9: "Yes, of course!",
+11: "A rock from the battleground!",
+12: "It's valuable because it's hard to step foot in there and make it out alive!",
+13: "Good thing I wasn't actually fighting, I just rolled in and out real quick.",
+15: "You bet!"
+},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+3: "Dan, what would you say is the fastest you've ever rolled?",
+6: "Wait- you robbed the coliseum?!",
+8: "All by yourself?",
+10: "What did you rob exactly?",
+14: "So... your \"world renowned\" coliseum heist... was for a rock?"
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {},
+"Dan": {
+4: "Hmm...",
+5: "Probably while making my escape after my world renowned coliseum heist.",
+7: "Most certainly!",
+9: "Yes, of course!",
+11: "A rock from the battleground!",
+12: "It's valuable because it's hard to step foot in there and make it out alive!",
+13: "Good thing I wasn't actually fighting, I just rolled in and out real quick.",
+15: "You bet!"
+},
+"GAME": {},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+3: "Dan, what would you say is the fastest you've ever rolled?",
+6: "Wait- you robbed the coliseum?!",
+8: "All by yourself?",
+10: "What did you rob exactly?",
+14: "So... your \"world renowned\" coliseum heist... was for a rock?"
+}
+}

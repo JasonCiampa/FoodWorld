@@ -64,6 +64,7 @@ var InterfaceFoodBuddyFieldState: FoodBuddyFieldStateInterface
 var InterfaceFoodBuddySelection: FoodBuddySelectInterface
 var InterfaceGameOver: GameOverInterface
 var InterfaceDialogue: DialogueInterface
+var InterfaceBerryBot: BerryBotInterface
 
 # Managers #
 var GameTileManager: TileManager
@@ -134,6 +135,7 @@ func _ready() -> void:
 	InterfaceFoodBuddySelection = $"Player/Food Buddy Select"
 	InterfaceGameOver = $"Player/Game Over"
 	InterfaceDialogue = $"Player/Dialogue Interface"
+	InterfaceBerryBot = $"Player/Berry Bot Interface"
 	
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 	InterfaceLevelUp.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
@@ -141,14 +143,16 @@ func _ready() -> void:
 	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	InterfaceDialogue.setValues(PLAYER)
+	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
 	
-	## CREATE NEW DIALOGUE RESOURCE CODE
-	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
-	#
-	#var temp = ["Brittany-Dan-Player"]
-	#
-	#for character_name in temp:
-		#InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
+	
+	# CREATE NEW DIALOGUE RESOURCE CODE
+	InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
+	
+	var temp = ["Brittany-Link-Player", "Brittany-Player", "Dan-Link-Player", "Dan-Player", "Link-Player"]
+	
+	for character_name in temp:
+		InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
 	
 	
 	timer_fade.start(0.1)
@@ -378,15 +382,29 @@ func process_player_nearby_interactables():
 		
 		# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
 		if interactable.global_position.distance_to(PLAYER.global_position) < closest_interactable_to_player.global_position.distance_to(PLAYER.global_position):
+			if closest_interactable_to_player.name == "Brittany":
+				closest_interactable_to_player.text_press_f_for_berry_bot.hide()
+			
 			closest_interactable_to_player.label_e_to_interact.hide()
 			closest_interactable_to_player = interactable
 	
-	
 	# Determine whether or not the closest Interactable to the Player is in range of the Player's hitbox, then show/hide their interaction prompt
 	if closest_interactable_to_player.in_range:
+		
+		# If the interactable closest to the Player is a Bush and has no berries or the Player is full on berries, don't consider it for interaction
+		if "Bush" in closest_interactable_to_player.name and (closest_interactable_to_player.berries == 0 or PLAYER.berries == PLAYER.berries_max):
+			return
+		
 		closest_interactable_to_player.label_e_to_interact.show()
+		
+		if closest_interactable_to_player.name == "Brittany":
+			closest_interactable_to_player.text_press_f_for_berry_bot.show()
+		
 	else:
 		closest_interactable_to_player.label_e_to_interact.hide()
+		
+		if closest_interactable_to_player.name == "Brittany":
+			closest_interactable_to_player.text_press_f_for_berry_bot.hide()
 
 
 
@@ -499,6 +517,10 @@ func _on_player_interact(delta: float) -> void:
 	# Determine if the closest Interactable to the Player is in range for an interaction, then trigger the interaction
 	if closest_interactable_to_player.in_range:
 		
+		# Determine if Brittany is the closest interactable, then ensure her berry bot prompt is disabled too.
+		if closest_interactable_to_player == BRITTANY:
+			closest_interactable_to_player.text_press_f_for_berry_bot.hide()
+		
 		# Set the Player to be interacting and remove the label above the Interactable
 		PLAYER.is_interacting = true
 		closest_interactable_to_player.label_e_to_interact.hide()
@@ -519,10 +541,14 @@ func _on_player_interact(delta: float) -> void:
 		
 		# Otherwise, determine if the closest Interactable is a Bush or Building, then trigger the interaction with them
 		elif closest_interactable_to_player is Bush or Building:
-			closest_interactable_to_player.interact_with_player(PLAYER, delta)
-			PLAYER.is_interacting = false
-		
+			if "Bush" in closest_interactable_to_player.name:
+				if closest_interactable_to_player.berries != 0 and PLAYER.berries != PLAYER.berries_max:
+					closest_interactable_to_player.interact_with_player(PLAYER, delta)
+			else:
+				closest_interactable_to_player.interact_with_player(PLAYER, delta)
 			
+			PLAYER.is_interacting = false
+
 
 
 
@@ -608,7 +634,7 @@ func _on_player_toggle_buddy_fusion_equipped() -> void:
 func _on_player_toggle_field_state_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
+	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible or InterfaceBerryBot.visible:
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
@@ -623,7 +649,7 @@ func _on_player_toggle_field_state_interface() -> void:
 func _on_player_toggle_select_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
-	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceGameOver.visible or InterfaceFoodBuddyFieldState.visible:
+	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceGameOver.visible or InterfaceFoodBuddyFieldState.visible or InterfaceBerryBot.visible:
 		print(InterfaceDialogue.visible)
 		return
 	
@@ -638,20 +664,26 @@ func _on_player_toggle_select_interface() -> void:
 func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversation_name: String = "") -> void:
 	
 	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
-	if InterfaceDialogue.visible or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
+	if InterfaceDialogue.visible or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible or InterfaceBerryBot.visible:
 		return
 	
 	# Enable the Dialogue Interface
 	InterfaceDialogue.start(characters, get_all_assets_on_screen(), conversation_name)
 
 
-
-# Callback function that executes whenever the Player wants to disable the Dialogue interface
-func _on_player_disable_dialogue_interface():
+func _on_player_toggle_berry_bot_interface():
 	
-	# Determine if the Dialogue Interface is active, then disable it
-	if InterfaceDialogue.visible:
-		InterfaceDialogue.end()
+	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
+	if InterfaceDialogue.visible or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
+		return
+	
+	if closest_interactable_to_player == BRITTANY and closest_interactable_to_player.in_range:
+		# Set the Player to be interacting and remove the label above the Interactable
+		PLAYER.is_interacting = true
+		closest_interactable_to_player.label_e_to_interact.hide()
+		closest_interactable_to_player.text_press_f_for_berry_bot.hide()
+		
+		InterfaceBerryBot.start(get_all_assets_on_screen())
 
 
 

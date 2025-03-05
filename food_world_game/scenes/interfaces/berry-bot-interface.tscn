@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://kcn5t15cgqyp"]
+[gd_scene load_steps=10 format=3 uid="uid://kcn5t15cgqyp"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/berry-bot-interface.gd" id="1_i0rd1"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="1_u4rtl"]
 [ext_resource type="Texture2D" uid="uid://blh6lim2k2ox4" path="res://images/ui/png/button-normal-cube.png" id="2_1ap0j"]
 [ext_resource type="Texture2D" uid="uid://bqaj7ivftup1f" path="res://images/ui/png/food-buddy-feildstate-normal.png" id="3_ra157"]
 [ext_resource type="Texture2D" uid="uid://blnyfq7j6m1n1" path="res://images/ui/png/food-buddy-feildstate-click.png" id="4_6un0e"]
+[ext_resource type="Texture2D" uid="uid://b44b8q3jdciqe" path="res://images/ui/png/food-buddy-feildstate-hover.png" id="6_1r3si"]
+[ext_resource type="Texture2D" uid="uid://bqnbk84qeck06" path="res://images/ui/png/food-buddy-feildstate-disabled.png" id="7_tdm4i"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_f7v74"]
 line_spacing = 10.0
@@ -93,38 +95,6 @@ scale = Vector2(4, 6)
 layout_mode = 2
 texture = ExtResource("2_1ap0j")
 
-[node name="Occupancy" type="Control" parent="Sauna"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = -17.0
-offset_right = 23.0
-offset_bottom = 40.0
-
-[node name="Occupancy Text Container" type="AspectRatioContainer" parent="Sauna/Occupancy"]
-offset_left = -240.0
-offset_top = 272.0
-offset_right = 1317.0
-offset_bottom = 398.0
-
-[node name="Occupancy Text" type="Label" parent="Sauna/Occupancy/Occupancy Text Container"]
-z_index = 3
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "occupancy"
-label_settings = SubResource("LabelSettings_fcrha")
-
-[node name="Textbox Image Container" type="AspectRatioContainer" parent="Sauna/Occupancy"]
-offset_left = 387.0
-offset_top = 255.0
-offset_right = 900.0
-offset_bottom = 389.0
-scale = Vector2(2, 0.5)
-
-[node name="Textbox Image" type="TextureRect" parent="Sauna/Occupancy/Textbox Image Container"]
-layout_mode = 2
-texture = ExtResource("2_1ap0j")
-
 [node name="Deposit" type="Control" parent="Sauna"]
 anchors_preset = 0
 offset_left = -17.0
@@ -132,10 +102,11 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Deposit Text Container" type="AspectRatioContainer" parent="Sauna/Deposit"]
+layout_mode = 0
 offset_left = -240.0
-offset_top = 862.0
+offset_top = 681.0
 offset_right = 1317.0
-offset_bottom = 988.0
+offset_bottom = 807.0
 
 [node name="Deposit Text" type="Label" parent="Sauna/Deposit/Deposit Text Container"]
 z_index = 3
@@ -148,17 +119,18 @@ label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Deposit Button Container" type="AspectRatioContainer" parent="Sauna/Deposit"]
 layout_mode = 0
-offset_left = 527.0
-offset_top = 875.0
-offset_right = 548.0
-offset_bottom = 882.0
+offset_left = 414.0
+offset_top = 652.0
+offset_right = 435.0
+offset_bottom = 659.0
 scale = Vector2(12, 12)
-pivot_offset = Vector2(10.5, 3.5)
 
 [node name="Deposit Button" type="TextureButton" parent="Sauna/Deposit/Deposit Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("3_ra157")
-texture_disabled = ExtResource("4_6un0e")
+texture_pressed = ExtResource("4_6un0e")
+texture_hover = ExtResource("6_1r3si")
+texture_disabled = ExtResource("7_tdm4i")
 
 [node name="Berries" type="Control" parent="Sauna"]
 layout_mode = 3
@@ -168,6 +140,7 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Berries Text Container" type="AspectRatioContainer" parent="Sauna/Berries"]
+layout_mode = 0
 offset_left = -240.0
 offset_top = 781.0
 offset_right = 1317.0
@@ -182,6 +155,7 @@ text = "berries"
 label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Pipe Image Container" type="AspectRatioContainer" parent="Sauna/Berries"]
+layout_mode = 0
 offset_left = 387.0
 offset_top = 764.0
 offset_right = 900.0
@@ -189,6 +163,40 @@ offset_bottom = 898.0
 scale = Vector2(2, 0.5)
 
 [node name="Pipe Image" type="TextureRect" parent="Sauna/Berries/Pipe Image Container"]
+layout_mode = 2
+texture = ExtResource("2_1ap0j")
+
+[node name="Occupancy" type="Control" parent="Sauna"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -17.0
+offset_right = 23.0
+offset_bottom = 40.0
+
+[node name="Occupancy Text Container" type="AspectRatioContainer" parent="Sauna/Occupancy"]
+layout_mode = 0
+offset_left = -240.0
+offset_top = 272.0
+offset_right = 1317.0
+offset_bottom = 398.0
+
+[node name="Occupancy Text" type="Label" parent="Sauna/Occupancy/Occupancy Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "occupancy"
+label_settings = SubResource("LabelSettings_fcrha")
+
+[node name="Textbox Image Container" type="AspectRatioContainer" parent="Sauna/Occupancy"]
+layout_mode = 0
+offset_left = 387.0
+offset_top = 255.0
+offset_right = 900.0
+offset_bottom = 389.0
+scale = Vector2(2, 0.5)
+
+[node name="Textbox Image" type="TextureRect" parent="Sauna/Occupancy/Textbox Image Container"]
 layout_mode = 2
 texture = ExtResource("2_1ap0j")
 
@@ -225,10 +233,11 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Juice Text Container" type="AspectRatioContainer" parent="Crafting/Juice"]
+layout_mode = 0
 offset_left = 847.0
-offset_top = 781.0
+offset_top = 629.0
 offset_right = 2404.0
-offset_bottom = 907.0
+offset_bottom = 755.0
 
 [node name="Juice Text" type="Label" parent="Crafting/Juice/Juice Text Container"]
 z_index = 3
@@ -239,10 +248,11 @@ text = "juice"
 label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Textbox Image Container" type="AspectRatioContainer" parent="Crafting/Juice"]
+layout_mode = 0
 offset_left = 1474.0
-offset_top = 764.0
+offset_top = 612.0
 offset_right = 1987.0
-offset_bottom = 898.0
+offset_bottom = 746.0
 scale = Vector2(2, 0.5)
 
 [node name="Textbox Image" type="TextureRect" parent="Crafting/Juice/Textbox Image Container"]
@@ -256,10 +266,11 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Craft Text Container" type="AspectRatioContainer" parent="Crafting/Craft"]
-offset_left = 608.0
-offset_top = 862.0
-offset_right = 2165.0
-offset_bottom = 988.0
+layout_mode = 0
+offset_left = 850.0
+offset_top = 549.5
+offset_right = 2407.0
+offset_bottom = 675.5
 
 [node name="Craft Text" type="Label" parent="Crafting/Craft/Craft Text Container"]
 z_index = 3
@@ -272,17 +283,19 @@ label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Craft Button Container" type="AspectRatioContainer" parent="Crafting/Craft"]
 layout_mode = 0
-offset_left = 1375.0
-offset_top = 875.0
-offset_right = 1396.0
-offset_bottom = 882.0
+offset_left = 1617.0
+offset_top = 562.5
+offset_right = 1638.0
+offset_bottom = 569.5
 scale = Vector2(12, 12)
 pivot_offset = Vector2(10.5, 3.5)
 
 [node name="Craft Button" type="TextureButton" parent="Crafting/Craft/Craft Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("3_ra157")
-texture_disabled = ExtResource("4_6un0e")
+texture_pressed = ExtResource("4_6un0e")
+texture_hover = ExtResource("6_1r3si")
+texture_disabled = ExtResource("7_tdm4i")
 
 [node name="Count" type="Control" parent="Crafting"]
 layout_mode = 3
@@ -292,10 +305,11 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Count Text Container" type="AspectRatioContainer" parent="Crafting/Count"]
-offset_left = 852.0
-offset_top = 860.0
-offset_right = 2409.0
-offset_bottom = 986.0
+layout_mode = 0
+offset_left = 889.0
+offset_top = 704.0
+offset_right = 2446.0
+offset_bottom = 830.0
 
 [node name="Count Text" type="Label" parent="Crafting/Count/Count Text Container"]
 z_index = 3
@@ -306,10 +320,11 @@ text = "#"
 label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Textbox Image Container" type="AspectRatioContainer" parent="Crafting/Count"]
-offset_left = 1542.0
-offset_top = 839.0
-offset_right = 2055.0
-offset_bottom = 973.0
+layout_mode = 0
+offset_left = 1579.0
+offset_top = 683.0
+offset_right = 2092.0
+offset_bottom = 817.0
 scale = Vector2(0.6, 0.6)
 
 [node name="Textbox Image" type="TextureRect" parent="Crafting/Count/Textbox Image Container"]
@@ -317,30 +332,36 @@ layout_mode = 2
 texture = ExtResource("2_1ap0j")
 
 [node name="Count Increment Button Container" type="AspectRatioContainer" parent="Crafting/Count"]
-offset_left = 1649.0
-offset_top = 897.0
-offset_right = 1670.0
-offset_bottom = 904.0
+layout_mode = 0
+offset_left = 1689.0
+offset_top = 722.0
+offset_right = 1710.0
+offset_bottom = 729.0
 scale = Vector2(2, 4)
 pivot_offset = Vector2(10.5, 3.5)
 
 [node name="Count Increment Button" type="TextureButton" parent="Crafting/Count/Count Increment Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("3_ra157")
-texture_disabled = ExtResource("4_6un0e")
+texture_pressed = ExtResource("4_6un0e")
+texture_hover = ExtResource("6_1r3si")
+texture_disabled = ExtResource("7_tdm4i")
 
 [node name="Count Decrement Button Container" type="AspectRatioContainer" parent="Crafting/Count"]
-offset_left = 1649.0
-offset_top = 853.0
-offset_right = 1670.0
-offset_bottom = 860.0
+layout_mode = 0
+offset_left = 1539.0
+offset_top = 722.0
+offset_right = 1560.0
+offset_bottom = 729.0
 scale = Vector2(2, 4)
 pivot_offset = Vector2(10.5, 3.5)
 
 [node name="Count Decrement Button" type="TextureButton" parent="Crafting/Count/Count Decrement Button Container"]
 layout_mode = 2
 texture_normal = ExtResource("3_ra157")
-texture_disabled = ExtResource("4_6un0e")
+texture_pressed = ExtResource("4_6un0e")
+texture_hover = ExtResource("6_1r3si")
+texture_disabled = ExtResource("7_tdm4i")
 
 [node name="Cost" type="Control" parent="Crafting"]
 layout_mode = 3
@@ -350,10 +371,11 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Cost Text Container" type="AspectRatioContainer" parent="Crafting/Cost"]
-offset_left = 1069.0
-offset_top = 862.0
-offset_right = 2626.0
-offset_bottom = 988.0
+layout_mode = 0
+offset_left = 847.0
+offset_top = 787.0
+offset_right = 2404.0
+offset_bottom = 913.0
 
 [node name="Cost Text" type="Label" parent="Crafting/Cost/Cost Text Container"]
 z_index = 3
@@ -364,10 +386,11 @@ text = "cost"
 label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Textbox Image Container" type="AspectRatioContainer" parent="Crafting/Cost"]
-offset_left = 1696.0
-offset_top = 845.0
-offset_right = 2209.0
-offset_bottom = 979.0
+layout_mode = 0
+offset_left = 1474.0
+offset_top = 770.0
+offset_right = 1987.0
+offset_bottom = 904.0
 scale = Vector2(2, 0.5)
 
 [node name="Textbox Image" type="TextureRect" parent="Crafting/Cost/Textbox Image Container"]
@@ -382,6 +405,7 @@ offset_right = 23.0
 offset_bottom = 40.0
 
 [node name="Juice Boxes Text Container" type="AspectRatioContainer" parent="Crafting/Juice Boxes"]
+layout_mode = 0
 offset_left = 847.0
 offset_top = 272.0
 offset_right = 2404.0
@@ -396,6 +420,7 @@ text = "juice boxes"
 label_settings = SubResource("LabelSettings_fcrha")
 
 [node name="Textbox Image Container" type="AspectRatioContainer" parent="Crafting/Juice Boxes"]
+layout_mode = 0
 offset_left = 1411.0
 offset_top = 255.0
 offset_right = 1924.0
@@ -407,3 +432,45 @@ layout_mode = 2
 texture = ExtResource("2_1ap0j")
 
 [node name="Animator" type="AnimationPlayer" parent="."]
+
+[node name="Exit" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Exit Text Container" type="AspectRatioContainer" parent="Exit"]
+layout_mode = 0
+offset_left = 315.0
+offset_top = 907.0
+offset_right = 1872.0
+offset_bottom = 1033.0
+
+[node name="Exit Text" type="Label" parent="Exit/Exit Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "exit"
+label_settings = SubResource("LabelSettings_fcrha")
+
+[node name="Exit Button Container" type="AspectRatioContainer" parent="Exit"]
+layout_mode = 0
+offset_left = 1075.0
+offset_top = 922.0
+offset_right = 1096.0
+offset_bottom = 929.0
+scale = Vector2(12, 12)
+pivot_offset = Vector2(10.5, 3.5)
+
+[node name="Exit Button" type="TextureButton" parent="Exit/Exit Button Container"]
+layout_mode = 2
+texture_normal = ExtResource("3_ra157")
+texture_pressed = ExtResource("4_6un0e")
+texture_hover = ExtResource("6_1r3si")
+texture_disabled = ExtResource("7_tdm4i")
+
+[connection signal="button_down" from="Sauna/Deposit/Deposit Button Container/Deposit Button" to="." method="_on_deposit_button_down"]
+[connection signal="button_down" from="Crafting/Craft/Craft Button Container/Craft Button" to="." method="_on_craft_button_down"]
+[connection signal="button_down" from="Crafting/Count/Count Increment Button Container/Count Increment Button" to="." method="_on_craft_count_increment_button_down"]
+[connection signal="button_down" from="Crafting/Count/Count Decrement Button Container/Count Decrement Button" to="." method="_on_craft_count_decrement_button_down"]
+[connection signal="button_down" from="Exit/Exit Button Container/Exit Button" to="." method="_on_exit_button_down"]

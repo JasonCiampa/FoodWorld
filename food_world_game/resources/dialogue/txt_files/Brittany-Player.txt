@@ -1,0 +1,39 @@
+﻿Brittany-Player
+
+
+Feeling Blue
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Brittany: *Sigh*
+
+
+4. Player: Are you alright, Brittany?
+
+
+5. Brittany: Yeah, I'm just feeling a little blue.
+
+
+6. Player: Hahah, I get it, good one.
+
+
+7. Brittany: Wh-?
+8. Brittany: You?
+9. Brittany: What's so funny?
+
+
+10. Player: You- uh- you said you're feeling blue, and it's just that you're-
+
+
+11. Brittany: That I'm WHAT?!
+
+
+12. Player: You're blue! You are literally blue! I thought it was a pun!
+
+
+13. Brittany: No, of course it wasn't a pun.
+14. Brittany: There'd be nothing funny about that.
+
+
+15. Player: Ok, my bad. Jeez.

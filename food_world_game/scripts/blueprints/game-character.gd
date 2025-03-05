@@ -81,6 +81,9 @@ var health_current: int
 var health_max: int
 var alive: bool = true
 
+# Berries #
+var berries: int
+var berries_max: int = 10
 
 # Target #
 var target: GameCharacter = null

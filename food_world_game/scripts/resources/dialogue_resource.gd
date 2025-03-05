@@ -131,7 +131,7 @@ func create_and_save_resource(txt_file_name: String):
 	
 	
 	# Open the given .txt file
-	var txt_file = FileAccess.open("res://" + txt_file_name + ".txt", FileAccess.READ)
+	var txt_file = FileAccess.open("res://resources/dialogue/txt_files/" + txt_file_name + ".txt", FileAccess.READ)
 	
 	
 	# Store the first line of the text file as the current line and as the name of this Dialogue Resource. This first line is the title of the Dialogue, which is made up of all of the involved Characters' names

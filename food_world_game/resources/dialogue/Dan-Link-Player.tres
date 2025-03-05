@@ -1,0 +1,56 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_imcrq"]
+
+[resource]
+script = ExtResource("1_imcrq")
+conversations = {
+"Fusion Fears": {
+"DIALOGUE": {},
+"Dan": {
+3: "Link, I'm afraid that one of these times we fuse, you'll let me loose and send me flying!",
+4: "I can handle the dizziness, but I can't handle the altitude!",
+8: "Hold on tighter!"
+},
+"GAME": {},
+"Link": {
+5: "I'd never let you go, bro. Never.",
+9: "What am I, a chew toy?! Don't squeeze me any harder!"
+},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+6: "What if I let you both go though?",
+7: "Link's grease makes my hands all slippery.",
+10: "It seems we'll just have to hope nobody gets sent flying!"
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {},
+"Dan": {
+3: "Link, I'm afraid that one of these times we fuse, you'll let me loose and send me flying!",
+4: "I can handle the dizziness, but I can't handle the altitude!",
+8: "Hold on tighter!"
+},
+"GAME": {},
+"Link": {
+5: "I'd never let you go, bro. Never.",
+9: "What am I, a chew toy?! Don't squeeze me any harder!"
+},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+6: "What if I let you both go though?",
+7: "Link's grease makes my hands all slippery.",
+10: "It seems we'll just have to hope nobody gets sent flying!"
+}
+}

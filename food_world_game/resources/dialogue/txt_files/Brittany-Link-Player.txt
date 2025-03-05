@@ -1,0 +1,36 @@
+﻿Brittany-Link-Player
+
+
+Grease Juice
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Link: Brittany, if we're ever running low on juice, feel free to use my grease!
+4. Link: It's quite nutritious and has a kick to it!
+
+
+5. Brittany: No, I don't think that'll be necessary.
+
+
+6. Player: Well, you never really know right?
+7. Player: What if we get trapped somewhere and can't forage any berries?
+8. Player: Could we survive on Link's grease if we had to?
+
+
+9. Brittany: Maybe, but I don't think anyone would enjoy it aside from Link.
+
+
+10. Link: What?! Now that's just rude. You can't knock it till you've tried it!
+11. Link: Why do we always gotta drink YOUR kind of juice, Brittany? Why?!
+
+
+12. Brittany: My juice has actual nutrition. Yours is basically sweat.
+
+
+13. Player: Oh jeez, well when you put it like that it's a hard no from me.
+14. Player: Link, I don't think we'll need to consume your grease. 
+15. Player: Maybe we can use it for something else down the line.
+
+
+16. Link: We'd better!!

@@ -1,0 +1,26 @@
+﻿Dan-Link-Player
+
+
+Fusion Fears
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Dan: Link, I'm afraid that one of these times we fuse, you'll let me loose and send me flying!
+4. Dan: I can handle the dizziness, but I can't handle the altitude!
+
+
+5. Link: I'd never let you go, bro. Never.
+
+
+6. Player: What if I let you both go though?
+7. Player: Link's grease makes my hands all slippery.
+
+
+8. Dan: Hold on tighter!
+
+
+9. Link: What am I, a chew toy?! Don't squeeze me any harder!
+
+
+10. Player: It seems we'll just have to hope nobody gets sent flying!

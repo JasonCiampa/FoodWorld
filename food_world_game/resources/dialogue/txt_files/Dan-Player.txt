@@ -1,0 +1,39 @@
+﻿Dan-Player
+
+
+Fastest Roll
+1. PLAY: player_level=|>=|1
+2. PLAY_WHEN: user
+
+
+3. Player: Dan, what would you say is the fastest you've ever rolled?
+
+
+4. Dan: Hmm...
+5. Dan: Probably while making my escape after my world renowned coliseum heist.
+
+
+6. Player: Wait- you robbed the coliseum?!
+
+
+7. Dan: Most certainly!
+
+
+8. Player: All by yourself?
+
+
+9. Dan: Yes, of course!
+
+
+10. Player: What did you rob exactly?
+
+
+11. Dan: A rock from the battleground!
+12. Dan: It's valuable because it's hard to step foot in there and make it out alive!
+13. Dan: Good thing I wasn't actually fighting, I just rolled in and out real quick.
+
+
+14. Player: So... your "world renowned" coliseum heist... was for a rock?
+
+
+15. Dan: You bet!

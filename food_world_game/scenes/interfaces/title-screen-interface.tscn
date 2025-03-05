@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://cmi2lo6il6bie"]
+[gd_scene load_steps=13 format=4 uid="uid://cmi2lo6il6bie"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/title-screen-interface.gd" id="1_6uedp"]
 [ext_resource type="Texture2D" uid="uid://dicdwk1l14tbp" path="res://images/ui/png/title-screen.png" id="2_4twbl"]
@@ -13,6 +13,13 @@
 [sub_resource type="LabelSettings" id="LabelSettings_mechp"]
 font = ExtResource("5_kvqyg")
 font_size = 105
+outline_size = 21
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wjt42"]
+line_spacing = 60.0
+font = ExtResource("5_kvqyg")
+font_size = 76
 outline_size = 21
 outline_color = Color(0, 0, 0, 1)
 
@@ -122,13 +129,22 @@ size_flags_vertical = 0
 text = "Food world"
 label_settings = SubResource("LabelSettings_mechp")
 
+[node name="Food World Text2" type="Label" parent="Title Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "
+Rotten revolution"
+label_settings = SubResource("LabelSettings_wjt42")
+
 [node name="Play Text Container" type="AspectRatioContainer" parent="."]
 z_index = 4
 layout_mode = 2
 offset_left = 877.5
-offset_top = 289.0
+offset_top = 381.0
 offset_right = 1042.5
-offset_bottom = 345.0
+offset_bottom = 437.0
 grow_horizontal = 2
 
 [node name="Play Text" type="Label" parent="Play Text Container"]
@@ -146,9 +162,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -256.5
-offset_top = 250.0
+offset_top = 342.0
 offset_right = 256.5
-offset_bottom = 384.0
+offset_bottom = 476.0
 grow_horizontal = 2
 pivot_offset = Vector2(300, 0)
 
@@ -163,9 +179,9 @@ texture_hover = ExtResource("8_jc818")
 z_index = 4
 layout_mode = 0
 offset_left = 877.5
-offset_top = 525.0
+offset_top = 617.0
 offset_right = 1042.5
-offset_bottom = 581.0
+offset_bottom = 673.0
 
 [node name="Quit Text" type="Label" parent="Quit Text Container"]
 z_index = 3
@@ -183,9 +199,9 @@ anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -256.5
-offset_top = 487.0
+offset_top = 579.0
 offset_right = 256.5
-offset_bottom = -459.0
+offset_bottom = -367.0
 grow_horizontal = 2
 pivot_offset = Vector2(300, 0)
 
@@ -198,6 +214,7 @@ texture_hover = ExtResource("8_jc818")
 
 [node name="FoodWorldTheme" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("9_ot2hm")
+volume_db = 1.0
 parameters/looping = true
 
 [connection signal="button_down" from="Play Button Container/Play Button" to="." method="_on_play_button_button_down"]

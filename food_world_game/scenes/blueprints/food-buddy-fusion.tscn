@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/blueprints/food-buddy-fusion.gd" id="1_8lwpj"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="3_3kh1l"]
-[ext_resource type="FontFile" uid="uid://ivkdsi6t2svr" path="res://showcard_gothic.ttf" id="5_pqgxn"]
+[ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_psjj3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdobk"]
 atlas = ExtResource("3_3kh1l")
@@ -33,11 +33,12 @@ size = Vector2(9, 2)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_asvm5"]
 size = Vector2(10, 4)
 
-[sub_resource type="LabelSettings" id="LabelSettings_mgje1"]
-font = ExtResource("5_pqgxn")
-font_size = 7
+[sub_resource type="LabelSettings" id="LabelSettings_5ywsq"]
+font = ExtResource("3_psjj3")
+font_size = 80
+outline_size = 40
+outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
-shadow_color = Color(0, 0, 0, 1)
 
 [node name="FoodBuddyFusion" type="CharacterBody2D" groups=["food_buddies", "interactables"]]
 y_sort_enabled = true
@@ -93,14 +94,16 @@ polygon = PackedVector2Array(-8, 21, -5, 19, 0, 19, 5, 19, 8, 21, 8, 22, 7, 23, 
 shape = SubResource("RectangleShape2D_asvm5")
 
 [node name="Press \'E\' to Interact" type="Label" parent="."]
-z_index = 2
-offset_left = -35.0
-offset_top = -38.0
-offset_right = 135.0
-offset_bottom = -30.0
-text = "Press 'E' to Interact"
-label_settings = SubResource("LabelSettings_mgje1")
-metadata/_edit_use_anchors_ = true
+visible = false
+z_index = 3
+offset_left = -37.0
+offset_top = -37.0
+offset_right = 2048.0
+offset_bottom = 69.0
+scale = Vector2(0.0564907, 0.0564907)
+text = "Press 'E' to Interact
+"
+label_settings = SubResource("LabelSettings_5ywsq")
 
 [connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
 [connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]

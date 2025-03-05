@@ -314,9 +314,14 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 				if character_names[character] == "Player":
 					character_names.remove_at(character)
 			
-			if character_names.size() == 2:
+			if character_names.size() == 1:
+				
+				# Set the dialogue's current line to instruct the user to select a convo to have with the character
+				current_dialogue.current_line = "Select a conversation to have with " + character_names[0] + "."
+			
+			elif character_names.size() == 2:
 				# Set the dialogue's current line to instruct the user to select a convo to have with the characters
-				current_dialogue.current_line = "Select a conversation listed above to have with " + character_names[0] + " and " + character_names[1] + "."
+				current_dialogue.current_line = "Select a conversation to have with " + character_names[0] + " and " + character_names[1] + "."
 			
 			else:
 				

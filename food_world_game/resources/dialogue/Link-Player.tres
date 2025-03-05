@@ -1,0 +1,56 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_yjrxu"]
+
+[resource]
+script = ExtResource("1_yjrxu")
+conversations = {
+"Side Effects": {
+"DIALOGUE": {},
+"GAME": {},
+"Link": {
+5: "No, I'm totally fine with it!",
+6: "Sure, sometimes everything goes dark for a second.",
+7: "But it always goes light again... eventually!",
+10: "Nah, it's actually pretty normal!",
+11: "I'm narcoleptic."
+},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+3: "Link, are you sure you're okay with me using you like nunchucks?",
+4: "I wouldn't want to do it if it hurts you.",
+8: "Oh, I- uh...",
+9: "Well, that's probably not great, Link.",
+12: "Oh. Alright, that makes sense then. I think."
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {},
+"GAME": {},
+"Link": {
+5: "No, I'm totally fine with it!",
+6: "Sure, sometimes everything goes dark for a second.",
+7: "But it always goes light again... eventually!",
+10: "Nah, it's actually pretty normal!",
+11: "I'm narcoleptic."
+},
+"PLAY": {
+1: "player_level=|>=|1"
+},
+"PLAY_WHEN": {
+2: "user"
+},
+"Player": {
+3: "Link, are you sure you're okay with me using you like nunchucks?",
+4: "I wouldn't want to do it if it hurts you.",
+8: "Oh, I- uh...",
+9: "Well, that's probably not great, Link.",
+12: "Oh. Alright, that makes sense then. I think."
+}
+}

@@ -21,6 +21,7 @@ signal toggle_buddy_fusion_equipped
 
 signal toggle_field_state_interface
 signal toggle_select_interface
+signal toggle_berry_bot_interface
 
 signal use_ability_solo
 signal use_ability_buddy
@@ -111,6 +112,11 @@ var is_dodging: bool
 var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
+# Juice #
+var juiceboxes: int = 0
+var juice: int = 0
+
+var juicebox_throw_cooldown
 
 # Abilities #
 var attack_damage: Dictionary = { 
@@ -171,6 +177,7 @@ func _process(delta: float) -> void:
 	
 	toggle_food_buddy_field_state_interface()
 	toggle_food_buddy_selection_interface()
+	toggle_brittany_berry_bot_interface()
 	
 	if not paused:
 		process_ability_use()
@@ -191,10 +198,11 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
+		print("Berries Current: ", berries)
 		#print(collision_value_current)
 		#print("Bottom X: " + str(global_position.x))
 		#print("Bottom Y: " + str(global_position.y))
-		#print(" ")
+		print(" ")
 		#print("Tile X: " + str(current_tile_position.x))
 		#print("Tile Y: " + str(current_tile_position.y))
 		#print(" ")
@@ -568,6 +576,15 @@ func toggle_food_buddy_selection_interface():
 	# If 'TAB' is pressed, end the selecting of Food Buddies
 	if Input.is_action_just_pressed("toggle_buddy_selection"):
 		toggle_select_interface.emit()
+
+
+
+# Toggles the Food Buddy Selection Interface on/off
+func toggle_brittany_berry_bot_interface():
+	
+	# If 'TAB' is pressed, end the selecting of Food Buddies
+	if Input.is_action_just_pressed("toggle_berry_bot"):
+		toggle_berry_bot_interface.emit()
 
 
 
