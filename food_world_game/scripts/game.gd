@@ -40,6 +40,7 @@ var enemies: Array[Node]
 var food_citizens: Array[Node]
 var interactables: Array[Node]
 var interactable_assets: Dictionary
+var bushes: Array[Vector2i]
 
 
 var closest_interactable_to_player: Node2D
@@ -111,7 +112,7 @@ func _ready() -> void:
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
-	
+	GameTileManager.set_bushes.connect(_on_set_bushes)
 
 	#MALICK.current_tilemaps = world_tilemaps["center"]
 	#SALLY.current_tilemaps = world_tilemaps["center"]
@@ -812,6 +813,24 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 		food_buddy.target_distance = 0
 
 
+func _on_food_buddy_find_nearest_bush(foodbuddy: FoodBuddy, _next_nearest: int = 0) -> void:
+	
+	pass
+	#var bush_distances: Array[float]
+	#var bush_distance_maps: Dictionary
+	#
+	## ACCESS BUSHES LIST THAT WE CREATED
+	#for index in range(0, bushes.size()):
+		#var distance = foodbuddy.global_position.distance_squared_to(bushes[index])
+		#bush_distances.append(distance)
+		#bush_distance_maps.get_or_add(distance, index)
+	#
+	#bush_distances.sort()
+	#
+	#foodbuddy.closest_bush = bushes[bush_distance_maps[bush_distances[0]]]
+	#print(foodbuddy.closest_bush)
+
+
 
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
 func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
@@ -879,7 +898,7 @@ func _on_tile_object_enter_game(tile: Tile):
 	
 	if tile.type == "building":
 		tile_object_location = tile.data.get_custom_data("global_position")
-		
+	
 	else:
 		tile_object_location = tile.coords_local
 	
@@ -905,6 +924,10 @@ func _on_tile_object_enter_game(tile: Tile):
 		interactable_assets.get_or_add(tile_object_location, tile_object)
 		
 		tile_object = null
+
+
+func _on_set_bushes(_bushes:Array[Vector2i]):
+	bushes = _bushes
 
 
 # BUILDING CALLBACKS #

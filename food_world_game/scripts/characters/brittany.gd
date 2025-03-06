@@ -33,6 +33,9 @@ var text_press_f_for_berry_bot
 
 # A custom ready function that is personally defined for Brittany. This is called in the default Food Buddy class's '_ready()' function
 func ready():
+	
+	field_state_current = FieldState.FOLLOW
+	
 	text_press_f_for_berry_bot = $"Press 'F' to Manage Berry Bot"
 	health_texture_path = "res://images/ui/png/brittany-health.png"
 	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-brittany.png"
