@@ -121,10 +121,11 @@ func _process(delta: float) -> void:
 	
 	target_distance = global_position.distance_to(target.global_position)
 	
-	if target_distance < 100 and FieldState.PASSIVE:
+	
+	if target_distance < 100 and field_state_current == FieldState.PASSIVE:
 		field_state_current = FieldState.AGGRESSIVE
 		
-	elif target_distance > 200 and FieldState.AGGRESSIVE:
+	elif target_distance > 200 and field_state_current == FieldState.AGGRESSIVE:
 		field_state_current = FieldState.PASSIVE
 	
 	if not paused:

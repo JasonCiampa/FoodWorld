@@ -12,6 +12,7 @@ var path_generation_rate: float = 0.1
 var timer_navigation: Timer
 var timer_ability_cooldown: Timer
 var timer_forage_cooldown: Timer
+var timer_general: Timer
 
 var closest_bush: Vector2i = Vector2i(-1, -1)
 
@@ -105,6 +106,7 @@ func _ready() -> void:
 	
 	timer_navigation = $"Navigation Timer"
 	timer_ability_cooldown = $"Ability Cooldown Timer"
+	timer_general = $"General Timer"
 	
 	RNG = RandomNumberGenerator.new()
 	# Set the Food Buddy's current field state to be forage (so that they don't move because it isn't coded yet, as of 1/22/25)
@@ -115,43 +117,47 @@ func _ready() -> void:
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
+	timer_general.start(1)
 	update_dimensions()
+	
 
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if !is_jumping and current_altitude > 0:
-		on_platform = true
-	else:
-		on_platform = false
-	
-	if not paused:
-		# Call the custom "update()" function that Food Buddy subclasses will define individually
-		process(delta)
+	if timer_general.is_stopped():
+		if !is_jumping and current_altitude > 0:
+			on_platform = true
+		else:
+			on_platform = false
+		
+		if not paused:
+			# Call the custom "update()" function that Food Buddy subclasses will define individually
+			process(delta)
 
 
 
 # Called every frame. Updates the Food Buddy's physics
 func _physics_process(delta: float) -> void:
 	
-	if not paused:
-		# Determine if the Player is jumping, then process their jump and ignore movement input for the y-axis
-		if is_jumping:
-			jump_process(delta)
+	if timer_general.is_stopped():
+		if not paused:
+			# Determine if the Player is jumping, then process their jump and ignore movement input for the y-axis
+			if is_jumping:
+				jump_process(delta)
+			
+			# Determine if the Food Buddy is currently in a FieldState that isn't user-controlled, then execute the FieldState's corresponding callback function
+			if field_state_current in field_state_callbacks.keys():
+				field_state_callbacks[field_state_current].call()
+			
+			# Adjust the Food Buddy's position based on its velocity
+			move_and_slide()
+			
+			# Call the custom "physics_process()" function that Food Buddy subclasses will define individually
+			physics_process(delta)
 		
-		# Determine if the Food Buddy is currently in a FieldState that isn't user-controlled, then execute the FieldState's corresponding callback function
-		if field_state_current in field_state_callbacks.keys():
-			field_state_callbacks[field_state_current].call()
-		
-		# Adjust the Food Buddy's position based on its velocity
-		move_and_slide()
-		
-		# Call the custom "physics_process()" function that Food Buddy subclasses will define individually
-		physics_process(delta)
-	
-	update_dimensions()
+		update_dimensions()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

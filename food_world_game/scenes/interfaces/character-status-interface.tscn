@@ -1,12 +1,16 @@
-[gd_scene load_steps=12 format=3 uid="uid://do46o8a68s06o"]
+[gd_scene load_steps=16 format=3 uid="uid://do46o8a68s06o"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/character-status-interface.gd" id="1_kijuv"]
 [ext_resource type="Texture2D" uid="uid://d3n5svd8hvnhh" path="res://images/ui/png/health-bar-player.png" id="2_5fvqm"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_cba4t"]
+[ext_resource type="Texture2D" uid="uid://idpqyu2nhalg" path="res://images/ui/png/health-bar-player-juice-interface.png" id="3_gi6xq"]
 [ext_resource type="Texture2D" uid="uid://eqsqwgnkaxd3" path="res://images/ui/png/player-health.png" id="4_im4g4"]
+[ext_resource type="Texture2D" uid="uid://cd2rqjra38jud" path="res://images/ui/png/health-bar-player-berry.png" id="4_nkkeu"]
 [ext_resource type="Texture2D" uid="uid://bem6s3gi3hoxi" path="res://images/ui/png/player-stamina.png" id="5_w4485"]
 [ext_resource type="Texture2D" uid="uid://d22ctu6acpi1" path="res://images/ui/png/player-xp.png" id="6_or0kg"]
+[ext_resource type="Texture2D" uid="uid://8agxy7gjuubq" path="res://images/ui/png/health-bar-player-juice.png" id="6_ujvnx"]
 [ext_resource type="Texture2D" uid="uid://cali72sodn0qd" path="res://images/ui/png/health-bar-buddy.png" id="7_gb87m"]
+[ext_resource type="Texture2D" uid="uid://doc71gqjeosl2" path="res://images/ui/png/health-bar-player-juicebox.png" id="7_ltcpy"]
 [ext_resource type="Texture2D" uid="uid://bv823wutjjlow" path="res://images/ui/png/stamina.png" id="7_t8op0"]
 [ext_resource type="Texture2D" uid="uid://ltpt3bypw08a" path="res://images/ui/png/heart.png" id="8_jecmj"]
 
@@ -50,73 +54,119 @@ scale = Vector2(0.25, 0.25)
 layout_mode = 2
 texture = ExtResource("2_5fvqm")
 
-[node name="Berries Text Container" type="AspectRatioContainer" parent="Player Status"]
+[node name="Berry Status Container" type="Control" parent="Player Status"]
+anchors_preset = 0
+offset_right = 657.0
+offset_bottom = 398.0
+
+[node name="Background Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+layout_mode = 0
+offset_left = -392.0
+offset_top = -161.0
+offset_right = 216.0
+offset_bottom = 47.0
+scale = Vector2(0.25, 0.25)
+
+[node name="TextureRect" type="TextureRect" parent="Player Status/Berry Status Container/Background Image Container"]
+layout_mode = 2
+texture = ExtResource("3_gi6xq")
+
+[node name="Berry Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+offset_left = -282.0
+offset_top = -156.0
+offset_right = 326.0
+offset_bottom = 52.0
+scale = Vector2(0.04, 0.04)
+
+[node name="Berry Image" type="TextureRect" parent="Player Status/Berry Status Container/Berry Image Container"]
+layout_mode = 2
+texture = ExtResource("4_nkkeu")
+
+[node name="Berries Text Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
 z_index = 4
 layout_mode = 0
-offset_left = -272.0
-offset_top = -158.0
-offset_right = 727.0
-offset_bottom = 240.0
-scale = Vector2(0.045, 0.045)
+offset_left = -261.0
+offset_top = -154.0
+offset_right = 738.0
+offset_bottom = 244.0
+scale = Vector2(0.04, 0.04)
 alignment_horizontal = 0
 
-[node name="Berries Text" type="Label" parent="Player Status/Berries Text Container"]
+[node name="Berries Text" type="Label" parent="Player Status/Berry Status Container/Berries Text Container"]
 z_index = 3
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "berries
-2"
+text = "10/10"
 label_settings = SubResource("LabelSettings_xg02t")
 horizontal_alignment = 1
 
-[node name="Juice Text Container" type="AspectRatioContainer" parent="Player Status"]
+[node name="Juice Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+offset_left = -273.0
+offset_top = -138.0
+offset_right = 335.0
+offset_bottom = 70.0
+scale = Vector2(0.03, 0.03)
+
+[node name="Juice Image" type="TextureRect" parent="Player Status/Berry Status Container/Juice Image Container"]
+layout_mode = 2
+texture = ExtResource("6_ujvnx")
+
+[node name="Juice Text Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
 z_index = 4
 layout_mode = 0
-offset_left = -267.0
-offset_top = -142.0
-offset_right = 732.0
-offset_bottom = 256.0
-scale = Vector2(0.045, 0.045)
+offset_left = -256.0
+offset_top = -138.0
+offset_right = 743.0
+offset_bottom = 260.0
+scale = Vector2(0.04, 0.04)
 alignment_horizontal = 0
 
-[node name="Juice Text" type="Label" parent="Player Status/Juice Text Container"]
+[node name="Juice Text" type="Label" parent="Player Status/Berry Status Container/Juice Text Container"]
 z_index = 3
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "juice
-2"
+text = "100"
 label_settings = SubResource("LabelSettings_xg02t")
 horizontal_alignment = 1
 
-[node name="Juicebox Text Container" type="AspectRatioContainer" parent="Player Status"]
+[node name="Juicebox Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+offset_left = -278.0
+offset_top = -125.0
+offset_right = 330.0
+offset_bottom = 83.0
+scale = Vector2(0.05, 0.05)
+
+[node name="Juicebox Image" type="TextureRect" parent="Player Status/Berry Status Container/Juicebox Image Container"]
+layout_mode = 2
+texture = ExtResource("7_ltcpy")
+
+[node name="Juicebox Text Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
 z_index = 4
 layout_mode = 0
-offset_left = -269.0
-offset_top = -126.0
-offset_right = 730.0
-offset_bottom = 272.0
-scale = Vector2(0.045, 0.045)
+offset_left = -256.0
+offset_top = -122.0
+offset_right = 743.0
+offset_bottom = 276.0
+scale = Vector2(0.04, 0.04)
 alignment_horizontal = 0
 
-[node name="Juicebox Text" type="Label" parent="Player Status/Juicebox Text Container"]
+[node name="Juicebox Text" type="Label" parent="Player Status/Berry Status Container/Juicebox Text Container"]
 z_index = 3
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "juice
-boxes
-2"
+text = "100"
 label_settings = SubResource("LabelSettings_xg02t")
 horizontal_alignment = 1
 
 [node name="Player Health Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
 offset_left = -220.0
-offset_top = -143.0
+offset_top = -145.0
 offset_right = 164.0
-offset_bottom = -127.0
+offset_bottom = -129.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Player Health" type="TextureProgressBar" parent="Player Status/Player Health Container"]
@@ -127,9 +177,9 @@ texture_progress = ExtResource("4_im4g4")
 [node name="Player Stamina Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
 offset_left = -220.0
-offset_top = -131.0
+offset_top = -133.0
 offset_right = 164.0
-offset_bottom = -115.0
+offset_bottom = -117.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Stamina Bar" type="TextureProgressBar" parent="Player Status/Player Stamina Container"]
@@ -140,9 +190,9 @@ texture_progress = ExtResource("5_w4485")
 [node name="Player XP Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
 offset_left = -220.0
-offset_top = -119.0
+offset_top = -121.0
 offset_right = 164.0
-offset_bottom = -103.0
+offset_bottom = -105.0
 scale = Vector2(0.25, 0.25)
 
 [node name="XP Bar" type="TextureProgressBar" parent="Player Status/Player XP Container"]
@@ -188,11 +238,11 @@ label_settings = SubResource("LabelSettings_xg02t")
 [node name="Health Count Text Container" type="AspectRatioContainer" parent="Player Status"]
 z_index = 4
 layout_mode = 0
-offset_left = -123.0
-offset_top = -143.0
-offset_right = 876.0
-offset_bottom = 255.0
-scale = Vector2(0.0280352, 0.0280352)
+offset_left = -121.0
+offset_top = -146.0
+offset_right = 878.0
+offset_bottom = 252.0
+scale = Vector2(0.05, 0.05)
 alignment_horizontal = 0
 
 [node name="Health Count Text" type="Label" parent="Player Status/Health Count Text Container"]
@@ -207,11 +257,11 @@ horizontal_alignment = 1
 [node name="Stamina Count Text Container" type="AspectRatioContainer" parent="Player Status"]
 z_index = 4
 layout_mode = 0
-offset_left = -123.0
-offset_top = -131.0
-offset_right = 876.0
-offset_bottom = 267.0
-scale = Vector2(0.0280352, 0.0280352)
+offset_left = -121.0
+offset_top = -134.0
+offset_right = 878.0
+offset_bottom = 264.0
+scale = Vector2(0.05, 0.05)
 alignment_horizontal = 0
 
 [node name="Stamina Count Text" type="Label" parent="Player Status/Stamina Count Text Container"]
@@ -226,11 +276,11 @@ horizontal_alignment = 1
 [node name="XP Count Text Container" type="AspectRatioContainer" parent="Player Status"]
 z_index = 4
 layout_mode = 0
-offset_left = -123.0
-offset_top = -119.0
-offset_right = 876.0
-offset_bottom = 279.0
-scale = Vector2(0.0280352, 0.0280352)
+offset_left = -121.0
+offset_top = -122.0
+offset_right = 878.0
+offset_bottom = 276.0
+scale = Vector2(0.052, 0.052)
 alignment_horizontal = 0
 
 [node name="XP Count Text" type="Label" parent="Player Status/XP Count Text Container"]
@@ -246,9 +296,9 @@ horizontal_alignment = 1
 z_index = 4
 layout_mode = 0
 offset_left = -235.0
-offset_top = -120.0
+offset_top = -122.0
 offset_right = -19.0
-offset_bottom = 6.0
+offset_bottom = 4.0
 scale = Vector2(0.0517937, 0.0517937)
 alignment_horizontal = 0
 
@@ -263,9 +313,9 @@ label_settings = SubResource("LabelSettings_xg02t")
 [node name="Stamina Image Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
 offset_left = -241.0
-offset_top = -138.0
+offset_top = -140.0
 offset_right = 272.0
-offset_bottom = -4.0
+offset_bottom = -6.0
 scale = Vector2(0.15, 0.15)
 
 [node name="Stamina Image" type="TextureRect" parent="Player Status/Stamina Image Container"]
@@ -275,9 +325,9 @@ texture = ExtResource("7_t8op0")
 [node name="Heart Image Container2" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
 offset_left = -241.0
-offset_top = -151.0
+offset_top = -153.0
 offset_right = 272.0
-offset_bottom = -17.0
+offset_bottom = -19.0
 scale = Vector2(0.15, 0.15)
 
 [node name="Heart Image" type="TextureRect" parent="Player Status/Heart Image Container2"]
@@ -291,9 +341,9 @@ offset_bottom = 40.0
 
 [node name="FoodBuddy1 Status Container2" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
 layout_mode = 0
-offset_left = -70.0
+offset_left = -59.0
 offset_top = -161.0
-offset_right = 474.0
+offset_right = 549.0
 offset_bottom = -49.0
 scale = Vector2(0.25, 0.25)
 
@@ -303,10 +353,10 @@ texture = ExtResource("7_gb87m")
 
 [node name="FoodBuddy1 Health Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
 layout_mode = 0
-offset_left = -50.0
-offset_top = -143.0
-offset_right = 334.0
-offset_bottom = -127.0
+offset_left = -39.0
+offset_top = -145.0
+offset_right = 345.0
+offset_bottom = -129.0
 scale = Vector2(0.25, 0.25)
 
 [node name="FoodBuddy1 Health" type="TextureProgressBar" parent="FoodBuddy1 Status/FoodBuddy1 Health Container"]
@@ -317,10 +367,10 @@ texture_progress = ExtResource("4_im4g4")
 [node name="Name Text Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
 z_index = 4
 layout_mode = 0
-offset_left = -67.0
+offset_left = -56.0
 offset_top = -159.0
-offset_right = 48.0
-offset_bottom = -146.0
+offset_right = 538.0
+offset_bottom = -33.0
 scale = Vector2(0.0792794, 0.0792794)
 alignment_horizontal = 0
 
@@ -335,9 +385,9 @@ label_settings = SubResource("LabelSettings_xg02t")
 [node name="Field State Text Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
 z_index = 4
 layout_mode = 0
-offset_left = -8.0
+offset_left = 3.0
 offset_top = -158.0
-offset_right = 892.0
+offset_right = 903.0
 offset_bottom = -32.0
 scale = Vector2(0.0792794, 0.0792794)
 alignment_horizontal = 2
@@ -353,9 +403,9 @@ horizontal_alignment = 2
 
 [node name="Heart Image Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
 layout_mode = 0
-offset_left = -72.0
+offset_left = -61.0
 offset_top = -151.0
-offset_right = 441.0
+offset_right = 452.0
 offset_bottom = -17.0
 scale = Vector2(0.15, 0.15)
 
@@ -366,11 +416,11 @@ texture = ExtResource("8_jecmj")
 [node name="Health Count Text Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
 z_index = 4
 layout_mode = 0
-offset_left = 48.0
-offset_top = -143.0
-offset_right = 1047.0
-offset_bottom = 255.0
-scale = Vector2(0.0280352, 0.0280352)
+offset_left = 60.0
+offset_top = -147.0
+offset_right = 1059.0
+offset_bottom = 251.0
+scale = Vector2(0.052, 0.052)
 alignment_horizontal = 0
 
 [node name="Health Count Text" type="Label" parent="FoodBuddy1 Status/Health Count Text Container"]
@@ -389,9 +439,9 @@ offset_bottom = 40.0
 
 [node name="FoodBuddy2 Status Container3" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 layout_mode = 0
-offset_left = 104.0
+offset_left = 123.0
 offset_top = -161.0
-offset_right = 648.0
+offset_right = 731.0
 offset_bottom = -49.0
 scale = Vector2(0.25, 0.25)
 
@@ -401,10 +451,10 @@ texture = ExtResource("7_gb87m")
 
 [node name="FoodBuddy2 Health Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 layout_mode = 0
-offset_left = 124.0
-offset_top = -143.0
-offset_right = 508.0
-offset_bottom = -127.0
+offset_left = 143.0
+offset_top = -145.0
+offset_right = 527.0
+offset_bottom = -129.0
 scale = Vector2(0.25, 0.25)
 
 [node name="FoodBuddy2 Health" type="TextureProgressBar" parent="FoodBuddy2 Status/FoodBuddy2 Health Container"]
@@ -415,10 +465,10 @@ texture_progress = ExtResource("4_im4g4")
 [node name="Name Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 z_index = 4
 layout_mode = 0
-offset_left = 107.0
+offset_left = 126.0
 offset_top = -159.0
-offset_right = 222.0
-offset_bottom = -146.0
+offset_right = 747.0
+offset_bottom = -33.0
 scale = Vector2(0.0842842, 0.0842842)
 alignment_horizontal = 0
 
@@ -433,9 +483,9 @@ label_settings = SubResource("LabelSettings_xg02t")
 [node name="Field State Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 z_index = 4
 layout_mode = 0
-offset_left = 166.0
+offset_left = 185.0
 offset_top = -158.0
-offset_right = 1066.0
+offset_right = 1085.0
 offset_bottom = -32.0
 scale = Vector2(0.0792794, 0.0792794)
 alignment_horizontal = 2
@@ -451,9 +501,9 @@ horizontal_alignment = 2
 
 [node name="Heart Image Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 layout_mode = 0
-offset_left = 102.0
+offset_left = 121.0
 offset_top = -151.0
-offset_right = 615.0
+offset_right = 634.0
 offset_bottom = -17.0
 scale = Vector2(0.15, 0.15)
 
@@ -464,11 +514,11 @@ texture = ExtResource("8_jecmj")
 [node name="Health Count Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
 z_index = 4
 layout_mode = 0
-offset_left = 222.0
-offset_top = -143.0
-offset_right = 1221.0
-offset_bottom = 255.0
-scale = Vector2(0.0280352, 0.0280352)
+offset_left = 242.0
+offset_top = -147.0
+offset_right = 1241.0
+offset_bottom = 251.0
+scale = Vector2(0.052, 0.052)
 alignment_horizontal = 0
 
 [node name="Health Count Text" type="Label" parent="FoodBuddy2 Status/Health Count Text Container"]

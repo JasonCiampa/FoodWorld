@@ -60,9 +60,9 @@ func _ready() -> void:
 	xp_bar_player = $"Player Status/Player XP Container/XP Bar"
 	text_xp_current_player = $"Player Status/XP Count Text Container/XP Count Text"
 	text_level_player = $"Player Status/Level Text Container/Level Text"
-	text_berries_player = $"Player Status/Berries Text Container/Berries Text"
-	text_juice_player = $"Player Status/Juice Text Container/Juice Text"
-	text_juiceboxes_player = $"Player Status/Juicebox Text Container/Juicebox Text"
+	text_berries_player = $"Player Status/Berry Status Container/Berries Text Container/Berries Text"
+	text_juice_player = $"Player Status/Berry Status Container/Juice Text Container/Juice Text"
+	text_juiceboxes_player = $"Player Status/Berry Status Container/Juicebox Text Container/Juicebox Text"
 	
 	health_bar_foodbuddy1 = $"FoodBuddy1 Status/FoodBuddy1 Health Container/FoodBuddy1 Health"
 	text_health_current_foodbuddy1 = $"FoodBuddy1 Status/Health Count Text Container/Health Count Text"
@@ -89,9 +89,9 @@ func _process(_delta: float) -> void:
 	text_stamina_current_player.text = str(int(player.stamina_current)) + "/" + str(player.stamina_max)
 	xp_bar_player.value = player.xp_current
 	text_xp_current_player.text = str(player.xp_current) + "/" + str(player.xp_max)
-	text_berries_player.text = "Berries\n" + str(player.berries) + "/" + str(player.berries_max)
-	text_juice_player.text = "Juice\n" + str(player.juice)
-	text_juiceboxes_player.text = "Juice\nboxes\n" + str(player.juiceboxes)
+	text_berries_player.text = str(player.berries) + "/" + str(player.berries_max)
+	text_juice_player.text = str(player.juice)
+	text_juiceboxes_player.text = str(player.juiceboxes)
 	
 	health_bar_foodbuddy1.value = foodbuddy1.health_current
 	health_bar_foodbuddy2.value = foodbuddy2.health_current
