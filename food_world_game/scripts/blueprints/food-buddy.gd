@@ -11,6 +11,9 @@ var path_generation_rate: float = 0.1
 
 var timer_navigation: Timer
 var timer_ability_cooldown: Timer
+var timer_forage_cooldown: Timer
+
+var closest_bush: Vector2i = Vector2i(-1, -1)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -20,6 +23,8 @@ var timer_ability_cooldown: Timer
 signal use_ability_solo
 
 signal target_closest_enemy
+
+signal find_nearest_bush
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -191,12 +196,14 @@ func physics_process(_delta: float) -> void:
 	pass
 
 
-func generate_path():
+func generate_path(target_point: Vector2 = Vector2(-1, -1)):
 	
 	if timer_navigation.is_stopped() and target != null:
 		
-		# Set the Player as the Food Buddy's target, then move towards the
+		if target_point == Vector2(-1, -1):
+			target_point = target.global_position
 		
+		# Set the Player as the Food Buddy's target, then move towards the
 		navigation_agent.target_position = target.global_position
 		
 		var current_agent_position = global_position
@@ -223,7 +230,16 @@ func follow_field_state_callback() -> void:
 
 # A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState
 func forage_field_state_callback() -> void:
-	pass
+	
+	if closest_bush == Vector2i(-1, -1):
+		find_nearest_bush.emit(self)
+	
+	if global_position.distance_to(closest_bush) <= 32:
+		velocity.x = 0
+		velocity.y = 0
+		#timer_forage_cooldown.start()
+	else:
+		generate_path(closest_bush)
 
 
 

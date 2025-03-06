@@ -12,6 +12,8 @@ class_name TileManager
 # A signal emitted to game.gd whenever a Tile's connected object is supposed to be loaded into the game
 signal tile_object_enter_game
 
+signal set_bushes
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -69,6 +71,7 @@ func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
 	
 	var tiles_used_environment: Array
+	var bushes: Array[Vector2i]
 	
 	for world in world_tilemaps:
 		
@@ -88,6 +91,9 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			# Determine if the ground Tile's coordinates are not occupied in the environment tilemap, then enable pathfinding for the tile
 			var environment_tile = Tile.new(world_tilemaps[world][Tile.MapType.ENVIRONMENT], Tile.MapType.ENVIRONMENT, tiles_used_environment[coords])
 			
+			if environment_tile.type == "bush":
+				bushes.append(environment_tile.coords_local)
+			
 			# Determine if the terrain Tile's width is set and is larger than 1
 			if environment_tile.width != null and environment_tile.width > 1:
 				
@@ -103,6 +109,11 @@ func _init(_world_tilemaps: Dictionary) -> void:
 				
 				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
 				tiles_occupied.get_or_add(tiles_used_environment[coords], true)
+			
+			unload_tile(environment_tile)
+			environment_tile = null
+	
+	set_bushes.emit(bushes)
 	
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

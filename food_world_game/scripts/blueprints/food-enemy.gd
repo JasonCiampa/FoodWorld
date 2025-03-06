@@ -116,10 +116,16 @@ func _process(delta: float) -> void:
 		on_platform = false
 	
 	if target == null:
+		
 		target_player.emit(self)
 	
-	if global_position.distance_to(target.global_position) < 100:
+	target_distance = global_position.distance_to(target.global_position)
+	
+	if target_distance < 100 and FieldState.PASSIVE:
 		field_state_current = FieldState.AGGRESSIVE
+		
+	elif target_distance > 200 and FieldState.AGGRESSIVE:
+		field_state_current = FieldState.PASSIVE
 	
 	if not paused:
 		# Call the custom "update()" function that Enemy subclasses will define individually
@@ -202,7 +208,6 @@ func passive_field_state_callback() -> void:
 	if timer_frolic_cooldown.is_stopped():
 		
 		if global_position.distance_to(navigation_agent.target_position) <= 5:
-			print("Timer started")
 			velocity.x = 0
 			velocity.y = 0
 			timer_frolic_cooldown.start(2.5)
@@ -213,10 +218,9 @@ func passive_field_state_callback() -> void:
 	else:
 		
 		if timer_frolic_cooldown.time_left <= 0.1:
-			print("Path generated, timer stopped")
+			
 			generate_path(Vector2(global_position.x + (frolic_range * RNG.randf_range(-1, 1)), global_position.y + (frolic_range * RNG.randf_range(-1, 1))))
 			timer_frolic_cooldown.stop()
-
 
 
 
