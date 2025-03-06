@@ -193,6 +193,8 @@ func end():
 	self.visible = false
 	
 	#animator.play("RESET")
+	
+	player.is_interacting = false
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -200,7 +202,6 @@ func end():
 
 func _on_exit_button_down() -> void:
 	end()
-	player.is_interacting = false
 
 
 func _on_craft_count_decrement_button_down() -> void:

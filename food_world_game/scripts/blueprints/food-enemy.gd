@@ -9,8 +9,12 @@ extends GameCharacter
 var navigation_agent: NavigationAgent2D
 var path_generation_rate: float = 0.1
 
+var frolic_range: float = 50
+var frolic_cooldown_rate: float = 2.5
+
 var timer_navigation: Timer
 var timer_ability_cooldown: Timer
+var timer_frolic_cooldown: Timer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -81,13 +85,16 @@ func _ready() -> void:
 	
 	timer_navigation = $"Navigation Timer"
 	timer_ability_cooldown = $"Ability Cooldown Timer"
+	timer_frolic_cooldown = $"Frolic Cooldown Timer"
 	
 	RNG = RandomNumberGenerator.new()
 	
 	# Generate a random number btwn 0 and 100 exclusive and if its even target the player by default, otherwise target the food buddies
-	target_closest_food_buddy.emit(self)
+	target_player.emit(self)
 	
 	field_state_current = FieldState.PASSIVE
+	timer_frolic_cooldown.start(2.5)
+	
 	
 	radius_range = 15
 	
@@ -109,11 +116,9 @@ func _process(delta: float) -> void:
 		on_platform = false
 	
 	if target == null:
-		
-		# Generate a random number btwn 0 and 100 exclusive and if its even target the player by default, otherwise target the food buddies
-		target_closest_food_buddy.emit(self)
+		target_player.emit(self)
 	
-	if global_position.distance_to(target.global_position) < 75:
+	if global_position.distance_to(target.global_position) < 100:
 		field_state_current = FieldState.AGGRESSIVE
 	
 	if not paused:
@@ -170,25 +175,22 @@ func physics_process(_delta: float) -> void:
 	pass
 
 
-func generate_path():
-	if timer_navigation.is_stopped() and target != null:
+func generate_path(target_point: Vector2 = Vector2(-1, -1)):
 	
+	if target_point == Vector2(-1, -1):
+		target_point = target.global_position
+	
+	
+	if timer_navigation.is_stopped() and target != null:
+		
 		# Set the Player as the Enemy's target, then move towards them
+		navigation_agent.target_position = target_point
 		
-		if global_position.distance_to(target.global_position) > RNG.randi_range(radius_range - 10, radius_range - 5):
+		var current_agent_position = global_position
+		var next_path_position = navigation_agent.get_next_path_position()
+		velocity = current_agent_position.direction_to(next_path_position) * speed_current
 		
-			navigation_agent.target_position = target.global_position
-			
-			var current_agent_position = global_position
-			var next_path_position = navigation_agent.get_next_path_position()
-			velocity = current_agent_position.direction_to(next_path_position) * speed_current
-			
-			target_distance = global_position.distance_to(target.global_position)
-		
-		else:
-			velocity.x = 0
-			velocity.y = 0
-		
+		target_distance = global_position.distance_to(target_point)
 		timer_navigation.start(path_generation_rate)
 
 
@@ -196,7 +198,25 @@ func generate_path():
 
 # A callback function that should execute repeatedly while the Enemy is in the FOLLOW FieldState
 func passive_field_state_callback() -> void:
-	pass
+	
+	if timer_frolic_cooldown.is_stopped():
+		
+		if global_position.distance_to(navigation_agent.target_position) <= 5:
+			print("Timer started")
+			velocity.x = 0
+			velocity.y = 0
+			timer_frolic_cooldown.start(2.5)
+		else:
+			generate_path(navigation_agent.target_position)
+		
+	
+	else:
+		
+		if timer_frolic_cooldown.time_left <= 0.1:
+			print("Path generated, timer stopped")
+			generate_path(Vector2(global_position.x + (frolic_range * RNG.randf_range(-1, 1)), global_position.y + (frolic_range * RNG.randf_range(-1, 1))))
+			timer_frolic_cooldown.stop()
+
 
 
 

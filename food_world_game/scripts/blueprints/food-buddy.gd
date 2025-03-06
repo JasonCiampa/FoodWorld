@@ -8,7 +8,9 @@ extends InteractableCharacter
 
 var navigation_agent: NavigationAgent2D
 var path_generation_rate: float = 0.1
-var timer: Timer
+
+var timer_navigation: Timer
+var timer_ability_cooldown: Timer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -58,7 +60,7 @@ var field_state_callbacks: Dictionary = {
 
 # Abilities #
 var ability_damage: Dictionary = { 
-	"Solo": 100, 
+	"Solo": 10, 
 	"Ability1": 15, 
 	"Ability2": 20 
 }
@@ -95,7 +97,10 @@ func _ready() -> void:
 	super()
 	
 	navigation_agent = $"NavigationAgent2D"
-	timer = $"Timer"
+	
+	timer_navigation = $"Navigation Timer"
+	timer_ability_cooldown = $"Ability Cooldown Timer"
+	
 	RNG = RandomNumberGenerator.new()
 	# Set the Food Buddy's current field state to be forage (so that they don't move because it isn't coded yet, as of 1/22/25)
 	field_state_current = FieldState.FORAGE
@@ -188,7 +193,7 @@ func physics_process(_delta: float) -> void:
 
 func generate_path():
 	
-	if timer.is_stopped() and target != null:
+	if timer_navigation.is_stopped() and target != null:
 		
 		# Set the Player as the Food Buddy's target, then move towards the
 		
@@ -201,7 +206,7 @@ func generate_path():
 		target_distance = global_position.distance_to(target.global_position)
 		
 		
-		timer.start(path_generation_rate)
+		timer_navigation.start(path_generation_rate)
 
 # FieldState Callbacks #
 
@@ -252,7 +257,13 @@ func solo_field_state_callback() -> void:
 		if target_distance <= target.radius_range:
 			velocity.x = 0
 			velocity.y = 0
-			use_ability_solo.emit(self, ability_damage["Solo"])
+			
+			if timer_ability_cooldown.is_stopped():
+				use_ability_solo.emit(self, ability_damage["Solo"])
+				timer_ability_cooldown.start(0.5)
+				target_distance = global_position.distance_to(target.global_position)
+				
+		
 
 
 

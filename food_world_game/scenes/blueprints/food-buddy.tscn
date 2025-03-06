@@ -117,5 +117,8 @@ path_postprocessing = 1
 simplify_path = true
 debug_path_custom_color = Color(0.252755, 0.104298, 1, 1)
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Navigation Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Ability Cooldown Timer" type="Timer" parent="."]
 one_shot = true

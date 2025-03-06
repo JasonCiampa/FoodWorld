@@ -119,6 +119,7 @@ func _ready() -> void:
 	DAN.current_tilemaps = world_tilemaps["center"]
 	BRITTANY.current_tilemaps = world_tilemaps["center"]
 	PLAYER.current_tilemaps = world_tilemaps["center"]
+	ENEMY.current_tilemaps = world_tilemaps["center"]
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
@@ -187,6 +188,7 @@ func _process(delta: float) -> void:
 		GameTileManager.process_nearby_tiles(PLAYER, 2)
 		GameTileManager.process_nearby_tiles(food_buddies_active[0], 1)
 		GameTileManager.process_nearby_tiles(food_buddies_active[1], 2)
+		GameTileManager.process_nearby_tiles(ENEMY, 3)
 	
 	
 	# Determine if the Player is not already interacting, then process in-range potential interactions
@@ -642,7 +644,6 @@ func _on_player_toggle_select_interface() -> void:
 	
 	# Determine if the Dialogue Interface is active, then return because the FieldState Interface shouldn't be opened while the Dialogue Interface is active
 	if InterfaceDialogue.visible or InterfaceLevelUp.visible or InterfaceGameOver.visible or InterfaceFoodBuddyFieldState.visible or InterfaceBerryBot.visible:
-		print(InterfaceDialogue.visible)
 		return
 	
 	# Determine if the Field State interface is active/inactive, then disable/enable it
@@ -667,6 +668,12 @@ func _on_player_toggle_berry_bot_interface():
 	
 	# Determine if the Dialogue Interface is already active or if any other Interfaces are active, then return because the Dialogue Interface doesn't need the 'enable' function called.
 	if InterfaceDialogue.visible or InterfaceFoodBuddyFieldState.visible or InterfaceLevelUp.visible or InterfaceFoodBuddySelection.visible or InterfaceGameOver.visible:
+		return
+	
+	
+	if InterfaceBerryBot.visible:
+		InterfaceBerryBot.end()
+		print("balls")
 		return
 	
 	if closest_interactable_to_player == BRITTANY and closest_interactable_to_player.in_range:
