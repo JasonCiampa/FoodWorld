@@ -92,16 +92,7 @@ position = Vector2(648, 557)
 position = Vector2(595, 516)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(664, 465)
-
-[node name="Enemy2" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(719, 511)
-
-[node name="Enemy3" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(618, 528)
+position = Vector2(866, 541)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 y_sort_enabled = true
@@ -132,7 +123,6 @@ parameters/looping = true
 [connection signal="level_up_ended" from="Player/Level-up" to="." method="_on_level_up_ended"]
 [connection signal="die" from="Link" to="." method="_on_food_buddy_die"]
 [connection signal="killed_target" from="Link" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Link" to="." method="_on_character_move_towards_target"]
 [connection signal="target_closest_enemy" from="Link" to="." method="_on_food_buddy_target_closest_enemy"]
 [connection signal="target_closest_food_buddy" from="Link" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Link" to="." method="_on_character_target_player"]
@@ -140,7 +130,6 @@ parameters/looping = true
 [connection signal="use_ability_solo" from="Link" to="." method="_on_food_buddy_use_ability_solo"]
 [connection signal="die" from="Dan" to="." method="_on_food_buddy_die"]
 [connection signal="killed_target" from="Dan" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Dan" to="." method="_on_character_move_towards_target"]
 [connection signal="target_closest_enemy" from="Dan" to="." method="_on_food_buddy_target_closest_enemy"]
 [connection signal="target_closest_food_buddy" from="Dan" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Dan" to="." method="_on_character_target_player"]
@@ -148,28 +137,15 @@ parameters/looping = true
 [connection signal="use_ability_solo" from="Dan" to="." method="_on_food_buddy_use_ability_solo"]
 [connection signal="die" from="Brittany" to="." method="_on_food_buddy_die"]
 [connection signal="killed_target" from="Brittany" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Brittany" to="." method="_on_character_move_towards_target"]
 [connection signal="target_closest_enemy" from="Brittany" to="." method="_on_food_buddy_target_closest_enemy"]
 [connection signal="target_closest_food_buddy" from="Brittany" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Brittany" to="." method="_on_character_target_player"]
 [connection signal="update_altitude" from="Brittany" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability_solo" from="Brittany" to="." method="_on_food_buddy_use_ability_solo"]
 [connection signal="die" from="Enemy" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Enemy" to="." method="_on_character_move_towards_target"]
+[connection signal="killed_target" from="Enemy" to="." method="_on_enemy_killed_target"]
 [connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
 [connection signal="target_player" from="Enemy" to="." method="_on_character_target_player"]
 [connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
-[connection signal="die" from="Enemy2" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy2" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Enemy2" to="." method="_on_character_move_towards_target"]
-[connection signal="target_closest_food_buddy" from="Enemy2" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy2" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy2" to="." method="_on_character_update_altitude"]
-[connection signal="die" from="Enemy3" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy3" to="." method="_on_character_killed_target"]
-[connection signal="move_towards_target" from="Enemy3" to="." method="_on_character_move_towards_target"]
-[connection signal="target_closest_food_buddy" from="Enemy3" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy3" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy3" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
 [connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]

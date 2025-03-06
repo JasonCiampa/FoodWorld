@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://do46o8a68s06o"]
+[gd_scene load_steps=12 format=3 uid="uid://do46o8a68s06o"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/character-status-interface.gd" id="1_kijuv"]
 [ext_resource type="Texture2D" uid="uid://d3n5svd8hvnhh" path="res://images/ui/png/health-bar-player.png" id="2_5fvqm"]
@@ -14,6 +14,13 @@
 line_spacing = 10.0
 font = ExtResource("3_cba4t")
 font_size = 96
+outline_size = 25
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kl1yx"]
+line_spacing = 10.0
+font = ExtResource("3_cba4t")
+font_size = 72
 outline_size = 25
 outline_color = Color(0, 0, 0, 1)
 
@@ -42,6 +49,64 @@ scale = Vector2(0.25, 0.25)
 [node name="Player Status" type="TextureRect" parent="Player Status/Player Status Container"]
 layout_mode = 2
 texture = ExtResource("2_5fvqm")
+
+[node name="Berries Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+offset_left = -272.0
+offset_top = -158.0
+offset_right = 727.0
+offset_bottom = 240.0
+scale = Vector2(0.045, 0.045)
+alignment_horizontal = 0
+
+[node name="Berries Text" type="Label" parent="Player Status/Berries Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "berries
+2"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
+
+[node name="Juice Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+offset_left = -267.0
+offset_top = -142.0
+offset_right = 732.0
+offset_bottom = 256.0
+scale = Vector2(0.045, 0.045)
+alignment_horizontal = 0
+
+[node name="Juice Text" type="Label" parent="Player Status/Juice Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "juice
+2"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
+
+[node name="Juicebox Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+offset_left = -269.0
+offset_top = -126.0
+offset_right = 730.0
+offset_bottom = 272.0
+scale = Vector2(0.045, 0.045)
+alignment_horizontal = 0
+
+[node name="Juicebox Text" type="Label" parent="Player Status/Juicebox Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "juice
+boxes
+2"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
 
 [node name="Player Health Container" type="AspectRatioContainer" parent="Player Status"]
 layout_mode = 0
@@ -117,8 +182,63 @@ size_flags_vertical = 0
 text = "Lvl 1"
 label_settings = SubResource("LabelSettings_xg02t")
 
+[node name="Health Count Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+offset_left = -123.0
+offset_top = -143.0
+offset_right = 876.0
+offset_bottom = 255.0
+scale = Vector2(0.0280352, 0.0280352)
+alignment_horizontal = 0
+
+[node name="Health Count Text" type="Label" parent="Player Status/Health Count Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "100/100"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
+
+[node name="Stamina Count Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+offset_left = -123.0
+offset_top = -131.0
+offset_right = 876.0
+offset_bottom = 267.0
+scale = Vector2(0.0280352, 0.0280352)
+alignment_horizontal = 0
+
+[node name="Stamina Count Text" type="Label" parent="Player Status/Stamina Count Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "100/100"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
+
+[node name="XP Count Text Container" type="AspectRatioContainer" parent="Player Status"]
+z_index = 4
+offset_left = -123.0
+offset_top = -119.0
+offset_right = 876.0
+offset_bottom = 279.0
+scale = Vector2(0.0280352, 0.0280352)
+alignment_horizontal = 0
+
+[node name="XP Count Text" type="Label" parent="Player Status/XP Count Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "100/100"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
+
 [node name="XP Text Container" type="AspectRatioContainer" parent="Player Status"]
 z_index = 4
+layout_mode = 0
 offset_left = -235.0
 offset_top = -120.0
 offset_right = -19.0
@@ -147,6 +267,7 @@ layout_mode = 2
 texture = ExtResource("7_t8op0")
 
 [node name="Heart Image Container2" type="AspectRatioContainer" parent="Player Status"]
+layout_mode = 0
 offset_left = -241.0
 offset_top = -151.0
 offset_right = 272.0
@@ -205,6 +326,53 @@ size_flags_vertical = 0
 text = "buddy1"
 label_settings = SubResource("LabelSettings_xg02t")
 
+[node name="Field State Text Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
+z_index = 4
+offset_left = -8.0
+offset_top = -158.0
+offset_right = 892.0
+offset_bottom = -32.0
+scale = Vector2(0.0792794, 0.0792794)
+alignment_horizontal = 2
+
+[node name="Field State Text" type="Label" parent="FoodBuddy1 Status/Field State Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "fieldstate"
+label_settings = SubResource("LabelSettings_kl1yx")
+horizontal_alignment = 2
+
+[node name="Heart Image Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
+offset_left = -72.0
+offset_top = -151.0
+offset_right = 441.0
+offset_bottom = -17.0
+scale = Vector2(0.15, 0.15)
+
+[node name="Heart Image" type="TextureRect" parent="FoodBuddy1 Status/Heart Image Container"]
+layout_mode = 2
+texture = ExtResource("8_jecmj")
+
+[node name="Health Count Text Container" type="AspectRatioContainer" parent="FoodBuddy1 Status"]
+z_index = 4
+offset_left = 48.0
+offset_top = -143.0
+offset_right = 1047.0
+offset_bottom = 255.0
+scale = Vector2(0.0280352, 0.0280352)
+alignment_horizontal = 0
+
+[node name="Health Count Text" type="Label" parent="FoodBuddy1 Status/Health Count Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "100/100"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1
+
 [node name="FoodBuddy2 Status" type="Control" parent="."]
 anchors_preset = 0
 offset_right = 40.0
@@ -252,3 +420,50 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "buddy2"
 label_settings = SubResource("LabelSettings_xg02t")
+
+[node name="Field State Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
+z_index = 4
+offset_left = 166.0
+offset_top = -158.0
+offset_right = 1066.0
+offset_bottom = -32.0
+scale = Vector2(0.0792794, 0.0792794)
+alignment_horizontal = 2
+
+[node name="Field State Text" type="Label" parent="FoodBuddy2 Status/Field State Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "fieldstate"
+label_settings = SubResource("LabelSettings_kl1yx")
+horizontal_alignment = 2
+
+[node name="Heart Image Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
+offset_left = 102.0
+offset_top = -151.0
+offset_right = 615.0
+offset_bottom = -17.0
+scale = Vector2(0.15, 0.15)
+
+[node name="Heart Image" type="TextureRect" parent="FoodBuddy2 Status/Heart Image Container"]
+layout_mode = 2
+texture = ExtResource("8_jecmj")
+
+[node name="Health Count Text Container" type="AspectRatioContainer" parent="FoodBuddy2 Status"]
+z_index = 4
+offset_left = 222.0
+offset_top = -143.0
+offset_right = 1221.0
+offset_bottom = 255.0
+scale = Vector2(0.0280352, 0.0280352)
+alignment_horizontal = 0
+
+[node name="Health Count Text" type="Label" parent="FoodBuddy2 Status/Health Count Text Container"]
+z_index = 3
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "100/100"
+label_settings = SubResource("LabelSettings_xg02t")
+horizontal_alignment = 1

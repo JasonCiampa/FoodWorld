@@ -7,6 +7,7 @@ extends InteractableCharacter
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 var navigation_agent: NavigationAgent2D
+var path_generation_rate: float = 0.1
 var timer: Timer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,7 +58,7 @@ var field_state_callbacks: Dictionary = {
 
 # Abilities #
 var ability_damage: Dictionary = { 
-	"Solo": 10, 
+	"Solo": 100, 
 	"Ability1": 15, 
 	"Ability2": 20 
 }
@@ -82,6 +83,8 @@ var inventory_size: int = 12
 var xp_current: int
 var xp_max: int
 
+var RNG: RandomNumberGenerator
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -93,7 +96,7 @@ func _ready() -> void:
 	
 	navigation_agent = $"NavigationAgent2D"
 	timer = $"Timer"
-	
+	RNG = RandomNumberGenerator.new()
 	# Set the Food Buddy's current field state to be forage (so that they don't move because it isn't coded yet, as of 1/22/25)
 	field_state_current = FieldState.FORAGE
 	
@@ -151,12 +154,6 @@ func interact_with_player(player: Player, characters_in_range: Array[Node2D], _d
 	# Create a list to store all of the Characters involved in an interaction with the Player
 	var characters_to_involve: Array[Node2D] = [player]
 	
-	# Check some sort of Game-Story-Tracking Variable to determine if any characters should be added to or removed from the list so that a specific Dialogue file can be be played at specific moments of the game
-	# If location == SweetsWorldCandyCastle and "Link" in characters_in_range:
-		# characters_to_involve.append(characters_in_range["Link"])
-	
-	#return characters_to_involve
-	
 	# Iterate over each Character that is in-range, and if they're a Food Buddy then add them as a Character to involve in the conversation
 	for character in characters_in_range:
 		if character is FoodBuddy:
@@ -164,6 +161,8 @@ func interact_with_player(player: Player, characters_in_range: Array[Node2D], _d
 	
 	# Return the list of Characters that should be involved in the conversation
 	return characters_to_involve
+
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -187,33 +186,33 @@ func physics_process(_delta: float) -> void:
 	pass
 
 
+func generate_path():
+	
+	if timer.is_stopped() and target != null:
+		
+		# Set the Player as the Food Buddy's target, then move towards the
+		
+		navigation_agent.target_position = target.global_position
+		
+		var current_agent_position = global_position
+		var next_path_position = navigation_agent.get_next_path_position()
+		velocity = current_agent_position.direction_to(next_path_position) * speed_current
+		
+		target_distance = global_position.distance_to(target.global_position)
+		
+		
+		timer.start(path_generation_rate)
 
 # FieldState Callbacks #
 
 # A callback function that should execute repeatedly while the Food Buddy is in the FOLLOW FieldState
 func follow_field_state_callback() -> void:
+	target_player.emit(self)
+	generate_path()
 	
-	if timer.is_stopped():
-		
-		# Set the Player as the Food Buddy's target, then move towards them
-		target_player.emit(self)
-		
-		if global_position.distance_to(target.global_position) > 32:
-		
-			navigation_agent.target_position = target.global_position
-			
-			var current_agent_position = global_position
-			var next_path_position = navigation_agent.get_next_path_position()
-			velocity = current_agent_position.direction_to(next_path_position) * speed_current
-			
-			move_towards_target.emit(self, target)
-		
-		else:
-			velocity.x = 0
-			velocity.y = 0
-		
-		timer.start(0.1)
-
+	if target_distance <= target.radius_range:
+		velocity.x = 0
+		velocity.y = 0
 
 
 
@@ -228,22 +227,32 @@ func solo_field_state_callback() -> void:
 	
 	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it.
 	if target != null and target is Enemy and target.alive:
-		move_towards_target.emit(self, target)
+		generate_path()
 	
 	# Otherwise, move the Food Buddy towards the Player while they look for a new target.
 	else:
-		target_player.emit(self)
-		move_towards_target.emit(self, target)
 		
 		target_closest_enemy.emit(self)
 		
-		return
+		if target == null:
+			target_player.emit(self)
+			
+			if global_position.distance_to(target.global_position) <= target.radius_range:
+				velocity.x = 0
+				velocity.y = 0
+				return
+		
+		generate_path()
+	
+	
 	
 	# Determine if the Food Buddy is in range of an Enemy, then make them stop moving and launch their solo attack
-	if target_distance <= 30 and target is Enemy:
-		velocity.x = 0
-		velocity.y = 0
-		use_ability_solo.emit(self, ability_damage["Solo"])
+	if target is Enemy:
+		
+		if target_distance <= target.radius_range:
+			velocity.x = 0
+			velocity.y = 0
+			use_ability_solo.emit(self, ability_damage["Solo"])
 
 
 

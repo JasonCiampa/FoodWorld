@@ -1,9 +1,9 @@
 [gd_resource type="Resource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_c0yt7"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_br8fw"]
 
 [resource]
-script = ExtResource("1_c0yt7")
+script = ExtResource("1_br8fw")
 conversations = {
 "Grease Juice": {
 "Brittany": {

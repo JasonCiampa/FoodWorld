@@ -13,11 +13,6 @@ extends FoodBuddy
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-enum CollisionValues {
-	GROUND = 7,
-	MIDAIR = 8,
-	PLATFORM = 9
-}
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -50,9 +45,11 @@ func ready():
 	speed_normal = 60
 	speed_current = speed_normal
 	
+	radius_range = 16
+	
 	self.name = "Dan"
 	
-	set_collision_value(CollisionValues.GROUND)
+	set_collision_value(collision_values["GROUND"])
 
 
 # A custom process function that is personally defined for Dan. This is called in the default FoodBuddy class's '_process()' function
@@ -71,16 +68,16 @@ func jump_start():
 	super()
 		
 	# Set Dan to be in midair
-	set_collision_value(CollisionValues.MIDAIR)
+	set_collision_value(collision_values["MIDAIR"])
 
 func jump_end():
 	super()
 	
 	if current_altitude == 0:
-		set_collision_value(CollisionValues.GROUND)
+		set_collision_value(collision_values["GROUND"])
 		on_platform = false
 	else:
-		set_collision_value(CollisionValues.PLATFORM)
+		set_collision_value(collision_values["PLATFORM"])
 		on_platform = true
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

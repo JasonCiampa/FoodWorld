@@ -34,8 +34,6 @@ signal target_player
 signal target_closest_food_buddy
 signal killed_target
 
-signal move_towards_target
-
 signal feet_collide_start
 
 signal update_altitude
@@ -77,8 +75,8 @@ var height: float
 
 
 # Health #
-var health_current: int
-var health_max: int
+var health_current: int = 100
+var health_max: int = 100
 var alive: bool = true
 
 # Berries #
@@ -118,6 +116,14 @@ var current_tilemaps
 # Collisions #
 var collision_value_current: int = 32
 
+var radius_range: int = 0
+
+# Collisions #
+var collision_values: Dictionary = {
+	"GROUND" = 1,
+	"MIDAIR" = 2,
+	"PLATFORM" = 3
+}
 
 # Previous Frame Movement Direction #
 var direction_previous_horizontal: float = 0
@@ -148,11 +154,11 @@ func _ready() -> void:
 	
 	feet_sensor = $"Feet Sensor"
 	
+	
 	# Placing all names of signals here with a random function call so that the debugger stops yelling at me for "never explicitly using" the signal within its class.
 	target_player.is_null()
 	target_closest_food_buddy.is_null()
 	killed_target.is_null()
-	move_towards_target.is_null()
 	feet_collide_start.is_null()
 	update_altitude.is_null()
 	fall_starting.is_null()

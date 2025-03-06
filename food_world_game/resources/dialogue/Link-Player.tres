@@ -1,9 +1,9 @@
 [gd_resource type="Resource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_yjrxu"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_h4quk"]
 
 [resource]
-script = ExtResource("1_yjrxu")
+script = ExtResource("1_h4quk")
 conversations = {
 "Side Effects": {
 "DIALOGUE": {},

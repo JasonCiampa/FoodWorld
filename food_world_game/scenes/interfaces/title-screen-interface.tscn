@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://cmi2lo6il6bie"]
+[gd_scene load_steps=12 format=4 uid="uid://cmi2lo6il6bie"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/title-screen-interface.gd" id="1_6uedp"]
 [ext_resource type="Texture2D" uid="uid://dicdwk1l14tbp" path="res://images/ui/png/title-screen.png" id="2_4twbl"]
@@ -13,13 +13,6 @@
 [sub_resource type="LabelSettings" id="LabelSettings_mechp"]
 font = ExtResource("5_kvqyg")
 font_size = 105
-outline_size = 21
-outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_wjt42"]
-line_spacing = 60.0
-font = ExtResource("5_kvqyg")
-font_size = 76
 outline_size = 21
 outline_color = Color(0, 0, 0, 1)
 
@@ -116,9 +109,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -517.0
-offset_top = 34.0
+offset_top = 108.0
 offset_right = 517.0
-offset_bottom = 173.0
+offset_bottom = 247.0
 grow_horizontal = 2
 
 [node name="Food World Text" type="Label" parent="Title Text Container"]
@@ -128,15 +121,6 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "Food world"
 label_settings = SubResource("LabelSettings_mechp")
-
-[node name="Food World Text2" type="Label" parent="Title Text Container"]
-z_index = 3
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "
-Rotten revolution"
-label_settings = SubResource("LabelSettings_wjt42")
 
 [node name="Play Text Container" type="AspectRatioContainer" parent="."]
 z_index = 4

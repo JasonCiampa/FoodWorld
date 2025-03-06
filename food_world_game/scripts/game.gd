@@ -122,7 +122,7 @@ func _ready() -> void:
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
-	#food_citizen.move_towards_target.connect(_on_character_move_towards_target)
+	#food_citizen.get_target_distance.connect(_on_character_get_target_distance)
 	#food_citizen.die.connect(_on_character_die)
 	
 	## Add the Food Citizen to the Game's SceneTree
@@ -145,14 +145,21 @@ func _ready() -> void:
 	InterfaceDialogue.setValues(PLAYER)
 	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
 	
+	DAN.collision_values["GROUND"] = 4
+	DAN.collision_values["MIDAIR"] = 5
+	DAN.collision_values["PLATFORM"] = 6
 	
-	# CREATE NEW DIALOGUE RESOURCE CODE
-	InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
+	BRITTANY.collision_values["GROUND"] = 7
+	BRITTANY.collision_values["MIDAIR"] = 8
+	BRITTANY.collision_values["PLATFORM"] = 9
 	
-	var temp = ["Brittany-Link-Player", "Brittany-Player", "Dan-Link-Player", "Dan-Player", "Link-Player"]
-	
-	for character_name in temp:
-		InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
+	## CREATE NEW DIALOGUE RESOURCE CODE
+	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
+	#
+	#var temp = ["Brittany-Link-Player", "Brittany-Player", "Dan-Link-Player", "Dan-Player", "Link-Player"]
+	#
+	#for character_name in temp:
+		#InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
 	
 	
 	timer_fade.start(0.1)
@@ -181,10 +188,6 @@ func _process(delta: float) -> void:
 		GameTileManager.process_nearby_tiles(food_buddies_active[0], 1)
 		GameTileManager.process_nearby_tiles(food_buddies_active[1], 2)
 	
-	
-	#var temp_tile = Tile.new(GameTileManager.tilemap_ground, Tile.MapType.GROUND, PLAYER.current_tile_position)
-	#print(temp_tile.type)
-	#GameTileManager.unload_tile(temp_tile)
 	
 	# Determine if the Player is not already interacting, then process in-range potential interactions
 	if not PLAYER.is_interacting:
@@ -300,21 +303,7 @@ func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 
 
 # Moves the subject towards a given target, stops it if it reaches the given distance, then returns the current distance between the two
-func move_towards_target(subject: GameCharacter, target: Node2D) -> float:
-	
-	
-	## Determine the subject's position compared to the target's, then adjust the subject's velocity so that they move towards the target 
-	#if subject.global_position.x < target.global_position.x:
-		#subject.velocity.x = subject.speed_current
-	#
-	#elif subject.global_position.x > target.global_position.x:
-		#subject.velocity.x = -subject.speed_current
-	#
-	#if subject.global_position.y < target.global_position.y:
-		#subject.velocity.y = subject.speed_current
-	#
-	#elif subject.global_position.y > target.global_position.y:
-		#subject.velocity.y = -subject.speed_current
+func get_target_distance(subject: GameCharacter, target: Node2D) -> float:
 	
 	# Calculate the distance from the subject to the target
 	var target_distance = subject.global_position.distance_to(target.global_position)
@@ -325,18 +314,21 @@ func move_towards_target(subject: GameCharacter, target: Node2D) -> float:
 
 
 # Determines if an attack has landed on the target and reduces the target's health if it has. Returns true if the attack landed on the target, false if not.
-func process_attack(target: Node2D, attacker: Node2D, damage: int) -> bool:
+func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int) -> bool:
 	
 	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
+	
 	var hitboxes = attacker.hitbox_damage.get_overlapping_areas()
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
 	if target.hitbox_damage in hitboxes:
 		
 		target.health_current -= damage
+		target.target = attacker
 		
 		# Determine if the attacked Node has run out of health, then emit their death signal
 		if target.health_current <= 0:
+			
 			target.die.emit(target)
 			target.alive = false
 			attacker.killed_target.emit(attacker)
@@ -720,7 +712,7 @@ func _on_player_killed_target() -> void:
 
 
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
-func _on_player_die() -> void:
+func _on_player_die(_player: Player) -> void:
 	InterfaceGameOver.game_over(get_all_assets_on_screen())
 	print("Player has died!")
 	
@@ -752,14 +744,14 @@ func _on_character_target_player(character: CharacterBody2D) -> void:
 
 
 # Callback function that executes whenever the Character wants to move towards an enemy: moves the Character towards the given target
-func _on_character_move_towards_target(character: CharacterBody2D, target: Node2D) -> void:
-	character.target_distance = move_towards_target(character, target)
+func _on_character_get_target_distance(character: CharacterBody2D, target: Node2D) -> void:
+	character.target_distance = get_target_distance(character, target)
 
 
 
 # Callback function that executes whenever the Character has killed their target: sets the Character's target to null
 func _on_character_killed_target(character: CharacterBody2D) -> void:
-	character.target = null
+	character.target = PLAYER
 	character.target_distance = 0
 
 
@@ -819,9 +811,9 @@ func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 	
 	# Determine which Food Buddy in the list of active Food Buddies just died, then remove it from the list since it is no longer active
 	if food_buddy == food_buddies_active[0]:
-		food_buddies_active.remove_at(0)
+		food_buddies_active[0] = food_buddies_inactive[0]
 	else:
-		food_buddies_active.remove_at(1)
+		food_buddies_active[1] = food_buddies_inactive[0]
 	
 	_on_character_die(food_buddy)
 
@@ -837,7 +829,37 @@ func _on_enemy_use_ability(enemy: Enemy, damage: int) -> void:
 	process_attack(enemy.target, enemy, damage)
 
 
-
+func _on_enemy_killed_target(enemy: Enemy) -> void:
+	
+	# Determine if the enemy's target was the first food buddy
+	if enemy.target == food_buddies_active[0]:
+		
+		if PLAYER.alive:
+			
+			if food_buddies_active[1].alive:
+		
+				# Determine if the enemy is closer to the other food buddy
+				if enemy.global_position.distance_to(PLAYER.global_position) <= enemy.global_position.distance_to(food_buddies_active[1].global_position):
+					enemy.target = PLAYER
+				else:
+					enemy.target = food_buddies_active[1]
+		
+		elif food_buddies_active[1].alive:
+			enemy.target = food_buddies_active[1]
+	
+	# Otherwise, determine if the enemy's target was the second food buddy
+	elif enemy.target == food_buddies_active[1]:
+		
+		if PLAYER.alive and food_buddies_active[0].alive:
+		
+			# Determine if the enemy is closer to the other food buddy
+			if enemy.global_position.distance_to(PLAYER.global_position) <= enemy.global_position.distance_to(food_buddies_active[0].global_position):
+				enemy.target = PLAYER
+			else:
+				enemy.target = food_buddies_active[0]
+		
+		elif food_buddies_active[0].alive:
+			enemy.target = food_buddies_active[0]
 
 
 

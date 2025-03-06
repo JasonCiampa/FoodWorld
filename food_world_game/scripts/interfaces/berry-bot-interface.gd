@@ -241,7 +241,6 @@ func _on_craft_count_increment_button_down() -> void:
 func _on_craft_button_down() -> void:
 	
 	var craft_count: int = int(text_craft_count.text)
-	var craft_cost: int = craft_count * juicebox_cost
 	
 	# Determine if the cost of crafting craft_count juiceboxes is higher than the amount of juice the player has currently
 	if craft_count * juicebox_cost <= player.juice:
@@ -251,7 +250,7 @@ func _on_craft_button_down() -> void:
 		player.juiceboxes += craft_count
 		text_juicebox_count.text = str("Juice Boxes: ", player.juiceboxes)
 		
-		if craft_count * juicebox_cost >= player.juice:
+		if craft_count * juicebox_cost > player.juice:
 			button_craft.disabled = true
 		
 	else:

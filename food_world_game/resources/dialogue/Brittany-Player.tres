@@ -1,9 +1,9 @@
 [gd_resource type="Resource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_lb652"]
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_04eba"]
 
 [resource]
-script = ExtResource("1_lb652")
+script = ExtResource("1_04eba")
 conversations = {
 "Feeling Blue": {
 "Brittany": {

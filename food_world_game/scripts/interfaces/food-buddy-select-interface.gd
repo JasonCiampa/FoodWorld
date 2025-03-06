@@ -220,6 +220,10 @@ func _on_active_buddy1_button_down() -> void:
 		inactive_food_buddies[0].global_position = active_food_buddies[0].global_position
 		active_food_buddies[0].global_position = temp_position
 		
+		active_food_buddies[0].collision_values["GROUND"] = 4
+		active_food_buddies[0].collision_values["MIDAIR"] = 5
+		active_food_buddies[0].collision_values["PLATFORM"] = 6
+		
 		active_food_buddies[0].process_mode = Node.PROCESS_MODE_INHERIT
 		inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
 		
@@ -262,6 +266,10 @@ func _on_active_buddy2_button_down() -> void:
 		var temp_position: Vector2 = inactive_food_buddies[0].global_position
 		inactive_food_buddies[0].global_position = active_food_buddies[1].global_position
 		active_food_buddies[1].global_position = temp_position
+		
+		active_food_buddies[1].collision_values["GROUND"] = 7
+		active_food_buddies[1].collision_values["MIDAIR"] = 8
+		active_food_buddies[1].collision_values["PLATFORM"] = 9
 		
 		active_food_buddies[1].process_mode = Node.PROCESS_MODE_INHERIT
 		inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED

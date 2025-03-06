@@ -56,12 +56,6 @@ enum Ability {
 	KICK = 2
 }
 
-enum CollisionValues {
-	GROUND = 1,
-	MIDAIR = 2,
-	PLATFORM = 3
-}
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -133,8 +127,14 @@ var attack_damage: Dictionary = {
 func _ready() -> void:
 	super()
 	
-	health_current = 200
 	sprite.play("test")
+	
+	collision_values["GROUND"] = 1
+	collision_values["MIDAIR"] = 2
+	collision_values["PLATFORM"] = 3
+	
+	radius_range = 32
+	
 	self.name = "Player"
 	body_collider.disabled = true
 	feet_collider.disabled = false
@@ -198,11 +198,11 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
-		print("Berries Current: ", berries)
+		#print("Berries Current: ", berries)
 		#print(collision_value_current)
 		#print("Bottom X: " + str(global_position.x))
 		#print("Bottom Y: " + str(global_position.y))
-		print(" ")
+		#print(" ")
 		#print("Tile X: " + str(current_tile_position.x))
 		#print("Tile Y: " + str(current_tile_position.y))
 		#print(" ")
@@ -308,17 +308,17 @@ func jump_start():
 		super()
 		
 		# Set the Player to be in midair
-		set_collision_value(CollisionValues.MIDAIR)
+		set_collision_value(collision_values["MIDAIR"])
 
 
 func jump_end():
 	super()
 	
 	if current_altitude == 0:
-		set_collision_value(CollisionValues.GROUND)
+		set_collision_value(collision_values["GROUND"])
 		on_platform = false
 	else:
-		set_collision_value(CollisionValues.PLATFORM)
+		set_collision_value(collision_values["PLATFORM"])
 		on_platform = true
 
 

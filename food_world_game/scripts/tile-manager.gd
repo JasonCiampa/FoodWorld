@@ -379,19 +379,19 @@ func tile_callback_ledge(tile: Tile, character: GameCharacter):
 	# Determine if the Character is currently standing on a platform, then update their collision and z-index to behave accordingly while they are on the platform
 	if character.on_platform:
 		
-		character.set_collision_value(character.CollisionValues.PLATFORM)
+		character.set_collision_value(character.collision_values["PLATFORM"])
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 	
 	# Determine if the Character is currently jumping in mid-air, then update their collision and z-index to behave accordingly while they are in mid-air
 	elif character.is_jumping:
-		character.set_collision_value(character.CollisionValues.MIDAIR)
+		character.set_collision_value(character.collision_values["MIDAIR"])
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 	
 	# Otherwise, the Character is on the ground, so update their collision and z-index to behave accordingly while they are on the ground
 	else:
-		character.set_collision_value(character.CollisionValues.GROUND)
+		character.set_collision_value(character.collision_values["GROUND"])
 		
 		# Determine if the given ledge Tile is a 'ledge_front', then update the Character's collision and z-index with respect to that Tile type
 		if tile.type == "ledge_front":
@@ -434,7 +434,7 @@ func tile_callback_environment_asset(_tile: Tile, character: GameCharacter):
 	if !character.is_jumping:
 		
 		# Set the Character to collide with the ground physics layer, enable their body collider, and disable their feet collider
-		character.set_collision_value(character.CollisionValues.GROUND)
+		character.set_collision_value(character.collision_values["GROUND"])
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 		character.z_index = 0
@@ -448,7 +448,7 @@ func tile_callback_bush(tile: Tile, character: GameCharacter):
 	if !character.is_jumping:
 		
 		# Set the Character to collide with the ground physics layer, enable their body collider, and disable their feet collider
-		character.set_collision_value(character.CollisionValues.GROUND)
+		character.set_collision_value(character.collision_values["GROUND"])
 		character.body_collider.disabled = true
 		character.feet_collider.disabled = false
 		character.z_index = 0
