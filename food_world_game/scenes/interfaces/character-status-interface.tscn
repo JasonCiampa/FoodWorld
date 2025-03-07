@@ -72,6 +72,7 @@ layout_mode = 2
 texture = ExtResource("3_gi6xq")
 
 [node name="Berry Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+layout_mode = 0
 offset_left = -282.0
 offset_top = -156.0
 offset_right = 326.0
@@ -102,6 +103,7 @@ label_settings = SubResource("LabelSettings_xg02t")
 horizontal_alignment = 1
 
 [node name="Juice Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+layout_mode = 0
 offset_left = -273.0
 offset_top = -138.0
 offset_right = 335.0
@@ -132,6 +134,7 @@ label_settings = SubResource("LabelSettings_xg02t")
 horizontal_alignment = 1
 
 [node name="Juicebox Image Container" type="AspectRatioContainer" parent="Player Status/Berry Status Container"]
+layout_mode = 0
 offset_left = -278.0
 offset_top = -125.0
 offset_right = 330.0
