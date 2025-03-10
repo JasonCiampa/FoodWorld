@@ -18,8 +18,6 @@ var button_craft: TextureButton
 var button_increment_craft_count: TextureButton
 var button_decrement_craft_count: TextureButton
 
-var image_juice_pipe: TextureRect
-
 var animator: AnimationPlayer
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -72,7 +70,6 @@ func _ready() -> void:
 	button_craft = $"Crafting/Craft/Craft Button Container/Craft Button"
 	button_increment_craft_count = $"Crafting/Craft/Count Increment Button Container/Count Increment Button"
 	button_decrement_craft_count = $"Crafting/Craft/Count Decrement Button Container/Count Decrement Button"
-	image_juice_pipe = $"Pipe/Pipe Image Container/Pipe Image"
 	animator = $"Animator"
 
 
@@ -145,9 +142,9 @@ func start(_freeze_subjects: Array[Node2D]):
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
-	## Animate the UI onto the screen, then have it stay in place
-	#animator.play("enter_UI")
-	#animator.queue("stay_UI")
+	# Animate the UI onto the screen, then have it stay in place
+	animator.play("enter_UI")
+	animator.queue("stay_UI")
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -192,7 +189,7 @@ func end():
 	# Set the UI to be invisible and not processing
 	self.visible = false
 	
-	#animator.play("RESET")
+	animator.play("RESET")
 	player.is_interacting = false
 	
 
