@@ -271,3 +271,6 @@ func _on_deposit_button_down() -> void:
 		text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy)
 		text_berry_count.text = str("Berries: ", player.berries)
 		sauna_current_occupant_times.append(0)
+		
+		animator.play("steam_start")
+		animator.queue("steam_stay")

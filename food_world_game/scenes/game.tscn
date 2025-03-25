@@ -29,6 +29,8 @@ position = Vector2(519, 527)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
+offset_top = -7.0
+offset_bottom = -7.0
 
 [node name="Level-up" parent="Player" instance=ExtResource("5_ehj14")]
 visible = false
