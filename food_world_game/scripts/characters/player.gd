@@ -127,7 +127,7 @@ var attack_damage: Dictionary = {
 func _ready() -> void:
 	super()
 	
-	sprite.play("test")
+	sprite.play("idle_front")
 	
 	collision_values["GROUND"] = 1
 	collision_values["MIDAIR"] = 2
@@ -181,7 +181,7 @@ func _process(delta: float) -> void:
 	
 	if not paused:
 		process_ability_use()
-		#update_movement_animation()
+		update_movement_animation()
 		update_movement_direction()
 		update_stamina(delta)
 		update_field_state()
@@ -314,6 +314,8 @@ func jump_start():
 func jump_end():
 	super()
 	
+	sprite.play("idle_front")
+	
 	if current_altitude == 0:
 		set_collision_value(collision_values["GROUND"])
 		on_platform = false
@@ -397,18 +399,13 @@ func update_movement_animation():
 		
 		# Determine whether the Player is facing left or right, then flip the sprite horizontally based on the direction the Player is facing
 		if direction_current_horizontal == Direction.RIGHT:
-			sprite.flip_h = false
-		elif direction_current_horizontal == Direction.LEFT:
 			sprite.flip_h = true
+		elif direction_current_horizontal == Direction.LEFT:
+			sprite.flip_h = false
 	
 	
 	# Determine if the Player has stamina, then determine if they're performing any actions, then set the correct animation and animation speed based on the Player's action
 	if stamina_current > 0:
-		
-		if Input.is_action_just_pressed("sprint"):
-			animation_player.play("start_sprinting")
-		if Input.is_action_just_released("sprint"):
-			animation_player.play("stop_sprinting")
 		
 		if is_sprinting:
 			sprite.speed_scale = 1.5
