@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
-[ext_resource type="Texture2D" uid="uid://2ej7mhjmw7xp" path="res://images/animations/player/walking/walking-spritesheet.png" id="3_b30js"]
-[ext_resource type="Texture2D" uid="uid://d3cn5kwvxte71" path="res://images/animations/player/idle/idle-spritesheet.png" id="3_ek0am"]
-[ext_resource type="Texture2D" uid="uid://ba23ox3t27ypr" path="res://images/animations/player/jumping/jumping-foward-spritesheet.png" id="4_jwot2"]
+[ext_resource type="Texture2D" uid="uid://bw2fuvg8xs6v7" path="res://images/animations/player/walking/walking-spritesheet.png" id="3_b30js"]
+[ext_resource type="Texture2D" uid="uid://dp1hsdl647rk" path="res://images/animations/player/idle/idle-spritesheet.png" id="3_ek0am"]
+[ext_resource type="Texture2D" uid="uid://d4mlfjvkcjxtw" path="res://images/animations/player/jumping/jumping-foward-spritesheet.png" id="4_jwot2"]
 
 [sub_resource type="Animation" id="Animation_fm2qe"]
 length = 0.001

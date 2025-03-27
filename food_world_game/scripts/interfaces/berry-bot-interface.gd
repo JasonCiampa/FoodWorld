@@ -41,6 +41,7 @@ var frozen_subjects: Array[Node2D]
 
 var player: Player
 var brittany: FoodBuddy
+var berry_sprites: Array[Node2D]
 
 var sauna_current_occupant_times: Array[float]
 var sauna_occupant_stay_time: int = 15
@@ -84,6 +85,14 @@ func _process(delta: float) -> void:
 			sauna_current_occupant_times[time] += delta
 		else:
 			sauna_current_occupant_times.remove_at(time)
+			
+			if berry_sprites.size() > 0:
+				remove_child(berry_sprites[0])
+				berry_sprites.remove_at(0)
+			
+			if sauna_current_occupant_times.size() == 0:
+				animator.play("steam_end")
+			
 			player.juice += sauna_occupant_juice_drop
 			text_juice_count.text = str("Juice: ", player.juice)
 			text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_current_occupant_times.size())
@@ -142,9 +151,20 @@ func start(_freeze_subjects: Array[Node2D]):
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
+	for berry in berry_sprites:
+		var berry_animator = berry.get_node("Animator")
+		berry.visible = true
+		berry_animator.play("enter")
+		berry_animator.queue("glide")
+		
+	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
+	
+	if sauna_current_occupant_times.size() > 0:
+		animator.queue("steam_start")
+		animator.queue("steam_stay")
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -188,6 +208,10 @@ func end():
 	
 	# Set the UI to be invisible and not processing
 	self.visible = false
+	
+	for berry in berry_sprites:
+		berry.visible = false
+	
 	
 	animator.play("RESET")
 	player.is_interacting = false
@@ -251,6 +275,10 @@ func _on_craft_button_down() -> void:
 		if craft_count * juicebox_cost > player.juice:
 			button_craft.disabled = true
 		
+		animator.play("juice_craft_start")
+		animator.queue("juice_craft_end")
+		
+		
 	else:
 		button_craft.disabled = true
 
@@ -264,6 +292,12 @@ func _on_deposit_button_down() -> void:
 	if sauna_occupancy < sauna_occupancy_max and player.berries > 0:
 		sauna_occupancy += 1
 		player.berries -= 1
+		berry_sprites.append(load("res://scenes/blueprints/berry.tscn").instantiate())
+		berry_sprites[berry_sprites.size() - 1].global_position = Vector2(326, 720)
+		add_child(berry_sprites[berry_sprites.size() - 1])
+		var berry_animator = berry_sprites[berry_sprites.size() - 1].get_node("Animator")
+		berry_animator.play("enter")
+		berry_animator.queue("glide")
 		
 		if sauna_occupancy == sauna_occupancy_max or player.berries == 0:
 			button_deposit.disabled = true
@@ -272,5 +306,8 @@ func _on_deposit_button_down() -> void:
 		text_berry_count.text = str("Berries: ", player.berries)
 		sauna_current_occupant_times.append(0)
 		
-		animator.play("steam_start")
-		animator.queue("steam_stay")
+		if sauna_current_occupant_times.size() == 0:
+			animator.play("steam_start")
+			animator.queue("steam_stay")
+		else:
+			animator.queue("steam_stay")
