@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cihoalh5h5cik"]
+[gd_scene load_steps=18 format=3 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://1r6edy1t7kho" path="res://scenes/characters/link.tscn" id="9_t4o2x"]
 [ext_resource type="PackedScene" uid="uid://cufwqkidanpu1" path="res://scenes/characters/dan.tscn" id="10_14ky5"]
 [ext_resource type="PackedScene" uid="uid://da5ns6vxli514" path="res://scenes/characters/brittany.tscn" id="11_8vviu"]
+[ext_resource type="PackedScene" uid="uid://chw6e7j6lh5l" path="res://scenes/blueprints/juicebox.tscn" id="17_vbogv"]
 
 [node name="Game" type="Node2D"]
 z_index = -1
@@ -25,7 +26,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(519, 527)
+position = Vector2(467, 577)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
@@ -109,6 +110,9 @@ one_shot = true
 [node name="WorldCenter" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_gwi8m")
 parameters/looping = true
+
+[node name="Juicebox" parent="." instance=ExtResource("17_vbogv")]
+position = Vector2(470, 562)
 
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]

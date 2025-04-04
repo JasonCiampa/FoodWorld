@@ -146,13 +146,13 @@ region = Rect2(0, 0, 70, 57)
 atlas = ExtResource("3_ek0am")
 region = Rect2(70, 0, 70, 57)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xxmc8"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_mh467"]
 atlas = ExtResource("3_ek0am")
-region = Rect2(0, 132, 70, 66)
+region = Rect2(0, 64, 70, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wui1u"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_uoes4"]
 atlas = ExtResource("3_ek0am")
-region = Rect2(70, 132, 70, 66)
+region = Rect2(70, 64, 70, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cuxmo"]
 atlas = ExtResource("5_slwiu")
@@ -378,10 +378,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xxmc8")
+"texture": SubResource("AtlasTexture_mh467")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wui1u")
+"texture": SubResource("AtlasTexture_uoes4")
 }],
 "loop": true,
 "name": &"idle_sideways",
@@ -575,9 +575,7 @@ libraries = {
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -7)
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"juicethrow_back"
-frame = 2
-frame_progress = 0.32939
+animation = &"idle_sideways"
 offset = Vector2(0, -16)
 
 [node name="Camera2D" type="Camera2D" parent="AnimatedSprite2D"]

@@ -1,0 +1,73 @@
+[gd_scene load_steps=9 format=3 uid="uid://chw6e7j6lh5l"]
+
+[ext_resource type="Script" path="res://scripts/blueprints/juicebox.gd" id="1_cjdey"]
+[ext_resource type="Texture2D" uid="uid://dq0l8c0bt7v" path="res://images/ui/png/berry_bot/juicebox-8.png" id="1_pndo3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pqe8d"]
+atlas = ExtResource("1_pndo3")
+region = Rect2(0, 0, 39, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xews2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pqe8d")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_ca5ob"]
+resource_name = "in-air"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+
+[sub_resource type="Animation" id="Animation_vv24v"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_d4icc"]
+resource_name = "explode"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_nh42o"]
+_data = {
+"RESET": SubResource("Animation_vv24v"),
+"explode": SubResource("Animation_d4icc"),
+"in-air": SubResource("Animation_ca5ob")
+}
+
+[node name="Juicebox" type="Node2D"]
+script = ExtResource("1_cjdey")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_xews2")
+offset = Vector2(0, -2)
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_nh42o")
+}
