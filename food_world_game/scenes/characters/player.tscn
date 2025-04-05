@@ -214,18 +214,6 @@ region = Rect2(204, 128, 68, 64)
 atlas = ExtResource("6_mfej8")
 region = Rect2(272, 128, 68, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_58grq"]
-atlas = ExtResource("4_jwot2")
-region = Rect2(0, 0, 68, 57)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pyo84"]
-atlas = ExtResource("4_jwot2")
-region = Rect2(68, 0, 68, 57)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cv3qk"]
-atlas = ExtResource("4_jwot2")
-region = Rect2(136, 0, 68, 57)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_8ojc2"]
 atlas = ExtResource("5_d4iaq")
 region = Rect2(0, 63, 70, 63)
@@ -237,6 +225,18 @@ region = Rect2(70, 63, 70, 63)
 [sub_resource type="AtlasTexture" id="AtlasTexture_r4jn4"]
 atlas = ExtResource("5_d4iaq")
 region = Rect2(140, 63, 70, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_58grq"]
+atlas = ExtResource("4_jwot2")
+region = Rect2(0, 0, 68, 57)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pyo84"]
+atlas = ExtResource("4_jwot2")
+region = Rect2(68, 0, 68, 57)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cv3qk"]
+atlas = ExtResource("4_jwot2")
+region = Rect2(136, 0, 68, 57)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vtw51"]
 atlas = ExtResource("5_d4iaq")
@@ -310,7 +310,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_atr5t")
 }],
-"loop": true,
+"loop": false,
 "name": &"die",
 "speed": 1.0
 }, {
@@ -427,7 +427,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_amllp")
 }],
-"loop": true,
+"loop": false,
 "name": &"juice_throw_back",
 "speed": 5.0
 }, {
@@ -447,7 +447,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wpnn8")
 }],
-"loop": true,
+"loop": false,
 "name": &"juice_throw_front",
 "speed": 5.0
 }, {
@@ -467,23 +467,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7ofnf")
 }],
-"loop": true,
+"loop": false,
 "name": &"juice_throw_sideways",
 "speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_58grq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pyo84")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cv3qk")
-}],
-"loop": true,
-"name": &"jump",
-"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -497,6 +483,20 @@ animations = [{
 }],
 "loop": true,
 "name": &"jump_back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_58grq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pyo84")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cv3qk")
+}],
+"loop": true,
+"name": &"jump_front",
 "speed": 5.0
 }, {
 "frames": [{
@@ -599,7 +599,7 @@ libraries = {
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -7)
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"field_state_solo"
+animation = &"jump_back"
 offset = Vector2(0, -16)
 
 [node name="Camera2D" type="Camera2D" parent="AnimatedSprite2D"]
@@ -657,5 +657,6 @@ one_shot = true
 [node name="Jump Timer" type="Timer" parent="Timers"]
 one_shot = true
 
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_sprite_animation_finished"]
 [connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
 [connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]

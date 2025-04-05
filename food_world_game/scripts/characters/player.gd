@@ -92,7 +92,8 @@ var stamina_use: Dictionary = {
 	"Dodge": 30, 
 	"Punch": 5, 
 	"Kick": 10,
-	"Juice Throw": 10
+	"Juice Throw": 10,
+	"Juice Throw Three": 30
 }
 
 # Speed #
@@ -110,15 +111,18 @@ var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
 # Juice #
-var juiceboxes: int = 0
-var juice: int = 0
+var juiceboxes: int = 500
+var juice: int = 5000
 
 var juicebox_throw_cooldown
+var throwing_juicebox
 
 # Abilities #
 var attack_damage: Dictionary = { 
 	"Punch": 10, 
-	"Kick": 15 
+	"Kick": 15,
+	"Juice Throw": -25,
+	"Juice Throw Three": -75
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -338,9 +342,9 @@ func process_ability_use() -> int:
 	var ability_number: int = 0
 	
 	# Determine if the Player left-clicked (ability 1) or right-clicked (ability 2) their mouse, then store the corresponding ability number in the variable
-	if Input.is_action_just_pressed("ability1"):
+	if Input.is_action_just_pressed("ability1") or Input.is_action_just_pressed("throw_juicebox"):
 		ability_number = 1
-	elif Input.is_action_just_pressed("ability2"):
+	elif Input.is_action_just_pressed("ability2") or Input.is_action_just_pressed("throw_three_juiceboxes"):
 		ability_number = 2
 	
 	# Determine if an ability was used, then trigger the signal that will use the correct ability based on the Player's current FieldState
@@ -357,17 +361,30 @@ func process_ability_use() -> int:
 					use_ability_solo.emit(attack_damage["Kick"])
 					print("The Player used their kick attack!")
 		
-		if field_state_current == FieldState.JUICE:
+		elif field_state_current == FieldState.JUICE:
 			if ability_number == 1 and juiceboxes > 0:
 				if use_stamina(stamina_use["Juice Throw"]):
 					use_ability_solo.emit(attack_damage["Juice Throw"])
 					juiceboxes -= 1
-					print("The Player used their punch attack!")
+					print("The Player threw a juicebox!")
+					throwing_juicebox = true
+				
 			elif juiceboxes > 2:
 				if use_stamina(stamina_use["Juice Throw Three"]):
 					use_ability_solo.emit(attack_damage["Juice Throw Three"])
 					juiceboxes -= 3
-					print("The Player used their kick attack!")
+					print("The Player threw three juiceboxes!")
+					throwing_juicebox = true
+			
+			
+			if direction_previous_vertical == Direction.DOWN:
+				sprite.play("juice_throw_front")
+			elif direction_previous_vertical == Direction.UP:
+				sprite.play("juice_throw_back")
+			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+				sprite.play("juice_throw_sideways")
+			else:
+				sprite.play("juice_throw_front")
 		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
@@ -390,7 +407,17 @@ func update_movement_animation():
 	
 	# Determine if the Player is jumping, then trigger the jump animation
 	if is_jumping:
-		sprite.play("jump")
+		
+		if direction_previous_vertical == Direction.DOWN:
+			sprite.play("jump_front")
+		elif direction_previous_vertical == Direction.UP:
+			sprite.play("jump_back")
+		
+		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+			sprite.play("jump_sideways")
+		
+		else:
+			sprite.play("jump_front")
 	
 	
 	# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
@@ -398,8 +425,19 @@ func update_movement_animation():
 		
 		if field_state_current == FieldState.JUICE:
 			
+			if throwing_juicebox:
+				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+				
+				if direction_previous_vertical == Direction.DOWN:
+					sprite.play("juice_throw_front")
+				elif direction_previous_vertical == Direction.UP:
+					sprite.play("juice_throw_back")
+				
+				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+					sprite.play("juice_throw_sideways")
+			
 			# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
-			if direction_previous_horizontal == Direction.IDLE:
+			elif direction_previous_horizontal == Direction.IDLE:
 				if direction_previous_vertical == Direction.DOWN:
 					sprite.play("juice_idle_front")
 				elif direction_previous_vertical == Direction.UP:
@@ -854,3 +892,10 @@ func test(delta: float):
 	# ----------------------------------------------------------------------------------------------------------------------------------------------------------------- #
 	
 	tests_ran = true
+
+
+func _on_sprite_animation_finished() -> void:
+	
+	if "juice_throw" in sprite.animation:
+		throwing_juicebox = false
+		sprite.play("juice_idle_front")
