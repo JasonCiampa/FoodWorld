@@ -1,22 +1,43 @@
-[gd_scene load_steps=11 format=3 uid="uid://1r6edy1t7kho"]
+[gd_scene load_steps=10 format=3 uid="uid://1r6edy1t7kho"]
 
 [ext_resource type="Script" path="res://scripts/characters/link.gd" id="1_3g1b3"]
-[ext_resource type="Texture2D" uid="uid://05wvuenbupbl" path="res://images/characters/link-the-sausage-link.png" id="1_lsqe2"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_dc0ob"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_r3o17"]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("1_lsqe2")
-}],
+"frames": [],
 "loop": true,
-"name": &"default",
+"name": &"death",
 "speed": 5.0
 }, {
 "frames": [],
 "loop": true,
-"name": &"new_animation",
+"name": &"idle-back",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_front",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_sideways",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walking-back",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walking-front",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walking-sideways",
 "speed": 5.0
 }]
 
@@ -58,6 +79,8 @@ polygon = PackedVector2Array(-6, 3, -12, 2, -12, 1, -12, -1, -9, -2, 9, -2, 12, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_r3o17")
+animation = &"idle_front"
+frame_progress = 0.687022
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

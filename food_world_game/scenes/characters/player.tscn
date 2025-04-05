@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=78 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dp1hsdl647rk" path="res://images/animations/player/idle/idle-spritesheet.png" id="3_ek0am"]
 [ext_resource type="Texture2D" uid="uid://d4mlfjvkcjxtw" path="res://images/animations/player/jumping/jumping-foward-spritesheet.png" id="4_jwot2"]
 [ext_resource type="Texture2D" uid="uid://strs07wuvikl" path="res://images/animations/player/jumping/jumping-spritesheet.png" id="5_d4iaq"]
+[ext_resource type="Texture2D" uid="uid://boido3sculb1g" path="res://images/animations/player/idle_juice/idle-juice-spritesheet.png" id="5_pyir7"]
 [ext_resource type="Texture2D" uid="uid://v62tarboodsv" path="res://images/animations/player/juicebox_throw/back-spritesheet.png" id="5_slwiu"]
 [ext_resource type="Texture2D" uid="uid://dimhj0hjds645" path="res://images/animations/player/juicebox_throw/juice-throw-spritesheet.png" id="6_mfej8"]
 
@@ -154,17 +155,33 @@ region = Rect2(0, 64, 70, 64)
 atlas = ExtResource("3_ek0am")
 region = Rect2(70, 64, 70, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_4bm2o"]
+atlas = ExtResource("5_pyir7")
+region = Rect2(0, 0, 70, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_41efx"]
+atlas = ExtResource("5_pyir7")
+region = Rect2(70, 0, 70, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5mx3b"]
+atlas = ExtResource("5_pyir7")
+region = Rect2(0, 63, 70, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_64ki0"]
+atlas = ExtResource("5_pyir7")
+region = Rect2(70, 63, 70, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwetj"]
+atlas = ExtResource("5_pyir7")
+region = Rect2(0, 130, 70, 65)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gxqt4"]
+atlas = ExtResource("5_pyir7")
+region = Rect2(70, 130, 70, 65)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_cuxmo"]
 atlas = ExtResource("5_slwiu")
 region = Rect2(0, 0, 70, 54)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y73qp"]
-atlas = ExtResource("6_mfej8")
-region = Rect2(0, 62, 68, 62)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_itilu"]
-atlas = ExtResource("6_mfej8")
-region = Rect2(0, 128, 68, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6y72p"]
 atlas = ExtResource("5_slwiu")
@@ -182,6 +199,10 @@ region = Rect2(210, 0, 70, 54)
 atlas = ExtResource("5_slwiu")
 region = Rect2(280, 0, 70, 54)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_y73qp"]
+atlas = ExtResource("6_mfej8")
+region = Rect2(0, 62, 68, 62)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_be61x"]
 atlas = ExtResource("6_mfej8")
 region = Rect2(68, 62, 68, 62)
@@ -197,6 +218,10 @@ region = Rect2(204, 62, 68, 62)
 [sub_resource type="AtlasTexture" id="AtlasTexture_wpnn8"]
 atlas = ExtResource("6_mfej8")
 region = Rect2(272, 62, 68, 62)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_itilu"]
+atlas = ExtResource("6_mfej8")
+region = Rect2(0, 128, 68, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tc0k2"]
 atlas = ExtResource("6_mfej8")
@@ -389,7 +414,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_cuxmo")
+"texture": SubResource("AtlasTexture_4bm2o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_41efx")
 }],
 "loop": true,
 "name": &"juice_idle_back",
@@ -397,7 +425,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_y73qp")
+"texture": SubResource("AtlasTexture_5mx3b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_64ki0")
 }],
 "loop": true,
 "name": &"juice_idle_front",
@@ -405,7 +436,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_itilu")
+"texture": SubResource("AtlasTexture_uwetj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gxqt4")
 }],
 "loop": true,
 "name": &"juice_idle_sideways",
@@ -599,7 +633,8 @@ libraries = {
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -7)
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"jump_back"
+animation = &"juice_idle_sideways"
+frame_progress = 0.517149
 offset = Vector2(0, -16)
 
 [node name="Camera2D" type="Camera2D" parent="AnimatedSprite2D"]
