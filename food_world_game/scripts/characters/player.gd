@@ -18,6 +18,7 @@ extends GameCharacter
 
 signal toggle_buddy_equipped
 signal toggle_buddy_fusion_equipped
+signal toggle_juicebox
 
 signal toggle_field_state_interface
 signal toggle_select_interface
@@ -41,7 +42,8 @@ enum FieldState
 	SOLO,           # No Food Buddies equipped, can only use solo abilities (punch, kick, dropkick)
 	BUDDY1,         # Food Buddy 1 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
 	BUDDY2,         # Food Buddy 2 equipped, can use player-based abilities of the Food Buddy (differ dependent on the Food Buddy)
-	FUSION          # Food Buddy Fusion equipped, can use fusion-based abilities (differ dependent on the Food Buddy Fusion)
+	FUSION,         # Food Buddy Fusion equipped, can use fusion-based abilities (differ dependent on the Food Buddy Fusion)
+	JUICE,          # Juicebox equipped and ready to throw (if player has juiceboxes)
 }
 
 
@@ -89,7 +91,8 @@ var stamina_use: Dictionary = {
 	"Jump": 10, 
 	"Dodge": 30, 
 	"Punch": 5, 
-	"Kick": 10 
+	"Kick": 10,
+	"Juice Throw": 10
 }
 
 # Speed #
@@ -354,6 +357,18 @@ func process_ability_use() -> int:
 					use_ability_solo.emit(attack_damage["Kick"])
 					print("The Player used their kick attack!")
 		
+		if field_state_current == FieldState.JUICE:
+			if ability_number == 1 and juiceboxes > 0:
+				if use_stamina(stamina_use["Juice Throw"]):
+					use_ability_solo.emit(attack_damage["Juice Throw"])
+					juiceboxes -= 1
+					print("The Player used their punch attack!")
+			elif juiceboxes > 2:
+				if use_stamina(stamina_use["Juice Throw Three"]):
+					use_ability_solo.emit(attack_damage["Juice Throw Three"])
+					juiceboxes -= 3
+					print("The Player used their kick attack!")
+		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
 			use_ability_buddy.emit(1, ability_number)
@@ -380,11 +395,25 @@ func update_movement_animation():
 	
 	# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
 	elif direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
-		if direction_previous_horizontal == Direction.IDLE:
+		
+		if field_state_current == FieldState.JUICE:
+			
+			# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+			if direction_previous_horizontal == Direction.IDLE:
+				if direction_previous_vertical == Direction.DOWN:
+					sprite.play("juice_idle_front")
+				elif direction_previous_vertical == Direction.UP:
+					sprite.play("juice_idle_back")
+			
+			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+				sprite.play("juice_idle_sideways")
+		
+		elif direction_previous_horizontal == Direction.IDLE:
 			if direction_previous_vertical == Direction.DOWN:
 				sprite.play("idle_front")
 			elif direction_previous_vertical == Direction.UP:
 				sprite.play("idle_back")
+			
 		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
 			sprite.play("idle_sideways")
 	
@@ -549,10 +578,43 @@ func update_field_state():
 			sprite.play("field_state_buddy_fusion")
 			print("Player's FieldState has been updated to FUSION")
 		
+		
+		elif Input.is_action_just_pressed("toggle_juicebox"):
+			field_state_current = FieldState.JUICE
+			toggle_juicebox.emit()
+			
+			# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+			if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
+				if direction_previous_horizontal == Direction.IDLE:
+					if direction_previous_vertical == Direction.DOWN:
+						sprite.play("juice_idle_front")
+					elif direction_previous_vertical == Direction.UP:
+						sprite.play("juice_idle_back")
+					else:
+						sprite.play("juice_idle_front")
+			
+			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+				sprite.play("juice_idle_sideways")
+			
+			print("Player's FieldState has been updated to JUICE")
+			
+			
+			# animations = {
+			#	"idle" : _,
+			#
+			#	"juice" : { 
+			#		"idle" : {
+			#			
+			#		}
+			#	}
+			#
+			#
+			# }
+		
 		# Determine if the Player is selecting the SOLO FieldState, then set the selection as the current FieldState
 		if field_state_previous == field_state_current:
 			field_state_current = FieldState.SOLO
-			sprite.play("field_state_solo")
+			sprite.play("idle_front")
 			print("Player's FieldState has been updated to SOLO")
 
 

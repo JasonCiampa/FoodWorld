@@ -110,7 +110,7 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 
 
 func throw_process(delta: float):
-	print("Current: ", position_current)
+	
 	# If the throw is moving above the player and only half the distance to the end point remains, begin descending the y
 	if throwing_upward and !peaked and position_current.distance_squared_to(position_middle) <= 25:
 		print("IN")
