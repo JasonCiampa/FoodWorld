@@ -15,7 +15,13 @@ var animator: AnimationPlayer
 
 # ENUMS #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+enum Direction { 
+	IDLE = 0, 
+	UP = -1, 
+	DOWN = 1,  
+	LEFT = -1, 
+	RIGHT = 1 
+}#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,6 +41,7 @@ var deltaY: float
 var throw_speed: float = 50
 
 var in_air: bool = false
+var peaked: bool = false
 var throwing_upward: bool = true
 var deltaY_adjusted: bool = false
 
@@ -48,7 +55,7 @@ var health: int = 25
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	animator = $"Animator"
-	throw_start(Vector2(620, 480), true)
+	throw_start(Vector2(620, 480), Direction.RIGHT, Direction.UP)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -73,10 +80,7 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func throw_start(destination: Vector2, _throwing_upward: bool):
-	
-	# Indicate whether or not the throw is moving above or below the player
-	throwing_upward = _throwing_upward
+func throw_start(destination: Vector2, direction_horizontal: Direction, direction_vertical: Direction):
 	
 	# If the juicebox hasn't already been thrown
 	if !in_air:
@@ -84,7 +88,7 @@ func throw_start(destination: Vector2, _throwing_upward: bool):
 		# Calculate and store all points of interest in the juice box's path
 		position_start = global_position
 		position_end = destination
-		position_middle = Vector2((abs(position_start.x - position_end.x) / 2), (abs(position_start.y - position_end.y) - 50))		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
+		position_middle = Vector2(position_start.x + (abs(position_start.x - position_end.x) / 2) * direction_horizontal, position_start.y - (abs(position_start.y - position_end.y) / 2) * direction_horizontal)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
 		
 		# Set the current position of the juicebox at the start and its target to the middle
 		position_current = position_start
@@ -99,18 +103,20 @@ func throw_start(destination: Vector2, _throwing_upward: bool):
 		# Trigger the in-air state and animation
 		in_air = true
 		animator.play("in-air")
+	
+	print("Start: ", position_start)
+	print("Middle: ", position_middle)
+	print("End: ", position_end)
 
 
 func throw_process(delta: float):
-	
+	print("Current: ", position_current)
 	# If the throw is moving above the player and only half the distance to the end point remains, begin descending the y
-	if !deltaY_adjusted and throwing_upward and abs(position_current.x - position_end.x) < (total_horizontal_distance / 2):
+	if throwing_upward and !peaked and position_current.distance_squared_to(position_middle) <= 25:
 		print("IN")
-		print(position_current.distance_squared_to(position_end))
 		deltaY = -deltaY
-		deltaY_adjusted = true
 	
-	
+	#print(position_current.distance_squared_to(position_end))
 	# If the throw is close enough to its end position (within 5 px) (25 is being used instead of 5 because the distance_squared_to func is used instead of distance_to)
 	if position_current.distance_squared_to(position_end) > 25:
 		translate(Vector2(deltaX * delta, deltaY * delta))
