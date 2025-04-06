@@ -690,10 +690,12 @@ func _on_player_toggle_berry_bot_interface():
 # Callback function that executes whenever the Player wants to use a solo ability: processes the solo attack against enemies
 func _on_player_use_ability_solo(damage: int) -> void:
 	
-	# Iterate over every enemy currently on the screen to check if the Player's attack landed on them, then stop checking if the attack landed because the Player's solo ability can only damage one enemy at a time
-	for enemy in get_enemies_on_screen():
-		if process_attack(enemy, PLAYER, damage):
-			return
+	if damage > 0:
+		
+		# Iterate over every enemy currently on the screen to check if the Player's attack landed on them, then stop checking if the attack landed because the Player's solo ability can only damage one enemy at a time
+		for enemy in get_enemies_on_screen():
+			if process_attack(enemy, PLAYER, damage):
+				return
 
 
 
@@ -1051,3 +1053,32 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
 			current_building = null
+
+
+func _on_player_throw_juicebox(destination: Vector2) -> void:
+	
+	var juicebox: Juicebox
+	var vertical_direction: int
+	var horizontal_direction: int
+	
+	juicebox = load("res://scenes/blueprints/juicebox.tscn").instantiate()
+	juicebox.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 10)
+	add_child(juicebox)
+		
+	if destination.y <= juicebox.global_position.y:
+		vertical_direction = juicebox.Direction.UP
+		print("Juicebox being thrown:\nUP")
+	else:
+		vertical_direction = juicebox.Direction.DOWN
+		print("Juicebox being thrown:\nDOWN")
+	
+	if destination.x <= juicebox.global_position.x:
+		horizontal_direction = juicebox.Direction.LEFT
+		print("LEFT\n")
+	else:
+		horizontal_direction = juicebox.Direction.RIGHT
+		print("RIGHT\n")
+	
+	juicebox.throw_start(destination, horizontal_direction, vertical_direction)
+	print("Start: ", juicebox.global_position)
+	print("Destination: ", destination)

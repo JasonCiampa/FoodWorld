@@ -118,6 +118,7 @@ position = Vector2(470, 562)
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
 [connection signal="interact" from="Player" to="." method="_on_player_interact"]
+[connection signal="throw_juicebox" from="Player" to="." method="_on_player_throw_juicebox"]
 [connection signal="toggle_berry_bot_interface" from="Player" to="." method="_on_player_toggle_berry_bot_interface"]
 [connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]
 [connection signal="toggle_buddy_fusion_equipped" from="Player" to="." method="_on_player_toggle_buddy_fusion_equipped"]

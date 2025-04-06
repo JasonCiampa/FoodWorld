@@ -1,3 +1,5 @@
+class_name Juicebox
+
 extends Node2D
 
 
@@ -33,12 +35,12 @@ var position_middle: Vector2
 var position_current: Vector2
 var position_target: Vector2
 
-var total_horizontal_distance: float
-
 var deltaX: float
 var deltaY: float
 
 var throw_speed: float = 50
+var throw_direction_vertical: Direction
+var throw_direction_horizontal: Direction
 
 var in_air: bool = false
 var peaked: bool = false
@@ -57,7 +59,7 @@ var health: int = 25
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	animator = $"Animator"
-	throw_start(Vector2(620, 480), Direction.RIGHT, Direction.UP)
+	#throw_start(Vector2(620, 480), Direction.RIGHT, Direction.UP)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -69,6 +71,7 @@ func _process(delta: float) -> void:
 	
 	# Otherwise, if the juicebox isn't in the air and isn't exploding, it must have already been thrown and exploded, so delete it
 	elif animator.current_animation != "explosion":
+		print("juicebox removed")
 		queue_free()
 
 
@@ -90,19 +93,14 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 		# Calculate and store all points of interest in the juice box's path
 		position_start = global_position
 		position_end = destination
-		position_middle = Vector2(position_start.x + (abs(position_start.x - position_end.x) / 2) * direction_horizontal, position_end.y - 50)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
+		position_middle = Vector2(position_start.x + (direction_horizontal * abs(position_start.x - position_end.x)), position_end.y - 50)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
 		
 		# Set the current position of the juicebox at the start and its target to the middle
 		position_current = position_start
-		position_target = position_middle
+		position_target = position_end
 		
-		total_horizontal_distance = position_start.distance_to(position_end)
-		
-		# Calculate and store how much the x and y values should be adjusted each frame (based on distance of throw on each axis & throw speed- needs to be multiplied by delta time still)
-		deltaX = throw_speed * (abs(position_end.x - position_start.x) / abs(position_end.y - position_start.y))
-		deltaY = -1 * (throw_speed * ((abs(position_middle.y - position_start.y) + 50) / abs(position_middle.x - position_start.x)))		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
-		
-		print("Initial DeltaY: ", deltaY)
+		throw_direction_horizontal = direction_horizontal
+		throw_direction_vertical = direction_vertical
 		
 		# Trigger the in-air state and animation
 		in_air = true
@@ -115,47 +113,24 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 
 func throw_process(delta: float):
 	
-	#print(position_current.distance_squared_to(position_middle))
-	
-	# If the throw is moving above the player and only half the distance to the end point remains, begin descending the y
-	if throwing_upward and !peaked and abs(position_current.y - position_middle.y) <= 5:
-		
-		print("Not peaked")
-		delta_adjustment_counter += 1
-		deltaY = deltaY * 0.8
-		
-		if abs(deltaY) <= 5:
-			peaked = true
-			deltaY = -deltaY
-	
-	
-	if peaked and delta_adjustment_counter > 0:
-		print("Peaked")
-		delta_adjustment_counter -= 1
-		deltaY = deltaY * 1.2
-		
-		if delta_adjustment_counter == 0:
-			if deltaY < 0:
-				deltaY = -1 * (throw_speed * ((abs(position_end.y - position_start.y) + 50) / abs(position_end.x - position_start.x)))
-			else:
-				deltaY = (throw_speed * ((abs(position_end.y - position_start.y) + 50) / abs(position_end.x - position_start.x)))
-				
-			print("Final DeltaY: ", deltaY)
-		
-	
-	print(position_current.distance_squared_to(position_end))
 	# If the throw is close enough to its end position (within 5 px) (25 is being used instead of 5 because the distance_squared_to func is used instead of distance_to)
-	if abs(position_current.x - position_end.x) >= 2:
-		translate(Vector2(deltaX * delta, deltaY * delta))
-		position_current = global_position
-	else:
+	if abs(position_current.x - position_target.x) >= 4:
+		translate(Vector2(throw_speed * delta * throw_direction_horizontal, 0))
+	
+	if abs(position_current.y - position_target.y) >= 4:
+		translate(Vector2(0, throw_speed * delta * throw_direction_vertical))
+	
+	elif abs(position_current.x - position_target.x) < 4:
 		throw_end()
+	
+	position_current = global_position
 
 
 
 func throw_end():
 	in_air = false
 	animator.play("explode")
+	print("throw ended")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
