@@ -89,10 +89,10 @@ scale = Vector2(0.25, 0.25)
 position = Vector2(425, 499)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(546, 490)
+position = Vector2(620, 480)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(562, 518)
+position = Vector2(562, 430)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
@@ -100,7 +100,7 @@ position = Vector2(866, 541)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 y_sort_enabled = true
-position = Vector2(16, -68)
+position = Vector2(620, 480)
 
 [node name="Fade Timer" type="Timer" parent="."]
 one_shot = true

@@ -45,6 +45,8 @@ var peaked: bool = false
 var throwing_upward: bool = true
 var deltaY_adjusted: bool = false
 
+var delta_adjustment_counter: int      # How many times the delta value has been updated
+
 var health: int = 25
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,7 +90,7 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 		# Calculate and store all points of interest in the juice box's path
 		position_start = global_position
 		position_end = destination
-		position_middle = Vector2(position_start.x + (abs(position_start.x - position_end.x) / 2) * direction_horizontal, position_start.y - (abs(position_start.y - position_end.y) / 2) * direction_horizontal)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
+		position_middle = Vector2(position_start.x + (abs(position_start.x - position_end.x) / 2) * direction_horizontal, position_end.y - 50)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
 		
 		# Set the current position of the juicebox at the start and its target to the middle
 		position_current = position_start
@@ -98,7 +100,9 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 		
 		# Calculate and store how much the x and y values should be adjusted each frame (based on distance of throw on each axis & throw speed- needs to be multiplied by delta time still)
 		deltaX = throw_speed * (abs(position_end.x - position_start.x) / abs(position_end.y - position_start.y))
-		deltaY = -1 * (throw_speed * ((abs(position_end.y - position_start.y) + 50) / abs(position_end.x - position_start.x)))		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
+		deltaY = -1 * (throw_speed * ((abs(position_middle.y - position_start.y) + 50) / abs(position_middle.x - position_start.x)))		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
+		
+		print("Initial DeltaY: ", deltaY)
 		
 		# Trigger the in-air state and animation
 		in_air = true
@@ -111,14 +115,37 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 
 func throw_process(delta: float):
 	
-	# If the throw is moving above the player and only half the distance to the end point remains, begin descending the y
-	if throwing_upward and !peaked and position_current.distance_squared_to(position_middle) <= 25:
-		print("IN")
-		deltaY = -deltaY
+	#print(position_current.distance_squared_to(position_middle))
 	
-	#print(position_current.distance_squared_to(position_end))
+	# If the throw is moving above the player and only half the distance to the end point remains, begin descending the y
+	if throwing_upward and !peaked and abs(position_current.y - position_middle.y) <= 5:
+		
+		print("Not peaked")
+		delta_adjustment_counter += 1
+		deltaY = deltaY * 0.8
+		
+		if abs(deltaY) <= 5:
+			peaked = true
+			deltaY = -deltaY
+	
+	
+	if peaked and delta_adjustment_counter > 0:
+		print("Peaked")
+		delta_adjustment_counter -= 1
+		deltaY = deltaY * 1.2
+		
+		if delta_adjustment_counter == 0:
+			if deltaY < 0:
+				deltaY = -1 * (throw_speed * ((abs(position_end.y - position_start.y) + 50) / abs(position_end.x - position_start.x)))
+			else:
+				deltaY = (throw_speed * ((abs(position_end.y - position_start.y) + 50) / abs(position_end.x - position_start.x)))
+				
+			print("Final DeltaY: ", deltaY)
+		
+	
+	print(position_current.distance_squared_to(position_end))
 	# If the throw is close enough to its end position (within 5 px) (25 is being used instead of 5 because the distance_squared_to func is used instead of distance_to)
-	if position_current.distance_squared_to(position_end) > 25:
+	if abs(position_current.x - position_end.x) >= 2:
 		translate(Vector2(deltaX * delta, deltaY * delta))
 		position_current = global_position
 	else:

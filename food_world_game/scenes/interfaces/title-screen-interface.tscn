@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dr3tipdytirm0" path="res://images/ui/png/button-normal.png" id="6_3674f"]
 [ext_resource type="Texture2D" uid="uid://cyqnu8jfir83v" path="res://images/ui/png/button-click.png" id="7_echh1"]
 [ext_resource type="Texture2D" uid="uid://qpthqkahbyb4" path="res://images/ui/png/button-hover.png" id="8_jc818"]
-[ext_resource type="AudioStream" uid="uid://depl2g2xnrm81" path="res://music/FoodWorldTheme.mp3" id="9_ot2hm"]
+[ext_resource type="AudioStream" uid="uid://cfhiegnoltqxd" path="res://music/FoodWorldTheme.mp3" id="9_ot2hm"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_mechp"]
 font = ExtResource("5_kvqyg")
