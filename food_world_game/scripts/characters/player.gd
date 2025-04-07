@@ -202,8 +202,7 @@ func _process(delta: float) -> void:
 		escape_menu.emit()
 	
 	update_dimensions()
-	
-	
+
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
