@@ -41,11 +41,19 @@ enum AbilityType { ATTACK, TRAVERSAL, PUZZLE, HYBRID }
 
 enum FieldState 
 { 
-FOLLOW, # Follow the Player
-FORAGE, # Forage for Berries
-FIGHT,   # Use solo attack against enemies (not controlled by player) 
-PLAYER, # Use player-based abilities in the field (controlled by player)
-FUSION  # Fusion with another Food Buddy
+	FOLLOW, # Follow the Player
+	FORAGE, # Forage for Berries
+	FIGHT,   # Use solo attack against enemies (not controlled by player) 
+	PLAYER, # Use player-based abilities in the field (controlled by player)
+	FUSION  # Fusion with another Food Buddy
+}
+
+enum AnimationState
+{
+	IDLE,
+	MOVING,
+	ABILITY,
+	DIE
 }
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,6 +77,13 @@ var field_state_callbacks: Dictionary = {
 	FieldState.FORAGE: forage_field_state_callback,
 	FieldState.FIGHT: fight_field_state_callback,
 }
+
+var current_animation_name: String
+var current_direction_name: String
+var new_animation_name: String
+var new_direction_name: String
+var animation_directions: Dictionary = {}
+
 
 # Abilities #
 var ability_damage: Dictionary = { 
@@ -97,12 +112,64 @@ var inventory_size: int = 12
 var xp_current: int
 var xp_max: int
 
+var using_ability: bool = false
+
 var RNG: RandomNumberGenerator
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Updates the variables that keep track of previous and current movement direction
+func update_movement_direction():
+	
+	# Store the current horizontal and vertical directions as the previous directions.
+	direction_previous_horizontal = direction_current_horizontal
+	direction_previous_vertical = direction_current_vertical
+	
+	if velocity.x < 0:
+		direction_current_horizontal = Direction.LEFT
+	elif velocity.x > 0:
+		direction_current_horizontal = Direction.RIGHT
+	else:
+		direction_current_horizontal = Direction.IDLE
+	
+	if velocity.y < 0:
+		direction_current_vertical = Direction.UP
+	elif velocity.y > 0:
+		direction_current_vertical = Direction.DOWN
+	else:
+		direction_current_vertical = Direction.IDLE
+
+
+
+func update_animation():
+	
+	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
+	
+	if health_current <= 0:
+		new_animation_name = "die"
+	elif using_ability:
+		new_animation_name = "ability"
+	elif velocity.x == 0 and velocity.y == 0:
+		new_animation_name = "idle"
+	else:
+		new_animation_name = "moving"
+	
+	if new_animation_name == "" or new_animation_name == null:
+		new_animation_name = current_animation_name
+	
+	if new_direction_name == "" or new_direction_name == null:
+		new_direction_name = current_direction_name
+	
+	# If the animation has changed, play the new animation
+	if sprite.animation != new_animation_name + new_direction_name:
+		sprite.play(new_animation_name + new_direction_name)
+		current_animation_name = new_animation_name
+		current_direction_name = new_direction_name
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -127,6 +194,15 @@ func _ready() -> void:
 	timer_general.start(1)
 	update_dimensions()
 	
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), "")
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "back")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "back")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
 
 
 
