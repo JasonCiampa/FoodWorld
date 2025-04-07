@@ -390,7 +390,7 @@ func _on_feet_sensor_body_entered(body: Node2D) -> void:
 		
 		# Otherwise, determine if this is a Terrain TileMapLayer, then 
 		if body.name == "Terrain":
-			print("colliding with terrain")
+			#print("colliding with terrain")
 			
 			if !is_jumping and not (self is Player):
 				jump_start()
@@ -404,12 +404,13 @@ func _on_feet_sensor_body_exited(body: Node2D) -> void:
 		
 		# Determine if this is an Environment TileMapLayer, then enable jumping for this character now that they're no longer colliding with a tile
 		if body.name == "Environment":
-			print("jump enabled")
+			#print("jump enabled")
 			jump_enabled = true
 			
 		# Otherwise, determine if this is a Terrain TileMapLayer, then 
 		elif body.name == "Terrain":
-			print("done colliding with terrain")
+			pass
+			#print("done colliding with terrain")
 			
 			
 

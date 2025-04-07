@@ -32,7 +32,7 @@ extends FoodBuddy
 # A custom ready function that is personally defined for Dan. This is called in the default Food Buddy class's '_ready()' function
 func ready():
 	
-	field_state_current = FieldState.SOLO
+	field_state_current = FieldState.FIGHT
 	
 	health_texture_path = "res://images/ui/png/dan-health.png"
 	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-dan.png"

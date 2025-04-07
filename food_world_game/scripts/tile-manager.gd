@@ -12,8 +12,6 @@ class_name TileManager
 # A signal emitted to game.gd whenever a Tile's connected object is supposed to be loaded into the game
 signal tile_object_enter_game
 
-signal set_bushes
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -32,6 +30,8 @@ var tilemaps_active: Array[TileMapLayer]
 
 var tiles_occupied: Dictionary
 var tiles_enabled_navigation: Dictionary
+
+var bushes: Array[Vector2i]
 
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
@@ -71,7 +71,6 @@ func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
 	
 	var tiles_used_environment: Array
-	var bushes: Array[Vector2i]
 	
 	for world in world_tilemaps:
 		
@@ -112,14 +111,14 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			
 			unload_tile(environment_tile)
 			environment_tile = null
-	
-	set_bushes.emit(bushes)
-	
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+func get_bushes():
+	return bushes
 
 # Immediately unloads the Tile from memory
 func unload_tile(tile: Tile):

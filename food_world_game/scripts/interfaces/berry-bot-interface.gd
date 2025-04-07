@@ -46,6 +46,7 @@ var berry_sprites: Array[Node2D]
 var sauna_current_occupant_times: Array[float]
 var sauna_occupant_stay_time: int = 15
 var sauna_occupant_juice_drop: int = 10
+var sauna_occupancy_current: int = 0
 var sauna_occupancy_max: int = 15
 
 var juicebox_cost: int = 50
@@ -283,15 +284,14 @@ func _on_craft_button_down() -> void:
 		button_craft.disabled = true
 
 
-func _on_deposit_button_down() -> void:
+func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 	
-	var sauna_occupancy: int = int(text_sauna_occupancy.text)
+	sauna_occupancy_current = int(text_sauna_occupancy.text)
 	
-	
-	# Until the sauna reaches full capacity or the player runs out of berries, add berries to the sauna
-	if sauna_occupancy < sauna_occupancy_max and player.berries > 0:
-		sauna_occupancy += 1
-		player.berries -= 1
+	# Until the sauna reaches full capacity or the depositer runs out of berries, add berries to the sauna
+	if sauna_occupancy_current < sauna_occupancy_max and depositer.berries > 0:
+		sauna_occupancy_current += 1
+		depositer.berries -= 1
 		berry_sprites.append(load("res://scenes/blueprints/berry.tscn").instantiate())
 		berry_sprites[berry_sprites.size() - 1].global_position = Vector2(326, 720)
 		add_child(berry_sprites[berry_sprites.size() - 1])
@@ -299,11 +299,11 @@ func _on_deposit_button_down() -> void:
 		berry_animator.play("enter")
 		berry_animator.queue("glide")
 		
-		if sauna_occupancy == sauna_occupancy_max or player.berries == 0:
+		if sauna_occupancy_current == sauna_occupancy_max or depositer.berries == 0:
 			button_deposit.disabled = true
 		
-		text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy)
-		text_berry_count.text = str("Berries: ", player.berries)
+		text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
+		text_berry_count.text = str("Berries: ", depositer.berries)
 		sauna_current_occupant_times.append(0)
 		
 		if sauna_current_occupant_times.size() == 0:

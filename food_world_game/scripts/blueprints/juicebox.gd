@@ -65,7 +65,6 @@ func _ready() -> void:
 	animator = $"Animator"
 	sprite = $"AnimatedSprite2D"
 	hitbox_heal = $"Healing Hitbox"
-	#throw_start(Vector2(620, 480), Direction.RIGHT, Direction.UP)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -77,7 +76,7 @@ func _process(delta: float) -> void:
 
 
 # Called every frame. Updates the Enemy's physics
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -96,7 +95,7 @@ func get_parabola_point(start: Vector2, end: Vector2, height: float, t: float) -
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func throw_start(destination: Vector2, direction_horizontal: Direction, direction_vertical: Direction):
+func throw_start(destination: Vector2, direction_horizontal: Direction):
 	
 	# If the juicebox hasn't already been thrown
 	if !in_air:
@@ -110,16 +109,9 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 		position_current = position_start
 		position_target = position_middle
 		
-		deltaX = direction_horizontal * (throw_speed * (abs(position_end.x - position_start.x) / abs(position_end.y - position_start.y)))
-		deltaY = direction_vertical * (throw_speed * (abs(position_end.y - position_start.y) / abs(position_end.x - position_start.x)))
-		
 		# Trigger the in-air state and animation
 		in_air = true
 		animator.play("in-air")
-	
-	print("Start: ", position_start)
-	print("Middle: ", position_middle)
-	print("End: ", position_end)
 
 
 func throw_process(delta: float):
@@ -140,7 +132,6 @@ func throw_end():
 	in_air = false
 	sprite.play("explosion")
 	animator.play("explode")
-	print("throw ended")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -154,13 +145,13 @@ func ready():
 
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_process()' function
-func process(delta: float):
+func process(_delta: float):
 	pass
 
 
 
 # A custom physics_process function that each Enemy subclass should personally define. This is called in the default Enemy class's '_physics_process()' function
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -168,6 +159,5 @@ func physics_process(delta: float) -> void:
 
 func _on_sprite_animation_finished() -> void:
 	if "explosion" == sprite.animation:
-		print("juicebox removed")
 		explode.emit(self)
 		queue_free()

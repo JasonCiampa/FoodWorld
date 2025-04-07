@@ -49,6 +49,8 @@ func ready():
 	
 	self.name = "Link"
 	
+	field_state_current = FieldState.FIGHT
+	
 	set_collision_value(collision_values["GROUND"])
 
 
