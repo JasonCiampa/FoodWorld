@@ -850,6 +850,8 @@ func _on_food_buddy_forage_bush(food_buddy: FoodBuddy):
 		while (bush.berries > 0 and food_buddy.berries < food_buddy.berries_max):
 			bush.berries -= 1
 			food_buddy.berries += 1
+		
+		print(bush.berries)
 
 func _on_food_buddy_target_brittany(food_buddy: FoodBuddy):
 	food_buddy.target = BRITTANY
