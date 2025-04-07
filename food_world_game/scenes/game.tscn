@@ -26,7 +26,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(467, 577)
+position = Vector2(-2448, -1249)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
@@ -89,10 +89,14 @@ scale = Vector2(0.25, 0.25)
 position = Vector2(425, 499)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(546, 490)
+position = Vector2(-2295, -1346)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(562, 518)
+position = Vector2(-2353, -1396)
+
+[node name="Enemy2" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2307, -1153)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
@@ -100,7 +104,7 @@ position = Vector2(866, 541)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 y_sort_enabled = true
-position = Vector2(16, -68)
+position = Vector2(620, 480)
 
 [node name="Fade Timer" type="Timer" parent="."]
 one_shot = true
@@ -115,9 +119,26 @@ parameters/looping = true
 [node name="Juicebox" parent="." instance=ExtResource("17_vbogv")]
 position = Vector2(470, 562)
 
+[node name="Enemy3" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2347, -1218)
+
+[node name="Enemy4" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2684, -1154)
+
+[node name="Enemy5" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2549, -1152)
+
+[node name="Enemy6" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2226, -1207)
+
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
 [connection signal="interact" from="Player" to="." method="_on_player_interact"]
+[connection signal="throw_juicebox" from="Player" to="." method="_on_player_throw_juicebox"]
 [connection signal="toggle_berry_bot_interface" from="Player" to="." method="_on_player_toggle_berry_bot_interface"]
 [connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]
 [connection signal="toggle_buddy_fusion_equipped" from="Player" to="." method="_on_player_toggle_buddy_fusion_equipped"]
@@ -152,6 +173,12 @@ position = Vector2(470, 562)
 [connection signal="target_player" from="Brittany" to="." method="_on_character_target_player"]
 [connection signal="update_altitude" from="Brittany" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability_solo" from="Brittany" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="die" from="Enemy2" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy2" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy2" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy2" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy2" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy2" to="." method="_on_enemy_use_ability"]
 [connection signal="die" from="Enemy" to="." method="_on_character_die"]
 [connection signal="killed_target" from="Enemy" to="." method="_on_enemy_killed_target"]
 [connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
@@ -159,3 +186,27 @@ position = Vector2(470, 562)
 [connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
 [connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
+[connection signal="die" from="Enemy3" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy3" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy3" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy3" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy3" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy3" to="." method="_on_enemy_use_ability"]
+[connection signal="die" from="Enemy4" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy4" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy4" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy4" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy4" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy4" to="." method="_on_enemy_use_ability"]
+[connection signal="die" from="Enemy5" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy5" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy5" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy5" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy5" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy5" to="." method="_on_enemy_use_ability"]
+[connection signal="die" from="Enemy6" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy6" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy6" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy6" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy6" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy6" to="." method="_on_enemy_use_ability"]

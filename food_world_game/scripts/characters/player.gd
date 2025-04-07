@@ -28,6 +28,8 @@ signal use_ability_solo
 signal use_ability_buddy
 signal use_ability_buddy_fusion
 
+signal throw_juicebox
+
 signal interact
 signal escape_menu
 
@@ -111,10 +113,10 @@ var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
 # Juice #
-var juiceboxes: int = 500
+var juiceboxes: int = 1
 var juice: int = 5000
 
-var juicebox_throw_cooldown
+var juicebox_throw_coords
 var throwing_juicebox
 
 # Abilities #
@@ -362,19 +364,11 @@ func process_ability_use() -> int:
 					print("The Player used their kick attack!")
 		
 		elif field_state_current == FieldState.JUICE:
-			if ability_number == 1 and juiceboxes > 0:
+			if ability_number >= 1 and juiceboxes > 0:
 				if use_stamina(stamina_use["Juice Throw"]):
-					use_ability_solo.emit(attack_damage["Juice Throw"])
-					juiceboxes -= 1
 					print("The Player threw a juicebox!")
 					throwing_juicebox = true
-				
-			elif juiceboxes > 2:
-				if use_stamina(stamina_use["Juice Throw Three"]):
-					use_ability_solo.emit(attack_damage["Juice Throw Three"])
-					juiceboxes -= 3
-					print("The Player threw three juiceboxes!")
-					throwing_juicebox = true
+					juicebox_throw_coords = get_global_mouse_position()
 			
 			
 			if direction_previous_vertical == Direction.DOWN:
@@ -618,23 +612,24 @@ func update_field_state():
 		
 		
 		elif Input.is_action_just_pressed("toggle_juicebox"):
-			field_state_current = FieldState.JUICE
-			toggle_juicebox.emit()
-			
-			# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
-			if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
-				if direction_previous_horizontal == Direction.IDLE:
-					if direction_previous_vertical == Direction.DOWN:
-						sprite.play("juice_idle_front")
-					elif direction_previous_vertical == Direction.UP:
-						sprite.play("juice_idle_back")
-					else:
-						sprite.play("juice_idle_front")
-			
-			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
-				sprite.play("juice_idle_sideways")
-			
-			print("Player's FieldState has been updated to JUICE")
+			if juiceboxes > 0:
+				field_state_current = FieldState.JUICE
+				toggle_juicebox.emit()
+				
+				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+				if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
+					if direction_previous_horizontal == Direction.IDLE:
+						if direction_previous_vertical == Direction.DOWN:
+							sprite.play("juice_idle_front")
+						elif direction_previous_vertical == Direction.UP:
+							sprite.play("juice_idle_back")
+						else:
+							sprite.play("juice_idle_front")
+				
+				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+					sprite.play("juice_idle_sideways")
+				
+				print("Player's FieldState has been updated to JUICE")
 			
 			
 			# animations = {
@@ -898,4 +893,12 @@ func _on_sprite_animation_finished() -> void:
 	
 	if "juice_throw" in sprite.animation:
 		throwing_juicebox = false
-		sprite.play("juice_idle_front")
+		throw_juicebox.emit(juicebox_throw_coords)
+		juiceboxes -= 1
+		
+		if juiceboxes == 0:
+			field_state_current = FieldState.SOLO
+			print("Player's FieldState has been updated to SOLO")
+			sprite.play("idle_front")
+		else:
+			sprite.play("juice_idle_front")
