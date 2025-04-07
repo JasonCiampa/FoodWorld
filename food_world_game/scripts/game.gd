@@ -94,6 +94,8 @@ func _ready() -> void:
 	food_buddies_active.append(BRITTANY)
 	
 	food_buddies_inactive.append(LINK)
+	
+	food_buddies_inactive[0].active = false
 
 	#
 	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
@@ -112,7 +114,7 @@ func _ready() -> void:
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
-	GameTileManager.set_bushes.connect(_on_set_bushes)
+	bushes = GameTileManager.get_bushes()
 
 	#MALICK.current_tilemaps = world_tilemaps["center"]
 	#SALLY.current_tilemaps = world_tilemaps["center"]
@@ -674,7 +676,6 @@ func _on_player_toggle_berry_bot_interface():
 	
 	if InterfaceBerryBot.visible:
 		InterfaceBerryBot.end()
-		print("balls")
 		return
 	
 	if closest_interactable_to_player == BRITTANY and closest_interactable_to_player.in_range:
@@ -819,22 +820,39 @@ func _on_food_buddy_target_closest_enemy(food_buddy: FoodBuddy) -> void:
 
 func _on_food_buddy_find_nearest_bush(foodbuddy: FoodBuddy, _next_nearest: int = 0) -> void:
 	
-	pass
-	#var bush_distances: Array[float]
-	#var bush_distance_maps: Dictionary
-	#
-	## ACCESS BUSHES LIST THAT WE CREATED
-	#for index in range(0, bushes.size()):
-		#var distance = foodbuddy.global_position.distance_squared_to(bushes[index])
-		#bush_distances.append(distance)
-		#bush_distance_maps.get_or_add(distance, index)
-	#
-	#bush_distances.sort()
-	#
-	#foodbuddy.closest_bush = bushes[bush_distance_maps[bush_distances[0]]]
-	#print(foodbuddy.closest_bush)
+	var bush_distances: Array[float]
+	var bush_distance_maps: Dictionary
+	
+	# ACCESS BUSHES LIST THAT WE CREATED
+	for index in range(0, bushes.size()):
+		var distance = foodbuddy.global_position.distance_squared_to(bushes[index])
+		bush_distances.append(distance)
+		bush_distance_maps.get_or_add(distance, index)
+	
+	bush_distances.sort()
+	
+	for distance in bush_distances:
+		if foodbuddy.recently_foraged_bushes.get(bushes[bush_distance_maps[distance]]) == null:
+			foodbuddy.closest_bush = bushes[bush_distance_maps[distance]]
+			break
 
 
+func _on_food_buddy_deposit_berries(food_buddy: FoodBuddy):
+	while (food_buddy.berries > 0 and InterfaceBerryBot.sauna_occupancy_current < InterfaceBerryBot.sauna_occupancy_max):
+		InterfaceBerryBot._on_deposit_button_down(food_buddy)
+
+func _on_food_buddy_forage_bush(food_buddy: FoodBuddy):
+	
+	var bush: Bush = interactable_assets.get(Vector2(food_buddy.closest_bush))
+	
+	if bush != null:
+		
+		while (bush.berries > 0 and food_buddy.berries < food_buddy.berries_max):
+			bush.berries -= 1
+			food_buddy.berries += 1
+
+func _on_food_buddy_target_brittany(food_buddy: FoodBuddy):
+	food_buddy.target = BRITTANY
 
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
 func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
@@ -929,9 +947,6 @@ func _on_tile_object_enter_game(tile: Tile):
 		
 		tile_object = null
 
-
-func _on_set_bushes(_bushes:Array[Vector2i]):
-	bushes = _bushes
 
 
 # BUILDING CALLBACKS #
@@ -1066,24 +1081,13 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 	juicebox.explode.connect(_on_juicebox_explode)
 	
 	add_child(juicebox)
-		
-	if destination.y <= juicebox.global_position.y:
-		vertical_direction = juicebox.Direction.UP
-		print("Juicebox being thrown:\nUP")
-	else:
-		vertical_direction = juicebox.Direction.DOWN
-		print("Juicebox being thrown:\nDOWN")
 	
 	if destination.x <= juicebox.global_position.x:
 		horizontal_direction = juicebox.Direction.LEFT
-		print("LEFT\n")
 	else:
 		horizontal_direction = juicebox.Direction.RIGHT
-		print("RIGHT\n")
 	
-	juicebox.throw_start(destination, horizontal_direction, vertical_direction)
-	print("Start: ", juicebox.global_position)
-	print("Destination: ", destination)
+	juicebox.throw_start(destination, horizontal_direction)
 
 
 

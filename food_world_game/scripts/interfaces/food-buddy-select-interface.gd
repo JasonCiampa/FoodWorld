@@ -207,6 +207,9 @@ func _on_active_buddy1_button_down() -> void:
 		active_food_buddies[0] = inactive_foodbuddy
 		inactive_food_buddies[0] = temp
 		
+		active_food_buddies[0].active = true
+		inactive_food_buddies[0].active = false
+		
 		# Update the values of this interface
 		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 		
@@ -253,6 +256,9 @@ func _on_active_buddy2_button_down() -> void:
 		# Update the active and inactive food buddy lists
 		active_food_buddies[1] = inactive_foodbuddy
 		inactive_food_buddies[0] = temp
+		
+		active_food_buddies[1].active = true
+		inactive_food_buddies[0].active = false
 		
 		# Update the values of this interface
 		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)

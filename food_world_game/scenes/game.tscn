@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cihoalh5h5cik"]
+[gd_scene load_steps=17 format=3 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
@@ -16,7 +16,6 @@
 [ext_resource type="PackedScene" uid="uid://1r6edy1t7kho" path="res://scenes/characters/link.tscn" id="9_t4o2x"]
 [ext_resource type="PackedScene" uid="uid://cufwqkidanpu1" path="res://scenes/characters/dan.tscn" id="10_14ky5"]
 [ext_resource type="PackedScene" uid="uid://da5ns6vxli514" path="res://scenes/characters/brittany.tscn" id="11_8vviu"]
-[ext_resource type="PackedScene" uid="uid://chw6e7j6lh5l" path="res://scenes/blueprints/juicebox.tscn" id="17_vbogv"]
 
 [node name="Game" type="Node2D"]
 z_index = -1
@@ -26,7 +25,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-2448, -1249)
+position = Vector2(395, 622)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
@@ -89,14 +88,10 @@ scale = Vector2(0.25, 0.25)
 position = Vector2(425, 499)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(-2295, -1346)
+position = Vector2(548, 525)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(-2353, -1396)
-
-[node name="Enemy2" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(-2307, -1153)
+position = Vector2(490, 475)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
@@ -115,25 +110,6 @@ one_shot = true
 [node name="WorldCenter" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_gwi8m")
 parameters/looping = true
-
-[node name="Juicebox" parent="." instance=ExtResource("17_vbogv")]
-position = Vector2(470, 562)
-
-[node name="Enemy3" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(-2347, -1218)
-
-[node name="Enemy4" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(-2684, -1154)
-
-[node name="Enemy5" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(-2549, -1152)
-
-[node name="Enemy6" parent="." instance=ExtResource("2_2d8m7")]
-z_index = 0
-position = Vector2(-2226, -1207)
 
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
@@ -173,12 +149,6 @@ position = Vector2(-2226, -1207)
 [connection signal="target_player" from="Brittany" to="." method="_on_character_target_player"]
 [connection signal="update_altitude" from="Brittany" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability_solo" from="Brittany" to="." method="_on_food_buddy_use_ability_solo"]
-[connection signal="die" from="Enemy2" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy2" to="." method="_on_enemy_killed_target"]
-[connection signal="target_closest_food_buddy" from="Enemy2" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy2" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy2" to="." method="_on_character_update_altitude"]
-[connection signal="use_ability" from="Enemy2" to="." method="_on_enemy_use_ability"]
 [connection signal="die" from="Enemy" to="." method="_on_character_die"]
 [connection signal="killed_target" from="Enemy" to="." method="_on_enemy_killed_target"]
 [connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
@@ -186,27 +156,3 @@ position = Vector2(-2226, -1207)
 [connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
 [connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
-[connection signal="die" from="Enemy3" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy3" to="." method="_on_enemy_killed_target"]
-[connection signal="target_closest_food_buddy" from="Enemy3" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy3" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy3" to="." method="_on_character_update_altitude"]
-[connection signal="use_ability" from="Enemy3" to="." method="_on_enemy_use_ability"]
-[connection signal="die" from="Enemy4" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy4" to="." method="_on_enemy_killed_target"]
-[connection signal="target_closest_food_buddy" from="Enemy4" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy4" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy4" to="." method="_on_character_update_altitude"]
-[connection signal="use_ability" from="Enemy4" to="." method="_on_enemy_use_ability"]
-[connection signal="die" from="Enemy5" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy5" to="." method="_on_enemy_killed_target"]
-[connection signal="target_closest_food_buddy" from="Enemy5" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy5" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy5" to="." method="_on_character_update_altitude"]
-[connection signal="use_ability" from="Enemy5" to="." method="_on_enemy_use_ability"]
-[connection signal="die" from="Enemy6" to="." method="_on_character_die"]
-[connection signal="killed_target" from="Enemy6" to="." method="_on_enemy_killed_target"]
-[connection signal="target_closest_food_buddy" from="Enemy6" to="." method="_on_character_target_closest_food_buddy"]
-[connection signal="target_player" from="Enemy6" to="." method="_on_character_target_player"]
-[connection signal="update_altitude" from="Enemy6" to="." method="_on_character_update_altitude"]
-[connection signal="use_ability" from="Enemy6" to="." method="_on_enemy_use_ability"]

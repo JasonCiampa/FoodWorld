@@ -15,6 +15,7 @@ var timer_forage_cooldown: Timer
 var timer_general: Timer
 
 var closest_bush: Vector2i = Vector2i(-1, -1)
+var recently_foraged_bushes: Dictionary
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +27,9 @@ signal use_ability_solo
 signal target_closest_enemy
 
 signal find_nearest_bush
+signal forage_bush
+signal target_brittany
+signal deposit_berries
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -39,7 +43,7 @@ enum FieldState
 { 
 FOLLOW, # Follow the Player
 FORAGE, # Forage for Berries
-SOLO,   # Use solo attack against enemies (not controlled by player) 
+FIGHT,   # Use solo attack against enemies (not controlled by player) 
 PLAYER, # Use player-based abilities in the field (controlled by player)
 FUSION  # Fusion with another Food Buddy
 }
@@ -57,11 +61,13 @@ var select_circle_texture_path: String
 var field_state_previous: int
 var field_state_current: int
 
+var active: bool = true
+
 # A dictionary of callback functions that should repeatedly execute while the Food Buddy is in a given FieldState (none for PLAYER or FUSION because those are user-controlled)
 var field_state_callbacks: Dictionary = {
 	FieldState.FOLLOW: follow_field_state_callback,
 	FieldState.FORAGE: forage_field_state_callback,
-	FieldState.SOLO: solo_field_state_callback,
+	FieldState.FIGHT: fight_field_state_callback,
 }
 
 # Abilities #
@@ -107,6 +113,7 @@ func _ready() -> void:
 	timer_navigation = $"Navigation Timer"
 	timer_ability_cooldown = $"Ability Cooldown Timer"
 	timer_general = $"General Timer"
+	timer_forage_cooldown = $"Forage Cooldown Timer"
 	
 	RNG = RandomNumberGenerator.new()
 	# Set the Food Buddy's current field state to be forage (so that they don't move because it isn't coded yet, as of 1/22/25)
@@ -125,6 +132,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if !active:
+		return
 	
 	if timer_general.is_stopped():
 		if !is_jumping and current_altitude > 0:
@@ -140,6 +149,8 @@ func _process(delta: float) -> void:
 
 # Called every frame. Updates the Food Buddy's physics
 func _physics_process(delta: float) -> void:
+	if !active:
+		return
 	
 	if timer_general.is_stopped():
 		if not paused:
@@ -204,19 +215,22 @@ func physics_process(_delta: float) -> void:
 
 func generate_path(target_point: Vector2 = Vector2(-1, -1)):
 	
-	if timer_navigation.is_stopped() and target != null:
+	if timer_navigation.is_stopped():
 		
 		if target_point == Vector2(-1, -1):
-			target_point = target.global_position
+			if target != null:
+				target_point = target.global_position
+			else:
+				return
 		
 		# Set the Player as the Food Buddy's target, then move towards the
-		navigation_agent.target_position = target.global_position
+		navigation_agent.target_position = target_point
 		
 		var current_agent_position = global_position
 		var next_path_position = navigation_agent.get_next_path_position()
-		velocity = current_agent_position.direction_to(next_path_position) * speed_current
 		
-		target_distance = global_position.distance_to(target.global_position)
+		velocity = current_agent_position.direction_to(next_path_position) * speed_current
+		target_distance = global_position.distance_to(target_point)
 		
 		
 		timer_navigation.start(path_generation_rate)
@@ -237,20 +251,49 @@ func follow_field_state_callback() -> void:
 # A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState
 func forage_field_state_callback() -> void:
 	
-	if closest_bush == Vector2i(-1, -1):
-		find_nearest_bush.emit(self)
 	
-	if global_position.distance_to(closest_bush) <= 32:
+	if berries == berries_max:
+		target_brittany.emit(self)
+		generate_path()
+		
+		if global_position.distance_squared_to(target.global_position) <= 144:
+			velocity.x = 0
+			velocity.y = 0
+			deposit_berries.emit(self)
+			
+			if berries < berries_max:
+				find_nearest_bush.emit(self)
+	
+	
+	
+	elif closest_bush == Vector2i(-1, -1):
+		find_nearest_bush.emit(self)
+		return
+	
+	generate_path(closest_bush)
+	
+	if global_position.distance_squared_to(closest_bush) <= 144:
 		velocity.x = 0
 		velocity.y = 0
-		#timer_forage_cooldown.start()
-	else:
-		generate_path(closest_bush)
+		
+		if berries < berries_max and timer_forage_cooldown.is_stopped():
+			# Trigger forage animation LATER ON
+			# Start timer for foraging
+			recently_foraged_bushes.get_or_add(closest_bush, true)
+			timer_forage_cooldown.start(1)
+		
+		elif timer_forage_cooldown.time_left < 0.1:
+			timer_forage_cooldown.stop()
+			forage_bush.emit(self)
+			find_nearest_bush.emit(self)
+			
+			print(name, "'s berry count: ", berries, "/", berries_max)
 
 
 
-# A callback function that should execute repeatedly while the Food Buddy is in the SOLO FieldState
-func solo_field_state_callback() -> void:
+
+# A callback function that should execute repeatedly while the Food Buddy is in the FIGHT FieldState
+func fight_field_state_callback() -> void:
 	
 	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it.
 	if target != null and target is Enemy and target.alive:

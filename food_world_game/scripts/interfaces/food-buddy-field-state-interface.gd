@@ -8,11 +8,11 @@ class_name FoodBuddyFieldStateInterface
 var text_foodbuddy1_name: Label
 var text_foodbuddy2_name: Label
 
-var button_buddy1_solo: TextureButton
+var button_buddy1_fight: TextureButton
 var button_buddy1_follow: TextureButton
 var button_buddy1_forage: TextureButton
 
-var button_buddy2_solo: TextureButton
+var button_buddy2_fight: TextureButton
 var button_buddy2_follow: TextureButton
 var button_buddy2_forage: TextureButton
 
@@ -77,10 +77,10 @@ func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy]):
 	text_foodbuddy1_name = $"Buddy 1 Field States/Buddy 1 Name Text Container/Buddy 1 Name Text"
 	text_foodbuddy2_name = $"Buddy 2 Field States/Buddy 2 Name Text Container/Buddy 2 Name Text"
 	
-	button_buddy1_solo = $"Buddy 1 Field States/Buddy 1 SOLO State/Buddy 1 SOLO State Button Container/Buddy 1 SOLO State Button"
+	button_buddy1_fight = $"Buddy 1 Field States/Buddy 1 SOLO State/Buddy 1 SOLO State Button Container/Buddy 1 SOLO State Button"
 	button_buddy1_follow = $"Buddy 1 Field States/Buddy 1 FOLLOW State/Buddy 1 FOLLOW State Button Container/Buddy 1 FOLLOW State Button"
 	button_buddy1_forage = $"Buddy 1 Field States/Buddy 1 FORAGE State/Buddy 1 FORAGE State Button Container/Buddy 1 FORAGE State Button"
-	button_buddy2_solo = $"Buddy 2 Field States/Buddy 2 SOLO State/Buddy 2 SOLO State Button Container/Buddy 2 SOLO State Button"
+	button_buddy2_fight = $"Buddy 2 Field States/Buddy 2 SOLO State/Buddy 2 SOLO State Button Container/Buddy 2 SOLO State Button"
 	button_buddy2_follow = $"Buddy 2 Field States/Buddy 2 FOLLOW State/Buddy 2 FOLLOW State Button Container/Buddy 2 FOLLOW State Button"
 	button_buddy2_forage = $"Buddy 2 Field States/Buddy 2 FORAGE State/Buddy 2 FORAGE State Button Container/Buddy 2 FORAGE State State Button"
 	animator = $"Animator"
@@ -112,15 +112,15 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
-	if foodbuddy1.field_state_current == FoodBuddy.FieldState.SOLO:
-		selected_button_buddy1 = button_buddy1_solo
+	if foodbuddy1.field_state_current == FoodBuddy.FieldState.FIGHT:
+		selected_button_buddy1 = button_buddy1_fight
 	elif foodbuddy1.field_state_current == FoodBuddy.FieldState.FOLLOW:
 		selected_button_buddy1 = button_buddy1_follow
 	elif foodbuddy1.field_state_current == FoodBuddy.FieldState.FORAGE:
 		selected_button_buddy1 = button_buddy1_forage
 	
-	if foodbuddy2.field_state_current == FoodBuddy.FieldState.SOLO:
-		selected_button_buddy2 = button_buddy2_solo
+	if foodbuddy2.field_state_current == FoodBuddy.FieldState.FIGHT:
+		selected_button_buddy2 = button_buddy2_fight
 	elif foodbuddy2.field_state_current == FoodBuddy.FieldState.FOLLOW:
 		selected_button_buddy2 = button_buddy2_follow
 	elif foodbuddy2.field_state_current == FoodBuddy.FieldState.FORAGE:
@@ -211,7 +211,7 @@ func update_selected_state_buddy2(newly_selected_button: TextureButton, field_st
 
 
 func _on_buddy_1_solo_state_button_down() -> void:
-	update_selected_state_buddy1(button_buddy1_solo, FoodBuddy.FieldState.SOLO)
+	update_selected_state_buddy1(button_buddy1_fight, FoodBuddy.FieldState.FIGHT)
 
 
 func _on_buddy_1_follow_state_button_down() -> void:
@@ -220,13 +220,15 @@ func _on_buddy_1_follow_state_button_down() -> void:
 
 func _on_buddy_1_forage_state_button_down() -> void:
 	update_selected_state_buddy1(button_buddy1_forage, FoodBuddy.FieldState.FORAGE)
+	foodbuddy1.target = null
 
 
 func _on_buddy_2_solo_state_button_down() -> void:
-	update_selected_state_buddy2(button_buddy2_solo, FoodBuddy.FieldState.SOLO)
+	update_selected_state_buddy2(button_buddy2_fight, FoodBuddy.FieldState.FIGHT)
 
 func _on_buddy_2_follow_state_button_down() -> void:
 	update_selected_state_buddy2(button_buddy2_follow, FoodBuddy.FieldState.FOLLOW)
 
 func _on_buddy_2_forage_state_button_down() -> void:
 	update_selected_state_buddy2(button_buddy2_forage, FoodBuddy.FieldState.FORAGE)
+	foodbuddy2.target = null
