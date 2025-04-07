@@ -113,7 +113,7 @@ var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
 # Juice #
-var juiceboxes: int = 500
+var juiceboxes: int = 1
 var juice: int = 5000
 
 var juicebox_throw_coords
@@ -612,23 +612,24 @@ func update_field_state():
 		
 		
 		elif Input.is_action_just_pressed("toggle_juicebox"):
-			field_state_current = FieldState.JUICE
-			toggle_juicebox.emit()
-			
-			# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
-			if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
-				if direction_previous_horizontal == Direction.IDLE:
-					if direction_previous_vertical == Direction.DOWN:
-						sprite.play("juice_idle_front")
-					elif direction_previous_vertical == Direction.UP:
-						sprite.play("juice_idle_back")
-					else:
-						sprite.play("juice_idle_front")
-			
-			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
-				sprite.play("juice_idle_sideways")
-			
-			print("Player's FieldState has been updated to JUICE")
+			if juiceboxes > 0:
+				field_state_current = FieldState.JUICE
+				toggle_juicebox.emit()
+				
+				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+				if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
+					if direction_previous_horizontal == Direction.IDLE:
+						if direction_previous_vertical == Direction.DOWN:
+							sprite.play("juice_idle_front")
+						elif direction_previous_vertical == Direction.UP:
+							sprite.play("juice_idle_back")
+						else:
+							sprite.play("juice_idle_front")
+				
+				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+					sprite.play("juice_idle_sideways")
+				
+				print("Player's FieldState has been updated to JUICE")
 			
 			
 			# animations = {
@@ -898,7 +899,6 @@ func _on_sprite_animation_finished() -> void:
 		if juiceboxes == 0:
 			field_state_current = FieldState.SOLO
 			print("Player's FieldState has been updated to SOLO")
-			print(" ")
 			sprite.play("idle_front")
 		else:
 			sprite.play("juice_idle_front")

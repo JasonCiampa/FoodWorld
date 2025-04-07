@@ -1063,6 +1063,8 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 	
 	juicebox = load("res://scenes/blueprints/juicebox.tscn").instantiate()
 	juicebox.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 10)
+	juicebox.explode.connect(_on_juicebox_explode)
+	
 	add_child(juicebox)
 		
 	if destination.y <= juicebox.global_position.y:
@@ -1082,3 +1084,21 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 	juicebox.throw_start(destination, horizontal_direction, vertical_direction)
 	print("Start: ", juicebox.global_position)
 	print("Destination: ", destination)
+
+
+
+func _on_juicebox_explode(juicebox: Juicebox):
+	var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
+	
+	if PLAYER.hitbox_damage in hitboxes:
+		PLAYER.health_current += juicebox.health
+		
+		if PLAYER.health_current > PLAYER.health_max:
+			PLAYER.health_current = PLAYER.health_max
+	
+	for food_buddy in food_buddies_active:
+		if food_buddy.hitbox_damage in hitboxes:
+			food_buddy.health_current += juicebox.health
+			
+			if food_buddy.health_current > food_buddy.health_max:
+				food_buddy.health_current = food_buddy.health_max

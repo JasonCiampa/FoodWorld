@@ -1,11 +1,52 @@
-[gd_scene load_steps=9 format=3 uid="uid://chw6e7j6lh5l"]
+[gd_scene load_steps=21 format=3 uid="uid://chw6e7j6lh5l"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/juicebox.gd" id="1_cjdey"]
 [ext_resource type="Texture2D" uid="uid://dq0l8c0bt7v" path="res://images/ui/png/berry_bot/juicebox-8.png" id="1_pndo3"]
+[ext_resource type="Texture2D" uid="uid://gjuvgxykkwcn" path="res://images/ui/png/berry_bot/juicebox_explosion/juice_explosion.png" id="3_b2b3v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pqe8d"]
 atlas = ExtResource("1_pndo3")
 region = Rect2(0, 0, 39, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ejete"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(0, 0, 29, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e6bwa"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(54, 0, 27, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t65wg"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(84, 0, 27, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_88mom"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(116, 0, 29, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eorlj"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(146, 0, 36, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pc4ha"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(183, 0, 36, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rbb67"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(226, 0, 32, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3d5nh"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(270, 0, 27, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_osby8"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(303, 0, 25, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5uud"]
+atlas = ExtResource("3_b2b3v")
+region = Rect2(28, 1, 27, 28)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_xews2"]
 animations = [{
@@ -16,7 +57,96 @@ animations = [{
 "loop": true,
 "name": &"default",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ejete")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e6bwa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t65wg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_88mom")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eorlj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pc4ha")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rbb67")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3d5nh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_osby8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5uud")
+}],
+"loop": false,
+"name": &"explosion",
+"speed": 15.0
 }]
+
+[sub_resource type="Animation" id="Animation_vv24v"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_d4icc"]
+resource_name = "explode"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.466667, 0.666667, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.75, 1.75), Vector2(1, 1), Vector2(1.75, 1.75), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_ca5ob"]
 resource_name = "in-air"
@@ -35,24 +165,6 @@ tracks/0/keys = {
 "values": [0.0, 6.28319]
 }
 
-[sub_resource type="Animation" id="Animation_vv24v"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-
-[sub_resource type="Animation" id="Animation_d4icc"]
-resource_name = "explode"
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_nh42o"]
 _data = {
 "RESET": SubResource("Animation_vv24v"),
@@ -60,14 +172,28 @@ _data = {
 "in-air": SubResource("Animation_ca5ob")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t4n2n"]
+size = Vector2(34, 22)
+
 [node name="Juicebox" type="Node2D"]
+z_index = 2
 script = ExtResource("1_cjdey")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_xews2")
-offset = Vector2(0, -2)
+animation = &"explosion"
+offset = Vector2(0.64, 2.315)
 
 [node name="Animator" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_nh42o")
 }
+
+[node name="Healing Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Healing Hitbox"]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_t4n2n")
+debug_color = Color(0.505887, 0, 0.044596, 0.42)
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_sprite_animation_finished"]

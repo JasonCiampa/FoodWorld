@@ -6,11 +6,15 @@ extends Node2D
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 var animator: AnimationPlayer
+var sprite: AnimatedSprite2D
+var hitbox_heal: Area2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+signal explode
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,6 +63,8 @@ var health: int = 25
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	animator = $"Animator"
+	sprite = $"AnimatedSprite2D"
+	hitbox_heal = $"Healing Hitbox"
 	#throw_start(Vector2(620, 480), Direction.RIGHT, Direction.UP)
 
 
@@ -68,12 +74,6 @@ func _process(delta: float) -> void:
 	# If the juicebox is in midair, process its trajectory
 	if in_air:
 		throw_process(delta)
-	
-	# Otherwise, if the juicebox isn't in the air and isn't exploding, it must have already been thrown and exploded, so delete it
-	elif animator.current_animation != "explosion":
-		print("juicebox removed")
-		queue_free()
-
 
 
 # Called every frame. Updates the Enemy's physics
@@ -81,6 +81,17 @@ func _physics_process(delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Used chatgpt to make this- but I was the one who decided to use parabolas so I feel smarts still
+func get_parabola_point(start: Vector2, end: Vector2, height: float, t: float) -> Vector2:
+	var normal_mid = (start + end) * 0.5
+	var forward_mid = start.lerp(end, 4)  # shifted forward midpoint
+	forward_mid.y -= height
+	
+	# Quadratic Bezier formula
+	var a = start.lerp(forward_mid, t)
+	var b = normal_mid.lerp(end, t)
+	return a.lerp(b, t)
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -93,14 +104,14 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 		# Calculate and store all points of interest in the juice box's path
 		position_start = global_position
 		position_end = destination
-		position_middle = Vector2(position_start.x + (direction_horizontal * abs(position_start.x - position_end.x)), position_end.y - 50)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
+		position_middle = Vector2(position_start.x + (direction_horizontal * (abs(position_start.x - position_end.x) / 2)), position_end.y - 50)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
 		
 		# Set the current position of the juicebox at the start and its target to the middle
 		position_current = position_start
-		position_target = position_end
+		position_target = position_middle
 		
-		throw_direction_horizontal = direction_horizontal
-		throw_direction_vertical = direction_vertical
+		deltaX = direction_horizontal * (throw_speed * (abs(position_end.x - position_start.x) / abs(position_end.y - position_start.y)))
+		deltaY = direction_vertical * (throw_speed * (abs(position_end.y - position_start.y) / abs(position_end.x - position_start.x)))
 		
 		# Trigger the in-air state and animation
 		in_air = true
@@ -113,22 +124,21 @@ func throw_start(destination: Vector2, direction_horizontal: Direction, directio
 
 func throw_process(delta: float):
 	
-	# If the throw is close enough to its end position (within 5 px) (25 is being used instead of 5 because the distance_squared_to func is used instead of distance_to)
-	if abs(position_current.x - position_target.x) >= 4:
-		translate(Vector2(throw_speed * delta * throw_direction_horizontal, 0))
-	
-	if abs(position_current.y - position_target.y) >= 4:
-		translate(Vector2(0, throw_speed * delta * throw_direction_vertical))
-	
-	elif abs(position_current.x - position_target.x) < 4:
-		throw_end()
-	
+	global_position = get_parabola_point(position_current, position_target, 0, (delta * position_current.x / position_end.x))
+
 	position_current = global_position
+	
+	if abs(position_current.x - position_target.x) < 10 and abs(position_current.y - position_target.y) < 10:
+		if position_target == position_middle:
+			position_target = position_end
+		elif position_target == position_end:
+			throw_end()
 
 
 
 func throw_end():
 	in_air = false
+	sprite.play("explosion")
 	animator.play("explode")
 	print("throw ended")
 
@@ -154,3 +164,10 @@ func physics_process(delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+func _on_sprite_animation_finished() -> void:
+	if "explosion" == sprite.animation:
+		print("juicebox removed")
+		explode.emit(self)
+		queue_free()
