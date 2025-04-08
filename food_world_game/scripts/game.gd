@@ -640,6 +640,7 @@ func _on_player_toggle_field_state_interface() -> void:
 	if InterfaceFoodBuddyFieldState.visible:
 		InterfaceFoodBuddyFieldState.end()
 	else:
+		InterfaceFoodBuddyFieldState.setValues(PLAYER, food_buddies_active)
 		InterfaceFoodBuddyFieldState.start(get_all_assets_on_screen(), food_buddies_active)
 
 
@@ -655,6 +656,7 @@ func _on_player_toggle_select_interface() -> void:
 	if InterfaceFoodBuddySelection.visible:
 		InterfaceFoodBuddySelection.end()
 	else:
+		InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 		InterfaceFoodBuddySelection.start(get_all_assets_on_screen())
 
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm2w4m46mv5wv"
-path="res://.godot/imported/idle-sideways-1.png-faa81029b0a0c7c6bfe09176f0953ff9.ctex"
+uid="uid://bqcxtgfm07f45"
+path="res://.godot/imported/idle_spritesheet.png-d8eaa14264c66270923a830bd2694891.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/link/idle/idle-sideways-1.png"
-dest_files=["res://.godot/imported/idle-sideways-1.png-faa81029b0a0c7c6bfe09176f0953ff9.ctex"]
+source_file="res://images/animations/link/idle/idle_spritesheet.png"
+dest_files=["res://.godot/imported/idle_spritesheet.png-d8eaa14264c66270923a830bd2694891.ctex"]
 
 [params]
 

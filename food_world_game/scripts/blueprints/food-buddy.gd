@@ -81,7 +81,7 @@ var field_state_callbacks: Dictionary = {
 var current_animation_name: String
 var current_direction_name: String
 var new_animation_name: String
-var new_direction_name: String
+var new_direction_name
 var animation_directions: Dictionary = {}
 
 
@@ -129,19 +129,15 @@ func update_movement_direction():
 	direction_previous_horizontal = direction_current_horizontal
 	direction_previous_vertical = direction_current_vertical
 	
-	if velocity.x < 0:
-		direction_current_horizontal = Direction.LEFT
-	elif velocity.x > 0:
-		direction_current_horizontal = Direction.RIGHT
-	else:
-		direction_current_horizontal = Direction.IDLE
+	direction_current_horizontal = sign(velocity.x)
+	direction_current_vertical = sign(velocity.y)
+
 	
-	if velocity.y < 0:
-		direction_current_vertical = Direction.UP
-	elif velocity.y > 0:
-		direction_current_vertical = Direction.DOWN
-	else:
-		direction_current_vertical = Direction.IDLE
+	# Determine whether the Food Buddy is facing left or right, then flip the sprite horizontally based on the direction the Food Buddy is facing
+	if direction_current_horizontal == Direction.RIGHT:
+		sprite.flip_h = true
+	elif direction_current_horizontal == Direction.LEFT:
+		sprite.flip_h = false
 
 
 
@@ -162,14 +158,24 @@ func update_animation():
 		new_animation_name = current_animation_name
 	
 	if new_direction_name == "" or new_direction_name == null:
-		new_direction_name = current_direction_name
+		if current_direction_name != "":
+			new_direction_name = current_direction_name
+		else:
+			new_direction_name = "front"
 	
 	# If the animation has changed, play the new animation
-	if sprite.animation != new_animation_name + new_direction_name:
-		sprite.play(new_animation_name + new_direction_name) # --> idle_front
+	if sprite.animation != (new_animation_name + "_" + new_direction_name):
+		print("UPDATE")
+		sprite.play(new_animation_name + "_" + new_direction_name) # --> idle_front
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
-
+	
+	#print("Current Animation: ", sprite.animation)
+	#print("New Animation: ", new_animation_name + "_" + new_direction_name)
+	#print("Current Direction: ", current_direction_name)
+	#print("New Direction: ", new_direction_name)
+	#print("")
+	
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -188,21 +194,22 @@ func _ready() -> void:
 	
 	self.name = "FoodBuddy"
 	
+	update_movement_direction()
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), "")
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
+	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
 	timer_general.start(1)
 	update_dimensions()
-	
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), "")
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "back")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "front")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "back")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
 
 
 
@@ -212,6 +219,9 @@ func _process(delta: float) -> void:
 		return
 	
 	if timer_general.is_stopped():
+		update_movement_direction()
+		#update_animation()
+		
 		if !is_jumping and current_altitude > 0:
 			on_platform = true
 		else:
@@ -321,7 +331,6 @@ func follow_field_state_callback() -> void:
 	if target_distance <= target.radius_range:
 		velocity.x = 0
 		velocity.y = 0
-
 
 
 # A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState

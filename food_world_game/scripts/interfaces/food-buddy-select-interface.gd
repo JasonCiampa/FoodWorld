@@ -307,9 +307,12 @@ func _on_inactive_buddy_button_button_down() -> void:
 		# Update the active and inactive food buddy lists
 		if selected_active_foodbuddy == active_foodbuddy1:
 			temp = active_foodbuddy1
-			active_food_buddies[0] = inactive_foodbuddy
 			
+			active_food_buddies[0] = inactive_foodbuddy
 			inactive_food_buddies[0] = temp
+			
+			active_food_buddies[0].active = true
+			inactive_food_buddies[0].active = false
 			
 			# Update the locations of the Food Buddies in-game
 			temp_position = inactive_food_buddies[0].global_position
@@ -321,9 +324,12 @@ func _on_inactive_buddy_button_button_down() -> void:
 		
 		else:
 			temp = active_foodbuddy2
+			
 			active_food_buddies[1] = inactive_foodbuddy
-		
 			inactive_food_buddies[0] = temp
+			
+			active_food_buddies[1].active = true
+			inactive_food_buddies[0].active = false
 			
 			# Update the locations of the Food Buddies in-game
 			temp_position = inactive_food_buddies[0].global_position

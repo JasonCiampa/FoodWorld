@@ -1,7 +1,32 @@
-[gd_scene load_steps=10 format=3 uid="uid://1r6edy1t7kho"]
+[gd_scene load_steps=17 format=3 uid="uid://1r6edy1t7kho"]
 
 [ext_resource type="Script" path="res://scripts/characters/link.gd" id="1_3g1b3"]
+[ext_resource type="Texture2D" uid="uid://bqcxtgfm07f45" path="res://images/animations/link/idle/idle_spritesheet.png" id="2_1514k"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_dc0ob"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hrnk"]
+atlas = ExtResource("2_1514k")
+region = Rect2(0, 0, 26, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4t6eb"]
+atlas = ExtResource("2_1514k")
+region = Rect2(26, 0, 26, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0i0xy"]
+atlas = ExtResource("2_1514k")
+region = Rect2(0, 20, 26, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xurwb"]
+atlas = ExtResource("2_1514k")
+region = Rect2(26, 20, 26, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_thd3l"]
+atlas = ExtResource("2_1514k")
+region = Rect2(0, 40, 17, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_601lf"]
+atlas = ExtResource("2_1514k")
+region = Rect2(17, 40, 17, 20)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_r3o17"]
 animations = [{
@@ -35,17 +60,35 @@ animations = [{
 "name": &"die_sideways",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hrnk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4t6eb")
+}],
 "loop": true,
 "name": &"idle_back",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0i0xy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xurwb")
+}],
 "loop": true,
 "name": &"idle_front",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_thd3l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_601lf")
+}],
 "loop": true,
 "name": &"idle_sideways",
 "speed": 5.0
@@ -102,9 +145,11 @@ color = Color(0, 0, 0, 0.572549)
 polygon = PackedVector2Array(-6, 3, -12, 2, -12, 1, -12, -1, -9, -2, 9, -2, 12, -1, 12, 1, 12, 2, 6, 3)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_r3o17")
-animation = &"idle_back"
+animation = &"idle_sideways"
+frame_progress = 0.092889
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -176,5 +221,7 @@ one_shot = true
 [node name="Forage Cooldown Timer" type="Timer" parent="."]
 one_shot = true
 
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_sprite_animation_finished"]
+[connection signal="animation_looped" from="AnimatedSprite2D" to="." method="_on_sprite_animation_looped"]
 [connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
 [connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]
