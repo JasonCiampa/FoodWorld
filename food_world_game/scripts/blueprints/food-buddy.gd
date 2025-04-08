@@ -166,7 +166,7 @@ func update_animation():
 	
 	# If the animation has changed, play the new animation
 	if sprite.animation != new_animation_name + new_direction_name:
-		sprite.play(new_animation_name + new_direction_name)
+		sprite.play(new_animation_name + new_direction_name) # --> idle_front
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
 

@@ -642,12 +642,12 @@ offset_bottom = 40.0
 
 [node name="Buddy 1 SOLO State Text Container" type="AspectRatioContainer" parent="Buddy 1 Field States/Buddy 1 SOLO State"]
 layout_mode = 0
-offset_left = 523.0
+offset_left = 512.0
 offset_top = 493.0
-offset_right = 652.0
+offset_right = 665.0
 offset_bottom = 535.0
 scale = Vector2(1e-05, 1e-05)
-pivot_offset = Vector2(64.5, 21)
+pivot_offset = Vector2(73.785, 21)
 
 [node name="Buddy 1 SOLO State Text" type="Label" parent="Buddy 1 Field States/Buddy 1 SOLO State/Buddy 1 SOLO State Text Container"]
 z_index = 3
@@ -786,12 +786,12 @@ offset_bottom = 40.0
 
 [node name="Buddy 2 SOLO State Text Container" type="AspectRatioContainer" parent="Buddy 2 Field States/Buddy 2 SOLO State"]
 layout_mode = 0
-offset_left = 1270.0
+offset_left = 1259.0
 offset_top = 500.0
-offset_right = 1399.0
+offset_right = 1412.0
 offset_bottom = 542.0
 scale = Vector2(1e-05, 1e-05)
-pivot_offset = Vector2(64.5, 21)
+pivot_offset = Vector2(77.22, 21)
 
 [node name="Buddy 2 SOLO State Text" type="Label" parent="Buddy 2 Field States/Buddy 2 SOLO State/Buddy 2 SOLO State Text Container"]
 z_index = 3

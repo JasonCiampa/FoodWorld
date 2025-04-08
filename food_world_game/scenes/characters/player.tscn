@@ -573,8 +573,7 @@ libraries = {
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -7)
 sprite_frames = SubResource("SpriteFrames_ndqxf")
-animation = &"juice_idle_sideways"
-frame_progress = 0.517149
+animation = &"idle_sideways"
 offset = Vector2(0, -16)
 
 [node name="Camera2D" type="Camera2D" parent="AnimatedSprite2D"]

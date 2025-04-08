@@ -7,12 +7,37 @@
 animations = [{
 "frames": [],
 "loop": true,
-"name": &"death",
+"name": &"ability_back",
 "speed": 5.0
 }, {
 "frames": [],
 "loop": true,
-"name": &"idle-back",
+"name": &"ability_front",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"ability_sideways",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"die_back",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"die_front",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"die_sideways",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_back",
 "speed": 5.0
 }, {
 "frames": [],
@@ -27,17 +52,17 @@ animations = [{
 }, {
 "frames": [],
 "loop": true,
-"name": &"walking-back",
+"name": &"moving_back",
 "speed": 5.0
 }, {
 "frames": [],
 "loop": true,
-"name": &"walking-front",
+"name": &"moving_front",
 "speed": 5.0
 }, {
 "frames": [],
 "loop": true,
-"name": &"walking-sideways",
+"name": &"moving_sideways",
 "speed": 5.0
 }]
 
@@ -79,8 +104,7 @@ polygon = PackedVector2Array(-6, 3, -12, 2, -12, 1, -12, -1, -9, -2, 9, -2, 12, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_r3o17")
-animation = &"idle_front"
-frame_progress = 0.687022
+animation = &"idle_back"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

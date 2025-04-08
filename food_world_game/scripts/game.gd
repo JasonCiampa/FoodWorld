@@ -1077,7 +1077,6 @@ func _on_player_exit_building(_building: Building, _delta: float):
 func _on_player_throw_juicebox(destination: Vector2) -> void:
 	
 	var juicebox: Juicebox
-	var vertical_direction: int
 	var horizontal_direction: int
 	
 	juicebox = load("res://scenes/blueprints/juicebox.tscn").instantiate()
