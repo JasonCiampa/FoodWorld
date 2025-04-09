@@ -124,8 +124,11 @@ var attack_damage: Dictionary = {
 	"Punch": 10, 
 	"Kick": 15,
 	"Juice Throw": -25,
-	"Juice Throw Three": -75
 }
+
+var animation_directions: Dictionary = {}
+var current_direction_name = "front"
+var frame_counter: int = 0
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -137,6 +140,7 @@ func _ready() -> void:
 	super()
 	
 	sprite.play("idle_front")
+	sprite
 	
 	collision_values["GROUND"] = 1
 	collision_values["MIDAIR"] = 2
@@ -148,6 +152,16 @@ func _ready() -> void:
 	body_collider.disabled = true
 	feet_collider.disabled = false
 	update_dimensions()
+	
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), "")
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
+	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
 
 
 
@@ -322,7 +336,7 @@ func jump_start():
 func jump_end():
 	super()
 	
-	sprite.play("idle_front")
+	sprite.play("idle_" + current_direction_name)
 	
 	if current_altitude == 0:
 		set_collision_value(collision_values["GROUND"])
@@ -363,21 +377,25 @@ func process_ability_use() -> int:
 					print("The Player used their kick attack!")
 		
 		elif field_state_current == FieldState.JUICE:
-			if ability_number >= 1 and juiceboxes > 0:
-				if use_stamina(stamina_use["Juice Throw"]):
-					print("The Player threw a juicebox!")
-					throwing_juicebox = true
-					juicebox_throw_coords = get_global_mouse_position()
-			
-			
-			if direction_previous_vertical == Direction.DOWN:
-				sprite.play("juice_throw_front")
-			elif direction_previous_vertical == Direction.UP:
-				sprite.play("juice_throw_back")
-			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
-				sprite.play("juice_throw_sideways")
-			else:
-				sprite.play("juice_throw_front")
+			if !throwing_juicebox:
+				if ability_number >= 1 and juiceboxes > 0:
+					if use_stamina(stamina_use["Juice Throw"]):
+						print("The Player threw a juicebox!")
+						throwing_juicebox = true
+						juicebox_throw_coords = get_global_mouse_position()
+				
+				
+				if direction_previous_vertical == Direction.DOWN:
+					sprite.play("juice_throw_front")
+					current_direction_name = "front"
+				elif direction_previous_vertical == Direction.UP:
+					sprite.play("juice_throw_back")
+					current_direction_name = "back"
+				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+					sprite.play("juice_throw_sideways")
+					current_direction_name = "sideways"
+				else:
+					sprite.play("juice_throw_" + current_direction_name)
 		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
@@ -403,14 +421,17 @@ func update_movement_animation():
 		
 		if direction_previous_vertical == Direction.DOWN:
 			sprite.play("jump_front")
+			current_direction_name = "front"
 		elif direction_previous_vertical == Direction.UP:
 			sprite.play("jump_back")
+			current_direction_name = "back"
 		
 		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
 			sprite.play("jump_sideways")
+			current_direction_name = "sideways"
 		
 		else:
-			sprite.play("jump_front")
+			sprite.play("jump_" + current_direction_name)
 	
 	
 	# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
@@ -418,44 +439,96 @@ func update_movement_animation():
 		
 		if field_state_current == FieldState.JUICE:
 			
-			if throwing_juicebox:
+			if !throwing_juicebox:
 				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+				if direction_previous_horizontal == Direction.IDLE:
+					if direction_previous_vertical == Direction.DOWN:
+						sprite.play("juice_idle_front")
+						current_direction_name = "front"
+					elif direction_previous_vertical == Direction.UP:
+						sprite.play("juice_idle_back")
+						current_direction_name = "back"
+					else:
+						sprite.play("juice_idle_" + current_direction_name)
 				
-				if direction_previous_vertical == Direction.DOWN:
-					sprite.play("juice_throw_front")
-				elif direction_previous_vertical == Direction.UP:
-					sprite.play("juice_throw_back")
+				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+					sprite.play("juice_idle_sideways")
+					current_direction_name = "sideways"
+			else:
+				var frame: int = sprite.get_frame()
+				var frame_progress: float = sprite.get_frame_progress()
+				
+				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
+				if direction_previous_horizontal == Direction.IDLE:
+					if direction_previous_vertical == Direction.DOWN:
+						sprite.play("juice_throw_front")
+						current_direction_name = "front"
+					elif direction_previous_vertical == Direction.UP:
+						sprite.play("juice_throw_back")
+						current_direction_name = "back"
 				
 				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
 					sprite.play("juice_throw_sideways")
-			
-			# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
-			elif direction_previous_horizontal == Direction.IDLE:
-				if direction_previous_vertical == Direction.DOWN:
-					sprite.play("juice_idle_front")
-				elif direction_previous_vertical == Direction.UP:
-					sprite.play("juice_idle_back")
-			
-			elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
-				sprite.play("juice_idle_sideways")
+					current_direction_name = "sideways"
+				
+				sprite.set_frame_and_progress(frame, frame_progress)
 		
 		elif direction_previous_horizontal == Direction.IDLE:
 			if direction_previous_vertical == Direction.DOWN:
 				sprite.play("idle_front")
+				sprite
+				current_direction_name = "front"
 			elif direction_previous_vertical == Direction.UP:
 				sprite.play("idle_back")
+				sprite
+				current_direction_name = "back"
 			
 		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
 			sprite.play("idle_sideways")
+			sprite
+			current_direction_name = "sideways"
 	
 	
 	# Determine which direction the Player is moving, then play the correct 'running' animation based on the direction they're pursuing
 	elif direction_current_vertical == Direction.UP:
-		sprite.play("run_upward")
+		if field_state_current == FieldState.JUICE:
+			if throwing_juicebox:
+				var frame: int = sprite.get_frame()
+				var frame_progress: float = sprite.get_frame_progress()
+				sprite.play("moving_juice_throw_back")
+				sprite.set_frame_and_progress(frame, frame_progress)
+			else:
+				sprite.play("moving_juice_back")
+		else:
+			sprite.play("run_upward")
+		
+		current_direction_name = "back"
 	elif direction_current_vertical == Direction.DOWN:
-		sprite.play("run_downward")
+		if field_state_current == FieldState.JUICE:
+			if throwing_juicebox:
+				var frame: int = sprite.get_frame()
+				var frame_progress: float = sprite.get_frame_progress()
+				sprite.play("moving_juice_throw_front")
+				sprite.set_frame_and_progress(frame, frame_progress)
+			else:
+				sprite.play("moving_juice_front")
+		else:
+			sprite.play("run_downward")
+			
+		current_direction_name = "front"
 	else:
-		sprite.play("run_sideways")
+		if field_state_current == FieldState.JUICE:
+			if throwing_juicebox:
+				var frame: int = sprite.get_frame()
+				var frame_progress: float = sprite.get_frame_progress()
+				sprite.play("moving_juice_throw_sideways")
+				sprite.set_frame_and_progress(frame, frame_progress)
+			else:
+				sprite.play("moving_juice_sideways")
+		else:
+			sprite.play("run_sideways")
+		
+		current_direction_name = "sideways"
 		
 		# Determine whether the Player is facing left or right, then flip the sprite horizontally based on the direction the Player is facing
 		if direction_current_horizontal == Direction.RIGHT:
@@ -595,18 +668,21 @@ func update_field_state():
 			field_state_current = FieldState.BUDDY1
 			toggle_buddy_equipped.emit(1)
 			sprite.play("field_state_buddy1")
+			sprite
 			print("Player's FieldState has been updated to BUDDY1")
 		
 		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
 			field_state_current = FieldState.BUDDY2
 			toggle_buddy_equipped.emit(2)
 			sprite.play("field_state_buddy2")
+			sprite
 			print("Player's FieldState has been updated to BUDDY2")
 		
 		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
 			field_state_current = FieldState.FUSION
 			toggle_buddy_fusion_equipped.emit()
 			sprite.play("field_state_buddy_fusion")
+			sprite
 			print("Player's FieldState has been updated to FUSION")
 		
 		
@@ -617,36 +693,19 @@ func update_field_state():
 				
 				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
 				if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
-					if direction_previous_horizontal == Direction.IDLE:
-						if direction_previous_vertical == Direction.DOWN:
-							sprite.play("juice_idle_front")
-						elif direction_previous_vertical == Direction.UP:
-							sprite.play("juice_idle_back")
-						else:
-							sprite.play("juice_idle_front")
-				
-				elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
-					sprite.play("juice_idle_sideways")
+					sprite.play("juice_idle_" + current_direction_name)
+					sprite
+				else:
+					sprite.play("moving_juice_" + current_direction_name)
+					sprite
 				
 				print("Player's FieldState has been updated to JUICE")
-			
-			
-			# animations = {
-			#	"idle" : _,
-			#
-			#	"juice" : { 
-			#		"idle" : {
-			#			
-			#		}
-			#	}
-			#
-			#
-			# }
 		
 		# Determine if the Player is selecting the SOLO FieldState, then set the selection as the current FieldState
 		if field_state_previous == field_state_current:
 			field_state_current = FieldState.SOLO
-			sprite.play("idle_front")
+			sprite.play("idle_" + current_direction_name)
+			sprite
 			print("Player's FieldState has been updated to SOLO")
 
 
@@ -898,6 +957,22 @@ func _on_sprite_animation_finished() -> void:
 		if juiceboxes == 0:
 			field_state_current = FieldState.SOLO
 			print("Player's FieldState has been updated to SOLO")
-			sprite.play("idle_front")
+			sprite.play("idle_" + current_direction_name)
+			sprite
 		else:
-			sprite.play("juice_idle_front")
+			if sprite.animation == "juice_throw_front":
+				sprite.play("juice_idle_front")
+				sprite
+				current_direction_name = "front"
+			elif sprite.animation == "juice_throw_back":
+				sprite.play("juice_idle_back")
+				sprite
+				current_direction_name = "back"
+			elif sprite.animation == "juice_throw_sideways":
+				sprite.play("juice_idle_sideways")
+				sprite
+				current_direction_name = "sideways"
+
+
+func _on_sprite_frame_changed() -> void:
+	frame_counter += 1
