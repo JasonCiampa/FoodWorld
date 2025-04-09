@@ -442,9 +442,9 @@ func _on_sprite_animation_looped() -> void:
 	update_animation()
 
 func _on_sprite_animation_finished() -> void:
-	print("balls2")
+	
 	if "ability" in sprite.animation:
-		print("balls")
+		
 		use_ability_solo.emit(self, ability_damage["Solo"])
 		timer_ability_cooldown.start(0.5)
 		using_ability = false
