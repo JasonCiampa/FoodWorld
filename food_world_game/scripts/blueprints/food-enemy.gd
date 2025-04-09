@@ -96,7 +96,7 @@ func _ready() -> void:
 	timer_frolic_cooldown.start(2.5)
 	
 	
-	radius_range = 15
+	radius_range = 20
 	
 	self.name = "Enemy"
 	

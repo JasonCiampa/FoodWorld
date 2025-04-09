@@ -98,11 +98,3 @@ func jump_end():
 		on_platform = true
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-func _on_sprite_animation_looped() -> void:
-	update_animation()
-
-
-func _on_sprite_animation_finished() -> void:
-	update_animation()

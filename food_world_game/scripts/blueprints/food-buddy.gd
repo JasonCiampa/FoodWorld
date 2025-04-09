@@ -402,9 +402,10 @@ func fight_field_state_callback() -> void:
 			velocity.x = 0
 			velocity.y = 0
 			
-			if timer_ability_cooldown.is_stopped():
-				use_ability_solo.emit(self, ability_damage["Solo"])
-				timer_ability_cooldown.start(0.5)
+			if timer_ability_cooldown.is_stopped() and !using_ability:
+				using_ability = true
+				current_animation_name = "ability"
+				sprite.play("ability_" + current_direction_name)
 				target_distance = global_position.distance_to(target.global_position)
 				
 		
@@ -435,3 +436,19 @@ func use_special_attack():
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+func _on_sprite_animation_looped() -> void:
+	
+	update_animation()
+
+func _on_sprite_animation_finished() -> void:
+	print("balls2")
+	if "ability" in sprite.animation:
+		print("balls")
+		use_ability_solo.emit(self, ability_damage["Solo"])
+		timer_ability_cooldown.start(0.5)
+		using_ability = false
+		sprite.play("idle_" + current_direction_name)
+		current_animation_name = "idle"
+	
+	update_animation()
