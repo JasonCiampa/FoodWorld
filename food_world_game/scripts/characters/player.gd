@@ -140,7 +140,6 @@ func _ready() -> void:
 	super()
 	
 	sprite.play("idle_front")
-	sprite
 	
 	collision_values["GROUND"] = 1
 	collision_values["MIDAIR"] = 2
@@ -209,7 +208,7 @@ func _process(delta: float) -> void:
 		update_stamina(delta)
 		update_field_state()
 		
-		if Input.is_action_just_pressed("interact"):
+		if !is_interacting and Input.is_action_pressed("interact"):
 			interact.emit(delta)
 	
 	if Input.is_action_just_pressed("escape_menu"):
@@ -476,16 +475,13 @@ func update_movement_animation():
 		elif direction_previous_horizontal == Direction.IDLE:
 			if direction_previous_vertical == Direction.DOWN:
 				sprite.play("idle_front")
-				sprite
 				current_direction_name = "front"
 			elif direction_previous_vertical == Direction.UP:
 				sprite.play("idle_back")
-				sprite
 				current_direction_name = "back"
 			
 		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
 			sprite.play("idle_sideways")
-			sprite
 			current_direction_name = "sideways"
 	
 	
@@ -668,21 +664,18 @@ func update_field_state():
 			field_state_current = FieldState.BUDDY1
 			toggle_buddy_equipped.emit(1)
 			sprite.play("field_state_buddy1")
-			sprite
 			print("Player's FieldState has been updated to BUDDY1")
 		
 		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
 			field_state_current = FieldState.BUDDY2
 			toggle_buddy_equipped.emit(2)
 			sprite.play("field_state_buddy2")
-			sprite
 			print("Player's FieldState has been updated to BUDDY2")
 		
 		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
 			field_state_current = FieldState.FUSION
 			toggle_buddy_fusion_equipped.emit()
 			sprite.play("field_state_buddy_fusion")
-			sprite
 			print("Player's FieldState has been updated to FUSION")
 		
 		
@@ -694,10 +687,8 @@ func update_field_state():
 				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
 				if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
 					sprite.play("juice_idle_" + current_direction_name)
-					sprite
 				else:
 					sprite.play("moving_juice_" + current_direction_name)
-					sprite
 				
 				print("Player's FieldState has been updated to JUICE")
 		
@@ -705,7 +696,6 @@ func update_field_state():
 		if field_state_previous == field_state_current:
 			field_state_current = FieldState.SOLO
 			sprite.play("idle_" + current_direction_name)
-			sprite
 			print("Player's FieldState has been updated to SOLO")
 
 
@@ -958,19 +948,15 @@ func _on_sprite_animation_finished() -> void:
 			field_state_current = FieldState.SOLO
 			print("Player's FieldState has been updated to SOLO")
 			sprite.play("idle_" + current_direction_name)
-			sprite
 		else:
 			if sprite.animation == "juice_throw_front":
 				sprite.play("juice_idle_front")
-				sprite
 				current_direction_name = "front"
 			elif sprite.animation == "juice_throw_back":
 				sprite.play("juice_idle_back")
-				sprite
 				current_direction_name = "back"
 			elif sprite.animation == "juice_throw_sideways":
 				sprite.play("juice_idle_sideways")
-				sprite
 				current_direction_name = "sideways"
 
 

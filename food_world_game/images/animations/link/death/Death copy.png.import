@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://daixykkgop3co"
-path="res://.godot/imported/sideway-2.png-df663cacd7454bd7c41ce6fa78bf98e5.ctex"
+uid="uid://d0djnyywv0nsq"
+path="res://.godot/imported/Death copy.png-3185fac077c5e995285d7663325d99dc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/link/walking/sideway-2.png"
-dest_files=["res://.godot/imported/sideway-2.png-df663cacd7454bd7c41ce6fa78bf98e5.ctex"]
+source_file="res://images/animations/link/death/Death copy.png"
+dest_files=["res://.godot/imported/Death copy.png-3185fac077c5e995285d7663325d99dc.ctex"]
 
 [params]
 

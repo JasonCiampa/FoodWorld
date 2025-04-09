@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://oiidccm7eyv"
-path="res://.godot/imported/walking-link-spritesheet.png-e465430b9ad8b6f14cc16dce496d4a98.ctex"
+uid="uid://dsfmrqqjmgyvr"
+path="res://.godot/imported/die_front.png-bcb978a01c41e1f89327481382bc0054.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/link/walking/walking-link-spritesheet.png"
-dest_files=["res://.godot/imported/walking-link-spritesheet.png-e465430b9ad8b6f14cc16dce496d4a98.ctex"]
+source_file="res://images/animations/link/death/die_front.png"
+dest_files=["res://.godot/imported/die_front.png-bcb978a01c41e1f89327481382bc0054.ctex"]
 
 [params]
 

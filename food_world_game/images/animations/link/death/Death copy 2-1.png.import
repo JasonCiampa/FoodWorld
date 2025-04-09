@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bd5it1wisnl7u"
-path="res://.godot/imported/death-3.png-68eb798cd67b160e09dc694e53d7f6aa.ctex"
+uid="uid://2j3oo5hi50cs"
+path="res://.godot/imported/Death copy 2-1.png-f8e03c7a897ef8e5f44383f36c2426b8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/link/death/death-3.png"
-dest_files=["res://.godot/imported/death-3.png-68eb798cd67b160e09dc694e53d7f6aa.ctex"]
+source_file="res://images/animations/link/death/Death copy 2-1.png"
+dest_files=["res://.godot/imported/Death copy 2-1.png-f8e03c7a897ef8e5f44383f36c2426b8.ctex"]
 
 [params]
 

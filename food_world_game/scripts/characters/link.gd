@@ -74,9 +74,6 @@ func update_movement_direction():
 	
 	direction_current_horizontal = sign(floor(velocity.x))
 	direction_current_vertical = sign(floor(velocity.y))
-	print("Horizontal: ", velocity.x)
-	print("Vertical: ", velocity.y)
-	print("")
 	
 	# Determine whether the Food Buddy is facing left or right, then flip the sprite horizontally based on the direction the Food Buddy is facing
 	if direction_current_horizontal == Direction.RIGHT:

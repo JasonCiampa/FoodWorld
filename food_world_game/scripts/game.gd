@@ -92,10 +92,10 @@ func _ready() -> void:
 	timer_process_tiles = $"Process Tiles Timer"
 	
 	# Add Malick and Sally into the active Food Buddies list
-	food_buddies_active.append(DAN)
+	food_buddies_active.append(LINK)
 	food_buddies_active.append(BRITTANY)
 	
-	food_buddies_inactive.append(LINK)
+	food_buddies_inactive.append(DAN)
 	
 	food_buddies_inactive[0].active = false
 
@@ -151,9 +151,9 @@ func _ready() -> void:
 	InterfaceDialogue.setValues(PLAYER)
 	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
 	
-	DAN.collision_values["GROUND"] = 4
-	DAN.collision_values["MIDAIR"] = 5
-	DAN.collision_values["PLATFORM"] = 6
+	LINK.collision_values["GROUND"] = 4
+	LINK.collision_values["MIDAIR"] = 5
+	LINK.collision_values["PLATFORM"] = 6
 	
 	BRITTANY.collision_values["GROUND"] = 7
 	BRITTANY.collision_values["MIDAIR"] = 8
@@ -530,6 +530,23 @@ func _on_player_interact(delta: float) -> void:
 			# Create a variable to store all of the in-range Interactable Characters after they're filtered out of from the non-Character Interactables
 			var characters_in_range: Array[Node2D] = []
 			
+			if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.alive == false:
+				closest_interactable_to_player.revive_time_remaining -= delta
+				
+				print(closest_interactable_to_player.revive_time_remaining)
+				if closest_interactable_to_player.revive_time_remaining <= 0:
+					closest_interactable_to_player.revive_time_remaining = 10
+					closest_interactable_to_player.alive = true
+					closest_interactable_to_player.active = true
+					closest_interactable_to_player.health_current = closest_interactable_to_player.health_max * 0.25
+					closest_interactable_to_player.sprite.play("idle_front")
+					closest_interactable_to_player.label_e_to_interact.text = "press 'e' to interact"
+					InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
+				
+				PLAYER.is_interacting = false
+				closest_interactable_to_player.label_e_to_interact.show()
+				return
+			
 			# Iterate over each on-screen Interactable and add the Interactable Characters that are in range of the Player to the previously created list
 			for interactable in interactables_on_screen:
 				if interactable.in_range and (interactable is FoodBuddy or interactable is FoodCitizen):
@@ -863,13 +880,16 @@ func _on_food_buddy_target_brittany(food_buddy: FoodBuddy):
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
 func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
 	
-	# Determine which Food Buddy in the list of active Food Buddies just died, then remove it from the list since it is no longer active
-	if food_buddy == food_buddies_active[0]:
-		food_buddies_active[0] = food_buddies_inactive[0]
-	else:
-		food_buddies_active[1] = food_buddies_inactive[0]
+	food_buddy.sprite.play("die_front")
+	food_buddy.alive = false
+	food_buddy.active = false
+	food_buddy.label_e_to_interact.text = "Hold 'E' To Revive"
 	
-	_on_character_die(food_buddy)
+	## Determine which Food Buddy in the list of active Food Buddies just died, then remove it from the list since it is no longer active
+	#if food_buddy == food_buddies_active[0]:
+		#food_buddies_active[0] = food_buddies_inactive[0]
+	#else:
+		#food_buddies_active[1] = food_buddies_inactive[0]
 
 
 

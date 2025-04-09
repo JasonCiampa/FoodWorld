@@ -25,7 +25,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(395, 622)
+position = Vector2(-2266, -1306)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
@@ -85,7 +85,7 @@ offset_bottom = -137.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Link" parent="." instance=ExtResource("9_t4o2x")]
-position = Vector2(425, 499)
+position = Vector2(-2375, -1254)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
 position = Vector2(548, 525)

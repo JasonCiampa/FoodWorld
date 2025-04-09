@@ -65,6 +65,9 @@ var health_texture_path: String
 var select_circle_texture_path: String
 
 
+var revive_time_total: int = 1000
+var revive_time_remaining: int = revive_time_total
+
 # Field State #
 var field_state_previous: int
 var field_state_current: int
@@ -131,7 +134,6 @@ func update_movement_direction():
 	
 	direction_current_horizontal = sign(velocity.x)
 	direction_current_vertical = sign(velocity.y)
-
 	
 	# Determine whether the Food Buddy is facing left or right, then flip the sprite horizontally based on the direction the Food Buddy is facing
 	if direction_current_horizontal == Direction.RIGHT:
@@ -165,17 +167,9 @@ func update_animation():
 	
 	# If the animation has changed, play the new animation
 	if sprite.animation != (new_animation_name + "_" + new_direction_name):
-		print("UPDATE")
 		sprite.play(new_animation_name + "_" + new_direction_name) # --> idle_front
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
-	
-	#print("Current Animation: ", sprite.animation)
-	#print("New Animation: ", new_animation_name + "_" + new_direction_name)
-	#print("Current Direction: ", current_direction_name)
-	#print("New Direction: ", new_direction_name)
-	#print("")
-	
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -199,11 +193,11 @@ func _ready() -> void:
 	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
 	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
 	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "back")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "front")
 	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "back")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "front")
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()

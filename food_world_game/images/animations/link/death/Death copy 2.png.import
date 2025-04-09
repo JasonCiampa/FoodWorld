@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsm4fcegshlmm"
-path="res://.godot/imported/foward-4.png-0d90b13ffd852216c0722310c0de3abc.ctex"
+uid="uid://dkh4hsqa88sl"
+path="res://.godot/imported/Death copy 2.png-1bb2135ce78394790ea3ab90cce563f5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/link/walking/foward-4.png"
-dest_files=["res://.godot/imported/foward-4.png-0d90b13ffd852216c0722310c0de3abc.ctex"]
+source_file="res://images/animations/link/death/Death copy 2.png"
+dest_files=["res://.godot/imported/Death copy 2.png-1bb2135ce78394790ea3ab90cce563f5.ctex"]
 
 [params]
 

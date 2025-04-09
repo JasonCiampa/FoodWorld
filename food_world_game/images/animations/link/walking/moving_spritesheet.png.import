@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ch02lqqqdkq4x"
-path="res://.godot/imported/backward-2.png-8e1d7d90ea6d9ae280370c6529e2b817.ctex"
+uid="uid://c8kg8pv24217l"
+path="res://.godot/imported/moving_spritesheet.png-02149663a151ff9da1c8cb3676333f22.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/link/walking/backward-2.png"
-dest_files=["res://.godot/imported/backward-2.png-8e1d7d90ea6d9ae280370c6529e2b817.ctex"]
+source_file="res://images/animations/link/walking/moving_spritesheet.png"
+dest_files=["res://.godot/imported/moving_spritesheet.png-02149663a151ff9da1c8cb3676333f22.ctex"]
 
 [params]
 
