@@ -393,7 +393,7 @@ autowrap_mode = 2
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 4.0
-target_desired_distance = 32.0
+target_desired_distance = 128.0
 path_max_distance = 10.0
 path_postprocessing = 1
 simplify_path = true

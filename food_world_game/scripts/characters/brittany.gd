@@ -50,7 +50,7 @@ func ready():
 	speed_normal = 45
 	speed_current = speed_normal
 	
-	radius_range = 16
+	radius_range = 60
 	
 	self.name = "Brittany"
 	

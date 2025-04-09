@@ -44,10 +44,10 @@ func ready():
 	}
 	
 	# Set Dan's default speed and current speed
-	speed_normal = 60
+	speed_normal = 70
 	speed_current = speed_normal
 	
-	radius_range = 16
+	radius_range = 40
 	
 	self.name = "Dan"
 	

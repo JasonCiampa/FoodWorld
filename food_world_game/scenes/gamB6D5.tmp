@@ -45,9 +45,9 @@ scale = Vector2(0.25, 0.25)
 visible = false
 z_index = 2
 offset_left = -242.0
-offset_top = -168.0
+offset_top = -161.0
 offset_right = -242.0
-offset_bottom = -168.0
+offset_bottom = -161.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Game Over" parent="Player" instance=ExtResource("7_6bun6")]
@@ -70,17 +70,18 @@ scale = Vector2(0.25, 0.25)
 [node name="Berry Bot Interface" parent="Player" instance=ExtResource("9_6ce2r")]
 visible = false
 offset_left = -273.0
-offset_top = -120.0
+offset_top = -107.0
 offset_right = -273.0
-offset_bottom = -120.0
+offset_bottom = -107.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Dialogue Interface" parent="Player" instance=ExtResource("9_7rgo0")]
 visible = false
+z_index = 1
 offset_left = -239.0
-offset_top = -149.0
+offset_top = -137.0
 offset_right = -239.0
-offset_bottom = -149.0
+offset_bottom = -137.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Link" parent="." instance=ExtResource("9_t4o2x")]

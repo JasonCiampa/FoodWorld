@@ -714,6 +714,7 @@ outline_size = 15
 outline_color = Color(0, 0, 0, 1)
 
 [node name="Dialogue Interface" type="Control"]
+z_index = 4
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_mr17q")

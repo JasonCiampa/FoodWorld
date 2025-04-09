@@ -377,44 +377,44 @@ func jump_end():
 
 # A callback function that will execute whenever the character's feet begin touching a body with a collider
 func _on_feet_sensor_body_entered(body: Node2D) -> void:
-	
-	# Determine if the colliding body is part of a TileMapLayer
-	if body is TileMapLayer:
-		
-		# Determine if this is an Environment TileMapLayer, then disable jumping for this character while they're in direct collision with a tile
-		if body.name == "Environment":
-			print("jump disabled")
-			jump_enabled = false
-			
-			# Determine if the character is jumping and moving downwards, then end the jump so they can't move through the environmentasset
-			if is_jumping and direction_current_vertical == Direction.DOWN:
-				jump_end()
-				velocity.y = 0
-		
-		# Otherwise, determine if this is a Terrain TileMapLayer, then 
-		if body.name == "Terrain":
-			#print("colliding with terrain")
-			
-			if !is_jumping and not (self is Player):
-				jump_start()
+	pass
+	## Determine if the colliding body is part of a TileMapLayer
+	#if body is TileMapLayer:
+		#
+		## Determine if this is an Environment TileMapLayer, then disable jumping for this character while they're in direct collision with a tile
+		#if body.name == "Environment":
+			#print("jump disabled")
+			#jump_enabled = false
+			#
+			## Determine if the character is jumping and moving downwards, then end the jump so they can't move through the environmentasset
+			#if is_jumping and direction_current_vertical == Direction.DOWN:
+				#jump_end()
+				#velocity.y = 0
+		#
+		## Otherwise, determine if this is a Terrain TileMapLayer, then 
+		#if body.name == "Terrain":
+			##print("colliding with terrain")
+			#
+			#if !is_jumping and not (self is Player):
+				#jump_start()
 
 
 # A callback function that will execute whenever the character's feet stop touching a body with a collider
 func _on_feet_sensor_body_exited(body: Node2D) -> void:
-	
-	# Determine if the colliding body is part of a TileMapLayer
-	if body is TileMapLayer:
-		
-		# Determine if this is an Environment TileMapLayer, then enable jumping for this character now that they're no longer colliding with a tile
-		if body.name == "Environment":
-			#print("jump enabled")
-			jump_enabled = true
-			
-		# Otherwise, determine if this is a Terrain TileMapLayer, then 
-		elif body.name == "Terrain":
-			pass
-			#print("done colliding with terrain")
-			
+	pass
+	## Determine if the colliding body is part of a TileMapLayer
+	#if body is TileMapLayer:
+		#
+		## Determine if this is an Environment TileMapLayer, then enable jumping for this character now that they're no longer colliding with a tile
+		#if body.name == "Environment":
+			##print("jump enabled")
+			#jump_enabled = true
+			#
+		## Otherwise, determine if this is a Terrain TileMapLayer, then 
+		#elif body.name == "Terrain":
+			#pass
+			##print("done colliding with terrain")
+			#
 			
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

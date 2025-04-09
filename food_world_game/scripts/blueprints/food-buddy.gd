@@ -319,10 +319,17 @@ func generate_path(target_point: Vector2 = Vector2(-1, -1)):
 
 # A callback function that should execute repeatedly while the Food Buddy is in the FOLLOW FieldState
 func follow_field_state_callback() -> void:
-	target_player.emit(self)
-	generate_path()
 	
-	if target_distance <= target.radius_range:
+	target_player.emit(self)
+	
+	if target.current_altitude == 0:
+	
+		generate_path()
+		
+		if target_distance <= radius_range:
+			velocity.x = 0
+			velocity.y = 0
+	else:
 		velocity.x = 0
 		velocity.y = 0
 
@@ -383,13 +390,15 @@ func fight_field_state_callback() -> void:
 		
 		target_closest_enemy.emit(self)
 		
-		if target == null:
+		if target == null or !target.alive:
+			
 			target_player.emit(self)
 			
-			if global_position.distance_to(target.global_position) <= target.radius_range:
+			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= radius_range:
 				velocity.x = 0
 				velocity.y = 0
 				return
+
 		
 		generate_path()
 	

@@ -70,11 +70,14 @@ func _physics_process(_delta: float) -> void:
 func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
 	
+	var tile_arrays: Array[Array]
 	var tiles_used_environment: Array
+	var tiles_used_terrain: Array
 	
 	for world in world_tilemaps:
 		
 		tiles_used_environment.append_array(world_tilemaps[world][Tile.MapType.ENVIRONMENT].get_used_cells())
+		tiles_used_terrain.append_array(world_tilemaps[world][Tile.MapType.TERRAIN].get_used_cells())
 		
 		var unique_dict = {} 
 		
@@ -83,6 +86,12 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			
 		tiles_used_environment = unique_dict.keys()
 		
+		unique_dict.clear()
+		
+		for coords in tiles_used_terrain:
+			unique_dict[coords] = true
+		
+		tiles_used_terrain = unique_dict.keys()
 		
 		# PATH FINDING 
 		for coords in range(tiles_used_environment.size() -1, -1, -1):
@@ -109,8 +118,32 @@ func _init(_world_tilemaps: Dictionary) -> void:
 				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
 				tiles_occupied.get_or_add(tiles_used_environment[coords], true)
 			
-			unload_tile(environment_tile)
-			environment_tile = null
+		
+		# PATH FINDING 
+		for coords in range(tiles_used_terrain.size() -1, -1, -1):
+		
+			# Determine if the ground Tile's coordinates are not occupied in the terrain tilemap, then enable pathfinding for the tile
+			var terrain_tile = Tile.new(world_tilemaps[world][Tile.MapType.TERRAIN], Tile.MapType.TERRAIN, tiles_used_terrain[coords])
+			
+			# Determine if the terrain Tile's width is set and is larger than 1
+			if terrain_tile.width != null and terrain_tile.width > 1:
+				
+				# Iterate for each tile wide the Tile is
+				for col in range(terrain_tile.width + 1):
+					
+					# Iterate for each tile tall the Tile is
+					for row in range(terrain_tile.height):
+						
+						# Append the coordinates of this sub-Tile into the list of Tiles not to process for path-finding
+						tiles_occupied.get_or_add(Vector2i(tiles_used_terrain[coords].x - int(terrain_tile.width / 2) + col, tiles_used_terrain[coords].y - int(terrain_tile.height / 2) + row + 1), true)
+			else:
+				
+				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
+				tiles_occupied.get_or_add(tiles_used_terrain[coords], true)
+			
+			
+			unload_tile(terrain_tile)
+			terrain_tile = null
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -241,7 +274,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 					
 					if "ledge" not in terrain_tile.type:
 						
-						if get_altitude(terrain_tile, character) == character.current_altitude:
+						if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
 							
 							# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
 							tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
@@ -255,7 +288,16 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 				
 				# Otherwise, the tile is already an alternative tile used to make the character appear behind it, so replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears behind it
 				elif tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 1:
-					tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
+					
+					# Determine if the tile isn't already an alternative tile, then replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
+					if tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 0:
+						
+						var terrain_tile = tiles_to_process[tile].get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
+						
+						if "ledge" not in terrain_tile.type:
+							
+							if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
+								tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
 		
 		# Unload the tile
 		tiles_to_process[tile].free()

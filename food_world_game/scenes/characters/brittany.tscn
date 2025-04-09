@@ -43,6 +43,7 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
 
 [node name="Brittany" type="CharacterBody2D" groups=["food_buddies", "interactable-characters", "interactables"]]
+floor_max_angle = 0.0
 script = ExtResource("1_3xxkd")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
