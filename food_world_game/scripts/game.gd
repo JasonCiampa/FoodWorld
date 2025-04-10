@@ -155,9 +155,9 @@ func _ready() -> void:
 	LINK.collision_values["MIDAIR"] = 5
 	LINK.collision_values["PLATFORM"] = 6
 	
-	BRITTANY.collision_values["GROUND"] = 7
-	BRITTANY.collision_values["MIDAIR"] = 8
-	BRITTANY.collision_values["PLATFORM"] = 9
+	DAN.collision_values["GROUND"] = 7
+	DAN.collision_values["MIDAIR"] = 8
+	DAN.collision_values["PLATFORM"] = 9
 	
 	## CREATE NEW DIALOGUE RESOURCE CODE
 	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")

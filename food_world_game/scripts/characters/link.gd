@@ -45,11 +45,11 @@ func ready():
 	speed_normal = 55
 	speed_current = speed_normal
 	
-	radius_range = 30
+	radius_range = 15
 	
 	self.name = "Link"
 	
-	field_state_current = FieldState.FIGHT
+	field_state_current = FieldState.FOLLOW
 	
 	set_collision_value(collision_values["GROUND"])
 	
@@ -65,21 +65,7 @@ func process(_delta: float):
 func physics_process(_delta: float) -> void:
 	pass
 
-# Updates the variables that keep track of previous and current movement direction
-func update_movement_direction():
-	
-	# Store the current horizontal and vertical directions as the previous directions.
-	direction_previous_horizontal = direction_current_horizontal
-	direction_previous_vertical = direction_current_vertical
-	
-	direction_current_horizontal = sign(floor(velocity.x))
-	direction_current_vertical = sign(floor(velocity.y))
-	
-	# Determine whether the Food Buddy is facing left or right, then flip the sprite horizontally based on the direction the Food Buddy is facing
-	if direction_current_horizontal == Direction.RIGHT:
-		sprite.flip_h = true
-	elif direction_current_horizontal == Direction.LEFT:
-		sprite.flip_h = false
+
 
 func jump_start():
 	super()

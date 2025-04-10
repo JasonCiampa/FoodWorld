@@ -193,11 +193,11 @@ func _ready() -> void:
 	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
 	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
 	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "back")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "front")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "back")
+	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "front")
 	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "back")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "sideways" if (abs(velocity.x) + 1 > abs(velocity.y)) else "front")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "back")
+	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "front")
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -254,6 +254,8 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 # A custom function to execute the Food Buddy's logic for when the Player interacts with them: Starts a conversation between this Food Buddy, the Player, and the other Food Buddy (if the other Food Buddy is in range).
 func interact_with_player(player: Player, characters_in_range: Array[Node2D], _delta: float) -> Array[Node2D]:
@@ -326,7 +328,7 @@ func follow_field_state_callback() -> void:
 	
 		generate_path()
 		
-		if target_distance <= radius_range:
+		if target_distance <= float((radius_range + target.radius_range) / 2):
 			velocity.x = 0
 			velocity.y = 0
 	else:
@@ -394,7 +396,7 @@ func fight_field_state_callback() -> void:
 			
 			target_player.emit(self)
 			
-			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= radius_range:
+			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= target.radius_range:
 				velocity.x = 0
 				velocity.y = 0
 				return
@@ -407,7 +409,7 @@ func fight_field_state_callback() -> void:
 	# Determine if the Food Buddy is in range of an Enemy, then make them stop moving and launch their solo attack
 	if target is Enemy:
 		
-		if target_distance <= target.radius_range:
+		if target_distance <= float((radius_range + target.radius_range) / 2):
 			velocity.x = 0
 			velocity.y = 0
 			

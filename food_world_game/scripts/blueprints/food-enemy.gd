@@ -104,7 +104,10 @@ func _ready() -> void:
 	ready()
 	
 	update_dimensions()
-
+	
+	collision_values["GROUND"] = 10
+	collision_values["MIDAIR"] = 11
+	collision_values["PLATFORM"] = 12
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -229,7 +232,7 @@ func passive_field_state_callback() -> void:
 func aggressive_field_state_callback() -> void:
 	
 	# Determine if the Enemy is in range of an Enemy, then make them stop moving and launch their solo attack
-	if target_distance <= target.radius_range:
+	if target_distance <= float((radius_range + target.radius_range) / 2):
 		velocity.x = 0
 		velocity.y = 0
 		

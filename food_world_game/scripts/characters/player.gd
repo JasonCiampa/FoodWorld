@@ -145,7 +145,7 @@ func _ready() -> void:
 	collision_values["MIDAIR"] = 2
 	collision_values["PLATFORM"] = 3
 	
-	radius_range = 32
+	radius_range = 50
 	
 	self.name = "Player"
 	body_collider.disabled = true

@@ -57,6 +57,8 @@ func ready():
 	set_collision_value(collision_values["GROUND"])
 	
 	field_state_current = FieldState.FOLLOW
+	
+	sprite.play("idle_front")
 
 
 # A custom process function that is personally defined for Brittany. This is called in the default FoodBuddy class's '_process()' function
