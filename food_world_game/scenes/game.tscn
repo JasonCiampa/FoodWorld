@@ -84,15 +84,12 @@ offset_bottom = -149.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Link" parent="." instance=ExtResource("9_t4o2x")]
-visible = false
 position = Vector2(3506, -591)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-visible = false
 position = Vector2(3244, -547)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-visible = false
 position = Vector2(10275, -1104)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
