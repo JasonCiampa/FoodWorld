@@ -47,7 +47,7 @@ func ready():
 	speed_normal = 70
 	speed_current = speed_normal
 	
-	radius_range = 40
+	radius_range = 50
 	
 	self.name = "Dan"
 	

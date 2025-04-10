@@ -50,11 +50,13 @@ func ready():
 	speed_normal = 45
 	speed_current = speed_normal
 	
-	radius_range = 60
+	radius_range = 70
 	
 	self.name = "Brittany"
 	
 	set_collision_value(collision_values["GROUND"])
+	
+	field_state_current = FieldState.FOLLOW
 
 
 # A custom process function that is personally defined for Brittany. This is called in the default FoodBuddy class's '_process()' function

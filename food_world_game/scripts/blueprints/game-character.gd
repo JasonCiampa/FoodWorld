@@ -376,7 +376,7 @@ func jump_end():
 
 
 # A callback function that will execute whenever the character's feet begin touching a body with a collider
-func _on_feet_sensor_body_entered(body: Node2D) -> void:
+func _on_feet_sensor_body_entered(_body: Node2D) -> void:
 	pass
 	## Determine if the colliding body is part of a TileMapLayer
 	#if body is TileMapLayer:
@@ -400,7 +400,7 @@ func _on_feet_sensor_body_entered(body: Node2D) -> void:
 
 
 # A callback function that will execute whenever the character's feet stop touching a body with a collider
-func _on_feet_sensor_body_exited(body: Node2D) -> void:
+func _on_feet_sensor_body_exited(_body: Node2D) -> void:
 	pass
 	## Determine if the colliding body is part of a TileMapLayer
 	#if body is TileMapLayer:

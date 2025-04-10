@@ -25,7 +25,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(723, 511)
+position = Vector2(10391, -1104)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
@@ -84,21 +84,25 @@ offset_bottom = -149.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Link" parent="." instance=ExtResource("9_t4o2x")]
-position = Vector2(822, 498)
+visible = false
+position = Vector2(3506, -591)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(548, 525)
+visible = false
+position = Vector2(3244, -547)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(490, 475)
+visible = false
+position = Vector2(10275, -1104)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
-position = Vector2(822, 491)
+position = Vector2(10480, -1001)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
+visible = false
 y_sort_enabled = true
-position = Vector2(462, 581)
+position = Vector2(1274, 665)
 
 [node name="Fade Timer" type="Timer" parent="."]
 one_shot = true
@@ -109,6 +113,10 @@ one_shot = true
 [node name="WorldCenter" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_gwi8m")
 parameters/looping = true
+
+[node name="Enemy2" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2296, -1222)
 
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
@@ -164,3 +172,9 @@ parameters/looping = true
 [connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
 [connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
 [connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
+[connection signal="die" from="Enemy2" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy2" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy2" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy2" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy2" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy2" to="." method="_on_enemy_use_ability"]

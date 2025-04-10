@@ -70,7 +70,6 @@ func _physics_process(_delta: float) -> void:
 func _init(_world_tilemaps: Dictionary) -> void:
 	world_tilemaps = _world_tilemaps
 	
-	var tile_arrays: Array[Array]
 	var tiles_used_environment: Array
 	var tiles_used_terrain: Array
 	
