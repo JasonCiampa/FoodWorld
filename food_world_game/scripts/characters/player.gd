@@ -99,7 +99,7 @@ var stamina_use: Dictionary = {
 }
 
 # Speed #
-var speed_sprinting: int = 125
+var speed_sprinting: int = 75
 var speed_dodging: int = 350
 
 # Sprinting #
@@ -138,6 +138,8 @@ var frame_counter: int = 0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	
+	speed_normal = 50
 	
 	sprite.play("idle_front")
 	

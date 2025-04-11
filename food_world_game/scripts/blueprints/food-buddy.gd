@@ -147,6 +147,10 @@ func update_animation():
 	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
 	
+	
+	if new_direction_name != null:
+		new_direction_name = new_direction_name.call()
+	
 	if health_current <= 0:
 		new_animation_name = "die"
 	elif using_ability:
@@ -155,6 +159,7 @@ func update_animation():
 		new_animation_name = "idle"
 	else:
 		new_animation_name = "moving"
+	
 	
 	if new_animation_name == "" or new_animation_name == null:
 		new_animation_name = current_animation_name
@@ -171,10 +176,13 @@ func update_animation():
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
 
+func velocity_checks():
+	pass
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
-	
+
 	navigation_agent = $"NavigationAgent2D"
 	
 	timer_navigation = $"Navigation Timer"
@@ -189,15 +197,6 @@ func _ready() -> void:
 	self.name = "FoodBuddy"
 	
 	update_movement_direction()
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), "")
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "back")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "front")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "back")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "sideways" if (abs(velocity.x) + 0.5 > abs(velocity.y)) else "front")
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -209,12 +208,22 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if target != null and animation_directions.size() == 0:
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), func(): return "")
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), func(): return "back")
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), func(): return "front")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), func(): return "sideways")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), func(): return ("back" if velocity.y < velocity.x else "sideways"))
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), func(): return ("front" if abs(velocity.y) > abs(velocity.x) else "sideways"))# if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), func(): return ("sideways"))
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), func(): return ("back" if abs(velocity.y) > abs(velocity.x) else "sideways"))#if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return ("front" if velocity.y > velocity.x else "sideways")) #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+	
 	if !active:
 		return
 	
 	if timer_general.is_stopped():
 		update_movement_direction()
-		#update_animation()
 		
 		if !is_jumping and current_altitude > 0:
 			on_platform = true
@@ -322,13 +331,16 @@ func generate_path(target_point: Vector2 = Vector2(-1, -1)):
 # A callback function that should execute repeatedly while the Food Buddy is in the FOLLOW FieldState
 func follow_field_state_callback() -> void:
 	
+	using_ability = false
+	speed_current = speed_normal
+	
 	target_player.emit(self)
 	
 	if target.current_altitude == 0:
 	
 		generate_path()
 		
-		if target_distance <= float((radius_range + target.radius_range) / 2):
+		if target.hitbox_damage in hitbox_interaction.get_overlapping_areas():
 			velocity.x = 0
 			velocity.y = 0
 	else:
@@ -339,6 +351,8 @@ func follow_field_state_callback() -> void:
 # A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState
 func forage_field_state_callback() -> void:
 	
+	using_ability = false
+	speed_current = speed_normal
 	
 	if berries == berries_max:
 		target_brittany.emit(self)
@@ -409,7 +423,7 @@ func fight_field_state_callback() -> void:
 	# Determine if the Food Buddy is in range of an Enemy, then make them stop moving and launch their solo attack
 	if target is Enemy:
 		
-		if target_distance <= float((radius_range + target.radius_range) / 2):
+		if target.hitbox_damage in hitbox_damage.get_overlapping_areas():
 			velocity.x = 0
 			velocity.y = 0
 			
@@ -449,7 +463,6 @@ func use_special_attack():
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 func _on_sprite_animation_looped() -> void:
-	
 	update_animation()
 
 func _on_sprite_animation_finished() -> void:

@@ -95,7 +95,7 @@ func _ready() -> void:
 	field_state_current = FieldState.PASSIVE
 	timer_frolic_cooldown.start(2.5)
 	
-	
+	speed_normal = 35
 	radius_range = 20
 	
 	self.name = "Enemy"
@@ -232,7 +232,7 @@ func passive_field_state_callback() -> void:
 func aggressive_field_state_callback() -> void:
 	
 	# Determine if the Enemy is in range of an Enemy, then make them stop moving and launch their solo attack
-	if target_distance <= float((radius_range + target.radius_range) / 2):
+	if target.hitbox_damage in hitbox_damage.get_overlapping_areas():
 		velocity.x = 0
 		velocity.y = 0
 		

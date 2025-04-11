@@ -23,11 +23,13 @@ var sprinkle_sprite: AnimatedSprite2D
 
 var animation_callbacks: Dictionary = {
 	
-	"ability_sideways" : ability_sideways_animation
+	"ability_sideways" : ability_sideways_animation,
+	"moving_sideways"  : moving_sideways_animation
 }
 
 var speed_sprinting: int
 
+var target_point: Vector2
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -55,11 +57,11 @@ func ready():
 	}
 	
 	# Set Dan's default speed and current speed
-	speed_normal = 65
-	speed_sprinting = 100
+	speed_normal = 45
+	speed_sprinting = 85
 	speed_current = speed_normal
 	
-	radius_range = 60
+	radius_range = 90
 	
 	self.name = "Dan"
 	
@@ -72,8 +74,13 @@ func ready():
 
 # A custom process function that is personally defined for Dan. This is called in the default FoodBuddy class's '_process()' function
 func process(_delta: float):
-	#print(sprite.animation)
 	
+	print(velocity)
+	print("DIFF: ", animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))) 
+	print(sprite.animation)
+	print(direction_current_horizontal)
+	print(direction_current_vertical)
+	print("")
 	if sprite.animation in animation_callbacks.keys():
 		animation_callbacks.get(sprite.animation).call()
 
@@ -109,16 +116,35 @@ func fight_field_state_callback() -> void:
 	
 	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it.
 	if target != null and target is Enemy and target.alive:
-		generate_path()
+		
+		if timer_ability_cooldown.is_stopped() and !using_ability:
+			using_ability = true
+			current_animation_name = "ability"
+			sprite.play("ability_" + current_direction_name)
+			target_distance = global_position.distance_to(target.global_position)
+			speed_current = speed_sprinting
+			generate_path()
+		
+		if !timer_ability_cooldown.is_stopped() and using_ability:
+			generate_path(target_point)
+		else:
+			generate_path()
+			speed_current = speed_sprinting
+		
+		if target.hitbox_damage in hitbox_damage.get_overlapping_areas():
+			generate_path(-target.global_position)
 	
 	# Otherwise, move the Food Buddy towards the Player while they look for a new target.
 	else:
+		using_ability = false
 		
 		target_closest_enemy.emit(self)
 		
 		if target == null or !target.alive:
 			
 			target_player.emit(self)
+			using_ability = false
+			speed_current = speed_normal
 			
 			target_distance = global_position.distance_to(target.global_position)
 			
@@ -128,45 +154,32 @@ func fight_field_state_callback() -> void:
 				return
 		
 		generate_path()
-	
-	
-	# Determine if the Food Buddy is in range of an Enemy, then make them stop moving and launch their solo attack
-	if target is Enemy:
-		
-		if target_distance <= float(200):
-			
-			if timer_ability_cooldown.is_stopped() and !using_ability:
-				using_ability = true
-				current_animation_name = "ability"
-				sprite.play("ability_" + current_direction_name)
-				target_distance = global_position.distance_to(target.global_position)
-				speed_current = speed_sprinting
-				generate_path()
-			
-			if target_distance <= float((radius_range + target.radius_range) / 2):
-				velocity.x = -50
-				velocity.y = 0
-				# HERE
-				# It seems like there is some other line of code that is still adjusting the donut's velocity towards the target despite it being reversed to -50
 
 
 func _on_sprite_animation_looped() -> void:
 	
-	if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target_distance <= float((radius_range + target.radius_range) / 2):
+	if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_damage in hitbox_damage.get_overlapping_areas():
 		
 		use_ability_solo.emit(self, ability_damage["Solo"])
-		timer_ability_cooldown.start(6.5)
+		timer_ability_cooldown.start(1.5)
 		sprite.play("idle_" + current_direction_name)
 		current_animation_name = "idle"
-		speed_current = speed_normal
 		
-		velocity.x = 0
-		velocity.y = 0
-		print("ANIMATION LOOP DE LOOPED")
-		if target.alive:
-			using_ability = true
+		print("TARGET: ", target.global_position)
+		if RNG.randi_range(0, 1):
+			if RNG.randi_range(0, 1):
+				target_point = Vector2(-target.global_position.x, -target.global_position.y)
+				generate_path(target_point)
+			else:
+				target_point = Vector2(-target.global_position.x, target.global_position.y * 2)
+				generate_path(target_point)
 		else:
-			using_ability = false
+			if RNG.randi_range(0, 1):
+				target_point = Vector2(target.global_position.x * 2, -target.global_position.y)
+				generate_path(target_point)
+			else:
+				target_point = Vector2(target.global_position.x * 2, target.global_position.y * 2)
+				generate_path(target_point)
 		
 		return
 	
@@ -186,16 +199,18 @@ func ability_sideways_animation() -> void:
 		animation_player.play("rotate_left_fast")
 
 
+func moving_sideways_animation() -> void:
+	# If sprite is facing/moving right, put trail on the left
+	if sprite.flip_h:
+		animation_player.play("rotate_right")
+	
+	# If sprite is facing/moving left, put trail on the right
+	else:
+		animation_player.play("rotate_left")
+
+
 func _on_sprite_animation_changed() -> void:
 	
-	if "ability" not in sprite.animation:
-		
-		# If sprite is facing/moving right, put trail on the left
-		if sprite.flip_h:
-			sprinkle_sprite.play("nothing")
-			animation_player.play("RESET")
-		
-		# If sprite is facing/moving left, put trail on the right
-		else:
-			sprinkle_sprite.play("nothing")
-			animation_player.play("RESET")
+	if "moving_sideways" != sprite.animation and "ability_sideways" != sprite.animation:
+		animation_player.play("RESET")
+		sprinkle_sprite.play("nothing")

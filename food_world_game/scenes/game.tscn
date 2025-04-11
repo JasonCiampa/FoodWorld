@@ -94,7 +94,7 @@ position = Vector2(10275, -1104)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
-position = Vector2(10480, -1001)
+position = Vector2(9255, -1023)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 visible = false

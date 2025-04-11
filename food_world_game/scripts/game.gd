@@ -92,10 +92,10 @@ func _ready() -> void:
 	timer_process_tiles = $"Process Tiles Timer"
 	
 	# Add Malick and Sally into the active Food Buddies list
+	food_buddies_active.append(DAN)
 	food_buddies_active.append(LINK)
-	food_buddies_active.append(BRITTANY)
 	
-	food_buddies_inactive.append(DAN)
+	food_buddies_inactive.append(BRITTANY)
 	
 	food_buddies_inactive[0].active = false
 
@@ -339,6 +339,9 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int)
 			target.die.emit(target)
 			target.alive = false
 			attacker.killed_target.emit(attacker)
+			
+			if attacker is FoodBuddy:
+				attacker.using_ability = false
 			
 			if attacker is Player and target is Enemy:
 				attacker.xp_current += target.xp_drop
@@ -1119,14 +1122,14 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 func _on_juicebox_explode(juicebox: Juicebox):
 	var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
 	
-	if PLAYER.hitbox_damage in hitboxes:
+	if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
 		PLAYER.health_current += juicebox.health
 		
 		if PLAYER.health_current > PLAYER.health_max:
 			PLAYER.health_current = PLAYER.health_max
 	
 	for food_buddy in food_buddies_active:
-		if food_buddy.hitbox_damage in hitboxes:
+		if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
 			food_buddy.health_current += juicebox.health
 			
 			if food_buddy.health_current > food_buddy.health_max:

@@ -153,10 +153,10 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
-size = Vector2(32, 29)
+size = Vector2(40, 36)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1bx7v"]
-size = Vector2(24, 24)
+size = Vector2(30, 18)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gly5j"]
 size = Vector2(24, 6)
@@ -189,10 +189,9 @@ color = Color(0, 0, 0, 0.572549)
 polygon = PackedVector2Array(-4, 4, -7, 3, -9, 1, -10, -1, -9, -2, 9, -2, 10, -1, 9, 1, 7, 3, 4, 4)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 1
 position = Vector2(0, -11)
 sprite_frames = ExtResource("2_7qx7e")
-animation = &"ability_sideways"
+animation = &"die_front"
 offset = Vector2(0, -0.5)
 
 [node name="AnimatedSpriteSprinkles2D" type="AnimatedSprite2D" parent="."]
@@ -210,14 +209,14 @@ libraries = {
 position = Vector2(0, -14)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
-position = Vector2(0, 3.5)
+position = Vector2(-4.80817e-06, 3)
 shape = SubResource("RectangleShape2D_s3nq7")
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(0, 2)
+position = Vector2(-1.44646e-06, 7)
 shape = SubResource("RectangleShape2D_1bx7v")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 

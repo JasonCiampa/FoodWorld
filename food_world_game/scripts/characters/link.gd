@@ -42,10 +42,10 @@ func ready():
 	}
 	
 	# Set Link's default speed and current speed
-	speed_normal = 55
+	speed_normal = 40
 	speed_current = speed_normal
 	
-	radius_range = 15
+	radius_range = 30
 	
 	self.name = "Link"
 	
