@@ -75,12 +75,6 @@ func ready():
 # A custom process function that is personally defined for Dan. This is called in the default FoodBuddy class's '_process()' function
 func process(_delta: float):
 	
-	print(velocity)
-	print("DIFF: ", animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))) 
-	print(sprite.animation)
-	print(direction_current_horizontal)
-	print(direction_current_vertical)
-	print("")
 	if sprite.animation in animation_callbacks.keys():
 		animation_callbacks.get(sprite.animation).call()
 
