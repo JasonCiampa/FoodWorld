@@ -39,6 +39,8 @@ func ready():
 	text_press_f_for_berry_bot = $"Press 'F' to Manage Berry Bot"
 	health_texture_path = "res://images/ui/png/brittany-health.png"
 	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-brittany.png"
+	dialogue_texture = load("res://images/ui/png/dialogue-brittany.png")
+	
 	
 	# Set the stamina cost for each of Brittany's two abilities
 	ability_stamina_cost = { 
@@ -47,7 +49,7 @@ func ready():
 	}
 	
 	# Set Brittany's default speed and current speed
-	speed_normal = 45
+	speed_normal = 35
 	speed_current = speed_normal
 	
 	radius_range = 70

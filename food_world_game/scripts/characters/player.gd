@@ -138,6 +138,7 @@ var frame_counter: int = 0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	dialogue_texture = load("res://images/ui/png/dialogue-player.png")
 	
 	speed_normal = 50
 	

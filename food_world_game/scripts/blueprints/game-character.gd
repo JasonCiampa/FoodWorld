@@ -63,6 +63,7 @@ var LEFT_DIRECTION : Vector2 = Vector2(Direction.LEFT, Direction.IDLE)
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+var dialogue_texture: Resource
 
 # Gravity #
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")

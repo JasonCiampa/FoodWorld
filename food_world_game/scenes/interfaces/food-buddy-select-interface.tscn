@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/interfaces/food-buddy-select-interface.gd" id="1_g6c6n"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="1_xiblw"]
-[ext_resource type="Texture2D" uid="uid://bp40n6kwu5cyp" path="res://images/ui/png/food-buddy-selection-link-test.png" id="3_x5hal"]
+[ext_resource type="Texture2D" uid="uid://cy54605uahonm" path="res://images/ui/png/food-buddy-selection-link.png" id="3_bvpg0"]
 [ext_resource type="Texture2D" uid="uid://c56du830fv46b" path="res://images/ui/png/food-buddy-selection-dan.png" id="4_6et25"]
 [ext_resource type="Texture2D" uid="uid://c5fnxvdvem4ig" path="res://images/ui/png/food-buddy-selection-brittany.png" id="5_8cnbo"]
 
@@ -198,7 +198,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+"values": [Vector2(0, 0), Vector2(6.2, 6.2), Vector2(3.8, 3.8), Vector2(5.4, 5.4), Vector2(5, 5)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -210,7 +210,7 @@ tracks/4/keys = {
 "times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+"values": [Vector2(0, 0), Vector2(6.2, 6.2), Vector2(3.8, 3.8), Vector2(5.4, 5.4), Vector2(5, 5)]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -222,7 +222,7 @@ tracks/5/keys = {
 "times": PackedFloat32Array(1.23333, 1.475, 1.63333, 1.8, 1.98333),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(13.2, 13.2), Vector2(10.8, 10.8), Vector2(12.4, 12.4), Vector2(12, 12)]
+"values": [Vector2(0, 0), Vector2(6.2, 6.2), Vector2(3.8, 3.8), Vector2(5.4, 5.4), Vector2(5, 5)]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -310,7 +310,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(12, 12)]
+"values": [Vector2(5, 5)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -322,7 +322,7 @@ tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(12, 12)]
+"values": [Vector2(5, 5)]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -334,7 +334,7 @@ tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(12, 12)]
+"values": [Vector2(5, 5)]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -471,17 +471,17 @@ offset_bottom = 40.0
 
 [node name="Active Buddy Circle Button Container" type="AspectRatioContainer" parent="Active Buddy Circle 1"]
 layout_mode = 0
-offset_left = 199.0
-offset_top = 996.0
-offset_right = 239.0
-offset_bottom = 1036.0
+offset_left = 183.0
+offset_top = 971.0
+offset_right = 233.0
+offset_bottom = 1021.0
 scale = Vector2(1e-05, 1e-05)
-pivot_offset = Vector2(10, 11)
+pivot_offset = Vector2(25, 25)
 
 [node name="Active Buddy Circle Button" type="TextureButton" parent="Active Buddy Circle 1/Active Buddy Circle Button Container"]
 layout_mode = 2
 disabled = true
-texture_normal = ExtResource("3_x5hal")
+texture_normal = ExtResource("3_bvpg0")
 
 [node name="Active Buddy Circle Text Container" type="AspectRatioContainer" parent="Active Buddy Circle 1"]
 layout_mode = 0
@@ -509,12 +509,12 @@ offset_bottom = 40.0
 
 [node name="Active Buddy Circle Button Container" type="AspectRatioContainer" parent="Active Buddy Circle 2"]
 layout_mode = 0
-offset_left = 600.0
-offset_top = 996.0
-offset_right = 640.0
-offset_bottom = 1036.0
+offset_left = 597.0
+offset_top = 971.0
+offset_right = 647.0
+offset_bottom = 1021.0
 scale = Vector2(1e-05, 1e-05)
-pivot_offset = Vector2(10, 11)
+pivot_offset = Vector2(25, 25)
 
 [node name="Active Buddy Circle Button" type="TextureButton" parent="Active Buddy Circle 2/Active Buddy Circle Button Container"]
 layout_mode = 2
@@ -547,12 +547,12 @@ offset_bottom = 40.0
 
 [node name="Inactive Buddy Circle Button Container" type="AspectRatioContainer" parent="Inactive Buddy Circle"]
 layout_mode = 0
-offset_left = 1555.0
-offset_top = 996.0
-offset_right = 1595.0
-offset_bottom = 1036.0
+offset_left = 1544.0
+offset_top = 971.0
+offset_right = 1594.0
+offset_bottom = 1021.0
 scale = Vector2(1e-05, 1e-05)
-pivot_offset = Vector2(10, 11)
+pivot_offset = Vector2(25, 25)
 
 [node name="Inactive Buddy Circle Button" type="TextureButton" parent="Inactive Buddy Circle/Inactive Buddy Circle Button Container"]
 layout_mode = 2

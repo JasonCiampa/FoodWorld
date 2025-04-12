@@ -42,7 +42,9 @@ polygon = PackedVector2Array(-6, 3, -12, 2, -12, 1, -12, -1, -9, -2, 9, -2, 12, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = ExtResource("2_4u0ai")
-animation = &"idle_front"
+animation = &"die_front"
+frame = 2
+frame_progress = 0.686964
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

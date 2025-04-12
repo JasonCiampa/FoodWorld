@@ -213,6 +213,7 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 	button_conversation2.disabled = false
 	button_conversation3.disabled = false
 	
+	image_character.texture = null
 	
 	# Create an empty Array that will hold Character names
 	var character_names: Array[String] = []
@@ -314,6 +315,11 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 				if character_names[character] == "Player":
 					character_names.remove_at(character)
 			
+			for character in characters_active:
+				if character.name == current_dialogue.current_speaker_name:
+					image_character.texture = character.dialogue_texture
+					break
+			
 			if character_names.size() == 1:
 				
 				# Set the dialogue's current line to instruct the user to select a convo to have with the character
@@ -385,6 +391,11 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 		
 		# Store the list of active characters in the Dialogue Interface so that references to all conversation participants can be accessed
 		characters_active = dialogue_characters
+		
+		for character in characters_active:
+			if character.name == current_dialogue.current_speaker_name:
+				image_character.texture = character.dialogue_texture
+				break
 		
 		# Set line displayed as false to indicate that the current line hasn't been displayed yet
 		line_displayed = false
@@ -501,6 +512,11 @@ func _on_next_button_down() -> void:
 		current_char_index = 0
 		current_char_string = ""
 		
+		for character in characters_active:
+			if character.name == current_dialogue.current_speaker_name:
+				image_character.texture = character.dialogue_texture
+				break
+			
 		# If the line is not adjusted forward, disable the next button because there is no other lines
 		if !current_dialogue.adjust_current_line(true):
 			button_back.disabled = false
@@ -544,6 +560,11 @@ func _on_back_button_down() -> void:
 		
 		if current_dialogue.current_speaker_name != "PLAY" and current_dialogue.current_speaker_name != "PLAY_WHEN":
 			text_character_name.text = current_dialogue.current_speaker_name
+			
+			for character in characters_active:
+				if character.name == current_dialogue.current_speaker_name:
+					image_character.texture = character.dialogue_texture
+					break
 		
 		current_char_index = 0
 		current_char_string = ""
@@ -558,7 +579,6 @@ func _on_back_button_down() -> void:
 
 func _on_exit_button_down() -> void:
 
-	
 	end()
 
 
@@ -589,8 +609,16 @@ func select_conversation(conversation_name: String):
 	current_char_string = ""
 	current_char_index = 0
 	
+	for character in characters_active:
+		if character.name == current_dialogue.current_speaker_name:
+			image_character.texture = character.dialogue_texture
+			break
+	
+	
 	# Set line displayed as false to indicate that the current line hasn't been displayed yet
 	line_displayed = false
+	
+	button_exit.disabled = false
 
 
 
