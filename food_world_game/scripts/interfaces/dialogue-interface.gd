@@ -407,7 +407,12 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
-		subject.paused = true
+		if subject is GameCharacter:
+			subject.paused = true
+			subject.sprite.pause()
+			
+			if subject is FoodBuddy:
+				subject.animation_player.pause()
 	
 	frozen_subjects = freeze_subjects
 	
@@ -443,7 +448,12 @@ func end():
 	
 	# Unpause all of the characters' processing now that the interface is no longer active
 	for subject in frozen_subjects:
-		subject.paused = false
+		if subject is GameCharacter:
+			subject.paused = false
+			subject.sprite.play()
+			
+			if subject is FoodBuddy:
+				subject.animation_player.play("RESET")
 	
 	animator.queue("RESET")
 

@@ -153,32 +153,33 @@ func fight_field_state_callback() -> void:
 
 func _on_sprite_animation_looped() -> void:
 	
-	if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_damage in hitbox_damage.get_overlapping_areas():
-		
-		use_ability_solo.emit(self, ability_damage["Solo"])
-		timer_ability_cooldown.start(1.5)
-		sprite.play("idle_" + current_direction_name)
-		current_animation_name = "idle"
-		
-		print("TARGET: ", target.global_position)
-		if RNG.randi_range(0, 1):
+	if !paused:
+		if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_damage in hitbox_damage.get_overlapping_areas():
+			
+			use_ability_solo.emit(self, ability_damage["Solo"])
+			timer_ability_cooldown.start(1.5)
+			sprite.play("idle_" + current_direction_name)
+			current_animation_name = "idle"
+			
+			print("TARGET: ", target.global_position)
 			if RNG.randi_range(0, 1):
-				target_point = Vector2(-target.global_position.x, -target.global_position.y)
-				generate_path(target_point)
+				if RNG.randi_range(0, 1):
+					target_point = Vector2(-target.global_position.x, -target.global_position.y)
+					generate_path(target_point)
+				else:
+					target_point = Vector2(-target.global_position.x, target.global_position.y * 2)
+					generate_path(target_point)
 			else:
-				target_point = Vector2(-target.global_position.x, target.global_position.y * 2)
-				generate_path(target_point)
-		else:
-			if RNG.randi_range(0, 1):
-				target_point = Vector2(target.global_position.x * 2, -target.global_position.y)
-				generate_path(target_point)
-			else:
-				target_point = Vector2(target.global_position.x * 2, target.global_position.y * 2)
-				generate_path(target_point)
+				if RNG.randi_range(0, 1):
+					target_point = Vector2(target.global_position.x * 2, -target.global_position.y)
+					generate_path(target_point)
+				else:
+					target_point = Vector2(target.global_position.x * 2, target.global_position.y * 2)
+					generate_path(target_point)
+			
+			return
 		
-		return
-	
-	update_animation()
+		update_animation()
 
 
 func ability_sideways_animation() -> void:
@@ -205,7 +206,7 @@ func moving_sideways_animation() -> void:
 
 
 func _on_sprite_animation_changed() -> void:
-	
-	if "moving_sideways" != sprite.animation and "ability_sideways" != sprite.animation:
-		animation_player.play("RESET")
-		sprinkle_sprite.play("nothing")
+	if !paused:
+		if "moving_sideways" != sprite.animation and "ability_sideways" != sprite.animation:
+			animation_player.play("RESET")
+			sprinkle_sprite.play("nothing")

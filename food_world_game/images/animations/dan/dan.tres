@@ -174,7 +174,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_f66fm")
 }],
-"loop": true,
+"loop": false,
 "name": &"die_front",
 "speed": 7.0
 }, {

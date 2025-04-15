@@ -219,7 +219,7 @@ func _process(delta: float) -> void:
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), func(): return ("back" if abs(velocity.y) > abs(velocity.x) else "sideways"))#if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return ("front" if velocity.y > velocity.x else "sideways")) #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 	
-	if !active:
+	if !active or paused:
 		return
 	
 	if timer_general.is_stopped():
@@ -463,16 +463,18 @@ func use_special_attack():
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 func _on_sprite_animation_looped() -> void:
-	update_animation()
+	if !paused:
+		update_animation()
 
 func _on_sprite_animation_finished() -> void:
 	
-	if "ability" in sprite.animation:
+	if !paused:
+		if "ability" in sprite.animation:
+			
+			use_ability_solo.emit(self, ability_damage["Solo"])
+			timer_ability_cooldown.start(0.5)
+			using_ability = false
+			sprite.play("idle_" + current_direction_name)
+			current_animation_name = "idle"
 		
-		use_ability_solo.emit(self, ability_damage["Solo"])
-		timer_ability_cooldown.start(0.5)
-		using_ability = false
-		sprite.play("idle_" + current_direction_name)
-		current_animation_name = "idle"
-	
-	update_animation()
+		update_animation()
