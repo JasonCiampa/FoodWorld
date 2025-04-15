@@ -275,6 +275,24 @@ func get_all_assets_on_screen() -> Array[Node2D]:
 
 
 
+func get_all_assets_in_game() -> Array[Node2D]:
+	
+	# Create a list that will store all Assets currently in the game and add the Player into it
+	var assets_in_game: Array[Node2D] = [PLAYER]
+	
+	for enemy in enemies:
+		assets_in_game.append(enemy)
+	
+	for citizen in food_citizens:
+		assets_in_game.append(citizen)
+	
+	for interactable in interactables:
+		assets_in_game.append(interactable)
+	
+	return assets_in_game
+
+
+
 # Determines which target in a given list of targets is closest to the subject and returns that target (or returns null if no targets on-screen)
 func select_closest_target(subject: Node2D, targets: Array) -> Node2D:
 	
@@ -348,7 +366,7 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int)
 				
 				if attacker.xp_current >= attacker.xp_max:
 					
-					InterfaceLevelUp.start(get_all_assets_on_screen())
+					InterfaceLevelUp.start(get_all_assets_in_game())
 		
 		return true
 	
@@ -661,7 +679,7 @@ func _on_player_toggle_field_state_interface() -> void:
 		InterfaceFoodBuddyFieldState.end()
 	else:
 		InterfaceFoodBuddyFieldState.setValues(PLAYER, food_buddies_active)
-		InterfaceFoodBuddyFieldState.start(get_all_assets_on_screen(), food_buddies_active)
+		InterfaceFoodBuddyFieldState.start(get_all_assets_in_game(), food_buddies_active)
 
 
 
@@ -677,7 +695,7 @@ func _on_player_toggle_select_interface() -> void:
 		InterfaceFoodBuddySelection.end()
 	else:
 		InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
-		InterfaceFoodBuddySelection.start(get_all_assets_on_screen())
+		InterfaceFoodBuddySelection.start(get_all_assets_in_game())
 
 
 # Callback function that executes whenever the Player wants to enable the Dialogue interface
@@ -688,7 +706,7 @@ func _on_player_enable_dialogue_interface(characters: Array[Node2D], conversatio
 		return
 	
 	# Enable the Dialogue Interface
-	InterfaceDialogue.start(characters, get_all_assets_on_screen(), conversation_name)
+	InterfaceDialogue.start(characters, get_all_assets_in_game(), conversation_name)
 
 
 func _on_player_toggle_berry_bot_interface():
@@ -708,7 +726,7 @@ func _on_player_toggle_berry_bot_interface():
 		closest_interactable_to_player.label_e_to_interact.hide()
 		closest_interactable_to_player.text_press_f_for_berry_bot.hide()
 		
-		InterfaceBerryBot.start(get_all_assets_on_screen())
+		InterfaceBerryBot.start(get_all_assets_in_game())
 
 
 
@@ -748,7 +766,7 @@ func _on_player_killed_target() -> void:
 
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
 func _on_player_die(_player: Player) -> void:
-	InterfaceGameOver.game_over(get_all_assets_on_screen())
+	InterfaceGameOver.game_over(get_all_assets_in_game())
 	
 	PLAYER.sprite.play("die")
 	print("Player has died!")

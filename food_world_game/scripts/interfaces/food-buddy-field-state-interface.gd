@@ -18,6 +18,9 @@ var button_buddy2_forage: TextureButton
 
 var animator: AnimationPlayer
 
+var start_location_foodbuddy1: Vector2
+var start_location_foodbuddy2: Vector2
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -139,6 +142,23 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	foodbuddy2 = food_buddies_active[1]
 	
 	
+	start_location_foodbuddy1 = foodbuddy1.global_position
+	start_location_foodbuddy2 = foodbuddy2.global_position
+	
+	foodbuddy1.global_position = player.global_position
+	foodbuddy1.global_position.x -= 32
+	
+	foodbuddy2.global_position = player.global_position
+	foodbuddy2.global_position.x += 32
+	
+	foodbuddy1.sprite.play("idle_front")
+	foodbuddy2.sprite.play("idle_front")
+	
+	foodbuddy1.animation_player.play("RESET")
+	foodbuddy2.animation_player.play("RESET")
+	
+	player.sprite.play("idle_front")
+	
 	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
 	foodbuddy1.global_position = player.global_position
 	foodbuddy1.global_position.x -= 32
@@ -189,6 +209,9 @@ func end():
 	
 	selected_button_buddy1.disabled = false
 	selected_button_buddy2.disabled = false
+	
+	foodbuddy1.global_position = start_location_foodbuddy1
+	foodbuddy2.global_position = start_location_foodbuddy2
 	
 	animator.play("RESET")
 

@@ -1,8 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://1r6edy1t7kho"]
+[gd_scene load_steps=12 format=3 uid="uid://1r6edy1t7kho"]
 
 [ext_resource type="Script" path="res://scripts/characters/link.gd" id="1_3g1b3"]
 [ext_resource type="SpriteFrames" uid="uid://vo80xmgqr1b" path="res://images/animations/link/link.tres" id="2_4u0ai"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_dc0ob"]
+
+[sub_resource type="Animation" id="Animation_o1bqr"]
+resource_name = "RESET"
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lun7r"]
+_data = {
+"RESET": SubResource("Animation_o1bqr")
+}
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
 size = Vector2(32, 26)
@@ -47,6 +56,9 @@ frame = 2
 frame_progress = 0.686964
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_lun7r")
+}
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -14)

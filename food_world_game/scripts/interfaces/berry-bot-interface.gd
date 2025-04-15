@@ -53,6 +53,8 @@ var juicebox_cost: int = 50
 
 var craft_count_max: int = 20
 
+var start_location_foodbuddy1: Vector2
+var start_location_foodbuddy2: Vector2
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,6 +86,7 @@ func _process(delta: float) -> void:
 		
 		if sauna_current_occupant_times[time] < sauna_occupant_stay_time:
 			sauna_current_occupant_times[time] += delta
+		
 		else:
 			sauna_current_occupant_times.remove_at(time)
 			
@@ -105,7 +108,13 @@ func _process(delta: float) -> void:
 			
 			if sauna_current_occupant_times.size() < sauna_occupancy_max and player.berries > 0:
 				button_deposit.disabled = false
-
+	
+	if animator.current_animation != "enter_UI":
+		for berry_index in range(0, berry_sprites.size()):
+			var berry_animator: AnimationPlayer = berry_sprites[berry_index].get_node("Animator")
+			
+			if berry_animator.current_animation_position != sauna_current_occupant_times[(berry_sprites.size() -1) - berry_index]:
+				berry_animator.seek(sauna_current_occupant_times[(berry_sprites.size() -1) - berry_index], true)
 
 
 # Called every frame. Updates the Enemy's physics
@@ -146,7 +155,11 @@ func start(_freeze_subjects: Array[Node2D]):
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
-		subject.paused = true
+		if subject is GameCharacter:
+			subject.paused = true
+			subject.sprite.pause()
+			subject.animation_player.pause()
+	
 	
 	# Set the UI to be visible and processing
 	self.visible = true
@@ -158,10 +171,18 @@ func start(_freeze_subjects: Array[Node2D]):
 		berry_animator.play("enter")
 		berry_animator.queue("glide")
 		
+		
 	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
+	
+	
+	brittany.sprite.play("idle_front")	
+	brittany.animation_player.play("RESET")
+	
+	player.sprite.play("idle_front")
+	
 	
 	if sauna_current_occupant_times.size() > 0:
 		animator.queue("steam_start")
@@ -201,7 +222,12 @@ func end():
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
-		subject.paused = false
+		if subject is GameCharacter:
+			subject.paused = false
+			subject.sprite.play()
+			
+			if subject is FoodBuddy:
+				subject.animation_player.play("RESET")
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:

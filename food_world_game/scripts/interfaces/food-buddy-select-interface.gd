@@ -47,6 +47,9 @@ var active_foodbuddy2: FoodBuddy
 var inactive_foodbuddy: FoodBuddy
 var inactive_food_buddies: Array[FoodBuddy]
 
+var start_location_foodbuddy1: Vector2
+var start_location_foodbuddy2: Vector2
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -121,12 +124,23 @@ func start(freeze_subjects: Array[Node2D]):
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
 	
+	start_location_foodbuddy1 = active_foodbuddy1.global_position
+	start_location_foodbuddy2 = active_foodbuddy2.global_position
+	
 	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
 	active_foodbuddy1.global_position = player.global_position
 	active_foodbuddy1.global_position.x -= 32
 	
 	active_foodbuddy2.global_position = player.global_position
 	active_foodbuddy2.global_position.x += 32
+	
+	active_foodbuddy1.sprite.play("idle_front")
+	active_foodbuddy2.sprite.play("idle_front")
+	
+	active_foodbuddy1.animation_player.play("RESET")
+	active_foodbuddy2.animation_player.play("RESET")
+	
+	player.sprite.play("idle_front")
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -145,6 +159,9 @@ func start(freeze_subjects: Array[Node2D]):
 
 
 func end():
+	
+	active_foodbuddy1.global_position = start_location_foodbuddy1
+	active_foodbuddy2.global_position = start_location_foodbuddy2
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
@@ -172,6 +189,7 @@ func end():
 	button_active_buddy1.disabled = true
 	button_active_buddy2.disabled = true
 	button_inactive_buddy.disabled = true
+	
 	
 	animator.play("RESET")
 

@@ -89,14 +89,24 @@ func game_over(freeze_subjects: Array[Node2D]):
 	
 	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
 	active_food_buddies[0].global_position = player.global_position
-	active_food_buddies[0].global_position.x -= 32
+	active_food_buddies[0].global_position.x -= 48
 	
 	active_food_buddies[1].global_position = player.global_position
-	active_food_buddies[1].global_position.x += 32
+	active_food_buddies[1].global_position.x += 48
 	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
+	
+	active_food_buddies[0].sprite.play("die_front")
+	active_food_buddies[1].sprite.play("die_front")
+	
+	for buddy in active_food_buddies:
+		buddy.sprite.play("die_front")
+		buddy.animation_player.play("RESET")
+		
+		if buddy.name == "Dan":
+			buddy.sprinkle_sprite.play("nothing")
 	
 	InterfaceCharacterStatus.visible = false
 	

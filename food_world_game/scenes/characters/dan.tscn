@@ -191,9 +191,7 @@ polygon = PackedVector2Array(-4, 4, -7, 3, -9, 1, -10, -1, -9, -2, 9, -2, 10, -1
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -11)
 sprite_frames = ExtResource("2_7qx7e")
-animation = &"die_front"
-frame = 2
-frame_progress = 0.370275
+animation = &"idle_sideways"
 offset = Vector2(0, -0.5)
 
 [node name="AnimatedSpriteSprinkles2D" type="AnimatedSprite2D" parent="."]

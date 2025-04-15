@@ -1,8 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://da5ns6vxli514"]
+[gd_scene load_steps=12 format=3 uid="uid://da5ns6vxli514"]
 
 [ext_resource type="Script" path="res://scripts/characters/brittany.gd" id="1_3xxkd"]
 [ext_resource type="SpriteFrames" uid="uid://cfvbqc5deyrrc" path="res://images/animations/brittany/brittany.tres" id="2_uiaoo"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_16rr1"]
+
+[sub_resource type="Animation" id="Animation_j278a"]
+resource_name = "RESET"
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4y5si"]
+_data = {
+"RESET": SubResource("Animation_j278a")
+}
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
 size = Vector2(36, 49)
@@ -47,6 +56,9 @@ animation = &"moving_sideways"
 frame_progress = 0.703495
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4y5si")
+}
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -14)
