@@ -109,12 +109,13 @@ func _process(delta: float) -> void:
 			if sauna_current_occupant_times.size() < sauna_occupancy_max and player.berries > 0:
 				button_deposit.disabled = false
 	
-	if animator.current_animation != "enter_UI":
-		for berry_index in range(0, berry_sprites.size()):
-			var berry_animator: AnimationPlayer = berry_sprites[berry_index].get_node("Animator")
-			
-			if berry_animator.current_animation_position != sauna_current_occupant_times[(berry_sprites.size() -1) - berry_index]:
-				berry_animator.seek(sauna_current_occupant_times[(berry_sprites.size() -1) - berry_index], true)
+	
+	for berry_index in range(0, berry_sprites.size()):
+		berry_sprites[berry_index].translate(Vector2(30 * delta, 0))
+		#var berry_animator: AnimationPlayer = berry_sprites[berry_index].get_node("Animator")
+		#
+		#if berry_animator.current_animation != "enter" and berry_animator.current_animation_position != sauna_current_occupant_times[(berry_sprites.size() -1) - berry_index]:
+			#berry_animator.seek(sauna_current_occupant_times[(berry_sprites.size() -1) - berry_index], true)
 
 
 # Called every frame. Updates the Enemy's physics
@@ -170,8 +171,7 @@ func start(_freeze_subjects: Array[Node2D]):
 		berry.visible = true
 		berry_animator.play("enter")
 		berry_animator.queue("glide")
-		
-		
+	
 	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
@@ -185,7 +185,7 @@ func start(_freeze_subjects: Array[Node2D]):
 	
 	
 	if sauna_current_occupant_times.size() > 0:
-		animator.queue("steam_start")
+		animator.queue("steam_stay_enter")
 		animator.queue("steam_stay")
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
@@ -322,7 +322,7 @@ func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 		berry_sprites[berry_sprites.size() - 1].global_position = Vector2(326, 720)
 		add_child(berry_sprites[berry_sprites.size() - 1])
 		var berry_animator = berry_sprites[berry_sprites.size() - 1].get_node("Animator")
-		berry_animator.play("enter")
+		berry_animator.play("spawn")
 		berry_animator.queue("glide")
 		
 		if sauna_occupancy_current == sauna_occupancy_max or depositer.berries == 0:
@@ -330,10 +330,14 @@ func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 		
 		text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
 		text_berry_count.text = str("Berries: ", depositer.berries)
-		sauna_current_occupant_times.append(0)
+		
 		
 		if sauna_current_occupant_times.size() == 0:
 			animator.play("steam_start")
 			animator.queue("steam_stay")
+			print("brrrrr")
 		else:
+			print(sauna_current_occupant_times.size())
 			animator.queue("steam_stay")
+		
+		sauna_current_occupant_times.append(0)
