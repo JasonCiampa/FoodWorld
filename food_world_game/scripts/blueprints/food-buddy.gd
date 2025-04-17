@@ -61,6 +61,9 @@ enum AnimationState
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var timers: Array[Timer]
+var timers_paused: bool
+
 var health_texture_path: String
 var select_circle_texture_path: String
 
@@ -196,6 +199,11 @@ func _ready() -> void:
 	
 	self.name = "FoodBuddy"
 	
+	timers.append(timer_ability_cooldown)
+	timers.append(timer_forage_cooldown)
+	timers.append(timer_general)
+	timers.append(timer_navigation)
+	
 	update_movement_direction()
 	
 	# Call the custom ready function that subclasses may have defined manually
@@ -218,6 +226,17 @@ func _process(delta: float) -> void:
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), func(): return ("sideways"))
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), func(): return ("back" if abs(velocity.y) > abs(velocity.x) else "sideways"))#if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return ("front" if velocity.y > velocity.x else "sideways")) #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+	
+	if not paused:
+		if timers_paused:
+			timers_paused = false
+			for timer in timers:
+				timer.paused = false
+	else:
+		if !timers_paused:
+			timers_paused = true
+			for timer in timers:
+				timer.paused = true
 	
 	if !active or paused:
 		return
