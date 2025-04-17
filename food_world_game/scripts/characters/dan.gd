@@ -161,7 +161,6 @@ func _on_sprite_animation_looped() -> void:
 			sprite.play("idle_" + current_direction_name)
 			current_animation_name = "idle"
 			
-			print("TARGET: ", target.global_position)
 			if RNG.randi_range(0, 1):
 				if RNG.randi_range(0, 1):
 					target_point = Vector2(-target.global_position.x, -target.global_position.y)

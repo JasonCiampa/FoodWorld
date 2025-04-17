@@ -183,8 +183,9 @@ func _process(delta: float) -> void:
 		#test(delta)
 		#return
 	
-	if Input.is_key_pressed(KEY_0):
-		die.emit()
+	# DEATH TRIGGER
+	#if Input.is_key_pressed(KEY_0):
+		#die.emit(self)
 	
 	if Input.is_action_just_pressed("scroll_down"):
 		camera.zoom.x -= 10 * delta
@@ -215,8 +216,8 @@ func _process(delta: float) -> void:
 	if not paused:
 		if timers_paused:
 			timers_paused = false
-			for timer in timers:
-				timer.paused = false
+			for game_timer in timers:
+				game_timer.paused = false
 		
 		process_ability_use()
 		update_movement_animation()
@@ -229,8 +230,8 @@ func _process(delta: float) -> void:
 	else:
 		if !timers_paused:
 			timers_paused = true
-			for timer in timers:
-				timer.paused = true
+			for game_timer in timers:
+				game_timer.paused = true
 	
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()

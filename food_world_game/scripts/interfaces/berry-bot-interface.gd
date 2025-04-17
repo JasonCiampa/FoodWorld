@@ -335,9 +335,7 @@ func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 		if sauna_current_occupant_times.size() == 0:
 			animator.play("steam_start")
 			animator.queue("steam_stay")
-			print("brrrrr")
 		else:
-			print(sauna_current_occupant_times.size())
 			animator.queue("steam_stay")
 		
 		sauna_current_occupant_times.append(0)
