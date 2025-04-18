@@ -581,10 +581,12 @@ func _on_player_interact(delta: float) -> void:
 			if "Bush" in closest_interactable_to_player.name:
 				if closest_interactable_to_player.berries != 0 and PLAYER.berries != PLAYER.berries_max:
 					closest_interactable_to_player.interact_with_player(PLAYER, delta)
+					
+				PLAYER.is_interacting = false
 			else:
 				closest_interactable_to_player.interact_with_player(PLAYER, delta)
+				PLAYER.is_interacting = true
 			
-			PLAYER.is_interacting = false
 
 
 
@@ -986,7 +988,7 @@ func _on_tile_object_enter_game(tile: Tile):
 		
 		tile_object.global_position = tile_object_location
 		
-		print("Added new Tile Object!")
+		#print("Added new Tile Object!")
 		
 		# Add the Tile Object into the Game and list of Interactable Assets
 		add_child(tile_object)
@@ -1068,6 +1070,7 @@ func fade_screen(final_opacity: float, delta: float):
 			modulate.a = 1
 			screen_fading = false
 			timer_fade.stop()
+			PLAYER.is_interacting = false
 
 
 

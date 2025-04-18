@@ -67,6 +67,10 @@ enum Ability {
 
 var tests_ran: bool = false
 
+# Timers #
+var timers: Array[Timer]
+var timers_paused: bool
+
 # Behavior #
 var is_interacting: bool = false
 
@@ -164,7 +168,11 @@ func _ready() -> void:
 	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
 	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways")
 	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
-
+	
+	timers.append(dodge_timer)
+	timers.append(dodge_cooldown_timer)
+	timers.append(stamina_regen_delay_timer)
+	timers.append(timer)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -175,8 +183,9 @@ func _process(delta: float) -> void:
 		#test(delta)
 		#return
 	
-	if Input.is_key_pressed(KEY_0):
-		die.emit()
+	# DEATH TRIGGER
+	#if Input.is_key_pressed(KEY_0):
+		#die.emit(self)
 	
 	if Input.is_action_just_pressed("scroll_down"):
 		camera.zoom.x -= 10 * delta
@@ -205,6 +214,11 @@ func _process(delta: float) -> void:
 	toggle_brittany_berry_bot_interface()
 	
 	if not paused:
+		if timers_paused:
+			timers_paused = false
+			for game_timer in timers:
+				game_timer.paused = false
+		
 		process_ability_use()
 		update_movement_animation()
 		update_movement_direction()
@@ -213,6 +227,11 @@ func _process(delta: float) -> void:
 		
 		if !is_interacting and Input.is_action_pressed("interact"):
 			interact.emit(delta)
+	else:
+		if !timers_paused:
+			timers_paused = true
+			for game_timer in timers:
+				game_timer.paused = true
 	
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()

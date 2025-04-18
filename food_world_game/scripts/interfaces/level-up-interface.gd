@@ -26,6 +26,9 @@ var foodbuddy2: FoodBuddy
 var InterfaceCharacterStatus: CharacterStatusInterface
 var frozen_subjects: Array[Node2D]
 
+var start_location_foodbuddy1: Vector2
+var start_location_foodbuddy2: Vector2
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -125,9 +128,21 @@ func start(freeze_subjects: Array[Node2D]):
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
+	foodbuddy1.sprite.play("idle_front")
+	foodbuddy2.sprite.play("idle_front")
+	
+	foodbuddy1.animation_player.play("RESET")
+	foodbuddy2.animation_player.play("RESET")
+	
+	player.sprite.play("idle_front")
+	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
+	
+	
+	start_location_foodbuddy1 = foodbuddy1.global_position
+	start_location_foodbuddy2 = foodbuddy2.global_position
 	
 	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
 	foodbuddy1.global_position = player.global_position
@@ -175,6 +190,9 @@ func end():
 		
 		for tilemap in foodbuddy1.current_tilemaps:
 			tilemap.modulate.a = 1
+	
+	foodbuddy1.global_position = start_location_foodbuddy1
+	foodbuddy2.global_position = start_location_foodbuddy2
 	
 	button_health.disabled = true
 	button_stamina.disabled = true

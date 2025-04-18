@@ -52,8 +52,7 @@ polygon = PackedVector2Array(-6, 4, -11, 3, -14, 1, -13, -1, -9, -2, 9, -2, 13, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -21)
 sprite_frames = ExtResource("2_uiaoo")
-animation = &"moving_sideways"
-frame_progress = 0.703495
+animation = &"die_front"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
