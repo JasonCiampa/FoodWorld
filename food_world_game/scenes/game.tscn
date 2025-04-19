@@ -25,7 +25,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(21, 460)
+position = Vector2(348, 435)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 2
@@ -90,11 +90,11 @@ position = Vector2(25, 750)
 position = Vector2(-237, 794)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(-94, 525)
+position = Vector2(409, 529)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 z_index = 0
-position = Vector2(384, 590)
+position = Vector2(174, 508)
 
 [node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
 visible = false
@@ -154,6 +154,7 @@ position = Vector2(-2296, -1222)
 [connection signal="deposit_berries" from="Brittany" to="." method="_on_food_buddy_deposit_berries"]
 [connection signal="die" from="Brittany" to="." method="_on_food_buddy_die"]
 [connection signal="find_nearest_bush" from="Brittany" to="." method="_on_food_buddy_find_nearest_bush"]
+[connection signal="fire_energy_ball" from="Brittany" to="." method="_on_brittany_fire_energy_ball"]
 [connection signal="forage_bush" from="Brittany" to="." method="_on_food_buddy_forage_bush"]
 [connection signal="killed_target" from="Brittany" to="." method="_on_character_killed_target"]
 [connection signal="target_brittany" from="Brittany" to="." method="_on_food_buddy_target_brittany"]

@@ -115,12 +115,25 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
+	button_buddy1_fight.disabled = false
+	button_buddy1_follow.disabled = false
+	button_buddy1_forage.disabled = false
+	
+	button_buddy2_fight.disabled = false
+	button_buddy2_follow.disabled = false
+	button_buddy2_forage.disabled = false
+	
 	if foodbuddy1.field_state_current == FoodBuddy.FieldState.FIGHT:
 		selected_button_buddy1 = button_buddy1_fight
 	elif foodbuddy1.field_state_current == FoodBuddy.FieldState.FOLLOW:
 		selected_button_buddy1 = button_buddy1_follow
 	elif foodbuddy1.field_state_current == FoodBuddy.FieldState.FORAGE:
 		selected_button_buddy1 = button_buddy1_forage
+	else:
+		selected_button_buddy1 = null
+		button_buddy1_fight.disabled = true
+		button_buddy1_follow.disabled = true
+		button_buddy1_forage.disabled = true
 	
 	if foodbuddy2.field_state_current == FoodBuddy.FieldState.FIGHT:
 		selected_button_buddy2 = button_buddy2_fight
@@ -128,10 +141,17 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		selected_button_buddy2 = button_buddy2_follow
 	elif foodbuddy2.field_state_current == FoodBuddy.FieldState.FORAGE:
 		selected_button_buddy2 = button_buddy2_forage
+	else:
+		selected_button_buddy2 = null
+		button_buddy2_fight.disabled = true
+		button_buddy2_follow.disabled = true
+		button_buddy2_forage.disabled = true
 	
-	selected_button_buddy1.disabled = true
-	selected_button_buddy2.disabled = true
-	
+	if selected_button_buddy1 != null:
+		selected_button_buddy1.disabled = true
+		
+	if selected_button_buddy2 != null:
+		selected_button_buddy2.disabled = true
 	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
@@ -140,7 +160,6 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	# Set Food Buddy 1 as the currently selected Food Buddy in the interface and Food Buddy 2 as the unselected Food Buddy (these are the first two subjects to freeze in the given list)
 	foodbuddy1 = food_buddies_active[0]
 	foodbuddy2 = food_buddies_active[1]
-	
 	
 	start_location_foodbuddy1 = foodbuddy1.global_position
 	start_location_foodbuddy2 = foodbuddy2.global_position
@@ -151,11 +170,21 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	foodbuddy2.global_position = player.global_position
 	foodbuddy2.global_position.x += 32
 	
-	foodbuddy1.sprite.play("idle_front")
-	foodbuddy2.sprite.play("idle_front")
-	
-	foodbuddy1.animation_player.play("RESET")
-	foodbuddy2.animation_player.play("RESET")
+	for buddy in active_food_buddies:
+		if buddy.field_state_current != FoodBuddy.FieldState.PLAYER and buddy.field_state_current != FoodBuddy.FieldState.FUSION:
+			buddy.field_state_previous = buddy.field_state_current
+		
+		buddy.previous_animation = buddy.sprite.animation
+		buddy.previous_animation_frame = buddy.sprite.get_frame()
+		buddy.previous_animation_frame_progress = buddy.sprite.get_frame_progress()
+		
+		if buddy.alive:
+			buddy.sprite.play("idle_front")
+		
+		buddy.animation_player.play("RESET")
+		
+		if buddy.name == "Dan":
+			buddy.sprinkle_sprite.play("nothing")
 	
 	player.sprite.play("idle_front")
 	
@@ -207,11 +236,26 @@ func end():
 	self.visible = false
 	self.process_mode = Node.PROCESS_MODE_DISABLED
 	
-	selected_button_buddy1.disabled = false
-	selected_button_buddy2.disabled = false
+	if selected_button_buddy1 != null:
+		selected_button_buddy1.disabled = false
+		
+	if selected_button_buddy2 != null:
+		selected_button_buddy2.disabled = false
 	
 	foodbuddy1.global_position = start_location_foodbuddy1
 	foodbuddy2.global_position = start_location_foodbuddy2
+	
+	for buddy in active_food_buddies:
+		
+		if buddy.field_state_current != FoodBuddy.FieldState.FIGHT:
+			buddy.using_ability = false
+		
+		if buddy.field_state_current == buddy.field_state_previous:
+			buddy.sprite.play(buddy.previous_animation)
+			buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
+		else:
+			buddy.update_animation()
+	
 	
 	animator.play("RESET")
 
@@ -223,6 +267,7 @@ func update_selected_state_buddy1(newly_selected_button: TextureButton, field_st
 	
 	selected_button_buddy1 = newly_selected_button
 	selected_button_buddy1.disabled = true
+	foodbuddy1.field_state_previous = foodbuddy1.field_state_current
 	foodbuddy1.field_state_current = field_state
 
 func update_selected_state_buddy2(newly_selected_button: TextureButton, field_state: FoodBuddy.FieldState):
@@ -230,6 +275,7 @@ func update_selected_state_buddy2(newly_selected_button: TextureButton, field_st
 	
 	selected_button_buddy2 = newly_selected_button
 	selected_button_buddy2.disabled = true
+	foodbuddy2.field_state_previous = foodbuddy2.field_state_current 
 	foodbuddy2.field_state_current = field_state
 
 

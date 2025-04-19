@@ -1,4 +1,4 @@
-class_name Juicebox
+class_name EnergyBall
 
 extends Node2D
 
@@ -7,7 +7,7 @@ extends Node2D
 
 var animator: AnimationPlayer
 var sprite: AnimatedSprite2D
-var hitbox_heal: Area2D
+var hitbox_damage: Area2D
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ var position_target: Vector2
 var deltaX: float
 var deltaY: float
 
-var throw_speed: float = 50
+var throw_speed: float = 2
 var throw_direction_vertical: Direction
 var throw_direction_horizontal: Direction
 
@@ -53,7 +53,9 @@ var deltaY_adjusted: bool = false
 
 var delta_adjustment_counter: int      # How many times the delta value has been updated
 
-var health: int = 25
+var damage: int = 25
+
+var target: GameCharacter
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -64,7 +66,7 @@ var health: int = 25
 func _ready() -> void:
 	animator = $"Animator"
 	sprite = $"AnimatedSprite2D"
-	hitbox_heal = $"Healing Hitbox"
+	hitbox_damage = $"Damage Hitbox"
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -103,11 +105,10 @@ func throw_start(destination: Vector2, direction_horizontal: Direction):
 		# Calculate and store all points of interest in the juice box's path
 		position_start = global_position
 		position_end = destination
-		position_middle = Vector2(position_start.x + (direction_horizontal * (abs(position_start.x - position_end.x) / 2)), position_end.y - 50)		# Subtract 50 from the difference in y positions so that the throw always peaks 50 px above its landing point
 		
 		# Set the current position of the juicebox at the start and its target to the middle
 		position_current = position_start
-		position_target = position_middle
+		position_target = position_end
 		
 		# Trigger the in-air state and animation
 		in_air = true
@@ -116,14 +117,16 @@ func throw_start(destination: Vector2, direction_horizontal: Direction):
 
 func throw_process(delta: float):
 	
-	global_position = get_parabola_point(position_current, position_target, 0, (delta * position_current.x / position_end.x))
+	global_position = global_position.lerp(position_end, (delta * throw_speed))
 
 	position_current = global_position
 	
-	if abs(position_current.x - position_target.x) < 10 and abs(position_current.y - position_target.y) < 10:
-		if position_target == position_middle:
-			position_target = position_end
-		elif position_target == position_end:
+	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
+	if target != null and target.hitbox_damage in hitbox_damage.get_overlapping_areas() and global_position.distance_to(Vector2(target.global_position.x, target.global_position.y - target.height / 2)) < 10:
+		throw_end()
+	
+	elif abs(position_current.x - position_target.x) < 10 and abs(position_current.y - position_target.y) < 10:
+		if position_target == position_end:
 			throw_end()
 
 
@@ -159,5 +162,6 @@ func physics_process(_delta: float) -> void:
 
 
 func _on_sprite_animation_finished() -> void:
+	print("explosion ended")
 	if "explosion" == sprite.animation:
 		queue_free()

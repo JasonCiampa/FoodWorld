@@ -178,10 +178,10 @@ func start(_freeze_subjects: Array[Node2D]):
 	animator.queue("stay_UI")
 	
 	
-	brittany.sprite.play("idle_front")	
-	brittany.animation_player.play("RESET")
+	brittany.sprite.pause()
+	brittany.animation_player.pause()
 	
-	player.sprite.play("idle_front")
+	player.sprite.pause()
 	
 	
 	if sauna_current_occupant_times.size() > 0:
