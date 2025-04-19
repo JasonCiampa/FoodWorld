@@ -215,12 +215,14 @@ func end():
 	
 	for buddy in active_food_buddies:
 		
-		if ("die" not in buddy.previous_animation) or ("ability" in buddy.previous_animation and !buddy.target.alive):
+		if buddy.field_state_current == FoodBuddy.FieldState.FIGHT and !buddy.target.alive:
+			buddy.using_ability = false
+		
+		if ("die" not in buddy.previous_animation) and ("ability" in buddy.previous_animation and buddy.target.alive):
 			buddy.sprite.play(buddy.previous_animation)
 			buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
 		else:
 			buddy.sprite.play("idle_front")
-		
 	
 	button_health.disabled = true
 	button_stamina.disabled = true
