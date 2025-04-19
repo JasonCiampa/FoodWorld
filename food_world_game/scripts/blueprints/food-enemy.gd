@@ -124,7 +124,6 @@ func _process(delta: float) -> void:
 	
 	target_distance = global_position.distance_to(target.global_position)
 	
-	
 	if target_distance < 100 and field_state_current == FieldState.PASSIVE:
 		field_state_current = FieldState.AGGRESSIVE
 		
@@ -230,6 +229,13 @@ func passive_field_state_callback() -> void:
 
 # A callback function that should execute repeatedly while the Enemy is in the FORAGE FieldState
 func aggressive_field_state_callback() -> void:
+	
+	if target == null or !target.alive:
+		field_state_current = FieldState.PASSIVE
+		velocity.x = 0
+		velocity.y = 0
+		target = null
+		return
 	
 	# Determine if the Enemy is in range of an Enemy, then make them stop moving and launch their solo attack
 	if target.hitbox_damage in hitbox_damage.get_overlapping_areas():

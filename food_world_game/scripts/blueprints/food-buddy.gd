@@ -67,9 +67,13 @@ var timers_paused: bool
 var health_texture_path: String
 var select_circle_texture_path: String
 
+var previous_animation: String = "idle_front"
+var previous_animation_frame: int = 0
+var previous_animation_frame_progress: float = 0
 
-var revive_time_total: int = 1000
-var revive_time_remaining: int = revive_time_total
+
+var revive_time_total: int = 10
+var revive_time_remaining: float = revive_time_total
 
 # Field State #
 var field_state_previous: int
@@ -149,7 +153,6 @@ func update_movement_direction():
 func update_animation():
 	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
-	
 	
 	if new_direction_name != null:
 		new_direction_name = new_direction_name.call()

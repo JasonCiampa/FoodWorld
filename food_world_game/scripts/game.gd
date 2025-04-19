@@ -353,7 +353,7 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int)
 		
 		# Determine if the attacked Node has run out of health, then emit their death signal
 		if target.health_current <= 0:
-			
+			target.health_current = 0
 			target.die.emit(target)
 			target.alive = false
 			attacker.killed_target.emit(attacker)
@@ -559,7 +559,7 @@ func _on_player_interact(delta: float) -> void:
 					closest_interactable_to_player.revive_time_remaining = 10
 					closest_interactable_to_player.alive = true
 					closest_interactable_to_player.active = true
-					closest_interactable_to_player.health_current = closest_interactable_to_player.health_max * 0.25
+					closest_interactable_to_player.health_current = int(closest_interactable_to_player.health_max * 0.25)
 					closest_interactable_to_player.sprite.play("idle_front")
 					closest_interactable_to_player.label_e_to_interact.text = "press 'e' to interact"
 					InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
@@ -613,7 +613,6 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected = food_buddies_active[0]
 		food_buddy_other = food_buddies_active[1]
 	
-	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
 	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
 		food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
@@ -635,6 +634,8 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		# Update the selected Food Buddy's FieldState variables
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
 		food_buddy_selected.field_state_current = FoodBuddy.FieldState.PLAYER
+	
+	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 
 
 

@@ -436,6 +436,8 @@ func process_ability_use() -> int:
 
 # Updates the Player Sprite's animation depending on which direction the Player was/is traveling.
 func update_movement_animation():
+	if paused:
+		return
 	
 	# Determine if the Player is jumping, then trigger the jump animation
 	if is_jumping:

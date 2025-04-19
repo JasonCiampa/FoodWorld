@@ -140,7 +140,6 @@ func start(freeze_subjects: Array[Node2D]):
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
 	
-	
 	start_location_foodbuddy1 = foodbuddy1.global_position
 	start_location_foodbuddy2 = foodbuddy2.global_position
 	
@@ -150,6 +149,26 @@ func start(freeze_subjects: Array[Node2D]):
 	
 	foodbuddy2.global_position = player.global_position
 	foodbuddy2.global_position.x += 32
+	
+	for buddy in active_food_buddies:
+		
+		if buddy.health_current <= 0:
+			buddy.revive_time_remaining = buddy.revive_time_total
+			buddy.alive = true
+			buddy.active = true
+			buddy.label_e_to_interact.text = "press 'e' to interact"
+		
+		buddy.health_current = buddy.health_max
+		
+		buddy.previous_animation = buddy.sprite.animation
+		buddy.previous_animation_frame = buddy.sprite.get_frame()
+		buddy.previous_animation_frame_progress = buddy.sprite.get_frame_progress()
+
+		buddy.sprite.play("idle_front")
+		buddy.animation_player.play("RESET")
+		
+		if buddy.name == "Dan":
+			buddy.sprinkle_sprite.play("nothing")
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -193,6 +212,15 @@ func end():
 	
 	foodbuddy1.global_position = start_location_foodbuddy1
 	foodbuddy2.global_position = start_location_foodbuddy2
+	
+	for buddy in active_food_buddies:
+		
+		if ("die" not in buddy.previous_animation) or ("ability" in buddy.previous_animation and !buddy.target.alive):
+			buddy.sprite.play(buddy.previous_animation)
+			buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
+		else:
+			buddy.sprite.play("idle_front")
+		
 	
 	button_health.disabled = true
 	button_stamina.disabled = true

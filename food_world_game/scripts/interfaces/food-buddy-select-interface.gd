@@ -134,11 +134,19 @@ func start(freeze_subjects: Array[Node2D]):
 	active_foodbuddy2.global_position = player.global_position
 	active_foodbuddy2.global_position.x += 32
 	
-	active_foodbuddy1.sprite.play("idle_front")
-	active_foodbuddy2.sprite.play("idle_front")
-	
-	active_foodbuddy1.animation_player.play("RESET")
-	active_foodbuddy2.animation_player.play("RESET")
+	for buddy in active_food_buddies:
+		buddy.field_state_previous = buddy.field_state_current
+		buddy.previous_animation = buddy.sprite.animation
+		buddy.previous_animation_frame = buddy.sprite.get_frame()
+		buddy.previous_animation_frame_progress = buddy.sprite.get_frame_progress()
+		
+		if buddy.alive:
+			buddy.sprite.play("idle_front")
+		
+		buddy.animation_player.play("RESET")
+		
+		if buddy.name == "Dan":
+			buddy.sprinkle_sprite.play("nothing")
 	
 	player.sprite.play("idle_front")
 	
@@ -190,6 +198,10 @@ func end():
 	button_active_buddy2.disabled = true
 	button_inactive_buddy.disabled = true
 	
+	for buddy in active_food_buddies:
+		buddy.sprite.play(buddy.previous_animation)
+		buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
+
 	
 	animator.play("RESET")
 
