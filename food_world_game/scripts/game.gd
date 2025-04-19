@@ -93,9 +93,9 @@ func _ready() -> void:
 	
 	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(DAN)
-	food_buddies_active.append(LINK)
+	food_buddies_active.append(BRITTANY)
 	
-	food_buddies_inactive.append(BRITTANY)
+	food_buddies_inactive.append(LINK)
 	
 	food_buddies_inactive[0].active = false
 
@@ -151,9 +151,9 @@ func _ready() -> void:
 	InterfaceDialogue.setValues(PLAYER)
 	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
 	
-	LINK.collision_values["GROUND"] = 4
-	LINK.collision_values["MIDAIR"] = 5
-	LINK.collision_values["PLATFORM"] = 6
+	BRITTANY.collision_values["GROUND"] = 4
+	BRITTANY.collision_values["MIDAIR"] = 5
+	BRITTANY.collision_values["PLATFORM"] = 6
 	
 	DAN.collision_values["GROUND"] = 7
 	DAN.collision_values["MIDAIR"] = 8
@@ -339,15 +339,20 @@ func get_target_distance(subject: GameCharacter, target: Node2D) -> float:
 
 
 # Determines if an attack has landed on the target and reduces the target's health if it has. Returns true if the attack landed on the target, false if not.
-func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int) -> bool:
+func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int, attacker_hitbox: Area2D = null) -> bool:
 	
-	# Store a list of all hitboxes that the hitbox of the attack has overlapped with
+	var hitboxes: Array[Area2D]
 	
-	var hitboxes = attacker.hitbox_damage.get_overlapping_areas()
+	if attacker_hitbox != null:
+		# Store a list of all hitboxes that the hitbox of the attack has overlapped with
+		hitboxes = attacker_hitbox.get_overlapping_areas()
+	else:
+		# Store a list of all hitboxes that the hitbox of the attack has overlapped with
+		hitboxes = attacker.hitbox_damage.get_overlapping_areas()
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
 	if target.hitbox_damage in hitboxes:
-		
+		print("HIT!")
 		target.health_current -= damage
 		target.target = attacker
 		
@@ -843,7 +848,7 @@ func _on_character_die(character: CharacterBody2D) -> void:
 # FOOD BUDDY CALLBACKS #
 
 # Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against the Food Buddy's target enemy
-func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int) -> void:
+func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int, attack_hitbox: Area2D = null) -> void:
 	process_attack(food_buddy.target, food_buddy, damage)
 
 
@@ -1140,7 +1145,6 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 	juicebox.throw_start(destination, horizontal_direction)
 
 
-
 func _on_juicebox_explode(juicebox: Juicebox):
 	var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
 	
@@ -1156,3 +1160,32 @@ func _on_juicebox_explode(juicebox: Juicebox):
 			
 			if food_buddy.health_current > food_buddy.health_max:
 				food_buddy.health_current = food_buddy.health_max
+
+
+
+func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
+	
+	var energy_ball: EnergyBall
+	
+	energy_ball = load("res://scenes/blueprints/energy-ball.tscn").instantiate()
+	
+	if BRITTANY.current_direction_name == "sideways" and !BRITTANY.sprite.flip_h:
+		energy_ball.global_position = Vector2(BRITTANY.global_position.x - 25, BRITTANY.global_position.y - 15)
+	elif BRITTANY.current_direction_name == "sideways" and BRITTANY.sprite.flip_h:
+		energy_ball.global_position = Vector2(BRITTANY.global_position.x + 25, BRITTANY.global_position.y - 15)
+	else:
+		energy_ball.global_position = Vector2(BRITTANY.global_position.x, BRITTANY.global_position.y - 15)
+	
+	energy_ball.explode.connect(_on_energy_ball_explode)
+	if not BRITTANY.target is Enemy:
+		energy_ball.target = null
+	else:
+		energy_ball.target = BRITTANY.target
+	
+	add_child(energy_ball)
+	
+	energy_ball.throw_start(destination, int(BRITTANY.direction_current_horizontal))
+
+
+func _on_energy_ball_explode(energy_ball: EnergyBall):
+	process_attack(BRITTANY.target, BRITTANY, energy_ball.damage, energy_ball.hitbox_damage)

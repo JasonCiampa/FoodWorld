@@ -66,7 +66,7 @@ func ready():
 	
 	self.name = "Dan"
 	
-	field_state_current = FieldState.FIGHT
+	field_state_current = FieldState.FORAGE
 	
 	set_collision_value(collision_values["GROUND"])
 	
@@ -115,7 +115,10 @@ func fight_field_state_callback() -> void:
 		if timer_ability_cooldown.is_stopped() and !using_ability:
 			using_ability = true
 			current_animation_name = "ability"
-			sprite.play("ability_" + current_direction_name)
+			if current_direction_name != "":
+				sprite.play("ability_" + current_direction_name)
+			else:
+				sprite.play("ability_front")
 			target_distance = global_position.distance_to(target.global_position)
 			speed_current = speed_sprinting
 			generate_path()

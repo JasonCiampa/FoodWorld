@@ -1,0 +1,146 @@
+[gd_scene load_steps=12 format=3 uid="uid://dyvofnxtiyexp"]
+
+[ext_resource type="Script" path="res://scripts/blueprints/energy-ball.gd" id="1_8gqqh"]
+[ext_resource type="Texture2D" uid="uid://yres5rwp5id7" path="res://images/animations/brittany/ability/particle-beam.png" id="1_exy6o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_23rsc"]
+atlas = ExtResource("1_exy6o")
+region = Rect2(154, 0, 20, 65)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1l0o7"]
+atlas = ExtResource("1_exy6o")
+region = Rect2(23, 0, 20, 65)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0dl5v"]
+atlas = ExtResource("1_exy6o")
+region = Rect2(89, 0, 20, 65)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0op7e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_23rsc")
+}],
+"loop": false,
+"name": &"default",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_23rsc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1l0o7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0dl5v")
+}],
+"loop": false,
+"name": &"explosion",
+"speed": 6.0
+}]
+
+[sub_resource type="Animation" id="Animation_vv24v"]
+length = 0.001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_d4icc"]
+resource_name = "explode"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.75, 1.75), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_ca5ob"]
+resource_name = "in-air"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 3.14159]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_nh42o"]
+_data = {
+"RESET": SubResource("Animation_vv24v"),
+"explode": SubResource("Animation_d4icc"),
+"in-air": SubResource("Animation_ca5ob")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bnboa"]
+size = Vector2(14, 14)
+
+[node name="Energy-ball" type="Node2D"]
+z_index = 1
+y_sort_enabled = true
+script = ExtResource("1_8gqqh")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_0op7e")
+offset = Vector2(0.5, -2)
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_nh42o")
+}
+
+[node name="Damage Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+shape = SubResource("RectangleShape2D_bnboa")
+debug_color = Color(0.505887, 0, 0.044596, 0.42)
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_sprite_animation_finished"]
