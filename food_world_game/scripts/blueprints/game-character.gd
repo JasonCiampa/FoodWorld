@@ -77,6 +77,7 @@ var in_range: bool = false
 var width: float
 var height: float
 
+var previous_modulate: Color
 
 # Health #
 var health_current: int = 100
@@ -115,6 +116,14 @@ var speed_current: int = speed_normal
 var current_tile_position: Vector2i
 var previous_tile_position: Vector2i
 var current_tilemaps
+
+
+var taking_damage: bool
+var healing_health: bool
+var is_red: bool = false
+var is_green: bool = false
+var damage_speed: int = 5
+var damage_taken: int
 
 
 # Collisions #
@@ -193,6 +202,12 @@ func _process(delta: float) -> void:
 	else:
 		on_platform = false
 	
+	if taking_damage:
+		take_damage(delta)
+	
+	if healing_health:
+		heal_health(delta)
+	
 	# Determine if the Character's processing is not paused
 	if not paused:
 		
@@ -221,6 +236,100 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+func take_damage(delta: float, damage: int = -1):
+	#if damage == -1:
+		#damage = damage_taken
+	#else:
+		#damage_taken = damage
+	
+	if healing_health:
+		healing_health = false
+		return
+	
+	# If the character is not currently red from taking damage, adjust their color so that they glow red briefly
+	if !is_red:
+		if sprite.self_modulate.b > 0:
+			sprite.self_modulate.b -= delta * damage_speed
+		else:
+			sprite.self_modulate.b = 0
+		
+		if sprite.self_modulate.g > 0:
+			sprite.self_modulate.g -= delta * damage_speed
+		else:
+			sprite.self_modulate.g = 0
+		
+	# Otherwise, the character is red, so adjust their color back to normal
+	else:
+		if sprite.self_modulate.b < 1:
+			sprite.self_modulate.b += delta * damage_speed
+		else:
+			sprite.self_modulate.b = 1
+		
+		if sprite.self_modulate.g < 1:
+			sprite.self_modulate.g += delta * damage_speed
+		else:
+			sprite.self_modulate.g = 1
+	
+	if sprite.self_modulate.b == 0 and sprite.self_modulate.g == 0:
+		is_red = true
+	elif sprite.self_modulate.b == 1 and sprite.self_modulate.g == 1:
+		taking_damage = false
+		is_red = false
+	
+func heal_health(delta: float, damage: int = -1):
+	#if damage == -1:
+		#damage = damage_taken
+	#else:
+		#damage_taken = damage
+	if taking_damage:
+		taking_damage = false
+		return
+	
+	
+	# If the character is not currently red from taking damage, adjust their color so that they glow red briefly
+	if !is_green:
+		
+		if sprite.self_modulate.r > 0:
+			sprite.self_modulate.r -= delta * damage_speed
+		else:
+			sprite.self_modulate.r = 0
+		
+		if sprite.self_modulate.g > 0.7:
+			sprite.self_modulate.g -= delta * damage_speed
+		else:
+			sprite.self_modulate.g = 0.7
+		
+		if sprite.self_modulate.b > 0:
+			sprite.self_modulate.b -= delta * damage_speed
+		else:
+			sprite.self_modulate.b = 0
+		
+		if sprite.self_modulate.r == 0 and sprite.self_modulate.b == 0:
+			is_green = true
+	
+	# Otherwise, the character is red, so adjust their color back to normal
+	else:
+		
+		if sprite.self_modulate.r < 1:
+			sprite.self_modulate.r += delta * damage_speed
+		else:
+			sprite.self_modulate.r = 1
+		
+		if sprite.self_modulate.g < 1:
+			sprite.self_modulate.g += delta * damage_speed
+		else:
+			sprite.self_modulate.g = 1
+		
+		if sprite.self_modulate.b < 1:
+			sprite.self_modulate.b += delta * damage_speed
+		else:
+			sprite.self_modulate.b = 1
+	
+	
+		if sprite.self_modulate.r == 1 and sprite.self_modulate.g == 1 and sprite.self_modulate.b == 1:
+			healing_health = false
+			is_green = false
 
 # Calculates the location point of the Character by taking its current position and adjusting it by the width and height of the current Sprite frame to get the location coordinates
 func update_dimensions():

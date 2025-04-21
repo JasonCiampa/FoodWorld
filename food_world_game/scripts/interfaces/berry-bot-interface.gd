@@ -160,6 +160,11 @@ func start(_freeze_subjects: Array[Node2D]):
 			subject.paused = true
 			subject.sprite.pause()
 			subject.animation_player.pause()
+		
+		elif subject is Juicebox or subject is EnergyBall:
+			subject.paused = true
+			subject.sprite.pause()
+			subject.animator.pause()
 	
 	
 	# Set the UI to be visible and processing
@@ -231,7 +236,12 @@ func end():
 			
 			if subject is FoodBuddy:
 				subject.animation_player.play("RESET")
-	
+		
+		elif subject is Juicebox or subject is EnergyBall:
+			subject.paused = false
+			subject.sprite.play()
+			subject.animator.play()
+		
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
 		tilemap.modulate.a = 1
@@ -245,6 +255,7 @@ func end():
 	
 	animator.play("RESET")
 	player.is_interacting = false
+	player.paused = false
 	
 
 

@@ -67,6 +67,8 @@ enum Ability {
 
 var tests_ran: bool = false
 
+var level_up: bool = false
+
 # Timers #
 var timers: Array[Timer]
 var timers_paused: bool
@@ -112,6 +114,10 @@ var is_sprinting: bool
 # Dodging #
 var is_dodging: bool
 
+var using_ability: bool
+
+var hand_punching: String = "left"
+
 # Field State #
 var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
@@ -131,7 +137,15 @@ var attack_damage: Dictionary = {
 }
 
 var animation_directions: Dictionary = {}
-var current_direction_name = "front"
+var current_animation_name: String
+var current_direction_name: String = "front"
+var new_animation_name: String
+var new_direction_name
+
+var previous_animation: String = "idle_front"
+var previous_animation_frame: int = 0
+var previous_animation_frame_progress: float = 0
+
 var frame_counter: int = 0
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -159,16 +173,6 @@ func _ready() -> void:
 	feet_collider.disabled = false
 	update_dimensions()
 	
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), "")
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), "back")
-	animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), "front")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), "front")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), "sideways")
-	animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), "front")
-	
 	timers.append(dodge_timer)
 	timers.append(dodge_cooldown_timer)
 	timers.append(stamina_regen_delay_timer)
@@ -177,7 +181,18 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-
+	
+	if animation_directions.size() == 0:
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), func(): return "")
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), func(): return "back")
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), func(): return "front")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), func(): return "sideways")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), func(): return "back")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), func(): return "front")	# if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), func(): return ("sideways"))
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), func(): return "back")#if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return "front") #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+	
 	## ENABLE/DISABLE THIS IF STATEMENT TO TOGGLE THE PLAYER'S TEST FUNCTION
 	#if !tests_ran:
 		#test(delta)
@@ -214,6 +229,13 @@ func _process(delta: float) -> void:
 	toggle_brittany_berry_bot_interface()
 	
 	if not paused:
+		
+		if taking_damage:
+			take_damage(delta)
+			
+		if healing_health:
+			heal_health(delta)
+		
 		if timers_paused:
 			timers_paused = false
 			for game_timer in timers:
@@ -290,6 +312,38 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+func update_animation():
+	
+	if level_up:
+		return
+	
+	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
+	
+	if new_direction_name != null:
+		new_direction_name = new_direction_name.call()
+	
+	if using_ability:
+		new_animation_name = "ability"
+	
+	if new_animation_name == "" or new_animation_name == null:
+		new_animation_name = current_animation_name
+	
+	if new_direction_name == "" or new_direction_name == null:
+		if current_direction_name != "":
+			new_direction_name = current_direction_name
+		else:
+			new_direction_name = "front"
+	
+	# If the animation has changed, play the new animation
+	if sprite.animation != (new_animation_name + "_" + new_direction_name):
+		
+		if new_animation_name != "ability":
+			sprite.play(new_animation_name + "_" + new_direction_name) # --> formats like: idle_front
+		else:
+			sprite.play(new_animation_name + "_" + new_direction_name + "_" + hand_punching)
+		
+		current_animation_name = new_animation_name
+		current_direction_name = new_direction_name
 
 # Starts the Player's sprint
 func sprint_start():
@@ -388,14 +442,21 @@ func process_ability_use() -> int:
 		
 		# Determine if the Player is using a solo attack, then launch the correct attack
 		if field_state_current == FieldState.SOLO:
-			if ability_number == 1:
+			if !using_ability:
 				if use_stamina(stamina_use["Punch"]):
+					
+					using_ability = true 
+					
+					if ability_number == 1:
+						hand_punching = "left"
+					else:
+						hand_punching = "right"
+					
 					use_ability_solo.emit(attack_damage["Punch"])
-					print("The Player used their punch attack!")
-			else:
-				if use_stamina(stamina_use["Kick"]):
-					use_ability_solo.emit(attack_damage["Kick"])
-					print("The Player used their kick attack!")
+				
+					update_animation()
+					print("The Player threw a " + hand_punching + " punch!")
+		
 		
 		elif field_state_current == FieldState.JUICE:
 			if !throwing_juicebox:
@@ -437,6 +498,9 @@ func process_ability_use() -> int:
 # Updates the Player Sprite's animation depending on which direction the Player was/is traveling.
 func update_movement_animation():
 	if paused:
+		return
+	
+	if using_ability:
 		return
 	
 	# Determine if the Player is jumping, then trigger the jump animation
@@ -599,6 +663,11 @@ func update_movement_direction():
 # Updates the Player's velocity based on their actions, speed, and the direction they're currently moving in
 func update_movement_velocity(delta):
 	
+	if using_ability:
+		velocity.x = 0
+		velocity.y = 0
+		return
+	
 	# Determine if the Player currently has stamina
 	if stamina_current > 0:
 		
@@ -685,16 +754,10 @@ func update_field_state():
 		
 		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to the Game to update the corresponding Food Buddy, and trigger the correct animation
 		if Input.is_action_just_pressed("toggle_buddy1_equipped"):
-			field_state_current = FieldState.BUDDY1
 			toggle_buddy_equipped.emit(1)
-			sprite.play("field_state_buddy1")
-			print("Player's FieldState has been updated to BUDDY1")
 		
 		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
-			field_state_current = FieldState.BUDDY2
 			toggle_buddy_equipped.emit(2)
-			sprite.play("field_state_buddy2")
-			print("Player's FieldState has been updated to BUDDY2")
 		
 		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
 			field_state_current = FieldState.FUSION
@@ -704,9 +767,8 @@ func update_field_state():
 		
 		
 		elif Input.is_action_just_pressed("toggle_juicebox"):
-			if juiceboxes > 0:
+			if !using_ability and !throwing_juicebox and juiceboxes > 0:
 				field_state_current = FieldState.JUICE
-				toggle_juicebox.emit()
 				
 				# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
 				if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
@@ -716,11 +778,11 @@ func update_field_state():
 				
 				print("Player's FieldState has been updated to JUICE")
 		
-		# Determine if the Player is selecting the SOLO FieldState, then set the selection as the current FieldState
-		if field_state_previous == field_state_current:
-			field_state_current = FieldState.SOLO
-			sprite.play("idle_" + current_direction_name)
-			print("Player's FieldState has been updated to SOLO")
+				# Determine if the Player is selecting the SOLO FieldState, then set the selection as the current FieldState
+				if field_state_previous == field_state_current:
+					field_state_current = FieldState.SOLO
+					sprite.play("idle_" + current_direction_name)
+					print("Player's FieldState has been updated to SOLO")
 
 
 
@@ -812,10 +874,6 @@ func update_stamina(delta):
 		stamina_previous = stamina_current
 
 
-
-# Updates a stat chosen by the Player, increments level, resets current xp, refills hp, maybe increase max xp (harder to level up as you progress?)
-func level_up():
-	pass
 
 
 # Tests all of the functionality of the Player
@@ -982,7 +1040,15 @@ func _on_sprite_animation_finished() -> void:
 			elif sprite.animation == "juice_throw_sideways":
 				sprite.play("juice_idle_sideways")
 				current_direction_name = "sideways"
+	
+	if "ability" in sprite.animation:
+		using_ability = false
+		sprite.play("idle_" + current_direction_name)
 
 
 func _on_sprite_frame_changed() -> void:
 	frame_counter += 1
+
+
+func _on_sprite_animation_changed() -> void:
+	pass # Replace with function body.

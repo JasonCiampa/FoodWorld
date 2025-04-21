@@ -131,6 +131,11 @@ func _process(delta: float) -> void:
 		field_state_current = FieldState.PASSIVE
 	
 	if not paused:
+		if taking_damage:
+			take_damage(delta)
+		
+		if healing_health:
+			heal_health(delta)
 		# Call the custom "update()" function that Enemy subclasses will define individually
 		process(delta)
 
