@@ -289,6 +289,9 @@ func get_all_assets_in_game() -> Array[Node2D]:
 	for interactable in interactables:
 		assets_in_game.append(interactable)
 	
+	for projectile in scene_tree.get_nodes_in_group("projectiles"):
+		assets_in_game.append(projectile)
+	
 	return assets_in_game
 
 
@@ -352,7 +355,6 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
 	if target.hitbox_damage in hitboxes:
-		print("HIT!")
 		target.health_current -= damage
 		target.target = attacker
 		

@@ -32,6 +32,8 @@ enum Direction {
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var paused: bool
+
 var position_start: Vector2
 var position_end: Vector2
 var position_middle: Vector2
@@ -69,6 +71,14 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	if paused:
+		sprite.pause()
+		animator.pause()
+		return
+	else:
+		sprite.play()
+		animator.play()
 	
 	# If the juicebox is in midair, process its trajectory
 	if in_air:

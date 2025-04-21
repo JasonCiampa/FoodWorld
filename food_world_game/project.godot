@@ -31,6 +31,7 @@ food_citizens=""
 interactables="Nodes that can be interacted with by the Player"
 interactable-assets="All assets that can be interacted with in the game. This includes EnvironmentAssets such as trees, rocks, and bushes."
 interactable-characters="This includes all characters that can be interacted with by the Player."
+projectiles=""
 
 [gui]
 
