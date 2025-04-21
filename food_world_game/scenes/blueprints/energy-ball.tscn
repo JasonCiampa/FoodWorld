@@ -123,8 +123,7 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bnboa"]
 size = Vector2(14, 14)
 
-[node name="Energy-ball" type="Node2D"]
-z_index = 1
+[node name="Energy-ball" type="Node2D" groups=["projectiles"]]
 y_sort_enabled = true
 script = ExtResource("1_8gqqh")
 

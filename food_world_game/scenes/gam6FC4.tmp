@@ -1,0 +1,178 @@
+[gd_scene load_steps=17 format=3 uid="uid://cihoalh5h5cik"]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
+[ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
+[ext_resource type="PackedScene" uid="uid://6k636yjpnvdv" path="res://scenes/blueprints/food-enemy.tscn" id="2_2d8m7"]
+[ext_resource type="PackedScene" uid="uid://cwesuyi7ijoo4" path="res://scenes/map/world-map.tscn" id="2_q5di4"]
+[ext_resource type="PackedScene" uid="uid://b6kgh572n5vm7" path="res://scenes/interfaces/level-up-interface.tscn" id="5_ehj14"]
+[ext_resource type="PackedScene" uid="uid://dtdrrty6qehha" path="res://scenes/blueprints/food-citizen.tscn" id="6_0yf05"]
+[ext_resource type="PackedScene" uid="uid://bfdx6617hncsy" path="res://scenes/interfaces/food-buddy-select-interface.tscn" id="6_5m8hu"]
+[ext_resource type="PackedScene" uid="uid://d38wm4mn2bqw6" path="res://scenes/interfaces/game-over-interface.tscn" id="7_6bun6"]
+[ext_resource type="AudioStream" uid="uid://bsnpmtfb06hvv" path="res://music/WorldCenter.mp3" id="8_gwi8m"]
+[ext_resource type="PackedScene" uid="uid://oldpeuxuhha0" path="res://scenes/interfaces/food-buddy-field-state-interface.tscn" id="8_mcufm"]
+[ext_resource type="PackedScene" uid="uid://kcn5t15cgqyp" path="res://scenes/interfaces/berry-bot-interface.tscn" id="9_6ce2r"]
+[ext_resource type="PackedScene" uid="uid://do46o8a68s06o" path="res://scenes/interfaces/character-status-interface.tscn" id="9_6pngf"]
+[ext_resource type="PackedScene" uid="uid://dyl1v55egc7pm" path="res://scenes/interfaces/dialogue-interface.tscn" id="9_7rgo0"]
+[ext_resource type="PackedScene" uid="uid://1r6edy1t7kho" path="res://scenes/characters/link.tscn" id="9_t4o2x"]
+[ext_resource type="PackedScene" uid="uid://cufwqkidanpu1" path="res://scenes/characters/dan.tscn" id="10_14ky5"]
+[ext_resource type="PackedScene" uid="uid://da5ns6vxli514" path="res://scenes/characters/brittany.tscn" id="11_8vviu"]
+
+[node name="Game" type="Node2D"]
+z_index = -1
+y_sort_enabled = true
+script = ExtResource("1_in6cb")
+
+[node name="World Map" parent="." instance=ExtResource("2_q5di4")]
+
+[node name="Player" parent="." instance=ExtResource("1_ksjva")]
+position = Vector2(348, 435)
+
+[node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
+z_index = 2
+offset_top = -7.0
+offset_bottom = -7.0
+
+[node name="Level-up" parent="Player" instance=ExtResource("5_ehj14")]
+visible = false
+z_index = 2
+offset_left = -242.0
+offset_top = -161.0
+offset_right = -242.0
+offset_bottom = -161.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Food Buddy Select" parent="Player" instance=ExtResource("6_5m8hu")]
+visible = false
+z_index = 2
+offset_left = -242.0
+offset_top = -168.0
+offset_right = -242.0
+offset_bottom = -168.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Game Over" parent="Player" instance=ExtResource("7_6bun6")]
+visible = false
+offset_left = -235.0
+offset_top = -148.0
+offset_right = 1685.0
+offset_bottom = 932.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Food Buddy Field State" parent="Player" instance=ExtResource("8_mcufm")]
+visible = false
+z_index = 1
+offset_left = -243.0
+offset_top = -160.0
+offset_right = -243.0
+offset_bottom = -160.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Berry Bot Interface" parent="Player" instance=ExtResource("9_6ce2r")]
+visible = false
+offset_left = -273.0
+offset_top = -120.0
+offset_right = -273.0
+offset_bottom = -120.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Dialogue Interface" parent="Player" instance=ExtResource("9_7rgo0")]
+visible = false
+offset_left = -239.0
+offset_top = -149.0
+offset_right = -239.0
+offset_bottom = -149.0
+scale = Vector2(0.25, 0.25)
+
+[node name="Link" parent="." instance=ExtResource("9_t4o2x")]
+position = Vector2(25, 750)
+
+[node name="Dan" parent="." instance=ExtResource("10_14ky5")]
+position = Vector2(-237, 794)
+
+[node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
+position = Vector2(409, 529)
+
+[node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(174, 508)
+
+[node name="Food Citizen" parent="." instance=ExtResource("6_0yf05")]
+visible = false
+y_sort_enabled = true
+position = Vector2(1274, 665)
+
+[node name="Fade Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Process Tiles Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="WorldCenter" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_gwi8m")
+parameters/looping = true
+
+[node name="Enemy2" parent="." instance=ExtResource("2_2d8m7")]
+z_index = 0
+position = Vector2(-2296, -1222)
+
+[connection signal="die" from="Player" to="." method="_on_player_die"]
+[connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
+[connection signal="interact" from="Player" to="." method="_on_player_interact"]
+[connection signal="throw_juicebox" from="Player" to="." method="_on_player_throw_juicebox"]
+[connection signal="toggle_berry_bot_interface" from="Player" to="." method="_on_player_toggle_berry_bot_interface"]
+[connection signal="toggle_buddy_equipped" from="Player" to="." method="_on_player_toggle_buddy_equipped"]
+[connection signal="toggle_buddy_fusion_equipped" from="Player" to="." method="_on_player_toggle_buddy_fusion_equipped"]
+[connection signal="toggle_field_state_interface" from="Player" to="." method="_on_player_toggle_field_state_interface"]
+[connection signal="toggle_select_interface" from="Player" to="." method="_on_player_toggle_select_interface"]
+[connection signal="update_altitude" from="Player" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability_buddy" from="Player" to="." method="_on_player_use_ability_buddy"]
+[connection signal="use_ability_buddy_fusion" from="Player" to="." method="_on_player_use_ability_buddy_fusion"]
+[connection signal="use_ability_solo" from="Player" to="." method="_on_player_use_ability_solo"]
+[connection signal="level_up_ended" from="Player/Level-up" to="." method="_on_level_up_ended"]
+[connection signal="deposit_berries" from="Link" to="." method="_on_food_buddy_deposit_berries"]
+[connection signal="die" from="Link" to="." method="_on_food_buddy_die"]
+[connection signal="find_nearest_bush" from="Link" to="." method="_on_food_buddy_find_nearest_bush"]
+[connection signal="forage_bush" from="Link" to="." method="_on_food_buddy_forage_bush"]
+[connection signal="killed_target" from="Link" to="." method="_on_character_killed_target"]
+[connection signal="target_brittany" from="Link" to="." method="_on_food_buddy_target_brittany"]
+[connection signal="target_closest_enemy" from="Link" to="." method="_on_food_buddy_target_closest_enemy"]
+[connection signal="target_closest_food_buddy" from="Link" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Link" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Link" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability_solo" from="Link" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="deposit_berries" from="Dan" to="." method="_on_food_buddy_deposit_berries"]
+[connection signal="die" from="Dan" to="." method="_on_food_buddy_die"]
+[connection signal="find_nearest_bush" from="Dan" to="." method="_on_food_buddy_find_nearest_bush"]
+[connection signal="forage_bush" from="Dan" to="." method="_on_food_buddy_forage_bush"]
+[connection signal="killed_target" from="Dan" to="." method="_on_character_killed_target"]
+[connection signal="target_brittany" from="Dan" to="." method="_on_food_buddy_target_brittany"]
+[connection signal="target_closest_enemy" from="Dan" to="." method="_on_food_buddy_target_closest_enemy"]
+[connection signal="target_closest_food_buddy" from="Dan" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Dan" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Dan" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability_solo" from="Dan" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="deposit_berries" from="Brittany" to="." method="_on_food_buddy_deposit_berries"]
+[connection signal="die" from="Brittany" to="." method="_on_food_buddy_die"]
+[connection signal="find_nearest_bush" from="Brittany" to="." method="_on_food_buddy_find_nearest_bush"]
+[connection signal="fire_energy_ball" from="Brittany" to="." method="_on_brittany_fire_energy_ball"]
+[connection signal="forage_bush" from="Brittany" to="." method="_on_food_buddy_forage_bush"]
+[connection signal="killed_target" from="Brittany" to="." method="_on_character_killed_target"]
+[connection signal="target_brittany" from="Brittany" to="." method="_on_food_buddy_target_brittany"]
+[connection signal="target_closest_enemy" from="Brittany" to="." method="_on_food_buddy_target_closest_enemy"]
+[connection signal="target_closest_food_buddy" from="Brittany" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Brittany" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Brittany" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability_solo" from="Brittany" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="die" from="Enemy" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy" to="." method="_on_enemy_use_ability"]
+[connection signal="feet_collide_start" from="Food Citizen" to="." method="_on_character_feet_collide_start"]
+[connection signal="die" from="Enemy2" to="." method="_on_character_die"]
+[connection signal="killed_target" from="Enemy2" to="." method="_on_enemy_killed_target"]
+[connection signal="target_closest_food_buddy" from="Enemy2" to="." method="_on_character_target_closest_food_buddy"]
+[connection signal="target_player" from="Enemy2" to="." method="_on_character_target_player"]
+[connection signal="update_altitude" from="Enemy2" to="." method="_on_character_update_altitude"]
+[connection signal="use_ability" from="Enemy2" to="." method="_on_enemy_use_ability"]

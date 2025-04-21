@@ -73,6 +73,7 @@ var previous_animation_frame: int = 0
 var previous_animation_frame_progress: float = 0
 
 
+
 var revive_time_total: int = 10
 var revive_time_remaining: float = revive_time_total
 
@@ -232,6 +233,13 @@ func _process(delta: float) -> void:
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return ("front" if velocity.y > velocity.x else "sideways")) #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 	
 	if not paused:
+		
+		if taking_damage:
+			take_damage(delta)
+		
+		if healing_health:
+			heal_health(delta)
+		
 		if timers_paused:
 			timers_paused = false
 			for timer in timers:

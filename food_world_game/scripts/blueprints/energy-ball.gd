@@ -32,6 +32,8 @@ enum Direction {
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var paused: bool
+
 var position_start: Vector2
 var position_end: Vector2
 var position_middle: Vector2
@@ -71,6 +73,14 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	if paused:
+		sprite.pause()
+		animator.pause()
+		return
+	else:
+		sprite.play()
+		animator.play()
 	
 	# If the juicebox is in midair, process its trajectory
 	if in_air:
@@ -122,7 +132,7 @@ func throw_process(delta: float):
 	position_current = global_position
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
-	if target != null and target.hitbox_damage in hitbox_damage.get_overlapping_areas() and global_position.distance_to(Vector2(target.global_position.x, target.global_position.y - target.height / 2)) < 10:
+	if target != null and target.hitbox_damage in hitbox_damage.get_overlapping_areas() and global_position.distance_to(Vector2(target.global_position.x, target.global_position.y - target.height / 2)) < 12.5:
 		throw_end()
 	
 	elif abs(position_current.x - position_target.x) < 10 and abs(position_current.y - position_target.y) < 10:
@@ -132,6 +142,7 @@ func throw_process(delta: float):
 
 
 func throw_end():
+	z_index = 1
 	in_air = false
 	sprite.play("explosion")
 	explode.emit(self)
@@ -162,6 +173,6 @@ func physics_process(_delta: float) -> void:
 
 
 func _on_sprite_animation_finished() -> void:
-	print("explosion ended")
+	
 	if "explosion" == sprite.animation:
 		queue_free()

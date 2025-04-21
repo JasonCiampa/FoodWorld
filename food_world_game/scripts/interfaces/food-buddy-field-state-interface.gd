@@ -177,6 +177,8 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		buddy.previous_animation = buddy.sprite.animation
 		buddy.previous_animation_frame = buddy.sprite.get_frame()
 		buddy.previous_animation_frame_progress = buddy.sprite.get_frame_progress()
+		buddy.previous_modulate = buddy.sprite.self_modulate
+		buddy.sprite.self_modulate = Color(1, 1, 1, 1)
 		
 		if buddy.alive:
 			buddy.sprite.play("idle_front")
@@ -186,7 +188,14 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")
 	
+	player.previous_animation = player.sprite.animation
+	player.previous_animation_frame = player.sprite.get_frame()
+	player.previous_animation_frame_progress = player.sprite.get_frame_progress()
+	player.previous_modulate = player.sprite.self_modulate
+	player.sprite.self_modulate = Color(1, 1, 1, 1)
+	
 	player.sprite.play("idle_front")
+	
 	
 	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
 	foodbuddy1.global_position = player.global_position
@@ -255,7 +264,12 @@ func end():
 			buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
 		else:
 			buddy.update_animation()
+		
+		buddy.sprite.self_modulate = buddy.previous_modulate
 	
+	player.sprite.play(player.previous_animation)
+	player.sprite.set_frame_and_progress(player.previous_animation_frame, player.previous_animation_frame_progress)
+	player.sprite.self_modulate = player.previous_modulate
 	
 	animator.play("RESET")
 

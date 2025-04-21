@@ -142,6 +142,8 @@ func start(freeze_subjects: Array[Node2D]):
 		buddy.previous_animation = buddy.sprite.animation
 		buddy.previous_animation_frame = buddy.sprite.get_frame()
 		buddy.previous_animation_frame_progress = buddy.sprite.get_frame_progress()
+		buddy.previous_modulate = buddy.sprite.self_modulate
+		buddy.sprite.self_modulate = Color(1, 1, 1, 1)
 		
 		if buddy.alive:
 			buddy.sprite.play("idle_front")
@@ -150,6 +152,12 @@ func start(freeze_subjects: Array[Node2D]):
 		
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")
+	
+	player.previous_animation = player.sprite.animation
+	player.previous_animation_frame = player.sprite.get_frame()
+	player.previous_animation_frame_progress = player.sprite.get_frame_progress()
+	player.previous_modulate = player.sprite.self_modulate
+	player.sprite.self_modulate = Color(1, 1, 1, 1)
 	
 	player.sprite.play("idle_front")
 	
@@ -204,7 +212,11 @@ func end():
 	for buddy in active_food_buddies:
 		buddy.sprite.play(buddy.previous_animation)
 		buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
-
+		buddy.sprite.self_modulate = buddy.previous_modulate
+	
+	player.sprite.play(player.previous_animation)
+	player.sprite.set_frame_and_progress(player.previous_animation_frame, player.previous_animation_frame_progress)
+	player.sprite.self_modulate = player.previous_modulate
 	
 	animator.play("RESET")
 

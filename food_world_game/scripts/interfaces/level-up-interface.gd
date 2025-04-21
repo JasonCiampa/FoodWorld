@@ -134,8 +134,6 @@ func start(freeze_subjects: Array[Node2D]):
 	foodbuddy1.animation_player.play("RESET")
 	foodbuddy2.animation_player.play("RESET")
 	
-	player.sprite.play("idle_front")
-	
 	# Animate the UI onto the screen, then have it stay in place
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
@@ -163,12 +161,24 @@ func start(freeze_subjects: Array[Node2D]):
 		buddy.previous_animation = buddy.sprite.animation
 		buddy.previous_animation_frame = buddy.sprite.get_frame()
 		buddy.previous_animation_frame_progress = buddy.sprite.get_frame_progress()
-
+		buddy.previous_modulate = buddy.sprite.self_modulate
+		buddy.sprite.self_modulate = Color(1, 1, 1, 1)
+		
 		buddy.sprite.play("idle_front")
 		buddy.animation_player.play("RESET")
 		
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")
+	
+	player.previous_animation = player.sprite.animation
+	player.previous_animation_frame = player.sprite.get_frame()
+	player.previous_animation_frame_progress = player.sprite.get_frame_progress()
+	player.previous_modulate = player.sprite.self_modulate
+	player.sprite.self_modulate = Color(1, 1, 1, 1)
+	
+	player.sprite.play("idle_front")
+	player.level_up = true
+	print("SET LEVEL UP IDLE FRONT: ", player.sprite.animation)
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -223,6 +233,14 @@ func end():
 			buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
 		else:
 			buddy.sprite.play("idle_front")
+		
+		buddy.sprite.self_modulate = buddy.previous_modulate
+		
+	player.sprite.play("idle_front")
+	player.sprite.self_modulate = player.previous_modulate
+	
+	player.level_up = false
+	player.using_ability = false
 	
 	button_health.disabled = true
 	button_stamina.disabled = true

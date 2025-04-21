@@ -101,9 +101,12 @@ func game_over(freeze_subjects: Array[Node2D]):
 	active_food_buddies[0].sprite.play("die_front")
 	active_food_buddies[1].sprite.play("die_front")
 	
+	player.sprite.self_modulate = Color(1, 1, 1, 1)
+	
 	for buddy in active_food_buddies:
 		buddy.sprite.play("die_front")
 		buddy.animation_player.play("RESET")
+		buddy.sprite.self_modulate = Color(1, 1, 1, 1)
 		
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")

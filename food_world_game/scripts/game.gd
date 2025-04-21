@@ -289,6 +289,9 @@ func get_all_assets_in_game() -> Array[Node2D]:
 	for interactable in interactables:
 		assets_in_game.append(interactable)
 	
+	for projectile in scene_tree.get_nodes_in_group("projectiles"):
+		assets_in_game.append(projectile)
+	
 	return assets_in_game
 
 
@@ -352,9 +355,9 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
 	if target.hitbox_damage in hitboxes:
-		print("HIT!")
 		target.health_current -= damage
 		target.target = attacker
+		target.taking_damage = true
 		
 		# Determine if the attacked Node has run out of health, then emit their death signal
 		if target.health_current <= 0:
@@ -614,9 +617,28 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 	if buddy_number >= 2:
 		food_buddy_selected = food_buddies_active[1]
 		food_buddy_other = food_buddies_active[0]
+		
+		if PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
+			return
+		
+		PLAYER.field_state_current = PLAYER.FieldState.BUDDY2
+		PLAYER.sprite.play("field_state_buddy2")
+		
+		print("Player's FieldState has been updated to BUDDY2")
+		
 	else:
 		food_buddy_selected = food_buddies_active[0]
 		food_buddy_other = food_buddies_active[1]
+		
+		if PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
+			return
+		
+		PLAYER.field_state_current = PLAYER.FieldState.BUDDY1
+		PLAYER.sprite.play("field_state_buddy1")
+		
+		print("Player's FieldState has been updated to BUDDY1")
+	
+	
 	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
 	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
@@ -746,6 +768,7 @@ func _on_player_use_ability_solo(damage: int) -> void:
 		# Iterate over every enemy currently on the screen to check if the Player's attack landed on them, then stop checking if the attack landed because the Player's solo ability can only damage one enemy at a time
 		for enemy in get_enemies_on_screen():
 			if process_attack(enemy, PLAYER, damage):
+				PLAYER.target = enemy
 				return
 
 
@@ -1150,6 +1173,7 @@ func _on_juicebox_explode(juicebox: Juicebox):
 	
 	if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
 		PLAYER.health_current += juicebox.health
+		PLAYER.healing_health = true
 		
 		if PLAYER.health_current > PLAYER.health_max:
 			PLAYER.health_current = PLAYER.health_max
@@ -1157,6 +1181,7 @@ func _on_juicebox_explode(juicebox: Juicebox):
 	for food_buddy in food_buddies_active:
 		if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
 			food_buddy.health_current += juicebox.health
+			food_buddy.healing_health = true
 			
 			if food_buddy.health_current > food_buddy.health_max:
 				food_buddy.health_current = food_buddy.health_max

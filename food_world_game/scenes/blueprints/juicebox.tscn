@@ -175,8 +175,7 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t4n2n"]
 size = Vector2(32, 30)
 
-[node name="Juicebox" type="Node2D"]
-z_index = 1
+[node name="Juicebox" type="Node2D" groups=["projectiles"]]
 y_sort_enabled = true
 script = ExtResource("1_cjdey")
 
