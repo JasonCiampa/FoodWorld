@@ -672,7 +672,7 @@ func update_movement_velocity(delta):
 	if stamina_current > 0:
 		
 		# Determine whether or not the Player is starting a jump, then trigger the jump
-		if jump_enabled and Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
+		if !throwing_juicebox and !using_ability and jump_enabled and Input.is_action_just_pressed("jump") and (not is_jumping) and (not is_dodging):
 			
 			if use_stamina(stamina_use["Jump"]):
 				jump_start()
