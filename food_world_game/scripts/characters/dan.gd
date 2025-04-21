@@ -48,7 +48,8 @@ func ready():
 	field_state_current = FieldState.FIGHT
 	
 	health_texture_path = "res://images/ui/png/dan-health.png"
-	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-dan.png"
+	select_circle_texture_path_normal = "res://images/ui/png/food-buddy-selection-dan.png"
+	select_circle_texture_path_pressed = "res://images/ui/png/food-buddy-selection-dan-selected.png"
 	dialogue_texture = load("res://images/ui/png/dialogue-dan.png")
 	
 	# Set the stamina cost for each of Dan's two abilities

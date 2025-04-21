@@ -65,7 +65,8 @@ var timers: Array[Timer]
 var timers_paused: bool
 
 var health_texture_path: String
-var select_circle_texture_path: String
+var select_circle_texture_path_normal: String
+var select_circle_texture_path_pressed: String
 
 var previous_animation: String = "idle_front"
 var previous_animation_frame: int = 0

@@ -177,7 +177,6 @@ func start(_freeze_subjects: Array[Node2D]):
 	animator.play("enter_UI")
 	animator.queue("stay_UI")
 	
-	
 	brittany.sprite.pause()
 	brittany.animation_player.pause()
 	
@@ -224,7 +223,11 @@ func end():
 	for subject in frozen_subjects:
 		if subject is GameCharacter:
 			subject.paused = false
-			subject.sprite.play()
+			
+			if subject.alive:
+				#subject.sprite.set_frame_and_progress(subject.sprite.get_frame(), subject.sprite.get_frame_progress())
+				subject.sprite.play()
+			
 			
 			if subject is FoodBuddy:
 				subject.animation_player.play("RESET")

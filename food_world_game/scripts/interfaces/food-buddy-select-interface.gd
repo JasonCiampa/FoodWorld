@@ -96,13 +96,16 @@ func setValues(_player: Player, _food_buddies_active: Array[FoodBuddy], _food_bu
 	InterfaceLevelUp = _InterfaceLevelUp
 	InterfaceFoodBuddyFieldState = _InterfaceFoodBuddyFieldState
 	
-	button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path)
+	button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path_normal)
+	button_active_buddy1.texture_pressed = load(active_foodbuddy1.select_circle_texture_path_pressed)
 	text_active_buddy1.text = active_foodbuddy1.name
 	
-	button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path)
+	button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path_normal)
+	button_active_buddy2.texture_pressed = load(active_foodbuddy2.select_circle_texture_path_pressed)
 	text_active_buddy2.text = active_foodbuddy2.name
 	
-	button_inactive_buddy.texture_normal = load(inactive_foodbuddy.select_circle_texture_path)
+	button_inactive_buddy.texture_normal = load(inactive_foodbuddy.select_circle_texture_path_normal)
+	button_inactive_buddy.texture_pressed = load(inactive_foodbuddy.select_circle_texture_path_pressed)
 	text_inactive_buddy.text = inactive_foodbuddy.name
 
 
@@ -222,10 +225,21 @@ func _on_active_buddy1_button_down() -> void:
 	# Determine if the active Food Buddy 1 is already selected, then unselect it
 	if active_foodbuddy1 == selected_active_foodbuddy:
 		selected_active_foodbuddy = null
+		button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path_normal)
+		button_active_buddy1.texture_pressed = load(active_foodbuddy1.select_circle_texture_path_pressed)
+	
+	elif active_foodbuddy2 == selected_active_foodbuddy:
+		selected_active_foodbuddy = active_foodbuddy1
+		button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path_pressed)
+		button_active_buddy1.texture_pressed = load(active_foodbuddy1.select_circle_texture_path_normal)
+		button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path_normal)
+		button_active_buddy2.texture_pressed = load(active_foodbuddy2.select_circle_texture_path_pressed)
 	
 	# Otherwise, determine if an inactive Food Buddy has not been selected yet, then set this Food Buddy as the selected active Food Buddy
 	elif selected_inactive_foodbuddy == null:
 		selected_active_foodbuddy = active_foodbuddy1
+		button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path_pressed)
+		button_active_buddy1.texture_pressed = load(active_foodbuddy1.select_circle_texture_path_normal)
 	
 	# Otherwise, there is a selected inactive Food Buddy, and this active Food Buddy 1 is being selected to swap with the inactive buddy, so do that
 	else:
@@ -272,10 +286,21 @@ func _on_active_buddy2_button_down() -> void:
 	# Determine if the active Food Buddy 2 is already selected, then unselect it
 	if active_foodbuddy2 == selected_active_foodbuddy:
 		selected_active_foodbuddy = null
+		button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path_normal)
+		button_active_buddy2.texture_pressed = load(active_foodbuddy2.select_circle_texture_path_pressed)
+	
+	elif active_foodbuddy1 == selected_active_foodbuddy:
+		selected_active_foodbuddy = active_foodbuddy2
+		button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path_pressed)
+		button_active_buddy2.texture_pressed = load(active_foodbuddy2.select_circle_texture_path_normal)
+		button_active_buddy1.texture_normal = load(active_foodbuddy1.select_circle_texture_path_normal)
+		button_active_buddy1.texture_pressed = load(active_foodbuddy1.select_circle_texture_path_pressed)
 	
 	# Otherwise, determine if an inactive Food Buddy has not been selected yet, then set this Food Buddy as the selected active Food Buddy
 	elif selected_inactive_foodbuddy == null:
 		selected_active_foodbuddy = active_foodbuddy2
+		button_active_buddy2.texture_normal = load(active_foodbuddy2.select_circle_texture_path_pressed)
+		button_active_buddy2.texture_pressed = load(active_foodbuddy2.select_circle_texture_path_normal)
 	
 	# Otherwise, there is a selected inactive Food Buddy, and this active Food Buddy 1 is being selected to swap with the inactive buddy, so do that
 	else:
@@ -322,10 +347,14 @@ func _on_inactive_buddy_button_button_down() -> void:
 	# Determine if the inactive Food Buddy is already selected, then unselect it
 	if inactive_foodbuddy == selected_inactive_foodbuddy:
 		selected_inactive_foodbuddy = null
+		button_inactive_buddy.texture_normal = load(inactive_foodbuddy.select_circle_texture_path_normal)
+		button_inactive_buddy.texture_pressed = load(inactive_foodbuddy.select_circle_texture_path_pressed)
 	
 	# Otherwise, determine if an active Food Buddy has not been selected yet, then set this Food Buddy as the selected inactive Food Buddy
 	elif selected_active_foodbuddy == null:
 		selected_inactive_foodbuddy = inactive_foodbuddy
+		button_inactive_buddy.texture_normal = load(inactive_foodbuddy.select_circle_texture_path_pressed)
+		button_inactive_buddy.texture_pressed = load(inactive_foodbuddy.select_circle_texture_path_normal)
 	
 	# Otherwise, there is a selected active Food Buddy, and this inactive Food Buddy is being selected to swap with the active buddy, so do that
 	else:

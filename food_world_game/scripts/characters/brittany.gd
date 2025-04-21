@@ -42,7 +42,8 @@ func ready():
 	hitbox_attack = $"Attack Hitbox"
 	text_press_f_for_berry_bot = $"Press 'F' to Manage Berry Bot"
 	health_texture_path = "res://images/ui/png/brittany-health.png"
-	select_circle_texture_path = "res://images/ui/png/food-buddy-selection-brittany.png"
+	select_circle_texture_path_normal = "res://images/ui/png/food-buddy-selection-brittany.png"
+	select_circle_texture_path_pressed = "res://images/ui/png/food-buddy-selection-brittany-selected.png"
 	dialogue_texture = load("res://images/ui/png/dialogue-brittany.png")
 	
 	
