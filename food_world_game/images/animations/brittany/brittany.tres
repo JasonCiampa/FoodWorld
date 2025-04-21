@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=54 format=3 uid="uid://cfvbqc5deyrrc"]
 
-[ext_resource type="Texture2D" uid="uid://bjt75ntfwcyf5" path="res://images/animations/brittany/idle_spritesheet.png" id="1_oosu8"]
+[ext_resource type="Texture2D" uid="uid://bjt75ntfwcyf5" path="res://images/animations/brittany/idle/idle_spritesheet.png" id="1_oosu8"]
 [ext_resource type="Texture2D" uid="uid://dwa42jhvcc3dd" path="res://images/animations/brittany/die/die-spritesheet.png" id="1_wj5bh"]
 [ext_resource type="Texture2D" uid="uid://bvj7l57h247kg" path="res://images/animations/brittany/ability/ability_spritesheet.png" id="1_y241m"]
 [ext_resource type="Texture2D" uid="uid://bjbhhb27gtm1j" path="res://images/animations/brittany/moving/moving_spritesheet.png" id="2_4j5ta"]
