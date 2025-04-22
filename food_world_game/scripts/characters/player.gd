@@ -69,6 +69,8 @@ var tests_ran: bool = false
 
 var level_up: bool = false
 
+var clicked_this_frame: bool = false
+
 # Timers #
 var timers: Array[Timer]
 var timers_paused: bool
@@ -166,12 +168,13 @@ func _ready() -> void:
 	collision_values["MIDAIR"] = 2
 	collision_values["PLATFORM"] = 3
 	
-	radius_range = 50
+	radius_range = 35
 	
 	self.name = "Player"
 	body_collider.disabled = true
 	feet_collider.disabled = false
 	update_dimensions()
+	set_collision_value(collision_values["GROUND"])
 	
 	timers.append(dodge_timer)
 	timers.append(dodge_cooldown_timer)
@@ -257,6 +260,8 @@ func _process(delta: float) -> void:
 	
 	if Input.is_action_just_pressed("escape_menu"):
 		escape_menu.emit()
+	
+	clicked_this_frame = false
 	
 	update_dimensions()
 
@@ -431,6 +436,9 @@ func calculate_velocity(direction):
 func process_ability_use() -> int:
 	var ability_number: int = 0
 	
+	if clicked_this_frame:
+		return -1
+	
 	# Determine if the Player left-clicked (ability 1) or right-clicked (ability 2) their mouse, then store the corresponding ability number in the variable
 	if Input.is_action_just_pressed("ability1") or Input.is_action_just_pressed("throw_juicebox"):
 		ability_number = 1
@@ -452,7 +460,6 @@ func process_ability_use() -> int:
 					else:
 						hand_punching = "right"
 					
-					use_ability_solo.emit(attack_damage["Punch"])
 				
 					update_animation()
 					print("The Player threw a " + hand_punching + " punch!")
@@ -1047,7 +1054,9 @@ func _on_sprite_animation_finished() -> void:
 
 
 func _on_sprite_frame_changed() -> void:
-	frame_counter += 1
+	if "ability" in sprite.animation:
+		if sprite.get_frame() == 3:
+			use_ability_solo.emit(attack_damage["Punch"])
 
 
 func _on_sprite_animation_changed() -> void:

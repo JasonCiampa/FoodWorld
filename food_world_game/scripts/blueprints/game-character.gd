@@ -72,12 +72,11 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var paused: bool = false
 var in_range: bool = false
 
-
 # Position and Size #
 var width: float
 var height: float
 
-var previous_modulate: Color
+var previous_modulate: Color = Color(1,1,1,1)
 
 # Health #
 var health_current: int = 100
@@ -180,11 +179,11 @@ func _ready() -> void:
 	
 	# Determine if the Character is on the ground, then set their collision value to 1 for proper on-ground collisions
 	if current_altitude == 0:
-		set_collision_value(1)
+		set_collision_value(collision_values["GROUND"])
 	
 	# Otherwise, the Character is on a platform, so set their collision value to 3 for proper on-platform collisions
 	else:
-		set_collision_value(3)
+		set_collision_value(collision_values["PLATFORM"])
 	
 	# Update the Character's center point based on their global position and their width and height based on the current sprite frame
 	update_dimensions()
@@ -245,7 +244,6 @@ func take_damage(delta: float, damage: int = -1):
 	
 	if healing_health:
 		healing_health = false
-		return
 	
 	# If the character is not currently red from taking damage, adjust their color so that they glow red briefly
 	if !is_red:
@@ -284,7 +282,6 @@ func heal_health(delta: float, damage: int = -1):
 		#damage_taken = damage
 	if taking_damage:
 		taking_damage = false
-		return
 	
 	
 	# If the character is not currently red from taking damage, adjust their color so that they glow red briefly
@@ -379,7 +376,17 @@ func set_collision_value(new_collision_value: int):
 	set_collision_layer_value(new_collision_value, true)
 	set_collision_mask_value(new_collision_value, true)
 
+func toggle_collision_mask(new_mask_value: int):
+	if get_collision_mask_value(new_mask_value):
+		set_collision_mask_value(new_mask_value, false)
+	else:
+		set_collision_mask_value(new_mask_value, true)
 
+func toggle_collision_layer(new_layer_value: int):
+	if get_collision_layer_value(new_layer_value):
+		set_collision_layer_value(new_layer_value, false)
+	else:
+		set_collision_layer_value(new_layer_value, true)
 
 # Start the Character's falling
 func fall_start():

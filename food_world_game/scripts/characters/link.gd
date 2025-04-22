@@ -47,7 +47,7 @@ func ready():
 	speed_normal = 40
 	speed_current = speed_normal
 	
-	radius_range = 30
+	radius_range = 35
 	
 	self.name = "Link"
 	

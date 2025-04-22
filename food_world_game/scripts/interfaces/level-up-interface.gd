@@ -128,6 +128,8 @@ func start(freeze_subjects: Array[Node2D]):
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
+	foodbuddy1.level_up = true
+	foodbuddy2.level_up = true
 	foodbuddy1.sprite.play("idle_front")
 	foodbuddy2.sprite.play("idle_front")
 	
@@ -223,6 +225,8 @@ func end():
 	foodbuddy1.global_position = start_location_foodbuddy1
 	foodbuddy2.global_position = start_location_foodbuddy2
 	
+	foodbuddy1.level_up = false
+	foodbuddy2.level_up = false
 	for buddy in active_food_buddies:
 		
 		if buddy.field_state_current == FoodBuddy.FieldState.FIGHT and !buddy.target.alive:
@@ -241,6 +245,7 @@ func end():
 	
 	player.level_up = false
 	player.using_ability = false
+	player.clicked_this_frame = true
 	
 	button_health.disabled = true
 	button_stamina.disabled = true

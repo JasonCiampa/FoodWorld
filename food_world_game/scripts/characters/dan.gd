@@ -63,11 +63,11 @@ func ready():
 	speed_sprinting = 85
 	speed_current = speed_normal
 	
-	radius_range = 90
+	radius_range = 50
 	
 	self.name = "Dan"
 	
-	field_state_current = FieldState.FORAGE
+	field_state_current = FieldState.FOLLOW
 	
 	set_collision_value(collision_values["GROUND"])
 	
@@ -110,6 +110,9 @@ func jump_end():
 # A callback function that should execute repeatedly while the Food Buddy is in the FIGHT FieldState
 func fight_field_state_callback() -> void:
 	
+	if paused or level_up:
+		return
+	
 	# Determine if the Food Buddy has an alive target Enemy currently, then move towards it.
 	if target != null and target is Enemy and target.alive:
 		
@@ -147,7 +150,7 @@ func fight_field_state_callback() -> void:
 			
 			target_distance = global_position.distance_to(target.global_position)
 			
-			if target.current_altitude != 0 or target_distance <= target.radius_range:
+			if target.current_altitude != 0 or target_distance <= max(target.radius_range, radius_range):
 				velocity.x = 0
 				velocity.y = 0
 				return
@@ -157,7 +160,7 @@ func fight_field_state_callback() -> void:
 
 func _on_sprite_animation_looped() -> void:
 	
-	if !paused:
+	if !paused and !level_up:
 		if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_damage in hitbox_damage.get_overlapping_areas():
 			
 			use_ability_solo.emit(self, ability_damage["Solo"])
@@ -209,7 +212,7 @@ func moving_sideways_animation() -> void:
 
 
 func _on_sprite_animation_changed() -> void:
-	if !paused:
+	if !paused and !level_up:
 		if "moving_sideways" != sprite.animation and "ability_sideways" != sprite.animation:
 			animation_player.play("RESET")
 			sprinkle_sprite.play("nothing")

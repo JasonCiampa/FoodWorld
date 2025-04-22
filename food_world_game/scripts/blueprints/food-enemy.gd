@@ -110,6 +110,7 @@ func _ready() -> void:
 	collision_values["PLATFORM"] = 12
 
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
@@ -128,7 +129,8 @@ func _process(delta: float) -> void:
 		field_state_current = FieldState.AGGRESSIVE
 		
 	elif target_distance > 200 and field_state_current == FieldState.AGGRESSIVE:
-		field_state_current = FieldState.PASSIVE
+		if target.name != "Brittany":
+			field_state_current = FieldState.PASSIVE
 	
 	if not paused:
 		if taking_damage:
@@ -229,6 +231,9 @@ func passive_field_state_callback() -> void:
 			
 			generate_path(Vector2(global_position.x + (frolic_range * RNG.randf_range(-1, 1)), global_position.y + (frolic_range * RNG.randf_range(-1, 1))))
 			timer_frolic_cooldown.stop()
+		else:
+			velocity.x = 0
+			velocity.y = 0
 
 
 

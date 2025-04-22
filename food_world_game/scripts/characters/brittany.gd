@@ -57,7 +57,7 @@ func ready():
 	speed_normal = 35
 	speed_current = speed_normal
 	
-	radius_range = 70
+	radius_range = 65
 	
 	self.name = "Brittany"
 	
@@ -117,7 +117,8 @@ func fight_field_state_callback() -> void:
 			
 			target_player.emit(self)
 			
-			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= target.radius_range:
+			target_distance = global_position.distance_to(target.global_position)
+			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= max(target.radius_range, radius_range):
 				velocity.x = 0
 				velocity.y = 0
 				return

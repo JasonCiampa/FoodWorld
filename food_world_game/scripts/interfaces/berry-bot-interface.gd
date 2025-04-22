@@ -256,6 +256,7 @@ func end():
 	animator.play("RESET")
 	player.is_interacting = false
 	player.paused = false
+	player.clicked_this_frame = true
 	
 
 

@@ -124,7 +124,10 @@ func _ready() -> void:
 	DAN.current_tilemaps = world_tilemaps["center"]
 	BRITTANY.current_tilemaps = world_tilemaps["center"]
 	PLAYER.current_tilemaps = world_tilemaps["center"]
-	ENEMY.current_tilemaps = world_tilemaps["center"]
+	
+	for enemy in scene_tree.get_nodes_in_group("enemies"):
+		enemy.current_tilemaps = world_tilemaps["center"]
+	
 	# Connect all of the Food Citizen's signals to the Game
 	#food_citizen.target_player.connect(_on_character_target_player)
 	#food_citizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
@@ -190,10 +193,13 @@ func _process(delta: float) -> void:
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
-		GameTileManager.process_nearby_tiles(PLAYER, 2)
-		GameTileManager.process_nearby_tiles(food_buddies_active[0], 1)
-		GameTileManager.process_nearby_tiles(food_buddies_active[1], 2)
-		GameTileManager.process_nearby_tiles(ENEMY, 3)
+		GameTileManager.process_nearby_tiles(PLAYER, 3)
+		GameTileManager.process_nearby_tiles(food_buddies_active[0], 3)
+		GameTileManager.process_nearby_tiles(food_buddies_active[1], 3)
+		
+		for enemy in enemies:
+			GameTileManager.process_nearby_tiles(enemy, 3)
+
 	
 	
 	# Determine if the Player is not already interacting, then process in-range potential interactions
@@ -359,6 +365,9 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 		target.target = attacker
 		target.taking_damage = true
 		
+		if target is Enemy:
+			target.field_state_current = Enemy.FieldState.AGGRESSIVE
+		
 		# Determine if the attacked Node has run out of health, then emit their death signal
 		if target.health_current <= 0:
 			target.health_current = 0
@@ -369,10 +378,10 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 			if attacker is FoodBuddy:
 				attacker.using_ability = false
 			
-			if attacker is Player and target is Enemy:
-				attacker.xp_current += target.xp_drop
+			if (attacker is Player or attacker is FoodBuddy) and (target is Enemy):
+				PLAYER.xp_current += target.xp_drop
 				
-				if attacker.xp_current >= attacker.xp_max:
+				if PLAYER.xp_current >= PLAYER.xp_max:
 					
 					InterfaceLevelUp.start(get_all_assets_in_game())
 		

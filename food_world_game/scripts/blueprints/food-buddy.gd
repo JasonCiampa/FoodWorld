@@ -72,7 +72,7 @@ var previous_animation: String = "idle_front"
 var previous_animation_frame: int = 0
 var previous_animation_frame_progress: float = 0
 
-
+var level_up: bool = false
 
 var revive_time_total: int = 10
 var revive_time_remaining: float = revive_time_total
@@ -137,6 +137,9 @@ var RNG: RandomNumberGenerator
 # Updates the variables that keep track of previous and current movement direction
 func update_movement_direction():
 	
+	if level_up:
+		return
+	
 	# Store the current horizontal and vertical directions as the previous directions.
 	direction_previous_horizontal = direction_current_horizontal
 	direction_previous_vertical = direction_current_vertical
@@ -153,6 +156,9 @@ func update_movement_direction():
 
 
 func update_animation():
+	
+	if level_up:
+		return
 	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
 	
@@ -366,17 +372,21 @@ func follow_field_state_callback() -> void:
 	speed_current = speed_normal
 	
 	target_player.emit(self)
+	target_distance = global_position.distance_to(target.global_position)
 	
-	if target.current_altitude == 0:
+	if target.current_altitude != 0 or target_distance <= max(target.radius_range, radius_range):
+		velocity.x = 0
+		velocity.y = 0
+		return
 	
+	else:
+		
 		generate_path()
 		
 		if target.hitbox_damage in hitbox_interaction.get_overlapping_areas():
 			velocity.x = 0
 			velocity.y = 0
-	else:
-		velocity.x = 0
-		velocity.y = 0
+
 
 
 # A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState
@@ -441,7 +451,7 @@ func fight_field_state_callback() -> void:
 			
 			target_player.emit(self)
 			
-			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= target.radius_range:
+			if target.current_altitude != 0 or global_position.distance_to(target.global_position) <= max(target.radius_range, radius_range):
 				velocity.x = 0
 				velocity.y = 0
 				return

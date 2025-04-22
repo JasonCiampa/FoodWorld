@@ -893,7 +893,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vq0ap"]
-size = Vector2(16, 19)
+size = Vector2(16, 34)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ubbk1"]
 size = Vector2(14, 6)
@@ -937,7 +937,7 @@ zoom = Vector2(3.5, 3.5)
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(0, 4.5)
+position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_vq0ap")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 

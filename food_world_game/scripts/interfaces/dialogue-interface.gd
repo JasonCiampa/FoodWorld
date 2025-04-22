@@ -465,6 +465,7 @@ func end():
 			subject.sprite.play()
 			subject.animator.play()
 	
+	player.clicked_this_frame = true
 	animator.queue("RESET")
 
 

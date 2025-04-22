@@ -124,6 +124,9 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			# Determine if the ground Tile's coordinates are not occupied in the terrain tilemap, then enable pathfinding for the tile
 			var terrain_tile = Tile.new(world_tilemaps[world][Tile.MapType.TERRAIN], Tile.MapType.TERRAIN, tiles_used_terrain[coords])
 			
+			if terrain_tile.type == "path":
+				return
+			
 			# Determine if the terrain Tile's width is set and is larger than 1
 			if terrain_tile.width != null and terrain_tile.width > 1:
 				
@@ -209,9 +212,12 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 # Process the tiles nearby a given Character on the given Tilemap(s)
 func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
+	if character is Enemy:
+		if tiles_occupied.get(Vector2i(character.navigation_agent.target_position)) != null:
+			character.generate_path(Vector2(character.global_position.x + (character.frolic_range * character.RNG.randf_range(-1, 1)), character.global_position.y + (character.frolic_range * character.RNG.randf_range(-1, 1))))
 	# Note: tiles_above is the number of tiles that should be processed above the one that the Character is standing on
 	# 	Ex: if trying to process three tiles above the tile that the Character is standing on, tiles_above = 3
-	
+
 	# Store the coordinates of the Tiles that the Character is currently standing on and was previously standing on in Map Coordinates
 	character.previous_tile_position = character.current_tile_position
 	character.current_tile_position = character.current_tilemaps[Tile.MapType.GROUND].local_to_map(character.global_position)

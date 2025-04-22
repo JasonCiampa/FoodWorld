@@ -145,7 +145,6 @@ func throw_end():
 	z_index = 1
 	in_air = false
 	sprite.play("explosion")
-	explode.emit(self)
 	animator.play("explode")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -176,3 +175,9 @@ func _on_sprite_animation_finished() -> void:
 	
 	if "explosion" == sprite.animation:
 		queue_free()
+
+#
+func _on_sprite_frame_changed() -> void:
+	if "explosion" == sprite.animation:
+		if sprite.get_frame() == 1:
+			explode.emit(self)
