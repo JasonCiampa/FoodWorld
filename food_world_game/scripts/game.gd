@@ -453,18 +453,18 @@ func process_food_ability_use(food_entity, ability_number: int):
 		
 		# Determine if the Player has enough stamina to use the ability, then use the ability
 		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 1"][0], food_entity.ability_stamina_cost["Ability 1"][1]):
-			food_entity.use_ability1()
+			food_entity.use_ability1(PLAYER)
 	
 	# Otherwise, determine if Ability 2 is being used, then process and launch it
-	elif ability_number == 2:
+	elif ability_number >= 2:
 		
 		# Determine if the Player has enough stamina to use the ability, then use the ability
 		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 2"][0], food_entity.ability_stamina_cost["Ability 2"][1]):
-			food_entity.use_ability2()
+			food_entity.use_ability2(PLAYER)
 	
-	# Otherwise, a special attack is being used, so process and launch it
-	else:
-		food_buddy_fusion_active.use_special_attack()
+	## Otherwise, a special attack is being used, so process and launch it
+	#else:
+		#food_buddy_fusion_active.use_special_attack()
 
 
 
@@ -631,9 +631,10 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			return
 		
 		PLAYER.field_state_current = PLAYER.FieldState.BUDDY2
-		PLAYER.sprite.play("field_state_buddy2")
 		
 		print("Player's FieldState has been updated to BUDDY2")
+		
+		PLAYER.name = "player_" + food_buddies_active[1].name.to_lower() + "_"
 		
 	else:
 		food_buddy_selected = food_buddies_active[0]
@@ -643,10 +644,12 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			return
 		
 		PLAYER.field_state_current = PLAYER.FieldState.BUDDY1
-		PLAYER.sprite.play("field_state_buddy1")
 		
 		print("Player's FieldState has been updated to BUDDY1")
+		
+		PLAYER.name = "player" + food_buddies_active[0].name
 	
+	PLAYER.update_animation()
 	
 	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it

@@ -141,7 +141,7 @@ var attack_damage: Dictionary = {
 var animation_directions: Dictionary = {}
 var current_animation_name: String
 var current_direction_name: String = "front"
-var new_animation_name: String
+var new_animation_name: String = "idle"
 var new_direction_name
 
 var previous_animation: String = "idle_front"
@@ -245,8 +245,8 @@ func _process(delta: float) -> void:
 				game_timer.paused = false
 		
 		process_ability_use()
-		update_movement_animation()
 		update_movement_direction()
+		update_animation()
 		update_stamina(delta)
 		update_field_state()
 		
@@ -268,6 +268,7 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
+		#print(name)
 		#print("Berries Current: ", berries)
 		#print(collision_value_current)
 		#print("Bottom X: " + str(global_position.x))
@@ -329,6 +330,13 @@ func update_animation():
 	
 	if using_ability:
 		new_animation_name = "ability"
+	elif health_current <= 0:
+		new_animation_name = "die"
+	elif direction_current_horizontal == 0 and direction_current_vertical == 0:
+		new_animation_name = "idle"
+	else:
+		new_animation_name = "moving"
+	
 	
 	if new_animation_name == "" or new_animation_name == null:
 		new_animation_name = current_animation_name
@@ -339,16 +347,26 @@ func update_animation():
 		else:
 			new_direction_name = "front"
 	
+	var fusion_name: String = ""
+	
+	if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
+		fusion_name = name
+	
 	# If the animation has changed, play the new animation
-	if sprite.animation != (new_animation_name + "_" + new_direction_name):
+	if sprite.animation != (fusion_name + new_animation_name + "_" + new_direction_name):
 		
 		if new_animation_name != "ability":
-			sprite.play(new_animation_name + "_" + new_direction_name) # --> formats like: idle_front
+			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name) # --> formats like: idle_front
 		else:
-			sprite.play(new_animation_name + "_" + new_direction_name + "_" + hand_punching)
+			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name + "_" + hand_punching)
+		
+		print(fusion_name + new_animation_name + "_" + new_direction_name)
 		
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
+		
+		new_animation_name = ""
+		new_direction_name = ""
 
 # Starts the Player's sprint
 func sprint_start():
@@ -504,32 +522,32 @@ func process_ability_use() -> int:
 
 # Updates the Player Sprite's animation depending on which direction the Player was/is traveling.
 func update_movement_animation():
-	if paused:
+	if paused or using_ability or field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
 		return
 	
-	if using_ability:
+	## Determine if the Player is jumping, then trigger the jump animation
+	#if is_jumping:
+		#
+		#if direction_previous_vertical == Direction.DOWN:
+			#sprite.play("jump_front")
+			#current_direction_name = "front"
+		#elif direction_previous_vertical == Direction.UP:
+			#sprite.play("jump_back")
+			#current_direction_name = "back"
+		#
+		#elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
+			#sprite.play("jump_sideways")
+			#current_direction_name = "sideways"
+		#
+		#else:
+			#sprite.play("jump_" + current_direction_name)
+	
+	if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
+		update_animation()
 		return
-	
-	# Determine if the Player is jumping, then trigger the jump animation
-	if is_jumping:
-		
-		if direction_previous_vertical == Direction.DOWN:
-			sprite.play("jump_front")
-			current_direction_name = "front"
-		elif direction_previous_vertical == Direction.UP:
-			sprite.play("jump_back")
-			current_direction_name = "back"
-		
-		elif direction_previous_horizontal == Direction.LEFT or direction_previous_horizontal == Direction.RIGHT:
-			sprite.play("jump_sideways")
-			current_direction_name = "sideways"
-		
-		else:
-			sprite.play("jump_" + current_direction_name)
-	
 	
 	# Determine if the Player is fully idle, then play the correct idle animation based on the direction that the Player was previously moving in
-	elif direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
+	if direction_current_horizontal == Direction.IDLE and direction_current_vertical == Direction.IDLE:
 		
 		if field_state_current == FieldState.JUICE:
 			
@@ -664,6 +682,12 @@ func update_movement_direction():
 	# Update the current horizontal and vertical direction being inputted by the user
 	direction_current_horizontal = Input.get_axis("move_left", "move_right")
 	direction_current_vertical = Input.get_axis("move_up", "move_down")
+	
+	# Determine whether the Player is facing left or right, then flip the sprite horizontally based on the direction the Player is facing
+	if direction_current_horizontal == Direction.RIGHT:
+		sprite.flip_h = true
+	elif direction_current_horizontal == Direction.LEFT:
+		sprite.flip_h = false
 
 
 
@@ -762,6 +786,7 @@ func update_field_state():
 		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to the Game to update the corresponding Food Buddy, and trigger the correct animation
 		if Input.is_action_just_pressed("toggle_buddy1_equipped"):
 			toggle_buddy_equipped.emit(1)
+			update_animation()
 		
 		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
 			toggle_buddy_equipped.emit(2)
@@ -1028,9 +1053,10 @@ func test(delta: float):
 
 func _on_sprite_animation_finished() -> void:
 	
+	
 	if "juice_throw" in sprite.animation:
 		throwing_juicebox = false
-		throw_juicebox.emit(juicebox_throw_coords)
+		throw_juicebox.emit(get_global_mouse_position())
 		juiceboxes -= 1
 		
 		if juiceboxes == 0:
@@ -1050,7 +1076,10 @@ func _on_sprite_animation_finished() -> void:
 	
 	if "ability" in sprite.animation:
 		using_ability = false
-		sprite.play("idle_" + current_direction_name)
+		if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
+			update_animation()
+		else:
+			sprite.play("idle_" + current_direction_name)
 
 
 func _on_sprite_frame_changed() -> void:
@@ -1061,3 +1090,8 @@ func _on_sprite_frame_changed() -> void:
 
 func _on_sprite_animation_changed() -> void:
 	pass # Replace with function body.
+
+
+#func _on_sprite_animation_looped() -> void:
+	#if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
+		#update_animation()
