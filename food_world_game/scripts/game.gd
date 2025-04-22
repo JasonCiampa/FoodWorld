@@ -194,8 +194,8 @@ func _process(delta: float) -> void:
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
 		GameTileManager.process_nearby_tiles(PLAYER, 3)
-		GameTileManager.process_nearby_tiles(food_buddies_active[0], 3)
-		GameTileManager.process_nearby_tiles(food_buddies_active[1], 3)
+		GameTileManager.process_nearby_tiles(food_buddies_active[0], 4)
+		GameTileManager.process_nearby_tiles(food_buddies_active[1], 4)
 		
 		for enemy in enemies:
 			GameTileManager.process_nearby_tiles(enemy, 3)
