@@ -160,3 +160,28 @@ func _on_sprite_animation_finished() -> void:
 			current_animation_name = "idle"
 		
 		update_animation()
+
+
+# Throw a juicebox while on the player's back
+func use_ability1(player: Player):
+	if !player.using_ability:
+		if player.use_stamina(player.stamina_use["Punch"]):
+			
+			player.using_ability = true 
+			
+			if player.hand_punching == "left":
+				player.hand_punching = "right"
+			else:
+				player.hand_punching = "left"
+			
+		
+			player.update_animation()
+			print("The Player threw a " + player.hand_punching + " punch!")
+
+
+# Throw a juicebox while on the player's back
+func use_ability2(player: Player):
+	if player.juiceboxes > 0:
+		if player.use_stamina(player.stamina_use["Juice Throw"]):
+			print("Brittany threw a juicebox!")
+			player.throw_juicebox.emit(get_global_mouse_position())

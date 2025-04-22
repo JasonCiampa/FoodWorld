@@ -99,7 +99,7 @@ func physics_process(_delta: float) -> void:
 # Ability Functions #
 
 # A custom function to execute the Food Buddy Fusion's ability 1 that each Food Buddy Fusion subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
-func use_ability1():
+func use_ability1(player: Player):
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	print(name + "'s Ability 1 has been triggered!")
 	pass
@@ -107,7 +107,7 @@ func use_ability1():
 
 
 # A custom function to execute the Food Buddy Fusion's ability 2 that each Food Buddy Fusion subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
-func use_ability2():
+func use_ability2(player: Player):
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	print(name + "'s Ability 2 has been triggered!")
 	pass
