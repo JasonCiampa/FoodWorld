@@ -88,6 +88,7 @@ var field_state_callbacks: Dictionary = {
 	FieldState.FOLLOW: follow_field_state_callback,
 	FieldState.FORAGE: forage_field_state_callback,
 	FieldState.FIGHT: fight_field_state_callback,
+	FieldState.PLAYER: player_field_state_callback,
 }
 
 var current_animation_name: String
@@ -189,6 +190,9 @@ func update_animation():
 		sprite.play(new_animation_name + "_" + new_direction_name) # --> idle_front
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
+	
+	if paused or level_up:
+		sprite.play("idle_front")
 
 func velocity_checks():
 	pass
@@ -475,6 +479,10 @@ func fight_field_state_callback() -> void:
 				target_distance = global_position.distance_to(target.global_position)
 				
 		
+
+
+func player_field_state_callback() -> void:
+	pass
 
 
 

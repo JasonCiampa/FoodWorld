@@ -37,13 +37,15 @@ var test_cases_complete: bool = false
 
 @onready var scene_tree = get_tree()
 
+
+var update_food_buddy_equipped: int = 0
+
 # Node Groups #
 var enemies: Array[Node]
 var food_citizens: Array[Node]
 var interactables: Array[Node]
 var interactable_assets: Dictionary
 var bushes: Array[Vector2i]
-
 
 var closest_interactable_to_player: Node2D
 
@@ -153,6 +155,7 @@ func _ready() -> void:
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	InterfaceDialogue.setValues(PLAYER)
 	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
+	InterfaceBerryBot.update_character_status_UI.connect(update_character_status_UI)
 	
 	BRITTANY.collision_values["GROUND"] = 4
 	BRITTANY.collision_values["MIDAIR"] = 5
@@ -176,6 +179,8 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	if !PLAYER.paused and update_food_buddy_equipped != 0:
+		_on_player_toggle_buddy_equipped(update_food_buddy_equipped)
 	
 	#if !musicStarted and timer_fade.is_stopped():
 		#musicStarted = true
@@ -350,6 +355,7 @@ func get_target_distance(subject: GameCharacter, target: Node2D) -> float:
 # Determines if an attack has landed on the target and reduces the target's health if it has. Returns true if the attack landed on the target, false if not.
 func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int, attacker_hitbox: Area2D = null) -> bool:
 	
+	
 	var hitboxes: Array[Area2D]
 	
 	if attacker_hitbox != null:
@@ -384,9 +390,11 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 				if PLAYER.xp_current >= PLAYER.xp_max:
 					
 					InterfaceLevelUp.start(get_all_assets_in_game())
-		
+			
+		InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 		return true
 	
+	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 	return false
 
 
@@ -404,26 +412,39 @@ func process_player_nearby_interactables():
 	
 	
 	# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
-	if closest_interactable_to_player == null:
-		closest_interactable_to_player = interactables[0]
+	if closest_interactable_to_player == null or !closest_interactable_to_player.active:
+		var count: int = 0
+		
+		
+		while closest_interactable_to_player == null or !closest_interactable_to_player.active:
+			closest_interactable_to_player = interactables[count]
+			
+			if closest_interactable_to_player.active:
+				closest_interactable_to_player = interactables[count]
+				break
+			
+			count += 1
+	
 	
 	
 	# Iterate over every Asset on-screen that can be Interacted with
 	for interactable in get_interactables_on_screen():
 		
-		# Determine if the Interactable's Interaction hitbox is included in the list of hitboxes that are overlapping with the Player's hitbox, then set the Interactable to be classified as in or out of range of the Player
-		if interactable.hitbox_interaction in overlapping_hitboxes:
-			interactable.in_range = true
-		else:
-			interactable.in_range = false
+		if interactable.active:
 		
-		# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
-		if interactable.global_position.distance_to(PLAYER.global_position) < closest_interactable_to_player.global_position.distance_to(PLAYER.global_position):
-			if closest_interactable_to_player.name == "Brittany":
-				closest_interactable_to_player.text_press_f_for_berry_bot.hide()
+			# Determine if the Interactable's Interaction hitbox is included in the list of hitboxes that are overlapping with the Player's hitbox, then set the Interactable to be classified as in or out of range of the Player
+			if interactable.hitbox_interaction in overlapping_hitboxes:
+				interactable.in_range = true
+			else:
+				interactable.in_range = false
 			
-			closest_interactable_to_player.label_e_to_interact.hide()
-			closest_interactable_to_player = interactable
+			# Determine if the Interactable of this iteration is closer to the Player than the latest closest Interactable is, then set this Interactable as the new current closest
+			if interactable.global_position.distance_to(PLAYER.global_position) < closest_interactable_to_player.global_position.distance_to(PLAYER.global_position):
+				if closest_interactable_to_player.name == "Brittany":
+					closest_interactable_to_player.text_press_f_for_berry_bot.hide()
+				
+				closest_interactable_to_player.label_e_to_interact.hide()
+				closest_interactable_to_player = interactable
 	
 	# Determine whether or not the closest Interactable to the Player is in range of the Player's hitbox, then show/hide their interaction prompt
 	if closest_interactable_to_player.in_range:
@@ -451,16 +472,12 @@ func process_food_ability_use(food_entity, ability_number: int):
 	# Determine if Ability 1 is being used, then process and launch it
 	if ability_number == 1:
 		
-		# Determine if the Player has enough stamina to use the ability, then use the ability
-		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 1"][0], food_entity.ability_stamina_cost["Ability 1"][1]):
-			food_entity.use_ability1(PLAYER)
+		food_entity.use_ability1(PLAYER)
 	
 	# Otherwise, determine if Ability 2 is being used, then process and launch it
 	elif ability_number >= 2:
 		
-		# Determine if the Player has enough stamina to use the ability, then use the ability
-		if process_food_stamina_use(food_entity.ability_stamina_cost["Ability 2"][0], food_entity.ability_stamina_cost["Ability 2"][1]):
-			food_entity.use_ability2(PLAYER)
+		food_entity.use_ability2(PLAYER)
 	
 	## Otherwise, a special attack is being used, so process and launch it
 	#else:
@@ -549,6 +566,10 @@ func determine_player_location_world() -> World:
 # Callback function that executes whenever the Player presses 'E' to interact with something
 func _on_player_interact(delta: float) -> void:
 	
+	if PLAYER.interaction_delay_timer.time_left != 0:
+		PLAYER.is_interacting = false
+		return
+	
 	var interactables_on_screen = get_interactables_on_screen()
 	
 	# Determine if the closest Interactable to the Player is in range for an interaction, then trigger the interaction
@@ -580,6 +601,7 @@ func _on_player_interact(delta: float) -> void:
 					closest_interactable_to_player.sprite.play("idle_front")
 					closest_interactable_to_player.label_e_to_interact.text = "press 'e' to interact"
 					InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
+					PLAYER.interaction_delay_timer.start(1)
 				
 				PLAYER.is_interacting = false
 				closest_interactable_to_player.label_e_to_interact.show()
@@ -598,6 +620,7 @@ func _on_player_interact(delta: float) -> void:
 			if "Bush" in closest_interactable_to_player.name:
 				if closest_interactable_to_player.berries != 0 and PLAYER.berries != PLAYER.berries_max:
 					closest_interactable_to_player.interact_with_player(PLAYER, delta)
+					update_character_status_UI()
 					
 				PLAYER.is_interacting = false
 			else:
@@ -621,41 +644,71 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 	var food_buddy_selected: FoodBuddy
 	var food_buddy_other: FoodBuddy
 	
-	
 	# Determine which Food Buddy was selected by the Player based on the emitted buddy_number and which Food Buddy wasn't, then store a local reference to each of them so we don't have to access the Food Buddies list multiple times
-	if buddy_number >= 2:
+	if update_food_buddy_equipped == 0 and buddy_number >= 2:
 		food_buddy_selected = food_buddies_active[1]
-		food_buddy_other = food_buddies_active[0]
+		update_food_buddy_equipped = 2
 		
-		if PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
-			return
+		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY1 and PLAYER.field_state_current != PLAYER.FieldState.BUDDY2:
+			
+			if PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
+				update_food_buddy_equipped = 0
+				PLAYER.equipping_buddy = false
+				return
 		
 		PLAYER.field_state_current = PLAYER.FieldState.BUDDY2
 		
 		print("Player's FieldState has been updated to BUDDY2")
 		
-		PLAYER.name = "player_" + food_buddies_active[1].name.to_lower() + "_"
+		PLAYER.fuse_sprite.play("fuse")
+		PLAYER.animation_player.play("fuse")
+		PLAYER.animation_player.queue("RESET")
+		return
 		
-	else:
+	elif update_food_buddy_equipped == 0 and buddy_number <= 1:
 		food_buddy_selected = food_buddies_active[0]
-		food_buddy_other = food_buddies_active[1]
+		update_food_buddy_equipped = 1
 		
-		if PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
-			return
+		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY1 and PLAYER.field_state_current != PLAYER.FieldState.BUDDY2:
+			
+			if PLAYER.global_position.distance_to(Vector2(food_buddy_selected.global_position.x, food_buddy_selected.global_position.y - food_buddy_selected.height / 2)) > 32:
+				update_food_buddy_equipped = 0
+				PLAYER.equipping_buddy = false
+				return
 		
 		PLAYER.field_state_current = PLAYER.FieldState.BUDDY1
 		
 		print("Player's FieldState has been updated to BUDDY1")
 		
-		PLAYER.name = "player" + food_buddies_active[0].name
+		PLAYER.fuse_sprite.play("fuse")
+		PLAYER.animation_player.play("fuse")
+		return
 	
-	PLAYER.update_animation()
+	else:
+		if PLAYER.animation_player.current_animation == "fuse" and PLAYER.animation_player.current_animation_position < 1:
+			return
+		else:
+			if update_food_buddy_equipped == 1:
+				food_buddy_selected = food_buddies_active[0]
+				food_buddy_other = food_buddies_active[1]
+			else:
+				food_buddy_selected = food_buddies_active[1]
+				food_buddy_other = food_buddies_active[0]
+			
+			update_food_buddy_equipped = 0
 	
 	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
 	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
 		food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
 		food_buddy_selected.field_state_previous = FoodBuddy.FieldState.PLAYER
+		food_buddy_selected.process_mode = Node.PROCESS_MODE_INHERIT
+		food_buddy_selected.global_position = Vector2(PLAYER.global_position.x + 32, PLAYER.global_position.y)
+		food_buddy_selected.visible = true
+		food_buddy_selected.active = true
+		
+		PLAYER.field_state_current = PLAYER.FieldState.SOLO
+		PLAYER.equipped_buddy = null
 	
 	else:
 		
@@ -673,7 +726,13 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		# Update the selected Food Buddy's FieldState variables
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
 		food_buddy_selected.field_state_current = FoodBuddy.FieldState.PLAYER
+		food_buddy_selected.process_mode = Node.PROCESS_MODE_DISABLED
+		food_buddy_selected.visible = false
+		food_buddy_selected.active = false
+		
+		PLAYER.equipped_buddy = food_buddy_selected
 	
+	PLAYER.update_animation()
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 
 
@@ -760,6 +819,10 @@ func _on_player_toggle_berry_bot_interface():
 	
 	if InterfaceBerryBot.visible:
 		InterfaceBerryBot.end()
+		return
+	
+	if BRITTANY.field_state_current == BRITTANY.FieldState.PLAYER:
+		InterfaceBerryBot.start(get_all_assets_in_game())
 		return
 	
 	if closest_interactable_to_player == BRITTANY and closest_interactable_to_player.in_range:
@@ -1197,6 +1260,8 @@ func _on_juicebox_explode(juicebox: Juicebox):
 			
 			if food_buddy.health_current > food_buddy.health_max:
 				food_buddy.health_current = food_buddy.health_max
+	
+	update_character_status_UI()
 
 
 
@@ -1226,3 +1291,7 @@ func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
 
 func _on_energy_ball_explode(energy_ball: EnergyBall):
 	process_attack(BRITTANY.target, BRITTANY, energy_ball.damage, energy_ball.hitbox_damage)
+
+
+func update_character_status_UI():
+	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)

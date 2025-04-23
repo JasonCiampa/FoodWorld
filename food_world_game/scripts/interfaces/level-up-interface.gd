@@ -178,7 +178,9 @@ func start(freeze_subjects: Array[Node2D]):
 	player.previous_modulate = player.sprite.self_modulate
 	player.sprite.self_modulate = Color(1, 1, 1, 1)
 	
-	player.sprite.play("idle_front")
+	player.direction_current_horizontal = player.Direction.IDLE
+	player.direction_current_vertical = player.Direction.IDLE
+	player.update_animation()
 	player.level_up = true
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
@@ -194,6 +196,8 @@ func start(freeze_subjects: Array[Node2D]):
 		
 		for tilemap in foodbuddy2.current_tilemaps:
 			tilemap.modulate.a = 0.25
+	
+	InterfaceCharacterStatus.setValues(player, [foodbuddy1, foodbuddy2])
 
 
 
@@ -237,9 +241,6 @@ func end():
 		else:
 			buddy.sprite.play("idle_front")
 		
-		
-	player.sprite.play("idle_front")
-
 	
 	player.level_up = false
 	player.using_ability = false

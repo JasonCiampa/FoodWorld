@@ -49,8 +49,8 @@ func ready():
 	
 	# Set the stamina cost for each of Brittany's two abilities
 	ability_stamina_cost = { 
-		"Ability 1": [5, "Gradual"], 
-		"Ability 2": [25, "Instant"] 
+		"Ability 1": [5, "Instant"], 
+		"Ability 2": [10, "Instant"] 
 	}
 	
 	# Set Brittany's default speed and current speed
@@ -70,6 +70,7 @@ func ready():
 
 # A custom process function that is personally defined for Brittany. This is called in the default FoodBuddy class's '_process()' function
 func process(_delta: float):
+	
 	if !using_ability and "ability" in sprite.animation and sprite.get_frame() == 5:
 		using_ability = true
 		fire_energy_ball.emit(Vector2(target.global_position.x, target.global_position.y - target.height / 2))
@@ -185,3 +186,5 @@ func use_ability2(player: Player):
 		if player.use_stamina(player.stamina_use["Juice Throw"]):
 			print("Brittany threw a juicebox!")
 			player.throw_juicebox.emit(get_global_mouse_position())
+		
+		player.juiceboxes -= 1

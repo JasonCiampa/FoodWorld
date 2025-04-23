@@ -38,6 +38,8 @@ extends InteractableAsset
 
 var RNG = RandomNumberGenerator.new()
 
+var active: bool = true
+
 var berries: int
 var berry_regen_timer: float
 var berry_regen_timer_length: int = 5
@@ -100,16 +102,17 @@ func ready():
 # A custom process function that each Bush subclass should personally define. This is called in the default Bush class's '_process()' function
 func process(delta: float):
 	
-	# Determine if there are less than 5 berries and that the regeneration period for a berry has completed
-	if berries < berries_max and berry_regen_timer <= 0:
+	if active:
+		# Determine if there are less than 5 berries and that the regeneration period for a berry has completed
+		if berries < berries_max and berry_regen_timer <= 0:
+			
+			# Regenerate 1 berry in this bush
+			berries += 1
+			berry_regen_timer = berry_regen_timer_length
 		
-		# Regenerate 1 berry in this bush
-		berries += 1
-		berry_regen_timer = berry_regen_timer_length
-	
-	# Otherwise, the berry timer needs to continue decrementing
-	else:
-		berry_regen_timer -= delta
+		# Otherwise, the berry timer needs to continue decrementing
+		else:
+			berry_regen_timer -= delta
 
 
 

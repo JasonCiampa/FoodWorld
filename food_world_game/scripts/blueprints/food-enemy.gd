@@ -119,7 +119,7 @@ func _process(delta: float) -> void:
 	else:
 		on_platform = false
 	
-	if target == null:
+	if target == null or !target.active:
 		
 		target_player.emit(self)
 	

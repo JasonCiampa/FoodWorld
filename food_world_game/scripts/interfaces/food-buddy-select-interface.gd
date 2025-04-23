@@ -159,7 +159,13 @@ func start(freeze_subjects: Array[Node2D]):
 	player.previous_modulate = player.sprite.self_modulate
 	player.sprite.self_modulate = Color(1, 1, 1, 1)
 	
-	player.sprite.play("idle_front")
+	player.direction_previous_horizontal = player.direction_current_horizontal
+	player.direction_previous_vertical = player.direction_current_vertical
+	
+	player.direction_current_horizontal = player.Direction.IDLE
+	player.direction_current_vertical = player.Direction.IDLE
+	
+	player.update_animation()
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -213,6 +219,9 @@ func end():
 		buddy.sprite.play(buddy.previous_animation)
 		buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
 		buddy.sprite.self_modulate = buddy.previous_modulate
+	
+	player.direction_current_horizontal = player.direction_previous_horizontal
+	player.direction_current_vertical = player.direction_previous_vertical
 	
 	player.sprite.play(player.previous_animation)
 	player.sprite.set_frame_and_progress(player.previous_animation_frame, player.previous_animation_frame_progress)

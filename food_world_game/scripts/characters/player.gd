@@ -8,8 +8,11 @@ extends GameCharacter
 @onready var dodge_timer: Timer = $"Timers/Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
+@onready var interaction_delay_timer: Timer = $"Timers/Interaction Delay Timer"
 @onready var timer: Timer = $Timers/Timer
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
+@onready var fuse_sprite: AnimatedSprite2D = $"Fuse Sprite"
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -69,6 +72,8 @@ var tests_ran: bool = false
 
 var level_up: bool = false
 
+var equipping_buddy: bool = false
+
 var clicked_this_frame: bool = false
 
 # Timers #
@@ -77,6 +82,7 @@ var timers_paused: bool
 
 # Behavior #
 var is_interacting: bool = false
+var active: bool = true
 
 # Inventory #
 var inventory: Array = []
@@ -86,6 +92,8 @@ var inventory_size: int = 12
 var xp_current: int = 0
 var xp_max: int = 50
 var level_current: int = 1
+
+var equipped_buddy: FoodBuddy
 
 # Stamina #
 var stamina_previous: float = 0
@@ -180,6 +188,7 @@ func _ready() -> void:
 	timers.append(dodge_cooldown_timer)
 	timers.append(stamina_regen_delay_timer)
 	timers.append(timer)
+	timers.append(interaction_delay_timer)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -233,6 +242,9 @@ func _process(delta: float) -> void:
 	
 	if not paused:
 		
+		if !equipping_buddy and (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
+			equipped_buddy.global_position = global_position
+		
 		if taking_damage:
 			take_damage(delta)
 			
@@ -243,6 +255,7 @@ func _process(delta: float) -> void:
 			timers_paused = false
 			for game_timer in timers:
 				game_timer.paused = false
+		
 		
 		process_ability_use()
 		update_movement_direction()
@@ -320,9 +333,6 @@ func _physics_process(delta: float) -> void:
 
 func update_animation():
 	
-	if level_up:
-		return
-	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
 	
 	if new_direction_name != null:
@@ -349,8 +359,12 @@ func update_animation():
 	
 	var fusion_name: String = ""
 	
-	if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
-		fusion_name = name
+	if paused or level_up:
+		new_animation_name = "idle"
+		new_direction_name = "front"
+	
+	if !equipping_buddy and (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
+		fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
 	
 	elif field_state_current == FieldState.JUICE:
 		if throwing_juicebox:
@@ -364,10 +378,14 @@ func update_animation():
 		sprite.speed_scale = 1
 	
 	# If the animation has changed, play the new animation
-	if sprite.animation != (fusion_name + new_animation_name + "_" + new_direction_name):
+	if sprite.animation != (fusion_name + new_animation_name + "_" + new_direction_name) or paused or level_up:
 		previous_animation_frame = sprite.get_frame()
 		previous_animation_frame_progress = sprite.get_frame_progress()
-			
+		
+		if paused or level_up:
+			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name)
+			return
+		
 		# Only play if the ability is not already launched in a different direction
 		if using_ability:
 			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name + "_" + hand_punching)
@@ -377,8 +395,9 @@ func update_animation():
 			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name)
 			sprite.set_frame_and_progress(previous_animation_frame, previous_animation_frame_progress)
 		
-		elif new_animation_name != "ability":
+		else:
 			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name) # --> formats like: idle_front
+		
 		
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
@@ -549,7 +568,8 @@ func update_movement_direction():
 # Updates the Player's velocity based on their actions, speed, and the direction they're currently moving in
 func update_movement_velocity(delta):
 	
-	if using_ability:
+	
+	if using_ability or equipping_buddy:
 		velocity.x = 0
 		velocity.y = 0
 		return
@@ -639,11 +659,12 @@ func update_field_state():
 		field_state_previous = field_state_current
 		
 		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to the Game to update the corresponding Food Buddy, and trigger the correct animation
-		if Input.is_action_just_pressed("toggle_buddy1_equipped"):
+		if !equipping_buddy and Input.is_action_just_pressed("toggle_buddy1_equipped"):
+			equipping_buddy = true
 			toggle_buddy_equipped.emit(1)
-			update_animation()
 		
-		elif Input.is_action_just_pressed("toggle_buddy2_equipped"):
+		elif !equipping_buddy and Input.is_action_just_pressed("toggle_buddy2_equipped"):
+			equipping_buddy = true
 			toggle_buddy_equipped.emit(2)
 		
 		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
@@ -653,7 +674,7 @@ func update_field_state():
 			print("Player's FieldState has been updated to FUSION")
 		
 		
-		elif Input.is_action_just_pressed("toggle_juicebox"):
+		elif field_state_current == FieldState.SOLO or field_state_current == FieldState.JUICE and Input.is_action_just_pressed("toggle_juicebox"):
 			if !using_ability and !throwing_juicebox and juiceboxes > 0:
 				field_state_current = FieldState.JUICE
 				
@@ -934,3 +955,8 @@ func _on_sprite_animation_changed() -> void:
 #func _on_sprite_animation_looped() -> void:
 	#if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
 		#update_animation()
+
+
+func _on_animation_player_animation_changed(old_name: StringName, new_name: StringName) -> void:
+	if old_name == "fuse" and new_name == "RESET":
+		equipping_buddy = false

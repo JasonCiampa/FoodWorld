@@ -25,6 +25,8 @@ var animator: AnimationPlayer
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+signal update_character_status_UI
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -34,6 +36,7 @@ var animator: AnimationPlayer
 
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 var active_food_buddies: Array[FoodBuddy]
 
@@ -108,6 +111,8 @@ func _process(delta: float) -> void:
 			
 			if sauna_current_occupant_times.size() < sauna_occupancy_max and player.berries > 0:
 				button_deposit.disabled = false
+			
+			update_character_status_UI.emit()
 	
 	
 	for berry_index in range(0, berry_sprites.size()):
@@ -150,6 +155,7 @@ func setValues(_player: Player, _brittany: FoodBuddy):
 
 # Enables the Food Buddy FieldState Interface and freezes the updating for the given subjects while the Interface is active
 func start(_freeze_subjects: Array[Node2D]):
+	
 	
 	# Store the currently frozen subjects so they can be unfrozen when selection is complete
 	frozen_subjects = _freeze_subjects
@@ -323,7 +329,8 @@ func _on_craft_button_down() -> void:
 		
 	else:
 		button_craft.disabled = true
-
+	
+	update_character_status_UI.emit()
 
 func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 	
@@ -354,3 +361,5 @@ func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 			animator.queue("steam_stay")
 		
 		sauna_current_occupant_times.append(0)
+	
+	update_character_status_UI.emit()

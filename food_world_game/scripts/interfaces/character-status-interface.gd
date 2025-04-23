@@ -83,25 +83,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	health_bar_player.value = player.health_current
-	text_health_current_player.text = str(player.health_current) + "/" + str(player.health_max)
-	stamina_bar_player.value = player.stamina_current
 	text_stamina_current_player.text = str(int(player.stamina_current)) + "/" + str(player.stamina_max)
-	xp_bar_player.value = player.xp_current
-	text_xp_current_player.text = str(player.xp_current) + "/" + str(player.xp_max)
-	text_berries_player.text = str(player.berries) + "/" + str(player.berries_max)
-	text_juice_player.text = str(player.juice)
-	text_juiceboxes_player.text = str(player.juiceboxes)
-	
-	health_bar_foodbuddy1.value = foodbuddy1.health_current
-	health_bar_foodbuddy2.value = foodbuddy2.health_current
-	
-	text_fieldstate_foodbuddy1.text = foodbuddy1.get_enum_value_name(FoodBuddy.FieldState, foodbuddy1.field_state_current)
-	text_fieldstate_foodbuddy2.text = foodbuddy2.get_enum_value_name(FoodBuddy.FieldState, foodbuddy2.field_state_current)
-	
-	text_health_current_foodbuddy1.text = str(foodbuddy1.health_current) + "/" + str(foodbuddy1.health_max)
-	text_health_current_foodbuddy2.text = str(foodbuddy2.health_current) + "/" + str(foodbuddy2.health_max)
-
+	stamina_bar_player.value = player.stamina_current
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -127,12 +110,44 @@ func setValues(_player: Player, food_buddies_active: Array[FoodBuddy]):
 	
 	text_level_player.text = str("Lvl ", player.level_current)
 	
+	
 	text_name_foodbuddy1.text = foodbuddy1.name
-	health_bar_foodbuddy1.max_value = foodbuddy1.health_max
+	
+	if foodbuddy1.field_state_current == foodbuddy1.FieldState.PLAYER:
+		health_bar_foodbuddy1.max_value = player.health_max
+		health_bar_foodbuddy1.value = player.health_current
+		text_health_current_foodbuddy1.text = str(player.health_current) + "/" + str(player.health_max)
+	else:
+		health_bar_foodbuddy1.max_value = foodbuddy1.health_max
+		health_bar_foodbuddy1.value = foodbuddy1.health_current
+		text_health_current_foodbuddy1.text = str(foodbuddy1.health_current) + "/" + str(foodbuddy1.health_max)
+	
 	health_bar_foodbuddy1.texture_progress = load(foodbuddy1.health_texture_path)
 	
+	
 	text_name_foodbuddy2.text = foodbuddy2.name
-	health_bar_foodbuddy2.max_value = foodbuddy2.health_max
+	
+	if foodbuddy2.field_state_current == foodbuddy2.FieldState.PLAYER:
+		health_bar_foodbuddy2.max_value = player.health_max
+		health_bar_foodbuddy2.value = player.health_current
+		text_health_current_foodbuddy2.text = str(player.health_current) + "/" + str(player.health_max)
+	else:
+		health_bar_foodbuddy2.max_value = foodbuddy2.health_max
+		health_bar_foodbuddy2.value = foodbuddy2.health_current
+		text_health_current_foodbuddy2.text = str(foodbuddy2.health_current) + "/" + str(foodbuddy2.health_max)
+	
 	health_bar_foodbuddy2.texture_progress = load(foodbuddy2.health_texture_path)
+	
+	
+	text_health_current_player.text = str(player.health_current) + "/" + str(player.health_max)
+	text_stamina_current_player.text = str(int(player.stamina_current)) + "/" + str(player.stamina_max)
+	text_xp_current_player.text = str(player.xp_current) + "/" + str(player.xp_max)
+	text_berries_player.text = str(player.berries) + "/" + str(player.berries_max)
+	text_juice_player.text = str(player.juice)
+	text_juiceboxes_player.text = str(player.juiceboxes)
+	
+	text_fieldstate_foodbuddy1.text = foodbuddy1.get_enum_value_name(FoodBuddy.FieldState, foodbuddy1.field_state_current)
+	text_fieldstate_foodbuddy2.text = foodbuddy2.get_enum_value_name(FoodBuddy.FieldState, foodbuddy2.field_state_current)
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

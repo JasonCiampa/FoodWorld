@@ -1,4 +1,4 @@
-[gd_scene load_steps=163 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=170 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -16,9 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://dk1t4r8os7s2j" path="res://images/animations/player-brittany/ability/ability_spritesheet.png" id="13_mhn1j"]
 [ext_resource type="Texture2D" uid="uid://br3qv7dl8dsng" path="res://images/animations/player-brittany/idle/idle_spritesheet.png" id="14_k56cb"]
 [ext_resource type="Texture2D" uid="uid://ykivqvivbdpl" path="res://images/animations/player-brittany/moving/moving_spritesheet.png" id="15_rlqq2"]
-
-[sub_resource type="Animation" id="Animation_fm2qe"]
-length = 0.001
+[ext_resource type="Texture2D" uid="uid://hcdqhk5pxlae" path="res://images/ui/png/fuse_spritesheet.png" id="17_k1g6j"]
 
 [sub_resource type="Animation" id="Animation_uqkj3"]
 resource_name = "dodge"
@@ -36,11 +34,44 @@ length = 0.25
 resource_name = "stop_sprinting"
 length = 0.25
 
+[sub_resource type="Animation" id="Animation_fm2qe"]
+resource_name = "fuse"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Fuse Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(2.2, 2.2), Vector2(1.7, 1.7), Vector2(2, 2), Vector2(1.7, 1.7), Vector2(2.2, 2.2), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_as0pd"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Fuse Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1e-05, 1e-05)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_uh8r5"]
 _data = {
-"RESET": SubResource("Animation_fm2qe"),
+"RESET": SubResource("Animation_as0pd"),
 "dodge": SubResource("Animation_uqkj3"),
 "dodge_sprinting": SubResource("Animation_53r6h"),
+"fuse": SubResource("Animation_fm2qe"),
 "start_sprinting": SubResource("Animation_s5i67"),
 "stop_sprinting": SubResource("Animation_v26ce")
 }
@@ -1201,6 +1232,42 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_feiag"]
+atlas = ExtResource("17_k1g6j")
+region = Rect2(228, 0, 114, 107)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iycsw"]
+atlas = ExtResource("17_k1g6j")
+region = Rect2(114, 0, 114, 107)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j60k3"]
+atlas = ExtResource("17_k1g6j")
+region = Rect2(0, 0, 114, 107)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1rh52"]
+atlas = ExtResource("17_k1g6j")
+region = Rect2(342, 0, 114, 107)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_j2xrq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_feiag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iycsw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j60k3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1rh52")
+}],
+"loop": true,
+"name": &"fuse",
+"speed": 8.0
+}]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vq0ap"]
 size = Vector2(16, 34)
 
@@ -1241,6 +1308,16 @@ offset = Vector2(0, -16)
 [node name="Camera2D" type="Camera2D" parent="AnimatedSprite2D"]
 position = Vector2(0, -6.5)
 zoom = Vector2(3.5, 3.5)
+
+[node name="Fuse Sprite" type="AnimatedSprite2D" parent="."]
+z_index = 5
+rotation = 6.80678
+scale = Vector2(1e-05, 1e-05)
+sprite_frames = SubResource("SpriteFrames_j2xrq")
+animation = &"fuse"
+frame = 3
+frame_progress = 1.0
+offset = Vector2(-8.72, -10.87)
 
 [node name="Damage Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -13)
@@ -1289,6 +1366,10 @@ one_shot = true
 [node name="Jump Timer" type="Timer" parent="Timers"]
 one_shot = true
 
+[node name="Interaction Delay Timer" type="Timer" parent="Timers"]
+one_shot = true
+
+[connection signal="animation_changed" from="AnimationPlayer" to="." method="_on_animation_player_animation_changed"]
 [connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_sprite_animation_changed"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_sprite_animation_finished"]
 [connection signal="animation_looped" from="AnimatedSprite2D" to="." method="_on_sprite_animation_looped"]
