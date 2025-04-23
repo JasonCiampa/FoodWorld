@@ -180,7 +180,6 @@ func start(freeze_subjects: Array[Node2D]):
 	
 	player.sprite.play("idle_front")
 	player.level_up = true
-	print("SET LEVEL UP IDLE FRONT: ", player.sprite.animation)
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:
@@ -238,10 +237,9 @@ func end():
 		else:
 			buddy.sprite.play("idle_front")
 		
-		buddy.sprite.self_modulate = buddy.previous_modulate
 		
 	player.sprite.play("idle_front")
-	player.sprite.self_modulate = player.previous_modulate
+
 	
 	player.level_up = false
 	player.using_ability = false
@@ -250,6 +248,8 @@ func end():
 	button_health.disabled = true
 	button_stamina.disabled = true
 	button_power.disabled = true
+	
+	animator.play("RESET")
 
 
 

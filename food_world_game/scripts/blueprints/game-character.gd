@@ -201,14 +201,18 @@ func _process(delta: float) -> void:
 	else:
 		on_platform = false
 	
-	if taking_damage:
-		take_damage(delta)
-	
-	if healing_health:
-		heal_health(delta)
 	
 	# Determine if the Character's processing is not paused
 	if not paused:
+		
+		if taking_damage:
+			take_damage(delta)
+		
+		elif healing_health:
+			heal_health(delta)
+		
+		else:
+			self_modulate = Color(1, 1, 1, 1)
 		
 		# Call the custom process function that subclasses may have defined manually
 		process(delta)
