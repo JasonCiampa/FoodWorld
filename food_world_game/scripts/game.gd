@@ -1089,6 +1089,7 @@ func _on_tile_object_enter_game(tile: Tile):
 			# Connect the Tile Object's signals to the game
 			tile_object.player_enter.connect(_on_player_enter_building)
 			tile_object.player_exit.connect(_on_player_enter_building)
+			tile_object.player_offset = tile.data.get_custom_data("player_offset")
 		
 		tile_object.global_position = tile_object_location
 		
@@ -1184,12 +1185,13 @@ func _on_player_enter_building(building: Building, _delta: float):
 	if current_building != building:
 		screen_fading = true
 		current_building = building
+		
 		# Freeze processing of everything except the game itself
 	else:
 		
 		if screen_fading and modulate.a == 0:
 
-			PLAYER.global_position.y -= 100
+			PLAYER.global_position = PLAYER.global_position - current_building.player_offset
 			food_buddies_active[0].global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y + 5)
 			food_buddies_active[1].global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y + 5)
 			
@@ -1209,7 +1211,7 @@ func _on_player_exit_building(_building: Building, _delta: float):
 		screen_fading = true
 	else:
 		if screen_fading and modulate.a == 0:
-			PLAYER.global_position.y += 100
+			PLAYER.global_position = PLAYER.global_position + current_building.player_offset
 			food_buddies_active[0].global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y - 5)
 			food_buddies_active[1].global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y - 5)
 			

@@ -45,6 +45,8 @@ var current_occupants: Array
 var playerEntering: bool = false
 var playerExiting: bool = false
 
+var player_offset: Vector2 = Vector2(0, 0)
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

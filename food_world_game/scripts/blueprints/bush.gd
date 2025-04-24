@@ -38,8 +38,6 @@ extends InteractableAsset
 
 var RNG = RandomNumberGenerator.new()
 
-var active: bool = true
-
 var berries: int
 var berry_regen_timer: float
 var berry_regen_timer_length: int = 5

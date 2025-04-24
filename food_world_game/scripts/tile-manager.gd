@@ -78,6 +78,9 @@ func _init(_world_tilemaps: Dictionary) -> void:
 		tiles_used_environment.append_array(world_tilemaps[world][Tile.MapType.ENVIRONMENT].get_used_cells())
 		tiles_used_terrain.append_array(world_tilemaps[world][Tile.MapType.TERRAIN].get_used_cells())
 		
+		var interior: TileMapLayer = world_tilemaps[world][Tile.MapType.BUILDINGS_INTERIOR]
+		interior.collision_enabled = false
+		
 		var unique_dict = {} 
 		
 		for coords in tiles_used_environment:
