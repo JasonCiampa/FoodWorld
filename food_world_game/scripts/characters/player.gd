@@ -82,7 +82,6 @@ var timers_paused: bool
 
 # Behavior #
 var is_interacting: bool = false
-var active: bool = true
 
 # Inventory #
 var inventory: Array = []

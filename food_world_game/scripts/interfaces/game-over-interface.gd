@@ -82,6 +82,9 @@ func game_over(freeze_subjects: Array[Node2D]):
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
 		subject.paused = true
+		subject.visible = false
+		subject.active = false
+		subject.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	# Set the UI to be visible and processing
 	self.visible = true
@@ -102,11 +105,22 @@ func game_over(freeze_subjects: Array[Node2D]):
 	active_food_buddies[1].sprite.play("die_front")
 	
 	player.sprite.self_modulate = Color(1, 1, 1, 1)
+	player.visible = true
+	player.active = true
+	player.process_mode = Node.PROCESS_MODE_INHERIT
+	
 	
 	for buddy in active_food_buddies:
 		buddy.sprite.play("die_front")
+		buddy.visible = true
+		buddy.active = true
+		buddy.process_mode = Node.PROCESS_MODE_INHERIT
 		buddy.animation_player.play("RESET")
 		buddy.sprite.self_modulate = Color(1, 1, 1, 1)
+		buddy.label_e_to_interact.visible = false
+		
+		if buddy.name == "Brittany":
+			buddy.text_press_f_for_berry_bot.visible = false
 		
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")

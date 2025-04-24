@@ -81,8 +81,6 @@ var revive_time_remaining: float = revive_time_total
 var field_state_previous: int
 var field_state_current: int
 
-var active: bool = true
-
 # A dictionary of callback functions that should repeatedly execute while the Food Buddy is in a given FieldState (none for PLAYER or FUSION because those are user-controlled)
 var field_state_callbacks: Dictionary = {
 	FieldState.FOLLOW: follow_field_state_callback,
