@@ -154,10 +154,20 @@ func update_movement_direction():
 
 
 
-func update_animation():
+func update_animation(animation_name: String = ""):
 	
 	if level_up:
 		return
+	
+	if animation_name != "":
+		#if sprite.animation != animation_name or !sprite.is_playing():
+		sprite.play(animation_name)
+			
+		return
+	
+	if field_state_current == FieldState.PLAYER:
+		return
+	
 	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
 	
@@ -229,6 +239,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
 	if target != null and animation_directions.size() == 0:
 		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), func(): return "")
 		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), func(): return "back")
@@ -240,13 +251,17 @@ func _process(delta: float) -> void:
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), func(): return ("back" if abs(velocity.y) > abs(velocity.x) else "sideways"))#if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return ("front" if velocity.y > velocity.x else "sideways")) #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 	
+	
 	if not paused:
 		
 		if taking_damage:
 			take_damage(delta)
 		
-		if healing_health:
+		elif healing_health:
 			heal_health(delta)
+		
+		else:
+			self_modulate = Color(1, 1, 1, 1)
 		
 		if timers_paused:
 			timers_paused = false
@@ -257,6 +272,7 @@ func _process(delta: float) -> void:
 			timers_paused = true
 			for timer in timers:
 				timer.paused = true
+	
 	
 	if !active or paused:
 		return
@@ -487,7 +503,7 @@ func player_field_state_callback() -> void:
 # Ability Functions #
 
 # A custom function to execute the Food Buddy's ability 1 that each Food Buddy subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
-func use_ability1(player: Player):
+func use_ability1(player: Player, delta: float):
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	print(name + "'s Ability 1 has been triggered!")
 	pass
@@ -495,7 +511,7 @@ func use_ability1(player: Player):
 
 
 # A custom function to execute the Food Buddy's ability 2 that each Food Buddy subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
-func use_ability2(player: Player):
+func use_ability2(player: Player, delta: float):
 	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
 	print(name + "'s Ability 2 has been triggered!")
 	pass

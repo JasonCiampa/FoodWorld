@@ -28,6 +28,7 @@ var shadow: Polygon2D
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 signal target_player
@@ -202,7 +203,7 @@ func _process(delta: float) -> void:
 		on_platform = true
 	else:
 		on_platform = false
-	
+
 	
 	# Determine if the Character's processing is not paused
 	if not paused:
@@ -281,6 +282,8 @@ func take_damage(delta: float, damage: int = -1):
 		taking_damage = false
 		is_red = false
 	
+	
+	
 func heal_health(delta: float, damage: int = -1):
 	#if damage == -1:
 		#damage = damage_taken
@@ -346,7 +349,6 @@ func update_dimensions():
 		# Store the current width and height of the Character's current Sprite frame
 		width = frame_texture.get_width()
 		height = frame_texture.get_height()
-
 
 
 # Returns the name of a Character's Enum value based on the number it is associated with

@@ -467,17 +467,17 @@ func process_player_nearby_interactables():
 
 
 # Processes the use of a Food Buddy or Food Buddy Fusion's ability
-func process_food_ability_use(food_entity, ability_number: int):
+func process_food_ability_use(food_entity, ability_number: int, delta: float):
 	
 	# Determine if Ability 1 is being used, then process and launch it
 	if ability_number == 1:
 		
-		food_entity.use_ability1(PLAYER)
+		food_entity.use_ability1(PLAYER, delta)
 	
 	# Otherwise, determine if Ability 2 is being used, then process and launch it
 	elif ability_number >= 2:
 		
-		food_entity.use_ability2(PLAYER)
+		food_entity.use_ability2(PLAYER, delta)
 	
 	## Otherwise, a special attack is being used, so process and launch it
 	#else:
@@ -649,9 +649,9 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected = food_buddies_active[1]
 		update_food_buddy_equipped = 2
 		
-		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY1 and PLAYER.field_state_current != PLAYER.FieldState.BUDDY2:
+		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY2:
 			
-			if PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
+			if food_buddy_selected.alive and PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
 				update_food_buddy_equipped = 0
 				PLAYER.equipping_buddy = false
 				return
@@ -669,9 +669,9 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected = food_buddies_active[0]
 		update_food_buddy_equipped = 1
 		
-		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY1 and PLAYER.field_state_current != PLAYER.FieldState.BUDDY2:
+		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY1:
 			
-			if PLAYER.global_position.distance_to(Vector2(food_buddy_selected.global_position.x, food_buddy_selected.global_position.y - food_buddy_selected.height / 2)) > 24:
+			if food_buddy_selected.alive and PLAYER.global_position.distance_to(food_buddy_selected.global_position) > 48:
 				update_food_buddy_equipped = 0
 				PLAYER.equipping_buddy = false
 				return
@@ -682,6 +682,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		
 		PLAYER.fuse_sprite.play("fuse")
 		PLAYER.animation_player.play("fuse")
+		PLAYER.animation_player.queue("RESET")
 		return
 	
 	else:
@@ -707,8 +708,15 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected.visible = true
 		food_buddy_selected.active = true
 		
+		if food_buddy_selected.name == "Dan":
+			food_buddy_selected.label_e_to_interact.visible = true
+			PLAYER.shadow.visible = false
+			PLAYER.sprite.offset.y = -16
+			PLAYER.speed_current = PLAYER.speed_normal
+		
 		PLAYER.field_state_current = PLAYER.FieldState.SOLO
 		PLAYER.equipped_buddy = null
+		PLAYER.shadow.visible = true
 	
 	else:
 		
@@ -722,13 +730,32 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 				# Revert the unselected Food Buddy to their previous FieldState because the selected Food Buddy is swapping places with it (only one Food Buddy in PLAYER FieldState at a time)
 				food_buddy_other.field_state_current = food_buddy_other.field_state_previous
 				food_buddy_other.field_state_previous = FoodBuddy.FieldState.PLAYER
+			
+			food_buddy_other.process_mode = Node.PROCESS_MODE_INHERIT
+			food_buddy_other.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 1)
+			food_buddy_other.visible = true
+			food_buddy_other.active = true
+			
+			if food_buddy_other.name == "Dan":
+				food_buddy_other.label_e_to_interact.visible = true
+				PLAYER.shadow.visible = false
+				PLAYER.sprite.offset.y = -16
+				PLAYER.speed_current = PLAYER.speed_normal
+			
 		
 		# Update the selected Food Buddy's FieldState variables
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
 		food_buddy_selected.field_state_current = FoodBuddy.FieldState.PLAYER
-		food_buddy_selected.process_mode = Node.PROCESS_MODE_DISABLED
-		food_buddy_selected.visible = false
 		food_buddy_selected.active = false
+		
+		if food_buddy_selected.name != "Dan":
+			food_buddy_selected.visible = false
+			food_buddy_selected.process_mode = Node.PROCESS_MODE_DISABLED
+		else:
+			food_buddy_selected.label_e_to_interact.visible = false
+			PLAYER.shadow.visible = false
+			PLAYER.sprite.offset.y = -39
+			PLAYER.speed_current = PLAYER.speed_normal_dan
 		
 		PLAYER.equipped_buddy = food_buddy_selected
 	
@@ -849,17 +876,17 @@ func _on_player_use_ability_solo(damage: int) -> void:
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy: executes the Food Buddy's ability
-func _on_player_use_ability_buddy(buddy_number: int, ability_number: int) -> void:
+func _on_player_use_ability_buddy(buddy_number: int, ability_number: int, delta: float) -> void:
 	
 	# Process the usage of the target Food Buddy's target ability
-	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number)
+	process_food_ability_use(food_buddies_active[buddy_number - 1], ability_number, delta)
 	print(food_buddies_active[buddy_number - 1].name + " has used ability " + str(ability_number))
 
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy Fusion: executes the Food Buddy Fusion's ability
-func _on_player_use_ability_buddy_fusion(ability_number: int) -> void:
-	process_food_ability_use(food_buddy_fusion_active, ability_number)
+func _on_player_use_ability_buddy_fusion(ability_number: int, delta) -> void:
+	process_food_ability_use(food_buddy_fusion_active, ability_number, delta)
 
 
 

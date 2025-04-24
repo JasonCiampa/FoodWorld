@@ -54,8 +54,8 @@ func ready():
 	
 	# Set the stamina cost for each of Dan's two abilities
 	ability_stamina_cost = { 
-		"Ability 1": [5, "Gradual"], 
-		"Ability 2": [25, "Instant"] 
+		"Ability 1": [25, "Gradual"], 
+		"Ability 2": [25, "Gradual"] 
 	}
 	
 	# Set Dan's default speed and current speed
@@ -158,12 +158,50 @@ func fight_field_state_callback() -> void:
 		generate_path()
 
 
+func player_field_state_callback() -> void:
+	pass
+		
+
+
+
+# Throw a left punch
+func use_ability1(player: Player, delta: float):
+	
+	if !player.using_ability:
+		if player.use_stamina(player.stamina_use["Punch"]):
+			
+			player.using_ability = true 
+			
+			player.hand_punching = "left"
+			
+			player.update_animation()
+			print("The Player threw a " + player.hand_punching + " punch!")
+
+
+
+# Throw a right punch
+func use_ability2(player: Player, delta: float):
+	
+	if !player.using_ability:
+		if player.use_stamina(player.stamina_use["Punch"]):
+			
+			player.using_ability = true 
+			
+			player.hand_punching = "right"
+			
+			player.update_animation()
+			print("The Player threw a " + player.hand_punching + " punch!")
+
+
+
 func _on_sprite_animation_looped() -> void:
 	
-	if !paused and !level_up:
+	if !paused and !level_up and target != null:
 		if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_damage in hitbox_damage.get_overlapping_areas():
 			
-			use_ability_solo.emit(self, ability_damage["Solo"])
+			if not (target is Player):
+				use_ability_solo.emit(self, ability_damage["Solo"])
+			
 			timer_ability_cooldown.start(1.5)
 			sprite.play("idle_" + current_direction_name)
 			current_animation_name = "idle"
