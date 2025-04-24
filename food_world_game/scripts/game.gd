@@ -671,7 +671,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		
 		if PLAYER.field_state_current != PLAYER.FieldState.BUDDY1 and PLAYER.field_state_current != PLAYER.FieldState.BUDDY2:
 			
-			if PLAYER.global_position.distance_to(Vector2(food_buddy_selected.global_position.x, food_buddy_selected.global_position.y - food_buddy_selected.height / 2)) > 32:
+			if PLAYER.global_position.distance_to(Vector2(food_buddy_selected.global_position.x, food_buddy_selected.global_position.y - food_buddy_selected.height / 2)) > 24:
 				update_food_buddy_equipped = 0
 				PLAYER.equipping_buddy = false
 				return
@@ -685,7 +685,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		return
 	
 	else:
-		if PLAYER.animation_player.current_animation == "fuse" and PLAYER.animation_player.current_animation_position < 1:
+		if PLAYER.animation_player.current_animation == "fuse" and PLAYER.animation_player.current_animation_position < 0.3:
 			return
 		else:
 			if update_food_buddy_equipped == 1:
@@ -703,7 +703,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
 		food_buddy_selected.field_state_previous = FoodBuddy.FieldState.PLAYER
 		food_buddy_selected.process_mode = Node.PROCESS_MODE_INHERIT
-		food_buddy_selected.global_position = Vector2(PLAYER.global_position.x + 32, PLAYER.global_position.y)
+		food_buddy_selected.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 1)
 		food_buddy_selected.visible = true
 		food_buddy_selected.active = true
 		

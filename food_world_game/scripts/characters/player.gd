@@ -363,8 +363,9 @@ func update_animation():
 		new_animation_name = "idle"
 		new_direction_name = "front"
 	
-	if !equipping_buddy and (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
-		fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
+	if (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
+		if animation_player.current_animation_position > 0.3 or animation_player.current_animation != "fuse":
+			fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
 	
 	elif field_state_current == FieldState.JUICE:
 		if throwing_juicebox:
