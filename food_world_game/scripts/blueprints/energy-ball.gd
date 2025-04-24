@@ -33,6 +33,7 @@ enum Direction {
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 var paused: bool
+var active: bool = true
 
 var position_start: Vector2
 var position_end: Vector2

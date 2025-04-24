@@ -115,6 +115,8 @@ var stamina_use: Dictionary = {
 
 # Speed #
 var speed_sprinting: int = 75
+var speed_normal_dan: int = 60
+var speed_sprinting_dan: int = 85
 var speed_dodging: int = 350
 
 # Sprinting #
@@ -134,6 +136,7 @@ var field_state_current: FieldState = FieldState.SOLO
 # Juice #
 var juiceboxes: int = 1
 var juice: int = 5000
+var juicebox_ready: bool = false
 
 var juicebox_throw_coords
 var throwing_juicebox
@@ -247,8 +250,19 @@ func _process(delta: float) -> void:
 		if taking_damage:
 			take_damage(delta)
 			
-		if healing_health:
+			if equipped_buddy != null and (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
+				equipped_buddy.self_modulate = self_modulate
+		
+		elif healing_health:
 			heal_health(delta)
+			
+			if equipped_buddy != null and (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
+				equipped_buddy.self_modulate = self_modulate
+		
+		else:
+			self_modulate = Color(1, 1, 1, 1)
+		
+		
 		
 		if timers_paused:
 			timers_paused = false
@@ -256,7 +270,7 @@ func _process(delta: float) -> void:
 				game_timer.paused = false
 		
 		
-		process_ability_use()
+		process_ability_use(delta)
 		update_movement_direction()
 		update_animation()
 		update_stamina(delta)
@@ -280,6 +294,7 @@ func _process(delta: float) -> void:
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
+		#print(using_ability)
 		#print(name)
 		#print("Berries Current: ", berries)
 		#print(collision_value_current)
@@ -330,7 +345,11 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func update_animation():
+func update_animation(animation_name: String = ""):
+	
+	if animation_name != "":
+		sprite.play(animation_name)
+		return
 	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
 	
@@ -362,20 +381,45 @@ func update_animation():
 		new_animation_name = "idle"
 		new_direction_name = "front"
 	
-	if (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
-		if animation_player.current_animation_position > 0.3 or animation_player.current_animation != "fuse":
-			fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
-	
-	elif field_state_current == FieldState.JUICE:
-		if throwing_juicebox:
-			new_animation_name = "juice_" + new_animation_name + "_throw"
-		else:
-			new_animation_name = "juice_" + new_animation_name
-	
 	if is_sprinting:
 		sprite.speed_scale = 1.5
 	else:
 		sprite.speed_scale = 1
+	
+	if (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
+		if equipped_buddy != null and equipped_buddy.name == "Dan":
+			
+			equipped_buddy.global_position = global_position
+			equipped_buddy.sprite.flip_h = sprite.flip_h
+			equipped_buddy.sprite.speed_scale = sprite.speed_scale
+			
+			if is_sprinting:
+				equipped_buddy.using_ability = true
+				equipped_buddy.update_animation("ability_" + new_direction_name)
+			else:
+				equipped_buddy.using_ability = false
+				equipped_buddy.update_animation(new_animation_name + "_" + new_direction_name)
+			
+			
+			if juicebox_ready:
+				new_animation_name = "juice_" + new_animation_name
+				
+				if throwing_juicebox:
+					new_animation_name = new_animation_name + "_throw"
+			
+			
+			if equipped_buddy.sprite.animation in equipped_buddy.animation_callbacks.keys():
+				equipped_buddy.animation_callbacks.get(equipped_buddy.sprite.animation).call()
+		
+		elif (animation_player.current_animation_position > 0.3 or animation_player.current_animation != "fuse"):
+			fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
+	
+	elif field_state_current == FieldState.JUICE:
+		
+		if throwing_juicebox:
+			new_animation_name = "juice_" + new_animation_name + "_throw"
+		else:
+			new_animation_name = "juice_" + new_animation_name
 	
 	# If the animation has changed, play the new animation
 	if sprite.animation != (fusion_name + new_animation_name + "_" + new_direction_name) or paused or level_up:
@@ -408,13 +452,21 @@ func update_animation():
 # Starts the Player's sprint
 func sprint_start():
 	is_sprinting = true
-	speed_current = speed_sprinting
+	
+	if equipped_buddy != null and equipped_buddy.name == "Dan":
+		speed_current = speed_sprinting_dan
+	else:
+		speed_current = speed_sprinting
 
 
 # Ends the Player's sprint
 func sprint_end():
 	is_sprinting = false
-	speed_current = speed_normal
+	
+	if equipped_buddy != null and equipped_buddy.name == "Dan":
+		speed_current = speed_normal_dan
+	else:
+		speed_current = speed_normal
 
 
 
@@ -488,7 +540,7 @@ func calculate_velocity(direction):
 
 
 # Checks if a Player has used one of their abilities and processes their input to determine what signals to send and what values to update
-func process_ability_use() -> int:
+func process_ability_use(delta: float) -> int:
 	var ability_number: int = 0
 	
 	if clicked_this_frame:
@@ -520,7 +572,7 @@ func process_ability_use() -> int:
 					print("The Player threw a " + hand_punching + " punch!")
 		
 		
-		elif field_state_current == FieldState.JUICE:
+		elif field_state_current == FieldState.JUICE or juicebox_ready:
 			if !throwing_juicebox:
 				if ability_number >= 1 and juiceboxes > 0:
 					if use_stamina(stamina_use["Juice Throw"]):
@@ -531,11 +583,11 @@ func process_ability_use() -> int:
 		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY1:
-			use_ability_buddy.emit(1, ability_number)
+			use_ability_buddy.emit(1, ability_number, delta)
 		
 		# Otherwise, determine if the Player is using their second Food Buddy's ability, then launch the correct ability
 		elif field_state_current == FieldState.BUDDY2:
-			use_ability_buddy.emit(2, ability_number)
+			use_ability_buddy.emit(2, ability_number, delta)
 		
 		# Otherwise, the Player is using their Food Buddy's Fusion ability, so launch the correct ability
 		else:
@@ -569,7 +621,7 @@ func update_movement_direction():
 func update_movement_velocity(delta):
 	
 	
-	if using_ability or equipping_buddy:
+	if equipping_buddy or (using_ability and equipped_buddy != null and equipped_buddy.name != "Dan"):
 		velocity.x = 0
 		velocity.y = 0
 		return
@@ -661,10 +713,12 @@ func update_field_state():
 		# Determine which FieldState the Player has now selected, then set the selection as the current FieldState, send a signal to the Game to update the corresponding Food Buddy, and trigger the correct animation
 		if !equipping_buddy and Input.is_action_just_pressed("toggle_buddy1_equipped"):
 			equipping_buddy = true
+			is_interacting = true
 			toggle_buddy_equipped.emit(1)
 		
 		elif !equipping_buddy and Input.is_action_just_pressed("toggle_buddy2_equipped"):
 			equipping_buddy = true
+			is_interacting = true
 			toggle_buddy_equipped.emit(2)
 		
 		elif Input.is_action_just_pressed("toggle_buddy_fusion_equipped"):
@@ -674,8 +728,18 @@ func update_field_state():
 			print("Player's FieldState has been updated to FUSION")
 		
 		
-		elif field_state_current == FieldState.SOLO or field_state_current == FieldState.JUICE and Input.is_action_just_pressed("toggle_juicebox"):
+		elif Input.is_action_just_pressed("toggle_juicebox") and field_state_current == FieldState.SOLO or (field_state_current == FieldState.JUICE or (equipped_buddy != null and equipped_buddy.name == "Dan")):
+			
+			if juicebox_ready:
+				juicebox_ready = false
+				return
+			
 			if !using_ability and !throwing_juicebox and juiceboxes > 0:
+				
+				if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
+					juicebox_ready = true
+					return
+				
 				field_state_current = FieldState.JUICE
 				
 				print("Player's FieldState has been updated to JUICE")
@@ -890,28 +954,28 @@ func test(delta: float):
 	stamina_current = 100
 	field_state_current = FieldState.SOLO
 	Input.action_press("ability2")
-	print("[Ability Test] Player Ability 2 On Right-Click:     ", process_ability_use() == 2)
+	print("[Ability Test] Player Ability 2 On Right-Click:     ", process_ability_use(delta) == 2)
 	print("[Ability Test] Player Ability 2 Depletes Stamina:   ", stamina_current < 100)
 	Input.action_release("ability2")
 	
 	stamina_current = 100
 	field_state_current = FieldState.BUDDY1
 	Input.action_press("ability2")
-	print("[Ability Test] Buddy Ability 2 On Right-Click:      ", process_ability_use() == 2)
+	print("[Ability Test] Buddy Ability 2 On Right-Click:      ", process_ability_use(delta) == 2)
 	print("[Ability Test] Buddy Ability 2 Depletes Stamina:    ", stamina_current < 100)
 	Input.action_release("ability2")
 	
 	stamina_current = 100
 	field_state_current = FieldState.SOLO
 	Input.action_press("ability1")
-	print("[Ability Test] Player Ability 1 On Left-Click:      ", process_ability_use() == 1)
+	print("[Ability Test] Player Ability 1 On Left-Click:      ", process_ability_use(delta) == 1)
 	print("[Ability Test] Player Ability 1 Depletes Stamina:   ", stamina_current < 100)
 	Input.action_release("ability1")
 	
 	stamina_current = 100
 	field_state_current = FieldState.BUDDY1
 	Input.action_press("ability1")
-	print("[Ability Test] Buddy Ability 1 On Left-Click:       ", process_ability_use() == 1)
+	print("[Ability Test] Buddy Ability 1 On Left-Click:       ", process_ability_use(delta) == 1)
 	print("[Ability Test] Buddy Ability 1 Depletes Stamina:    ", stamina_current < 100)
 	Input.action_release("ability1")
 	
@@ -929,13 +993,18 @@ func _on_sprite_animation_finished() -> void:
 		juiceboxes -= 1
 		
 		if juiceboxes == 0:
-			field_state_current = FieldState.SOLO
+			if juicebox_ready:
+				juicebox_ready = false
+				print("Player has unequipped their juicebox")
+			else:
+				field_state_current = FieldState.SOLO
 			print("Player's FieldState has been updated to SOLO")
 		
 		update_animation()
 	
 	if "ability" in sprite.animation:
 		using_ability = false
+		print("ABILITY ENDED")
 		if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
 			update_animation()
 		else:
@@ -958,5 +1027,7 @@ func _on_sprite_animation_changed() -> void:
 
 
 func _on_animation_player_animation_changed(old_name: StringName, new_name: StringName) -> void:
+	
 	if old_name == "fuse" and new_name == "RESET":
 		equipping_buddy = false
+		is_interacting = false

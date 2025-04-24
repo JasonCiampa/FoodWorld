@@ -152,6 +152,8 @@ func start(freeze_subjects: Array[Node2D]):
 	
 	for buddy in active_food_buddies:
 		
+		buddy.sprite.speed_scale = 1
+		
 		if buddy.health_current <= 0:
 			buddy.revive_time_remaining = buddy.revive_time_total
 			buddy.alive = true
@@ -177,6 +179,7 @@ func start(freeze_subjects: Array[Node2D]):
 	player.previous_animation_frame_progress = player.sprite.get_frame_progress()
 	player.previous_modulate = player.sprite.self_modulate
 	player.sprite.self_modulate = Color(1, 1, 1, 1)
+	player.sprite.speed_scale = 1
 	
 	player.direction_current_horizontal = player.Direction.IDLE
 	player.direction_current_vertical = player.Direction.IDLE
