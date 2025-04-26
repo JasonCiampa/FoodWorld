@@ -115,6 +115,7 @@ func _ready() -> void:
 	
 	# Create the instance of the Game's Tile Manager and pass it all of the tilemaps in the game
 	GameTileManager = load("res://scripts/tile-manager.gd").new(world_tilemaps)
+	add_child(GameTileManager.timer)
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
@@ -198,12 +199,14 @@ func _process(delta: float) -> void:
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
-		GameTileManager.process_nearby_tiles(PLAYER, 3)
-		GameTileManager.process_nearby_tiles(food_buddies_active[0], 4)
-		GameTileManager.process_nearby_tiles(food_buddies_active[1], 4)
+		GameTileManager.process_nearby_tiles(PLAYER, 4)
+		GameTileManager.process_nearby_tiles(food_buddies_active[0], 5)
+		GameTileManager.process_nearby_tiles(food_buddies_active[1], 5)
+		timer_process_tiles.start(0.38) # run this only every .38 seconds
 		
 		for enemy in enemies:
 			GameTileManager.process_nearby_tiles(enemy, 3)
+		
 
 	
 	

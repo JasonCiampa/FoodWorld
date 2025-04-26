@@ -24,12 +24,19 @@ enum TileLayers { PITS, WATER, GROUND, ENVIRONMENT, SKY }
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var timer: Timer
+
 var world_tilemaps: Dictionary
 
 var tilemaps_active: Array[TileMapLayer]
 
 var tiles_occupied: Dictionary
 var tiles_enabled_navigation: Dictionary
+
+var next_nav_index_to_add: int = 0
+var next_nav_index_to_remove: int = 0
+var next_nav_index_to_remove_world: TileMapLayer = null
+var nav_tile_cap: int = 500
 
 var bushes: Array[Vector2i]
 
@@ -68,6 +75,9 @@ func _physics_process(_delta: float) -> void:
 
 
 func _init(_world_tilemaps: Dictionary) -> void:
+	timer = Timer.new()
+	timer.one_shot = true
+	
 	world_tilemaps = _world_tilemaps
 	
 	var tiles_used_environment: Array
@@ -219,6 +229,10 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 # Process the tiles nearby a given Character on the given Tilemap(s)
 func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
+	if timer.is_stopped():
+		if character is Player:
+			timer.start(0.15)
+	
 	if character is Enemy:
 		if tiles_occupied.get(Vector2i(character.navigation_agent.target_position)) != null:
 			character.generate_path(Vector2(character.global_position.x + (character.frolic_range * character.RNG.randf_range(-1, 1)), character.global_position.y + (character.frolic_range * character.RNG.randf_range(-1, 1))))
@@ -289,11 +303,53 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 						
 						if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
 							
-							# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
-							tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, tiles_to_process[tile].tilemap.get_cell_source_id(tiles_to_process[tile].coords_map), tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
+							# If the tile is added to the enabled navigation tiles list with key equal to its fake index and the value being the actual tile, increment the fake index counter and check if it needs to loop around to start overwriting old tiles
+							if tiles_enabled_navigation.get(next_nav_index_to_add) == null:
+								
+								var new_nav_tile = tiles_to_process[tile]
+								
+								# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
+								new_nav_tile.tilemap.set_cell(new_nav_tile.coords_map, new_nav_tile.tilemap.get_cell_source_id(new_nav_tile.coords_map), new_nav_tile.tilemap.get_cell_atlas_coords(new_nav_tile.coords_map), 2)
+								
+								tiles_enabled_navigation.get_or_add(next_nav_index_to_add, new_nav_tile)
+								
+								next_nav_index_to_add += 1
+								
+								#if next_nav_index_to_add == next_nav_index_to_remove + 1:
+									#next_nav_index_to_remove_world = new_nav_tile.tilemap
+								
+								if next_nav_index_to_add % nav_tile_cap == 0:
+									next_nav_index_to_add = 0
+								
 							
-							# Add the tile to the enabled navigation tiles list
-							tiles_enabled_navigation.get_or_add(tiles_to_process[tile].coords_map, true)
+							
+								if tiles_enabled_navigation.size() == nav_tile_cap:
+									
+									# Create the reference to the cell and it set it back to a normal cell without path-finding (non-alternative)
+									var tile_to_remove: Tile = tiles_enabled_navigation.get(next_nav_index_to_remove)
+									tile_to_remove.tilemap.set_cell(tile_to_remove.coords_map, 0, tile_to_remove.tilemap.get_cell_atlas_coords(tile_to_remove.coords_map))
+									
+									# Erase the cell from the dictionary so it is ready to be overwritten
+									tiles_enabled_navigation.erase(next_nav_index_to_remove)
+									
+									# Increment the cell and see if we need to loop around to start removing older cells at the beginning
+									next_nav_index_to_remove += 1
+									
+									if next_nav_index_to_remove % nav_tile_cap == 0:
+										next_nav_index_to_remove = 0
+									
+									unload_tile(tile_to_remove)
+									tile_to_remove = null
+									
+									#if next_nav_index_to_remove == nav_tile_cap
+									#next_nav_index_to_add += 1
+								
+								# Unload the tile
+								terrain_tile.free()
+								terrain_tile = null
+								
+								continue
+					
 					
 					# Unload the tile
 					terrain_tile.free()
