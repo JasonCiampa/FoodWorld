@@ -46,6 +46,8 @@ var playerEntering: bool = false
 var playerExiting: bool = false
 
 var player_offset: Vector2 = Vector2(0, 0)
+var foodbuddy1_offset: Vector2 = Vector2(0, 0)
+var foodbuddy2_offset: Vector2 = Vector2(0, 0)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

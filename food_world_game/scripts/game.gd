@@ -37,6 +37,7 @@ var test_cases_complete: bool = false
 
 @onready var scene_tree = get_tree()
 
+@onready var ocean_tilemap: TileMapLayer = $"World Map/Ocean/Water"
 
 var update_food_buddy_equipped: int = 0
 
@@ -409,15 +410,12 @@ func process_player_nearby_interactables():
 	if interactables.size() == 0:
 		return
 	
-	
 	# Store a list of all hitboxes that are overlapping with the Player's Hitbox
 	var overlapping_hitboxes = PLAYER.hitbox_damage.get_overlapping_areas()
-	
 	
 	# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
 	if closest_interactable_to_player == null or !closest_interactable_to_player.active:
 		var count: int = 0
-		
 		
 		while closest_interactable_to_player == null or !closest_interactable_to_player.active:
 			closest_interactable_to_player = interactables[count]
@@ -577,6 +575,10 @@ func _on_player_interact(delta: float) -> void:
 	
 	# Determine if the closest Interactable to the Player is in range for an interaction, then trigger the interaction
 	if closest_interactable_to_player.in_range:
+		
+		if current_building != null and current_building != closest_interactable_to_player:
+			if current_building.in_range:
+				closest_interactable_to_player = current_building
 		
 		# Determine if Brittany is the closest interactable, then ensure her berry bot prompt is disabled too.
 		if closest_interactable_to_player == BRITTANY:
@@ -976,7 +978,7 @@ func _on_character_die(character: CharacterBody2D) -> void:
 # FOOD BUDDY CALLBACKS #
 
 # Callback function that executes whenever the Food Buddy wants to use a solo ability: processes the solo attack against the Food Buddy's target enemy
-func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int, attack_hitbox: Area2D = null) -> void:
+func _on_food_buddy_use_ability_solo(food_buddy: FoodBuddy, damage: int, _attack_hitbox: Area2D = null) -> void:
 	process_attack(food_buddy.target, food_buddy, damage)
 
 
@@ -1101,9 +1103,11 @@ func _on_tile_object_enter_game(tile: Tile):
 	
 	var tile_object_location: Vector2
 	
-	if tile.type == "building":
+	if "building" == tile.type:
 		tile_object_location = tile.data.get_custom_data("global_position")
-	
+		if tile_object_location == Vector2(0, 0):
+			
+			tile_object_location = tile.coords_local
 	else:
 		tile_object_location = tile.coords_local
 	
@@ -1114,12 +1118,14 @@ func _on_tile_object_enter_game(tile: Tile):
 		var tile_object: Node2D = load("res://scenes/blueprints/" + tile.type + ".tscn").instantiate()
 		
 		# Determine if the Tile Object is a building
-		if tile.type == "building":
+		if "building" in tile.type:
 			
 			# Connect the Tile Object's signals to the game
 			tile_object.player_enter.connect(_on_player_enter_building)
 			tile_object.player_exit.connect(_on_player_enter_building)
 			tile_object.player_offset = tile.data.get_custom_data("player_offset")
+			tile_object.foodbuddy1_offset = tile.data.get_custom_data("foodbuddy1_offset")
+			tile_object.foodbuddy2_offset = tile.data.get_custom_data("foodbuddy2_offset")
 		
 		tile_object.global_position = tile_object_location
 		
@@ -1173,6 +1179,8 @@ func fade_screen(final_opacity: float, delta: float):
 					# Disable the visibility and collisions of the outdoor tilemaps now that the player is going inside
 					PLAYER.current_tilemaps[tilemap].visible = false
 					PLAYER.current_tilemaps[tilemap].collision_enabled = false
+				
+				ocean_tilemap.visible = false
 			
 			# Otherwise, the exteriors of the building are not currently visible (meaning the player is exiting from outside) 
 			else:
@@ -1191,7 +1199,8 @@ func fade_screen(final_opacity: float, delta: float):
 					# Enable the visibility and collisions of the outdoor tilemaps now that the player is going back outside
 					PLAYER.current_tilemaps[tilemap].visible = true
 					PLAYER.current_tilemaps[tilemap].collision_enabled = true
-			
+				
+				ocean_tilemap.visible = true
 			# Start the timer_fade for 100 seconds so this code doesn't break by thinking the timer_fade is stopped when it shouldnt be affecting it anymore
 			timer_fade.start(100)
 			
@@ -1216,18 +1225,25 @@ func _on_player_enter_building(building: Building, _delta: float):
 		screen_fading = true
 		current_building = building
 		
+		for asset in get_all_assets_in_game():
+			asset.paused = true
+			
+			if asset is CharacterBody2D:
+				asset.velocity = Vector2(0, 0)
+		
 		# Freeze processing of everything except the game itself
 	else:
 		
 		if screen_fading and modulate.a == 0:
 			
-			
 			PLAYER.global_position = PLAYER.global_position - current_building.player_offset
 			PLAYER.in_building = true
 			
-			for foodbuddy in food_buddies_active:
-				foodbuddy.global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y + 5)
-				foodbuddy.in_building = true
+			food_buddies_active[0].global_position = PLAYER.global_position - current_building.foodbuddy1_offset
+			food_buddies_active[0].in_building = true
+			
+			food_buddies_active[1].global_position = PLAYER.global_position - current_building.foodbuddy2_offset
+			food_buddies_active[1].in_building = true
 			
 			current_building.current_occupants.append(PLAYER)
 			current_building.current_occupants.append(food_buddies_active[0])
@@ -1235,6 +1251,9 @@ func _on_player_enter_building(building: Building, _delta: float):
 			
 			current_building.playerEntering = false
 			current_building.label_e_to_interact.text = "Press 'E' to\nExit"
+			
+			for asset in get_all_assets_in_game():
+				asset.paused = false
 
 
 
@@ -1243,16 +1262,26 @@ func _on_player_exit_building(_building: Building, _delta: float):
 	
 	if !screen_fading:
 		screen_fading = true
+		
+		for asset in get_all_assets_in_game():
+			asset.paused = true
+			
+			if asset is CharacterBody2D:
+				asset.velocity = Vector2(0, 0)
+		
 	else:
 		if screen_fading and modulate.a == 0:
 			
 			PLAYER.global_position = PLAYER.global_position + current_building.player_offset
-			PLAYER.in_building = true
+			PLAYER.in_building = false
 			
-			for foodbuddy in food_buddies_active:
-				foodbuddy.global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y - 5)
-				foodbuddy.in_building = false
+			food_buddies_active[0].global_position = PLAYER.global_position + current_building.foodbuddy1_offset
+			food_buddies_active[0].in_building = false
 			
+			food_buddies_active[1].global_position = PLAYER.global_position + current_building.foodbuddy2_offset
+			food_buddies_active[1].in_building = false
+			
+
 			# Remove the Player and their Food Buddies from the list of current occupants
 			for occupant in range(current_building.current_occupants.size() - 1, -1, -1):
 				if current_building.current_occupants[occupant] is Player or current_building.current_occupants[occupant] is FoodBuddy:
@@ -1262,6 +1291,9 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
 			current_building = null
+			
+			for asset in get_all_assets_in_game():
+				asset.paused = false
 
 
 func _on_player_throw_juicebox(destination: Vector2) -> void:

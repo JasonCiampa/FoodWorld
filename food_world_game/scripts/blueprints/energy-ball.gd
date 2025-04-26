@@ -108,7 +108,7 @@ func get_parabola_point(start: Vector2, end: Vector2, height: float, t: float) -
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func throw_start(destination: Vector2, direction_horizontal: Direction):
+func throw_start(destination: Vector2, _direction_horizontal: Direction):
 	
 	# If the juicebox hasn't already been thrown
 	if !in_air:

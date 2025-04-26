@@ -164,7 +164,7 @@ func _on_sprite_animation_finished() -> void:
 
 
 # Throw a punch as the Player
-func use_ability1(player: Player, delta: float):
+func use_ability1(player: Player, _delta: float):
 	if !player.using_ability:
 		if player.use_stamina(player.stamina_use["Punch"]):
 			
@@ -181,7 +181,7 @@ func use_ability1(player: Player, delta: float):
 
 
 # Throw a juicebox while on the player's back
-func use_ability2(player: Player, delta: float):
+func use_ability2(player: Player, _delta: float):
 	if player.juiceboxes > 0:
 		if player.use_stamina(player.stamina_use["Juice Throw"]):
 			print("Brittany threw a juicebox!")

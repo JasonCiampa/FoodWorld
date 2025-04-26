@@ -111,13 +111,13 @@ func game_over(freeze_subjects: Array[Node2D]):
 	
 	if player.equipped_buddy != null and player.equipped_buddy.name == "Dan":
 		player.shadow.visible = false
-		player.on_screen_notifier.position.y + 24
+		player.on_screen_notifier.position.y += 24
 		player.sprite.offset.y = -16
-		player.hitbox_damage.position.y + 24
-		player.body_collider.position.y + 24
-		player.feet_collider.position.y + 24
-		player.feet_sensor.position.y + 24
-		player.shadow.position.y + 24
+		player.hitbox_damage.position.y += 24
+		player.body_collider.position.y += 24
+		player.feet_collider.position.y += 24
+		player.feet_sensor.position.y += 24
+		player.shadow.position.y += 24
 	
 	for buddy in active_food_buddies:
 		buddy.sprite.play("die_front")

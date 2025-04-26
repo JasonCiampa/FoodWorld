@@ -165,7 +165,7 @@ func player_field_state_callback() -> void:
 
 
 # Throw a left punch
-func use_ability1(player: Player, delta: float):
+func use_ability1(player: Player, _delta: float):
 	
 	if !player.using_ability:
 		if player.use_stamina(player.stamina_use["Punch"]):
@@ -180,7 +180,7 @@ func use_ability1(player: Player, delta: float):
 
 
 # Throw a right punch
-func use_ability2(player: Player, delta: float):
+func use_ability2(player: Player, _delta: float):
 	
 	if !player.using_ability:
 		if player.use_stamina(player.stamina_use["Punch"]):

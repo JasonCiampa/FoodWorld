@@ -245,11 +245,7 @@ func _physics_process(delta: float) -> void:
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func take_damage(delta: float, damage: int = -1):
-	#if damage == -1:
-		#damage = damage_taken
-	#else:
-		#damage_taken = damage
+func take_damage(delta: float):
 	
 	if healing_health:
 		healing_health = false
@@ -286,11 +282,8 @@ func take_damage(delta: float, damage: int = -1):
 	
 	
 	
-func heal_health(delta: float, damage: int = -1):
-	#if damage == -1:
-		#damage = damage_taken
-	#else:
-		#damage_taken = damage
+func heal_health(delta: float):
+
 	if taking_damage:
 		taking_damage = false
 	
