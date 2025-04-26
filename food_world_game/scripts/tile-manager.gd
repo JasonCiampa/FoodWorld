@@ -273,6 +273,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 		# Execute the callback function associated with the type of Tile of this iteration
 		execute_tile_callback(tiles_to_process[tile], character)
 		
+		
 		# Determine if the Tile is a default ground tile (not an alternative tile)
 		if tiles_to_process[tile].map_type == Tile.MapType.GROUND:
 			
@@ -289,7 +290,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 						if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
 							
 							# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
-							tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
+							tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, tiles_to_process[tile].tilemap.get_cell_source_id(tiles_to_process[tile].coords_map), tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 2)
 							
 							# Add the tile to the enabled navigation tiles list
 							tiles_enabled_navigation.get_or_add(tiles_to_process[tile].coords_map, true)
@@ -309,7 +310,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 						if "ledge" not in terrain_tile.type:
 							
 							if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
-								tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, 0, tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
+								tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, tiles_to_process[tile].tilemap.get_cell_source_id(tiles_to_process[tile].coords_map), tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
 		
 		# Unload the tile
 		tiles_to_process[tile].free()

@@ -1217,10 +1217,14 @@ func _on_player_enter_building(building: Building, _delta: float):
 	else:
 		
 		if screen_fading and modulate.a == 0:
-
+			
+			
 			PLAYER.global_position = PLAYER.global_position - current_building.player_offset
-			food_buddies_active[0].global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y + 5)
-			food_buddies_active[1].global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y + 5)
+			PLAYER.in_building = true
+			
+			for foodbuddy in food_buddies_active:
+				foodbuddy.global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y + 5)
+				foodbuddy.in_building = true
 			
 			current_building.current_occupants.append(PLAYER)
 			current_building.current_occupants.append(food_buddies_active[0])
@@ -1238,9 +1242,13 @@ func _on_player_exit_building(_building: Building, _delta: float):
 		screen_fading = true
 	else:
 		if screen_fading and modulate.a == 0:
+			
 			PLAYER.global_position = PLAYER.global_position + current_building.player_offset
-			food_buddies_active[0].global_position = Vector2(PLAYER.global_position.x - 30, PLAYER.global_position.y - 5)
-			food_buddies_active[1].global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y - 5)
+			PLAYER.in_building = true
+			
+			for foodbuddy in food_buddies_active:
+				foodbuddy.global_position = Vector2(PLAYER.global_position.x + 30, PLAYER.global_position.y - 5)
+				foodbuddy.in_building = false
 			
 			# Remove the Player and their Food Buddies from the list of current occupants
 			for occupant in range(current_building.current_occupants.size() - 1, -1, -1):

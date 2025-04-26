@@ -68,6 +68,8 @@ var dialogue_texture: Resource
 
 var active: bool = true
 
+var in_building: bool = false
+
 # Gravity #
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
