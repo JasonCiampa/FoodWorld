@@ -66,6 +66,8 @@ var LEFT_DIRECTION : Vector2 = Vector2(Direction.LEFT, Direction.IDLE)
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 var dialogue_texture: Resource
 
+var current_world: String = ""
+
 var active: bool = true
 
 var in_building: bool = false

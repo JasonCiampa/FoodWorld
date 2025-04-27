@@ -12,6 +12,8 @@ class_name TileManager
 # A signal emitted to game.gd whenever a Tile's connected object is supposed to be loaded into the game
 signal tile_object_enter_game
 
+signal world_changed
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -213,35 +215,36 @@ func unload_tile(tile: Tile):
 # Determine where the Character is in the world and send a signal to the game to update their location (returns TileMap to process)
 func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 	
-	# Determine if there is not any data for the given Tile in its associated Tilemap
-	if tile.type == "":
-	
-		# Iterate over each world that contains Tilemaps
-		for world in world_tilemaps:
-			
-			# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
-			var new_tile: Tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, tile.coords_map)
-			
-			# Determine if the newly created Tile has data in the world of this iteration
-			if new_tile.type != "":
-				
-				character.current_tilemaps = world_tilemaps[world]
-			
-				return new_tile
-			
-			# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
-			else:
-				
-				# Unload the Tile and return from the function now that the world has been updated
-				unload_tile(new_tile)
-				new_tile = null
+	# Iterate over each world that contains Tilemaps
+	for world in world_tilemaps:
 		
-		# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
-		return null
+		# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
+		var new_tile: Tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, character.current_tile_position)
+		
+		# Determine if the newly created Tile has data in the world of this iteration
+		if new_tile.type != "":
+			
+			character.current_tilemaps = world_tilemaps[world]
+			
+			if character.current_world == "":
+				character.current_world = world
+			
+			if character is Player and world != character.current_world:
+				print("Current World: ", character.current_world, "\nNew World: ", world)
+				character.current_world = world
+				world_changed.emit(character)
+			
+			return new_tile
+		
+		# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
+		else:
+			
+			# Unload the Tile and return from the function now that the world has been updated
+			unload_tile(new_tile)
+			new_tile = null
 	
-	# Otherwise, the Tile already has data in its associated Tilemap, so return the tile without changes
-	else:
-		return tile
+	# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
+	return tile
 
 
 

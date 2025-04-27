@@ -19,6 +19,10 @@ extends Node2D
 
 var food_citizen = load("res://scenes/blueprints/food-citizen.tscn").instantiate()
 
+@onready var WorldCenterSong: AudioStreamPlayer = $WorldCenter
+@onready var BatterBadlandsSong: AudioStreamPlayer = $BatterBadlands
+@onready var GardenSong: AudioStreamPlayer = $GardenWorld
+
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -77,12 +81,17 @@ var GameTileManager: TileManager
 
 var timer_fade: Timer
 var timer_process_tiles: Timer
+var timer_fade_music: Timer
 var screen_fading: bool = false
 var current_building: Building
 
 var world_tilemaps: Dictionary
 
 var musicStarted : bool = false
+var next_song: AudioStreamPlayer
+var transitioning_songs: bool = false
+var music_fade_in_duration: float = 3.5
+var music_fade_out_duration: float = 2
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -93,6 +102,7 @@ func _ready() -> void:
 	
 	timer_fade = $"Fade Timer"
 	timer_process_tiles = $"Process Tiles Timer"
+	timer_fade_music = $"Fade Music Timer"
 	
 	# Add Malick and Sally into the active Food Buddies list
 	food_buddies_active.append(DAN)
@@ -120,6 +130,7 @@ func _ready() -> void:
 	
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
+	GameTileManager.world_changed.connect(_on_character_changed_world)
 	bushes = GameTileManager.get_bushes()
 
 	#MALICK.current_tilemaps = world_tilemaps["center"]
@@ -184,12 +195,17 @@ func _process(delta: float) -> void:
 	#print(current_building.current_occupants)
 	#print(current_building.usual_occupants[0].process_mode)
 	
+	print(MUSIC.volume_db)
+	
+	if transitioning_songs:
+		process_music_fade(delta)
+	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
 		_on_player_toggle_buddy_equipped(update_food_buddy_equipped)
 	
-	#if !musicStarted and timer_fade.is_stopped():
-		#musicStarted = true
-		#MUSIC.play()
+	if !musicStarted and timer_fade.is_stopped():
+		musicStarted = true
+		MUSIC.play()
 		
 	# Update the list of on-screen enemies, food citizens, and interactables
 	enemies = scene_tree.get_nodes_in_group("enemies")
@@ -1471,3 +1487,41 @@ func load_food_buddy(foodbuddy: FoodBuddy):
 	foodbuddy.target_player.connect(_on_character_target_player)
 	foodbuddy.update_altitude.connect(_on_character_update_altitude)
 	add_child(foodbuddy)
+
+func _on_character_changed_world(character: GameCharacter):
+	
+	transition_music(character.current_world)
+
+func transition_music(character_world: String):
+	
+	timer_fade_music.start(music_fade_out_duration)
+	
+	if character_world == "center":
+		next_song = WorldCenterSong
+	elif character_world == "sweets":
+		next_song = BatterBadlandsSong
+	elif character_world == "garden":
+		next_song = GardenSong
+	
+	transitioning_songs = true
+
+func process_music_fade(delta: float):
+	if !timer_fade_music.is_stopped() and next_song != null:
+		MUSIC.volume_db = lerp(MUSIC.volume_db, float(-80), delta * (music_fade_out_duration - timer_fade_music.time_left) / music_fade_out_duration)
+	else:
+		
+		if next_song != null:
+			MUSIC.stop()
+			MUSIC = next_song
+			MUSIC.volume_db = -17
+			timer_fade_music.start(music_fade_in_duration)
+			MUSIC.play()
+			next_song = null
+			
+		if !timer_fade_music.is_stopped():
+			MUSIC.volume_db = lerp(MUSIC.volume_db, float(-8), delta * (music_fade_in_duration - timer_fade_music.time_left) / music_fade_in_duration)
+		else:
+			MUSIC.volume_db = -8
+			transitioning_songs = false
+		
+	
