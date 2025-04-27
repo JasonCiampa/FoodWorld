@@ -235,7 +235,7 @@ func end():
 	foodbuddy2.level_up = false
 	for buddy in active_food_buddies:
 		
-		if buddy.field_state_current == FoodBuddy.FieldState.FIGHT and !buddy.target.alive:
+		if buddy.field_state_current == FoodBuddy.FieldState.FIGHT and (!buddy.target == null or buddy.target.alive):
 			buddy.using_ability = false
 		
 		if ("die" not in buddy.previous_animation) and ("ability" in buddy.previous_animation and buddy.target.alive):

@@ -43,7 +43,6 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
-z_index = 1
 disable_mode = 1
 collision_layer = 3584
 collision_mask = 0

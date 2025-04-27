@@ -18,6 +18,8 @@ extends InteractableAsset
 signal player_enter
 signal player_exit
 
+signal connect_occupant_to_game
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -57,7 +59,20 @@ var foodbuddy2_offset: Vector2 = Vector2(0, 0)
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+# Called when node enters scene tree
+func _ready() -> void:
+	super()
+	
+	# Load in every occupant and replace the file path with the actual Node
+	for occupant_index in range(0, usual_occupants.size()):
+		usual_occupants[occupant_index] = load(usual_occupants[occupant_index]).instantiate()
+		usual_occupants[occupant_index].process_mode = Node.PROCESS_MODE_DISABLED
+		usual_occupants[occupant_index].visible = false
+		usual_occupants[occupant_index].paused = true
+		usual_occupants[occupant_index].in_building = true
+		connect_occupant_to_game.emit(usual_occupants[occupant_index])
+	
+	
 # Called every frame. Updates the Building's physics
 func _physics_process(_delta: float) -> void:
 	pass
@@ -72,6 +87,7 @@ func _physics_process(_delta: float) -> void:
 
 # A custom function to execute the Building's logic for when the Player interacts with them
 func interact_with_player(player: Player, delta: float):
+	
 	
 	# If the Player is not one of the occupants of the house, emit the enter signal because they're entering by interacting with the door
 	if player not in current_occupants:
@@ -112,5 +128,6 @@ func process(_delta: float):
 # A custom physics_process function that each Building subclass should personally define. This is called in the default Building class's '_physics_process()' function
 func physics_process(_delta: float) -> void:
 	pass
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

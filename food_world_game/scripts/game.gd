@@ -181,6 +181,9 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
+	#print(current_building.current_occupants)
+	#print(current_building.usual_occupants[0].process_mode)
+	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
 		_on_player_toggle_buddy_equipped(update_food_buddy_equipped)
 	
@@ -1123,9 +1126,14 @@ func _on_tile_object_enter_game(tile: Tile):
 			# Connect the Tile Object's signals to the game
 			tile_object.player_enter.connect(_on_player_enter_building)
 			tile_object.player_exit.connect(_on_player_enter_building)
+			tile_object.connect_occupant_to_game.connect(connect_character_to_game)
 			tile_object.player_offset = tile.data.get_custom_data("player_offset")
 			tile_object.foodbuddy1_offset = tile.data.get_custom_data("foodbuddy1_offset")
 			tile_object.foodbuddy2_offset = tile.data.get_custom_data("foodbuddy2_offset")
+			
+			# Iterate over each file path for the occupants of the building and store them in the buildings list
+			for occupant_path in tile.data.get_custom_data("occupant_paths"):
+				tile_object.usual_occupants.append(occupant_path)
 		
 		tile_object.global_position = tile_object_location
 		
@@ -1215,6 +1223,33 @@ func fade_screen(final_opacity: float, delta: float):
 			screen_fading = false
 			timer_fade.stop()
 			PLAYER.is_interacting = false
+		
+			if current_building != null:
+				for occupant in current_building.usual_occupants:
+					occupant.process_mode = Node.PROCESS_MODE_INHERIT
+					occupant.paused = false
+			else:
+				for asset in get_all_assets_in_game():
+					if asset is GameCharacter:
+						if !asset.in_building:
+							asset.paused = false
+							asset.process_mode = Node.PROCESS_MODE_INHERIT
+					else:
+						asset.paused = false
+						asset.process_mode = Node.PROCESS_MODE_INHERIT
+				
+			
+			PLAYER.paused = false
+			PLAYER.process_mode = Node.PROCESS_MODE_INHERIT
+			
+			food_buddies_active[0].paused = false
+			food_buddies_active[0].process_mode = Node.PROCESS_MODE_INHERIT
+			food_buddies_active[0].target = null
+			
+			food_buddies_active[1].paused = false
+			food_buddies_active[1].process_mode = Node.PROCESS_MODE_INHERIT
+			food_buddies_active[1].target = null
+
 
 
 
@@ -1227,6 +1262,7 @@ func _on_player_enter_building(building: Building, _delta: float):
 		
 		for asset in get_all_assets_in_game():
 			asset.paused = true
+			asset.process_mode = Node.PROCESS_MODE_DISABLED
 			
 			if asset is CharacterBody2D:
 				asset.velocity = Vector2(0, 0)
@@ -1245,15 +1281,30 @@ func _on_player_enter_building(building: Building, _delta: float):
 			food_buddies_active[1].global_position = PLAYER.global_position - current_building.foodbuddy2_offset
 			food_buddies_active[1].in_building = true
 			
-			current_building.current_occupants.append(PLAYER)
-			current_building.current_occupants.append(food_buddies_active[0])
-			current_building.current_occupants.append(food_buddies_active[1])
-			
 			current_building.playerEntering = false
 			current_building.label_e_to_interact.text = "Press 'E' to\nExit"
 			
 			for asset in get_all_assets_in_game():
-				asset.paused = false
+				asset.visible = false
+				asset.process_mode = Node.PROCESS_MODE_DISABLED
+			
+			current_building.current_occupants.append(PLAYER)
+			current_building.current_occupants.append(food_buddies_active[0])
+			current_building.current_occupants.append(food_buddies_active[1])
+			
+			for occupant in current_building.usual_occupants:
+				occupant.visible = true
+				occupant.global_position = Vector2(PLAYER.global_position.x + 50, PLAYER.global_position.y - 20)
+				occupant.target = PLAYER
+				current_building.current_occupants.append(occupant)
+			
+			current_building.paused = false
+			current_building.process_mode = Node.PROCESS_MODE_INHERIT
+			current_building.visible = true
+			
+			PLAYER.visible = true
+			food_buddies_active[0].visible = true
+			food_buddies_active[1].visible = true
 
 
 
@@ -1265,9 +1316,14 @@ func _on_player_exit_building(_building: Building, _delta: float):
 		
 		for asset in get_all_assets_in_game():
 			asset.paused = true
+			asset.process_mode = Node.PROCESS_MODE_DISABLED
 			
 			if asset is CharacterBody2D:
 				asset.velocity = Vector2(0, 0)
+		
+		PLAYER.visible = true
+		food_buddies_active[0].visible = true
+		food_buddies_active[1].visible = true
 		
 	else:
 		if screen_fading and modulate.a == 0:
@@ -1281,7 +1337,7 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			food_buddies_active[1].global_position = PLAYER.global_position + current_building.foodbuddy2_offset
 			food_buddies_active[1].in_building = false
 			
-
+			
 			# Remove the Player and their Food Buddies from the list of current occupants
 			for occupant in range(current_building.current_occupants.size() - 1, -1, -1):
 				if current_building.current_occupants[occupant] is Player or current_building.current_occupants[occupant] is FoodBuddy:
@@ -1290,10 +1346,19 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			current_building.playerExiting = false
 			current_building.label_e_to_interact.text = "Press 'E' to\nEnter"
 			
+			for occupant in current_building.usual_occupants:
+				occupant.visible = false
+				occupant.process_mode = Node.PROCESS_MODE_DISABLED
+				occupant.paused = true
+			
 			current_building = null
 			
 			for asset in get_all_assets_in_game():
-				asset.paused = false
+				if asset is GameCharacter:
+					if !asset.in_building:
+						asset.visible = true
+				else:
+					asset.visible = true
 
 
 func _on_player_throw_juicebox(destination: Vector2) -> void:
@@ -1367,3 +1432,42 @@ func _on_energy_ball_explode(energy_ball: EnergyBall):
 
 func update_character_status_UI():
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
+
+func connect_character_to_game(character: Node2D):
+	
+	if character is Enemy:
+		load_enemy(character)
+	
+	elif character is FoodCitizen:
+		load_food_citizen(character)
+		
+	elif character is FoodBuddy:
+		load_food_buddy(character)
+
+
+func load_enemy(enemy: Enemy):
+	enemy.use_ability.connect(_on_enemy_use_ability)
+	enemy.die.connect(_on_character_die)
+	enemy.killed_target.connect(_on_enemy_killed_target)
+	enemy.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
+	enemy.target_player.connect(_on_character_target_player)
+	enemy.update_altitude.connect(_on_character_update_altitude)
+	add_child(enemy)
+
+func load_food_citizen(foodcitizen: FoodCitizen):
+	foodcitizen.target_player.connect(_on_character_target_player)
+	foodcitizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
+	add_child(foodcitizen)
+
+func load_food_buddy(foodbuddy: FoodBuddy):
+	foodbuddy.deposit_berries.connect(_on_food_buddy_deposit_berries)
+	foodbuddy.find_nearest_bush.connect(_on_food_buddy_find_nearest_bush)
+	foodbuddy.forage_bush.connect(_on_food_buddy_forage_bush)
+	foodbuddy.target_brittany.connect(_on_food_buddy_target_brittany)
+	foodbuddy.target_closest_enemy.connect(_on_food_buddy_target_closest_enemy)
+	foodbuddy.use_ability_solo.connect(_on_food_buddy_use_ability_solo)
+	foodbuddy.die.connect(_on_character_die)
+	foodbuddy.killed_target.connect(_on_character_killed_target)
+	foodbuddy.target_player.connect(_on_character_target_player)
+	foodbuddy.update_altitude.connect(_on_character_update_altitude)
+	add_child(foodbuddy)

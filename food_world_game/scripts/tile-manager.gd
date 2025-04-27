@@ -261,6 +261,9 @@ func execute_tile_callback(tile: Tile, character: GameCharacter):
 # Process the tiles nearby a given Character on the given Tilemap(s)
 func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	
+	if character.current_tilemaps == null:
+		return
+	
 	if timer.is_stopped():
 		if character is Player:
 			timer.start(0.15)
