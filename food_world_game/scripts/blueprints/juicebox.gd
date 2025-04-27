@@ -129,8 +129,8 @@ func throw_start(destination: Vector2, direction_horizontal: Direction):
 
 func throw_process(delta: float):
 	
-	global_position = get_parabola_point(position_current, position_target, 0, (delta * position_current.x / position_end.x))
-
+	global_position = get_parabola_point(position_current, position_target, 0, (delta * abs(position_current.x / position_end.x)))
+	
 	position_current = global_position
 	
 	if abs(position_current.x - position_target.x) < 10 and abs(position_current.y - position_target.y) < 10:

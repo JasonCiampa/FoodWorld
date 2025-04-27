@@ -205,12 +205,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if !musicStarted and timer_fade.is_stopped():
-		musicStarted = true
-		MUSIC.play()
-	else:
-		if transitioning_songs:
-			process_music_fade(delta)
+	#if !musicStarted and timer_fade.is_stopped():
+		#musicStarted = true
+		#MUSIC.play()
+	#else:
+		#if transitioning_songs:
+			#process_music_fade(delta)
 	
 	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
@@ -774,13 +774,13 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		# Determine if the Food Buddy that wasn't selected is currently the Player's active Food Buddy or if a Food Buddy Fusion is currently active
 		if food_buddy_other.field_state_current == FoodBuddy.FieldState.PLAYER or food_buddy_other.field_state_current == FoodBuddy.FieldState.FUSION:
 			
-			# Determine if a FoodBuddyFusion is equipped, then unequip it and revert the two Food Buddies back to the FOLLOW FieldState
-			if food_buddy_fusion_active != null:
-				unequip_food_buddy_fusion()
-			else:
-				# Revert the unselected Food Buddy to their previous FieldState because the selected Food Buddy is swapping places with it (only one Food Buddy in PLAYER FieldState at a time)
-				food_buddy_other.field_state_current = food_buddy_other.field_state_previous
-				food_buddy_other.field_state_previous = FoodBuddy.FieldState.PLAYER
+			## Determine if a FoodBuddyFusion is equipped, then unequip it and revert the two Food Buddies back to the FOLLOW FieldState
+			#if food_buddy_fusion_active != null:
+				#unequip_food_buddy_fusion()
+			#else:
+			# Revert the unselected Food Buddy to their previous FieldState because the selected Food Buddy is swapping places with it (only one Food Buddy in PLAYER FieldState at a time)
+			food_buddy_other.field_state_current = food_buddy_other.field_state_previous
+			food_buddy_other.field_state_previous = FoodBuddy.FieldState.PLAYER
 			
 			food_buddy_other.process_mode = Node.PROCESS_MODE_INHERIT
 			food_buddy_other.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 1)
