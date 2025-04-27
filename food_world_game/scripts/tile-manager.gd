@@ -82,11 +82,13 @@ func _init(_world_tilemaps: Dictionary) -> void:
 	
 	var tiles_used_environment: Array
 	var tiles_used_terrain: Array
+	var tiles_used_buildings_exterior: Array
 	
 	for world in world_tilemaps.keys():
 		
 		tiles_used_environment.append_array(world_tilemaps[world][Tile.MapType.ENVIRONMENT].get_used_cells())
 		tiles_used_terrain.append_array(world_tilemaps[world][Tile.MapType.TERRAIN].get_used_cells())
+		tiles_used_buildings_exterior.append_array(world_tilemaps[world][Tile.MapType.BUILDINGS_EXTERIOR].get_used_cells())
 		
 		var interior: TileMapLayer = world_tilemaps[world][Tile.MapType.BUILDINGS_INTERIOR]
 		interior.collision_enabled = false
@@ -163,6 +165,36 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			terrain_tile = null
 		
 		tiles_used_terrain.clear()
+		
+		# PATH FINDING 
+		for coords in range(tiles_used_buildings_exterior.size() -1, -1, -1):
+		
+			# Determine if the ground Tile's coordinates are not occupied in the environment tilemap, then enable pathfinding for the tile
+			var building_tile = Tile.new(world_tilemaps[world][Tile.MapType.ENVIRONMENT], Tile.MapType.ENVIRONMENT, tiles_used_buildings_exterior[coords])
+			
+			# Determine if the terrain Tile's width is set and is larger than 1
+			if building_tile.width != null and building_tile.width > 1:
+				
+				# Iterate for each tile wide the Tile is
+				for col in range(building_tile.width + 1):
+					
+					# Iterate for each tile tall the Tile is
+					for row in range(building_tile.height):
+						
+						# Append the coordinates of this sub-Tile into the list of Tiles not to process for path-finding
+						tiles_occupied.get_or_add(Vector2i(tiles_used_buildings_exterior[coords].x - int(building_tile.width / 2) + col, tiles_used_buildings_exterior[coords].y - int(building_tile.height / 2) + row + 1), true)
+			else:
+				
+				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
+				tiles_occupied.get_or_add(tiles_used_buildings_exterior[coords], true)
+			
+			if building_tile.type == "bush":
+				bushes.append(building_tile.coords_local)
+			else:
+				unload_tile(building_tile)
+				building_tile = null
+		
+		tiles_used_buildings_exterior.clear()
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
