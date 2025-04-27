@@ -67,7 +67,7 @@ func ready():
 	
 	set_collision_value(collision_values["GROUND"])
 	
-	field_state_current = FieldState.FIGHT
+	field_state_current = FieldState.FORAGE
 	
 	sprite.play("idle_front")
 

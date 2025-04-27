@@ -40,9 +40,9 @@ var RNG = RandomNumberGenerator.new()
 
 var berries: int
 var berry_regen_timer: float
-var berry_regen_timer_length: int = 5
+var berry_regen_timer_length: int = 20
 
-var berries_max: int = 5
+var berries_max: int = 4
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

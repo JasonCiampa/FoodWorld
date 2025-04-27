@@ -34,6 +34,8 @@ var start_location_foodbuddy2: Vector2
 
 var inactive_foodbuddy: FoodBuddy
 
+var berry_capacity_increase: int = 5
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -107,6 +109,9 @@ func start(freeze_subjects: Array[Node2D]):
 		if subject is GameCharacter:
 			subject.sprite.pause()
 		
+		elif subject is InteractableAsset or subject is InteractableCharacter:
+			subject.label_e_to_interact.hide()
+		
 		subject.paused = true
 	
 	frozen_subjects = freeze_subjects
@@ -114,6 +119,7 @@ func start(freeze_subjects: Array[Node2D]):
 	# Fill up the character's stamina and health as a reward for leveling up
 	player.health_current = player.health_max
 	player.stamina_current = player.stamina_max
+	player.berries_max += berry_capacity_increase;
 	
 	if player.level_current != 15:
 		player.level_current += 1
@@ -163,6 +169,8 @@ func start(freeze_subjects: Array[Node2D]):
 	for buddy in active_food_buddies:
 		buddy.label_e_to_interact.hide()
 		buddy.sprite.speed_scale = 1
+		
+		buddy.berries_max += berry_capacity_increase;
 		
 		if buddy.health_current <= 0:
 			buddy.revive_time_remaining = buddy.revive_time_total

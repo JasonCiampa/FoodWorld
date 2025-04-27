@@ -50,6 +50,11 @@ var interactables: Array[Node]
 var interactable_assets: Dictionary
 var bushes: Array[Vector2i]
 
+var recently_foraged_bushes: Dictionary
+var next_bush_index_to_add: int = 0
+var next_bush_index_to_remove: int = 0
+var bush_history_cap: int = 20
+
 var closest_interactable_to_player: Node2D
 
 
@@ -1052,23 +1057,35 @@ func _on_food_buddy_find_nearest_bush(foodbuddy: FoodBuddy, _next_nearest: int =
 	var bush_distances: Array[float]
 	var bush_distance_maps: Dictionary
 	
+	var other_foodbuddy: FoodBuddy
+	
+	for foodbuddy_active in range(0, food_buddies_active.size()):
+		if foodbuddy != food_buddies_active[foodbuddy_active]:
+			other_foodbuddy = food_buddies_active[foodbuddy_active]
+			break
+	
 	# ACCESS BUSHES LIST THAT WE CREATED
 	for index in range(0, bushes.size()):
-		var distance = foodbuddy.global_position.distance_squared_to(bushes[index])
+		var distance = PLAYER.global_position.distance_squared_to(bushes[index])
 		bush_distances.append(distance)
 		bush_distance_maps.get_or_add(distance, index)
 	
 	bush_distances.sort()
 	
 	for distance in bush_distances:
-		if foodbuddy.recently_foraged_bushes.get(bushes[bush_distance_maps[distance]]) == null:
+		if recently_foraged_bushes.find_key(bushes[bush_distance_maps[distance]]) == null and bushes[bush_distance_maps[distance]] != other_foodbuddy.closest_bush:
 			foodbuddy.closest_bush = bushes[bush_distance_maps[distance]]
-			break
+			return
+	
+	foodbuddy.closest_bush = Vector2(-1, -1)
 
 
 func _on_food_buddy_deposit_berries(food_buddy: FoodBuddy):
 	while (food_buddy.berries > 0 and InterfaceBerryBot.sauna_occupancy_current < InterfaceBerryBot.sauna_occupancy_max):
-		InterfaceBerryBot._on_deposit_button_down(food_buddy)
+		
+		if !InterfaceBerryBot._on_deposit_button_down(food_buddy):
+			break
+			
 
 func _on_food_buddy_forage_bush(food_buddy: FoodBuddy):
 	
@@ -1084,6 +1101,25 @@ func _on_food_buddy_forage_bush(food_buddy: FoodBuddy):
 
 func _on_food_buddy_target_brittany(food_buddy: FoodBuddy):
 	food_buddy.target = BRITTANY
+
+func _on_food_buddy_update_recently_foraged_bushes(closest_bush_coords: Vector2i):
+	recently_foraged_bushes.get_or_add(next_bush_index_to_add, closest_bush_coords)
+	
+	next_bush_index_to_add += 1
+	
+	if next_bush_index_to_add % bush_history_cap == 0:
+		next_bush_index_to_add = 0
+	
+	if recently_foraged_bushes.size() == bush_history_cap:
+		
+		# Erase the cell from the dictionary so it is ready to be overwritten
+		recently_foraged_bushes.erase(next_bush_index_to_remove)
+		
+		# Increment the cell and see if we need to loop around to start removing older cells at the beginning
+		next_bush_index_to_remove += 1
+		
+		if next_bush_index_to_remove % bush_history_cap == 0:
+			next_bush_index_to_remove = 0
 
 # Callback function that executes whenever the Food Buddy dies: removes the Food Buddy from the SceneTree
 func _on_food_buddy_die(food_buddy: FoodBuddy) -> void:
@@ -1180,6 +1216,9 @@ func _on_tile_object_enter_game(tile: Tile):
 			# Iterate over each file path for the occupants of the building and store them in the buildings list
 			for occupant_path in tile.data.get_custom_data("occupant_paths"):
 				tile_object.usual_occupants.append(occupant_path)
+		
+		elif "bush" in tile.type:
+			tile_object.berries_max = PLAYER.level_current + 4
 		
 		tile_object.global_position = tile_object_location
 		

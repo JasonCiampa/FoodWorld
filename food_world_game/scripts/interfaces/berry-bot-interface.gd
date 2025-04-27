@@ -102,7 +102,9 @@ func _process(delta: float) -> void:
 			
 			player.juice += sauna_occupant_juice_drop
 			text_juice_count.text = str("Juice: ", player.juice)
-			text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_current_occupant_times.size())
+			
+			sauna_occupancy_current = sauna_current_occupant_times.size()
+			text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
 			
 			if int(text_craft_count.text) * juicebox_cost > player.juice:
 				button_craft.disabled = true
@@ -231,6 +233,11 @@ func start(_freeze_subjects: Array[Node2D]):
 		button_deposit.disabled = false
 	
 	text_berry_count.text = str("Berries: ", player.berries)
+	text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
+	text_juicebox_count.text = "Juice Boxes: " + str(player.juiceboxes)
+	text_juice_count.text = "Juice: " + str(player.juice)
+	text_craft_count.text = "1"
+	text_craft_cost.text = str("Cost: ", juicebox_cost)
 	
 	adjust_tilemap_modulate.emit(0.25)
 
@@ -269,8 +276,9 @@ func end():
 			subject.sprite.play()
 	
 	
-	# Set the UI to be invisible and not processing
+	# Set the UI to be invisible
 	self.visible = false
+	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
 	for berry in berry_sprites:
 		berry.visible = false
@@ -351,9 +359,13 @@ func _on_craft_button_down() -> void:
 	
 	update_character_status_UI.emit()
 
-func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
-	
-	sauna_occupancy_current = int(text_sauna_occupancy.text)
+func _on_deposit_button_down(depositer: GameCharacter = player) -> bool:
+	text_berry_count.text = str("Berries: ", player.berries)
+	text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
+	text_juicebox_count.text = "Juice Boxes: " + str(player.juiceboxes)
+	text_juice_count.text = "Juice: " + str(player.juice)
+	text_craft_count.text = "1"
+	text_craft_cost.text = str("Cost: ", juicebox_cost)
 	
 	# Until the sauna reaches full capacity or the depositer runs out of berries, add berries to the sauna
 	if sauna_occupancy_current < sauna_occupancy_max and depositer.berries > 0:
@@ -366,11 +378,8 @@ func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 		berry_animator.play("spawn")
 		berry_animator.queue("glide")
 		
-		if sauna_occupancy_current == sauna_occupancy_max or depositer.berries == 0:
-			button_deposit.disabled = true
-		
 		text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
-		text_berry_count.text = str("Berries: ", depositer.berries)
+		text_berry_count.text = str("Berries: ", player.berries)
 		
 		
 		if sauna_current_occupant_times.size() == 0:
@@ -380,5 +389,16 @@ func _on_deposit_button_down(depositer: GameCharacter = player) -> void:
 			animator.queue("steam_stay")
 		
 		sauna_current_occupant_times.append(0)
+		
+		update_character_status_UI.emit()
+		
+		if sauna_occupancy_current == sauna_occupancy_max or depositer.berries == 0:
+			button_deposit.disabled = true
+			return false
+		else:
+			button_deposit.disabled = false
+			return true
 	
-	update_character_status_UI.emit()
+	else:
+		button_deposit.disabled = true
+		return false

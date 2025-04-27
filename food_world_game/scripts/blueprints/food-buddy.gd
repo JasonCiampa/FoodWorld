@@ -14,8 +14,10 @@ var timer_ability_cooldown: Timer
 var timer_forage_cooldown: Timer
 var timer_general: Timer
 
+
 var closest_bush: Vector2i = Vector2i(-1, -1)
-var recently_foraged_bushes: Dictionary
+
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -30,6 +32,7 @@ signal find_nearest_bush
 signal forage_bush
 signal target_brittany
 signal deposit_berries
+signal update_recently_foraged_bushes
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -414,24 +417,36 @@ func forage_field_state_callback() -> void:
 	speed_current = speed_normal
 	
 	if berries == berries_max:
+		
 		target_brittany.emit(self)
-		generate_path()
+		
+		if name != "Brittany":
+			generate_path()
 		
 		if global_position.distance_squared_to(target.global_position) <= 144:
-			velocity.x = 0
-			velocity.y = 0
 			deposit_berries.emit(self)
 			
 			if berries < berries_max:
 				find_nearest_bush.emit(self)
-	
+				velocity.x = 0
+				velocity.y = 0
+			else:
+				if name == "Brittany":
+					target_player.emit(self)
+					generate_path()
+				return
 	
 	
 	elif closest_bush == Vector2i(-1, -1):
 		find_nearest_bush.emit(self)
+		
+		if closest_bush == Vector2i(-1, -1):
+			target_brittany.emit(self)
+		
 		return
 	
 	generate_path(closest_bush)
+	
 	
 	if global_position.distance_squared_to(closest_bush) <= 144:
 		velocity.x = 0
@@ -440,7 +455,8 @@ func forage_field_state_callback() -> void:
 		if berries < berries_max and timer_forage_cooldown.is_stopped():
 			# Trigger forage animation LATER ON
 			# Start timer for foraging
-			recently_foraged_bushes.get_or_add(closest_bush, true)
+			
+			update_recently_foraged_bushes.emit(closest_bush)
 			timer_forage_cooldown.start(1)
 		
 		elif timer_forage_cooldown.time_left < 0.1:
@@ -449,6 +465,8 @@ func forage_field_state_callback() -> void:
 			find_nearest_bush.emit(self)
 			
 			print(name, "'s berry count: ", berries, "/", berries_max)
+	
+	update_animation()
 
 
 

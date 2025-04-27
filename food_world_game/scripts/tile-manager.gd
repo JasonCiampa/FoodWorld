@@ -37,7 +37,6 @@ var tiles_enabled_navigation: Dictionary
 
 var next_nav_index_to_add: int = 0
 var next_nav_index_to_remove: int = 0
-var next_nav_index_to_remove_world: TileMapLayer = null
 var nav_tile_cap: int = 500
 
 var bushes: Array[Vector2i]
@@ -133,9 +132,9 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			
 			if environment_tile.type == "bush":
 				bushes.append(environment_tile.coords_local)
-			else:
-				unload_tile(environment_tile)
-				environment_tile = null
+			
+			unload_tile(environment_tile)
+			environment_tile = null
 		
 		tiles_used_environment.clear()
 		
@@ -190,11 +189,8 @@ func _init(_world_tilemaps: Dictionary) -> void:
 				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding
 				tiles_occupied.get_or_add(tiles_used_buildings_exterior[coords], true)
 			
-			if building_tile.type == "bush":
-				bushes.append(building_tile.coords_local)
-			else:
-				unload_tile(building_tile)
-				building_tile = null
+			unload_tile(building_tile)
+			building_tile = null
 		
 		tiles_used_buildings_exterior.clear()
 
@@ -234,6 +230,10 @@ func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 				character.current_world = world
 				world_changed.emit(character)
 			
+			# Unload the Tile and return from the function now that the world has been updated
+			unload_tile(tile)
+			tile = null
+			
 			return new_tile
 		
 		# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
@@ -249,16 +249,20 @@ func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 
 
 # Process the Tile's designated callback function based on its type
-func execute_tile_callback(tile: Tile, character: GameCharacter):
+func execute_tile_callback(tile: Tile, character: GameCharacter) -> Tile:
 	
 	# Update the Tile's world location if necessary
-	var updated_tile = update_tile_world_location(tile, character)
+	tile = update_tile_world_location(tile, character)
 	
 	# Determine if the updated Tile is not null and if the Tile's type has a designated callback function to execute, then execute it
-	if updated_tile and tile_callbacks.get(tile.type) != null:
+	if tile and tile_callbacks.get(tile.type) != null:
 		
 		# Call the callback function for this Tile to process it with respect to the given Character
 		tile_callbacks[tile.type].call(tile, character)
+	
+	return tile
+	
+	
 
 
 # Process the tiles nearby a given Character on the given Tilemap(s)
@@ -292,19 +296,31 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	for map_type in character.current_tilemaps.size():
 		
 		# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 2)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 2)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 2)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 2)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 2)))
+		
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 1)))
 		
 		# Add the Tiles in the row including the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y)))
 		
 		# Add the Tiles in the row above the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - 1)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - 1)))
 		
 		# Iterate (tiles_above - 1) times to add extra rows of Tiles to process above the Character
 		for count in range(2, tiles_above + 1):
@@ -312,10 +328,11 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 			# Note: Loop starts at 2 instead of 1 because one row above the Character is already processed automatically (y - 1), so the next row to be added must start at (y = 2).
 			
 			# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
+			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - count)))
 			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
 			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
 			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
-	
+			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - count)))
 	
 
 	
@@ -323,8 +340,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	for tile in range(tiles_to_process.size() - 1, -1, -1):
 		
 		# Execute the callback function associated with the type of Tile of this iteration
-		execute_tile_callback(tiles_to_process[tile], character)
-		
+		tiles_to_process[tile] = execute_tile_callback(tiles_to_process[tile], character)
 		
 		# Determine if the Tile is a default ground tile (not an alternative tile)
 		if tiles_to_process[tile].map_type == Tile.MapType.GROUND:
@@ -335,63 +351,46 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 				# Determine if the tile isn't already an alternative tile, then replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
 				if tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 0:
 					
-					var terrain_tile = tiles_to_process[tile].get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
-					
-					if "ledge" not in terrain_tile.type:
+					if tiles_enabled_navigation.get(next_nav_index_to_add) == null:
 						
-						if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
+						var new_nav_tile: Tile = tiles_to_process[tile]
+						
+						# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
+						new_nav_tile.tilemap.set_cell(new_nav_tile.coords_map, new_nav_tile.tilemap.get_cell_source_id(new_nav_tile.coords_map), new_nav_tile.tilemap.get_cell_atlas_coords(new_nav_tile.coords_map), 2)
+						
+						tiles_enabled_navigation.get_or_add(next_nav_index_to_add, new_nav_tile)
+						
+						next_nav_index_to_add += 1
+						
+						if next_nav_index_to_add % nav_tile_cap == 0:
+							next_nav_index_to_add = 0
+						
+						if tiles_enabled_navigation.size() == nav_tile_cap:
 							
-							# If the tile is added to the enabled navigation tiles list with key equal to its fake index and the value being the actual tile, increment the fake index counter and check if it needs to loop around to start overwriting old tiles
-							if tiles_enabled_navigation.get(next_nav_index_to_add) == null:
-								
-								var new_nav_tile = tiles_to_process[tile]
-								
-								# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
-								new_nav_tile.tilemap.set_cell(new_nav_tile.coords_map, new_nav_tile.tilemap.get_cell_source_id(new_nav_tile.coords_map), new_nav_tile.tilemap.get_cell_atlas_coords(new_nav_tile.coords_map), 2)
-								
-								tiles_enabled_navigation.get_or_add(next_nav_index_to_add, new_nav_tile)
-								
-								next_nav_index_to_add += 1
-								
-								#if next_nav_index_to_add == next_nav_index_to_remove + 1:
-									#next_nav_index_to_remove_world = new_nav_tile.tilemap
-								
-								if next_nav_index_to_add % nav_tile_cap == 0:
-									next_nav_index_to_add = 0
-								
+							# Create the reference to the cell and it set it back to a normal cell without path-finding (non-alternative)
+							var tile_to_remove: Tile = tiles_enabled_navigation.get(next_nav_index_to_remove)
+							tile_to_remove.tilemap.set_cell(tile_to_remove.coords_map, 0, tile_to_remove.tilemap.get_cell_atlas_coords(tile_to_remove.coords_map))
 							
+							# Erase the cell from the dictionary so it is ready to be overwritten
+							tiles_enabled_navigation.erase(next_nav_index_to_remove)
 							
-								if tiles_enabled_navigation.size() == nav_tile_cap:
-									
-									# Create the reference to the cell and it set it back to a normal cell without path-finding (non-alternative)
-									var tile_to_remove: Tile = tiles_enabled_navigation.get(next_nav_index_to_remove)
-									tile_to_remove.tilemap.set_cell(tile_to_remove.coords_map, 0, tile_to_remove.tilemap.get_cell_atlas_coords(tile_to_remove.coords_map))
-									
-									# Erase the cell from the dictionary so it is ready to be overwritten
-									tiles_enabled_navigation.erase(next_nav_index_to_remove)
-									
-									# Increment the cell and see if we need to loop around to start removing older cells at the beginning
-									next_nav_index_to_remove += 1
-									
-									if next_nav_index_to_remove % nav_tile_cap == 0:
-										next_nav_index_to_remove = 0
-									
-									unload_tile(tile_to_remove)
-									tile_to_remove = null
-									
-									#if next_nav_index_to_remove == nav_tile_cap
-									#next_nav_index_to_add += 1
-								
-								# Unload the tile
-								terrain_tile.free()
-								terrain_tile = null
-								
-								continue
+							# Increment the cell and see if we need to loop around to start removing older cells at the beginning
+							next_nav_index_to_remove += 1
+							
+							if next_nav_index_to_remove % nav_tile_cap == 0:
+								next_nav_index_to_remove = 0
+							
+							unload_tile(tile_to_remove)
+							tile_to_remove = null
+							
+							#if next_nav_index_to_remove == nav_tile_cap
+							#next_nav_index_to_add += 1
+						
+						new_nav_tile = null
+						
+						continue
 					
 					
-					# Unload the tile
-					terrain_tile.free()
-					terrain_tile = null
 				
 				# Otherwise, the tile is already an alternative tile used to make the character appear behind it, so replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears behind it
 				elif tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 1:
@@ -399,12 +398,13 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 					# Determine if the tile isn't already an alternative tile, then replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
 					if tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 0:
 						
-						var terrain_tile = tiles_to_process[tile].get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
+						var terrain_tile: Tile = tiles_to_process[tile].get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
 						
-						if "ledge" not in terrain_tile.type:
-							
-							if get_altitude(terrain_tile, character) == 0 and !character.on_platform:
-								tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, tiles_to_process[tile].tilemap.get_cell_source_id(tiles_to_process[tile].coords_map), tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
+						tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, tiles_to_process[tile].tilemap.get_cell_source_id(tiles_to_process[tile].coords_map), tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
+						
+						# Unload the tile
+						terrain_tile.free()
+						terrain_tile = null
 		
 		# Unload the tile
 		tiles_to_process[tile].free()

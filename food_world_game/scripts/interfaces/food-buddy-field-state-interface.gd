@@ -114,6 +114,9 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		
 		if subject is GameCharacter:
 			subject.sprite.pause()
+		
+		elif subject is InteractableAsset or subject is InteractableCharacter:
+			subject.label_e_to_interact.hide()
 	
 	# Set the UI to be visible and processing
 	self.visible = true

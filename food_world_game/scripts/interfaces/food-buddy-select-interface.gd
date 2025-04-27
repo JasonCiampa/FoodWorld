@@ -118,6 +118,9 @@ func start(freeze_subjects: Array[Node2D]):
 		
 		if subject is GameCharacter:
 			subject.sprite.pause()
+		
+		elif subject is InteractableAsset or subject is InteractableCharacter:
+			subject.label_e_to_interact.hide()
 	
 	
 	# Store the currently frozen subjects so they can be unfrozen when selection is complete
