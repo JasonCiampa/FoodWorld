@@ -108,6 +108,7 @@ func game_over(freeze_subjects: Array[Node2D]):
 	player.visible = true
 	player.active = true
 	player.process_mode = Node.PROCESS_MODE_INHERIT
+	player.is_interacting = true
 	
 	if player.equipped_buddy != null and player.equipped_buddy.name == "Dan":
 		player.shadow.visible = false

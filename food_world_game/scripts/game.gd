@@ -163,12 +163,23 @@ func _ready() -> void:
 	
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 	InterfaceLevelUp.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
+	InterfaceLevelUp.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
+	
 	InterfaceFoodBuddyFieldState.setValues(PLAYER, food_buddies_active)
+	InterfaceFoodBuddyFieldState.update_character_status_UI.connect(update_character_status_UI)
+	InterfaceFoodBuddyFieldState.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
+	
 	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
+	InterfaceFoodBuddySelection.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
+	
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
+	
 	InterfaceDialogue.setValues(PLAYER)
+	
 	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
 	InterfaceBerryBot.update_character_status_UI.connect(update_character_status_UI)
+	InterfaceBerryBot.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
+
 	
 	BRITTANY.collision_values["GROUND"] = 4
 	BRITTANY.collision_values["MIDAIR"] = 5
@@ -192,20 +203,17 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	#print(current_building.current_occupants)
-	#print(current_building.usual_occupants[0].process_mode)
+	if !musicStarted and timer_fade.is_stopped():
+		musicStarted = true
+		MUSIC.play()
+	else:
+		if transitioning_songs:
+			process_music_fade(delta)
 	
-	print(MUSIC.volume_db)
-	
-	if transitioning_songs:
-		process_music_fade(delta)
 	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
 		_on_player_toggle_buddy_equipped(update_food_buddy_equipped)
 	
-	if !musicStarted and timer_fade.is_stopped():
-		musicStarted = true
-		MUSIC.play()
 		
 	# Update the list of on-screen enemies, food citizens, and interactables
 	enemies = scene_tree.get_nodes_in_group("enemies")
@@ -232,7 +240,7 @@ func _process(delta: float) -> void:
 	
 	# Determine if the Player is not already interacting, then process in-range potential interactions
 	if not PLAYER.is_interacting:
-		process_player_nearby_interactables()
+		process_player_nearby_interactables(delta)
 	
 	
 	if screen_fading:
@@ -411,7 +419,6 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 				PLAYER.xp_current += target.xp_drop
 				
 				if PLAYER.xp_current >= PLAYER.xp_max:
-					
 					InterfaceLevelUp.start(get_all_assets_in_game())
 			
 		InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
@@ -423,7 +430,7 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 
 
 # Checks if the Player's Hitbox has overlapped with any other Interactable Asset's Interaction Hitboxes (meaning they are in range of the Player) and enables/disables a label above the Interactable that says to 'Press 'E' To Interact'
-func process_player_nearby_interactables():
+func process_player_nearby_interactables(delta):
 	
 	# Determine if there are no interactables to process, then return the function because there aren't any Interactables to process
 	if interactables.size() == 0:
@@ -432,26 +439,33 @@ func process_player_nearby_interactables():
 	# Store a list of all hitboxes that are overlapping with the Player's Hitbox
 	var overlapping_hitboxes = PLAYER.hitbox_damage.get_overlapping_areas()
 	
+	if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.field_state_current == closest_interactable_to_player.FieldState.PLAYER:
+		closest_interactable_to_player = null
+	
 	# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
-	if closest_interactable_to_player == null or !closest_interactable_to_player.active:
+	if closest_interactable_to_player == null:
 		var count: int = 0
 		
-		while closest_interactable_to_player == null or !closest_interactable_to_player.active:
+		while closest_interactable_to_player == null:
 			closest_interactable_to_player = interactables[count]
 			
-			if closest_interactable_to_player.active:
+			if closest_interactable_to_player.active and not (closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.field_state_current == closest_interactable_to_player.FieldState.PLAYER):
 				closest_interactable_to_player = interactables[count]
 				break
 			
 			count += 1
 	
 	
+	if PLAYER.level_up or PLAYER.is_interacting:
+		closest_interactable_to_player.label_e_to_interact.hide()
+		return
+	
 	
 	# Iterate over every Asset on-screen that can be Interacted with
 	for interactable in get_interactables_on_screen():
 		
-		if interactable.active:
-		
+		if not (interactable is FoodBuddy and interactable.field_state_current == interactable.FieldState.PLAYER):
+			
 			# Determine if the Interactable's Interaction hitbox is included in the list of hitboxes that are overlapping with the Player's hitbox, then set the Interactable to be classified as in or out of range of the Player
 			if interactable.hitbox_interaction in overlapping_hitboxes:
 				interactable.in_range = true
@@ -477,15 +491,29 @@ func process_player_nearby_interactables():
 		
 		if closest_interactable_to_player.name == "Brittany":
 			closest_interactable_to_player.text_press_f_for_berry_bot.show()
-		
+	
 	else:
 		closest_interactable_to_player.label_e_to_interact.hide()
 		
 		if closest_interactable_to_player.name == "Brittany":
 			closest_interactable_to_player.text_press_f_for_berry_bot.hide()
-
-
-
+		
+	
+	if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.field_state_current == closest_interactable_to_player.FieldState.PLAYER:
+		closest_interactable_to_player.label_e_to_interact.hide()
+		
+		if closest_interactable_to_player.name == "Brittany":
+			closest_interactable_to_player.text_press_f_for_berry_bot.hide()
+	
+	if closest_interactable_to_player is FoodBuddy and !closest_interactable_to_player.alive:
+		
+		if closest_interactable_to_player.revive_time_remaining < closest_interactable_to_player.revive_time_total:
+			closest_interactable_to_player.revive_time_remaining += delta
+			closest_interactable_to_player.label_e_to_interact.text = str(int(closest_interactable_to_player.revive_time_remaining))
+		else:
+			closest_interactable_to_player.revive_time_remaining = closest_interactable_to_player.revive_time_total
+			closest_interactable_to_player.label_e_to_interact.text = "Hold 'E' To Revive"
+	
 # Processes the use of a Food Buddy or Food Buddy Fusion's ability
 func process_food_ability_use(food_entity, ability_number: int, delta: float):
 	
@@ -595,9 +623,6 @@ func _on_player_interact(delta: float) -> void:
 	# Determine if the closest Interactable to the Player is in range for an interaction, then trigger the interaction
 	if closest_interactable_to_player.in_range:
 		
-		if current_building != null and current_building != closest_interactable_to_player:
-			if current_building.in_range:
-				closest_interactable_to_player = current_building
 		
 		# Determine if Brittany is the closest interactable, then ensure her berry bot prompt is disabled too.
 		if closest_interactable_to_player == BRITTANY:
@@ -614,9 +639,9 @@ func _on_player_interact(delta: float) -> void:
 			var characters_in_range: Array[Node2D] = []
 			
 			if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.alive == false:
-				closest_interactable_to_player.revive_time_remaining -= delta
+				closest_interactable_to_player.revive_time_remaining -= delta * 2
+				closest_interactable_to_player.label_e_to_interact.text = str(int(closest_interactable_to_player.revive_time_remaining))
 				
-				print(closest_interactable_to_player.revive_time_remaining)
 				if closest_interactable_to_player.revive_time_remaining <= 0:
 					closest_interactable_to_player.revive_time_remaining = 10
 					closest_interactable_to_player.alive = true
@@ -1525,3 +1550,9 @@ func process_music_fade(delta: float):
 			transitioning_songs = false
 		
 	
+func adjust_tilemap_modulate(modulate_value: float):
+	# Iterate over each tilemap that could be on screen right now and disable it
+	for world in world_tilemaps:
+		for tilemap in world_tilemaps[world]:
+			
+			tilemap.modulate.a = modulate_value

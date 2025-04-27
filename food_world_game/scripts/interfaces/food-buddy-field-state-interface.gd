@@ -25,7 +25,8 @@ var start_location_foodbuddy2: Vector2
 
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+signal update_character_status_UI
+signal adjust_tilemap_modulate
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -171,6 +172,8 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	foodbuddy2.global_position.x += 32
 	
 	for buddy in active_food_buddies:
+		buddy.label_e_to_interact.hide()
+		
 		if buddy.field_state_current != FoodBuddy.FieldState.PLAYER and buddy.field_state_current != FoodBuddy.FieldState.FUSION:
 			buddy.field_state_previous = buddy.field_state_current
 		
@@ -187,6 +190,8 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")
+		elif buddy.name == "Brittany":
+			buddy.text_press_f_for_berry_bot.hide()
 	
 	player.previous_animation = player.sprite.animation
 	player.previous_animation_frame = player.sprite.get_frame()
@@ -200,29 +205,15 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	player.direction_current_horizontal = player.Direction.IDLE
 	player.direction_current_vertical = player.Direction.IDLE
 	
-	player.update_animation()
+	player.is_interacting = true
+	
+	if "juice" in player.current_animation_name:
+		player.update_animation("idle_front")
+	else:
+		player.update_animation()
 	
 	
-	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
-	foodbuddy1.global_position = player.global_position
-	foodbuddy1.global_position.x -= 32
-	
-	foodbuddy2.global_position = player.global_position
-	foodbuddy2.global_position.x += 32
-	
-	# Iterate over each tilemap that could be on screen right now and disable it
-	for tilemap in player.current_tilemaps:
-		tilemap.modulate.a = 0.25
-	
-	# Determine if the food buddies have different tilemaps than the player
-	if player.current_tilemaps[0] != foodbuddy1.current_tilemaps[0] or player.current_tilemaps[0] != foodbuddy2.current_tilemaps[0]:
-		
-		# Iterate over each tilemap that could be on screen right now and disable it
-		for tilemap in foodbuddy1.current_tilemaps:
-			tilemap.modulate.a = 0.25
-		
-		for tilemap in foodbuddy2.current_tilemaps:
-			tilemap.modulate.a = 0.25
+	adjust_tilemap_modulate.emit(0.25)
 
 
 
@@ -279,9 +270,10 @@ func end():
 	player.sprite.play(player.previous_animation)
 	player.sprite.set_frame_and_progress(player.previous_animation_frame, player.previous_animation_frame_progress)
 	player.sprite.self_modulate = player.previous_modulate
-
+	player.is_interacting = false
 	
 	animator.play("RESET")
+	adjust_tilemap_modulate.emit(1)
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -293,6 +285,8 @@ func update_selected_state_buddy1(newly_selected_button: TextureButton, field_st
 	selected_button_buddy1.disabled = true
 	foodbuddy1.field_state_previous = foodbuddy1.field_state_current
 	foodbuddy1.field_state_current = field_state
+	
+	update_character_status_UI.emit()
 
 func update_selected_state_buddy2(newly_selected_button: TextureButton, field_state: FoodBuddy.FieldState):
 	selected_button_buddy2.disabled = false
@@ -301,6 +295,8 @@ func update_selected_state_buddy2(newly_selected_button: TextureButton, field_st
 	selected_button_buddy2.disabled = true
 	foodbuddy2.field_state_previous = foodbuddy2.field_state_current 
 	foodbuddy2.field_state_current = field_state
+	
+	update_character_status_UI.emit()
 
 
 func _on_buddy_1_solo_state_button_down() -> void:

@@ -26,7 +26,7 @@ var animator: AnimationPlayer
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 signal update_character_status_UI
-
+signal adjust_tilemap_modulate
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -192,15 +192,11 @@ func start(_freeze_subjects: Array[Node2D]):
 	brittany.animation_player.pause()
 	
 	player.sprite.pause()
-	
+	player.is_interacting = true
 	
 	if sauna_current_occupant_times.size() > 0:
 		animator.queue("steam_stay_enter")
 		animator.queue("steam_stay")
-	
-	# Iterate over each tilemap that could be on screen right now and disable it
-	for tilemap in player.current_tilemaps:
-		tilemap.modulate.a = 0.25
 	
 	var craft_count = int(text_craft_count.text)
 	
@@ -224,6 +220,8 @@ func start(_freeze_subjects: Array[Node2D]):
 		button_deposit.disabled = false
 	
 	text_berry_count.text = str("Berries: ", player.berries)
+	
+	adjust_tilemap_modulate.emit(0.25)
 
 
 
@@ -247,10 +245,6 @@ func end():
 			subject.paused = false
 			subject.sprite.play()
 			subject.animator.play()
-		
-	# Iterate over each tilemap that could be on screen right now and disable it
-	for tilemap in player.current_tilemaps:
-		tilemap.modulate.a = 1
 	
 	# Set the UI to be invisible and not processing
 	self.visible = false
@@ -263,6 +257,8 @@ func end():
 	player.is_interacting = false
 	player.paused = false
 	player.clicked_this_frame = true
+	
+	adjust_tilemap_modulate.emit(1)
 	
 
 

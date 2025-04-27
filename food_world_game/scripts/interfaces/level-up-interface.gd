@@ -35,6 +35,7 @@ var start_location_foodbuddy2: Vector2
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 signal level_up_ended
+signal adjust_tilemap_modulate
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -128,8 +129,6 @@ func start(freeze_subjects: Array[Node2D]):
 	self.visible = true
 	self.process_mode = Node.PROCESS_MODE_INHERIT
 	
-	foodbuddy1.level_up = true
-	foodbuddy2.level_up = true
 	foodbuddy1.sprite.play("idle_front")
 	foodbuddy2.sprite.play("idle_front")
 	
@@ -151,13 +150,14 @@ func start(freeze_subjects: Array[Node2D]):
 	foodbuddy2.global_position.x += 32
 	
 	for buddy in active_food_buddies:
-		
+		buddy.label_e_to_interact.hide()
 		buddy.sprite.speed_scale = 1
 		
 		if buddy.health_current <= 0:
 			buddy.revive_time_remaining = buddy.revive_time_total
 			buddy.alive = true
 			buddy.active = true
+			buddy.level_up = true
 			buddy.label_e_to_interact.text = "press 'e' to interact"
 		
 		buddy.health_current = buddy.health_max
@@ -173,6 +173,8 @@ func start(freeze_subjects: Array[Node2D]):
 		
 		if buddy.name == "Dan":
 			buddy.sprinkle_sprite.play("nothing")
+		elif buddy.name == "Brittany":
+			buddy.text_press_f_for_berry_bot.hide()
 	
 	player.previous_animation = player.sprite.animation
 	player.previous_animation_frame = player.sprite.get_frame()
@@ -183,25 +185,16 @@ func start(freeze_subjects: Array[Node2D]):
 	
 	player.direction_current_horizontal = player.Direction.IDLE
 	player.direction_current_vertical = player.Direction.IDLE
-	player.update_animation()
 	player.level_up = true
 	
-	# Iterate over each tilemap that could be on screen right now and disable it
-	for tilemap in player.current_tilemaps:
-		tilemap.modulate.a = 0.25
+	if "juice" in player.current_animation_name:
+		player.update_animation("idle_front")
+	else:
+		player.update_animation()
 	
-	# Determine if the food buddies have different tilemaps than the player
-	if player.current_tilemaps[0] != foodbuddy1.current_tilemaps[0] or player.current_tilemaps[0] != foodbuddy2.current_tilemaps[0]:
-		
-		# Iterate over each tilemap that could be on screen right now and disable it
-		for tilemap in foodbuddy1.current_tilemaps:
-			tilemap.modulate.a = 0.25
-		
-		for tilemap in foodbuddy2.current_tilemaps:
-			tilemap.modulate.a = 0.25
 	
 	InterfaceCharacterStatus.setValues(player, [foodbuddy1, foodbuddy2])
-
+	adjust_tilemap_modulate.emit(0.25)
 
 
 func end():
@@ -216,17 +209,6 @@ func end():
 	
 	self.visible = false
 	self.process_mode = Node.PROCESS_MODE_DISABLED
-	
-	for tilemap in player.current_tilemaps:
-		tilemap.modulate.a = 1
-	
-	if player.current_tilemaps[0] != foodbuddy1.current_tilemaps[0] or player.current_tilemaps[0] != foodbuddy2.current_tilemaps[0]:
-		
-		for tilemap in foodbuddy1.current_tilemaps:
-			tilemap.modulate.a = 1
-		
-		for tilemap in foodbuddy1.current_tilemaps:
-			tilemap.modulate.a = 1
 	
 	foodbuddy1.global_position = start_location_foodbuddy1
 	foodbuddy2.global_position = start_location_foodbuddy2
@@ -243,7 +225,7 @@ func end():
 			buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
 		else:
 			buddy.sprite.play("idle_front")
-		
+	
 	
 	player.level_up = false
 	player.using_ability = false
@@ -254,6 +236,8 @@ func end():
 	button_power.disabled = true
 	
 	animator.play("RESET")
+	
+	adjust_tilemap_modulate.emit(1)
 
 
 

@@ -108,24 +108,30 @@ shape = SubResource("RectangleShape2D_1no0i")
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 z_index = 3
-offset_left = -39.0
-offset_top = -60.0
-offset_right = 2046.0
-offset_bottom = 46.0
+offset_left = -1500.0
+offset_top = -158.0
+offset_right = 1500.0
+offset_bottom = 42.0
 scale = Vector2(0.0564907, 0.0564907)
+pivot_offset = Vector2(1500, 100)
 text = "Press 'E' to Interact
 "
 label_settings = SubResource("LabelSettings_efdjg")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Press \'F\' to Manage Berry Bot" type="Label" parent="."]
 visible = false
-offset_left = -55.0
-offset_top = -52.0
-offset_right = 2030.0
-offset_bottom = 54.0
+offset_left = -1500.0
+offset_top = -149.0
+offset_right = 1500.0
+offset_bottom = 51.0
 scale = Vector2(0.056, 0.056)
+pivot_offset = Vector2(1500, 100)
 text = "Press 'F' to Manage Berry Bot"
 label_settings = SubResource("LabelSettings_efdjg")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 4.0
