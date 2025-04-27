@@ -23,8 +23,6 @@ var food_citizen = load("res://scenes/blueprints/food-citizen.tscn").instantiate
 @onready var BatterBadlandsSong: AudioStreamPlayer = $BatterBadlands
 @onready var GardenSong: AudioStreamPlayer = $GardenWorld
 
-
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -89,6 +87,7 @@ var world_tilemaps: Dictionary
 
 var musicStarted : bool = false
 var next_song: AudioStreamPlayer
+var empty_song: AudioStreamPlayer
 var transitioning_songs: bool = false
 var music_fade_in_duration: float = 3.5
 var music_fade_out_duration: float = 2
@@ -111,6 +110,8 @@ func _ready() -> void:
 	food_buddies_inactive.append(LINK)
 	
 	food_buddies_inactive[0].active = false
+	
+	empty_song = AudioStreamPlayer.new()
 
 	#
 	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
@@ -121,7 +122,7 @@ func _ready() -> void:
 	world_tilemaps = {
 		"center" : [$"World Map/World Center/Ground", $"World Map/World Center/Terrain", $"World Map/World Center/Environment", $"World Map/World Center/Building Interiors", $"World Map/World Center/Building Exteriors"],
 		"sweets" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment", $"World Map/Sweets World/Building Interiors", $"World Map/Sweets World/Building Exteriors"],
-		"garden" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment", $"World Map/Garden World/Building Interiors", $"World Map/Garden World/Building Exteriors"]
+		"garden" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment", $"World Map/Garden World/Building Interiors", $"World Map/Garden World/Building Exteriors"],
 	}
 	
 	# Create the instance of the Game's Tile Manager and pass it all of the tilemaps in the game
@@ -173,6 +174,7 @@ func _ready() -> void:
 	InterfaceFoodBuddySelection.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
 	
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
+	InterfaceGameOver.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
 	
 	InterfaceDialogue.setValues(PLAYER)
 	
@@ -509,7 +511,7 @@ func process_player_nearby_interactables(delta):
 		
 		if closest_interactable_to_player.revive_time_remaining < closest_interactable_to_player.revive_time_total:
 			closest_interactable_to_player.revive_time_remaining += delta
-			closest_interactable_to_player.label_e_to_interact.text = str(int(closest_interactable_to_player.revive_time_remaining))
+			closest_interactable_to_player.label_e_to_interact.text = str(round(float(closest_interactable_to_player.revive_time_remaining) * 10) / 10.0)
 		else:
 			closest_interactable_to_player.revive_time_remaining = closest_interactable_to_player.revive_time_total
 			closest_interactable_to_player.label_e_to_interact.text = "Hold 'E' To Revive"
@@ -640,7 +642,7 @@ func _on_player_interact(delta: float) -> void:
 			
 			if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.alive == false:
 				closest_interactable_to_player.revive_time_remaining -= delta * 2
-				closest_interactable_to_player.label_e_to_interact.text = str(int(closest_interactable_to_player.revive_time_remaining))
+				closest_interactable_to_player.label_e_to_interact.text = str(round(float(closest_interactable_to_player.revive_time_remaining) * 10) / 10.0)
 				
 				if closest_interactable_to_player.revive_time_remaining <= 0:
 					closest_interactable_to_player.revive_time_remaining = 10
@@ -790,6 +792,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 				PLAYER.shadow.visible = false
 				PLAYER.sprite.offset.y = -16
 				PLAYER.speed_current = PLAYER.speed_normal
+				PLAYER.juicebox_ready = false
 			
 		
 		# Update the selected Food Buddy's FieldState variables
@@ -808,7 +811,9 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		
 		PLAYER.equipped_buddy = food_buddy_selected
 	
+	PLAYER.is_interacting = false
 	PLAYER.update_animation()
+	PLAYER.is_interacting = true
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 
 
@@ -949,7 +954,7 @@ func _on_player_killed_target() -> void:
 # Callback function that executes whenever the Player dies: removes the Player from the SceneTree
 func _on_player_die(_player: Player) -> void:
 	InterfaceGameOver.game_over(get_all_assets_in_game())
-	
+	transition_music("end")
 	PLAYER.sprite.play("die")
 	print("Player has died!")
 	
@@ -1316,11 +1321,22 @@ func _on_player_enter_building(building: Building, _delta: float):
 			PLAYER.global_position = PLAYER.global_position - current_building.player_offset
 			PLAYER.in_building = true
 			
-			food_buddies_active[0].global_position = PLAYER.global_position - current_building.foodbuddy1_offset
+			
+			if food_buddies_active[0].field_state_current != FoodBuddy.FieldState.PLAYER:
+				food_buddies_active[0].global_position = PLAYER.global_position - current_building.foodbuddy1_offset
+			else:
+				food_buddies_active[0].global_position = PLAYER.global_position
+			
 			food_buddies_active[0].in_building = true
 			
-			food_buddies_active[1].global_position = PLAYER.global_position - current_building.foodbuddy2_offset
+			
+			if food_buddies_active[1].field_state_current != FoodBuddy.FieldState.PLAYER:
+				food_buddies_active[1].global_position = PLAYER.global_position - current_building.foodbuddy2_offset
+			else:
+				food_buddies_active[1].global_position = PLAYER.global_position
+			
 			food_buddies_active[1].in_building = true
+			
 			
 			current_building.playerEntering = false
 			current_building.label_e_to_interact.text = "Press 'E' to\nExit"
@@ -1344,8 +1360,17 @@ func _on_player_enter_building(building: Building, _delta: float):
 			current_building.visible = true
 			
 			PLAYER.visible = true
-			food_buddies_active[0].visible = true
-			food_buddies_active[1].visible = true
+			if food_buddies_active[0].field_state_current == FoodBuddy.FieldState.PLAYER:
+				if food_buddies_active[0].name == "Dan":
+					food_buddies_active[0].visible = true
+			else:
+				food_buddies_active[0].visible = true
+			
+			if food_buddies_active[1].field_state_current == FoodBuddy.FieldState.PLAYER:
+				if food_buddies_active[1].name == "Dan":
+					food_buddies_active[1].visible = true
+			else:
+				food_buddies_active[1].visible = true
 
 
 
@@ -1372,10 +1397,18 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			PLAYER.global_position = PLAYER.global_position + current_building.player_offset
 			PLAYER.in_building = false
 			
-			food_buddies_active[0].global_position = PLAYER.global_position + current_building.foodbuddy1_offset
+			if food_buddies_active[0].field_state_current != FoodBuddy.FieldState.PLAYER:
+				food_buddies_active[0].global_position = PLAYER.global_position + current_building.foodbuddy1_offset
+			else:
+				food_buddies_active[0].global_position = PLAYER.global_position
+			
 			food_buddies_active[0].in_building = false
 			
-			food_buddies_active[1].global_position = PLAYER.global_position + current_building.foodbuddy2_offset
+			if food_buddies_active[1].field_state_current != FoodBuddy.FieldState.PLAYER:
+				food_buddies_active[1].global_position = PLAYER.global_position + current_building.foodbuddy2_offset
+			else:
+				food_buddies_active[1].global_position = PLAYER.global_position
+			
 			food_buddies_active[1].in_building = false
 			
 			
@@ -1400,6 +1433,22 @@ func _on_player_exit_building(_building: Building, _delta: float):
 						asset.visible = true
 				else:
 					asset.visible = true
+			
+			if food_buddies_active[0].field_state_current == FoodBuddy.FieldState.PLAYER:
+				if food_buddies_active[0].name == "Dan":
+					food_buddies_active[0].visible = true
+				else:
+					food_buddies_active[0].visible = false
+			else:
+				food_buddies_active[0].visible = true
+			
+			if food_buddies_active[1].field_state_current == FoodBuddy.FieldState.PLAYER:
+				if food_buddies_active[1].name == "Dan":
+					food_buddies_active[1].visible = true
+				else:
+					food_buddies_active[1].visible = false
+			else:
+				food_buddies_active[1].visible = true
 
 
 func _on_player_throw_juicebox(destination: Vector2) -> void:
@@ -1421,25 +1470,26 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 	juicebox.throw_start(destination, horizontal_direction)
 
 
-func _on_juicebox_explode(juicebox: Juicebox):
-	var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
-	
-	if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
-		PLAYER.health_current += juicebox.health
-		PLAYER.healing_health = true
+func _on_juicebox_explode(juicebox):
+	if juicebox is Juicebox:
+		var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
 		
-		if PLAYER.health_current > PLAYER.health_max:
-			PLAYER.health_current = PLAYER.health_max
-	
-	for food_buddy in food_buddies_active:
-		if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
-			food_buddy.health_current += juicebox.health
-			food_buddy.healing_health = true
+		if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
+			PLAYER.health_current += juicebox.health
+			PLAYER.healing_health = true
 			
-			if food_buddy.health_current > food_buddy.health_max:
-				food_buddy.health_current = food_buddy.health_max
-	
-	update_character_status_UI()
+			if PLAYER.health_current > PLAYER.health_max:
+				PLAYER.health_current = PLAYER.health_max
+		
+		for food_buddy in food_buddies_active:
+			if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
+				food_buddy.health_current += juicebox.health
+				food_buddy.healing_health = true
+				
+				if food_buddy.health_current > food_buddy.health_max:
+					food_buddy.health_current = food_buddy.health_max
+		
+		update_character_status_UI()
 
 
 
@@ -1448,6 +1498,7 @@ func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
 	var energy_ball: EnergyBall
 	
 	energy_ball = load("res://scenes/blueprints/energy-ball.tscn").instantiate()
+	energy_ball.damage = BRITTANY.ability_damage["Solo"]
 	
 	if BRITTANY.current_direction_name == "sideways" and !BRITTANY.sprite.flip_h:
 		energy_ball.global_position = Vector2(BRITTANY.global_position.x - 25, BRITTANY.global_position.y - 15)
@@ -1467,8 +1518,9 @@ func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
 	energy_ball.throw_start(destination, int(BRITTANY.direction_current_horizontal))
 
 
-func _on_energy_ball_explode(energy_ball: EnergyBall):
-	process_attack(BRITTANY.target, BRITTANY, energy_ball.damage, energy_ball.hitbox_damage)
+func _on_energy_ball_explode(energy_ball):
+	if energy_ball is EnergyBall:
+		process_attack(BRITTANY.target, BRITTANY, energy_ball.damage, energy_ball.hitbox_damage)
 
 
 func update_character_status_UI():
@@ -1527,6 +1579,8 @@ func transition_music(character_world: String):
 		next_song = BatterBadlandsSong
 	elif character_world == "garden":
 		next_song = GardenSong
+	else:
+		next_song = empty_song
 	
 	transitioning_songs = true
 
@@ -1536,7 +1590,13 @@ func process_music_fade(delta: float):
 	else:
 		
 		if next_song != null:
+			
 			MUSIC.stop()
+			
+			if next_song == empty_song:
+				transitioning_songs = false
+				return
+			
 			MUSIC = next_song
 			MUSIC.volume_db = -17
 			timer_fade_music.start(music_fade_in_duration)
@@ -1556,3 +1616,5 @@ func adjust_tilemap_modulate(modulate_value: float):
 		for tilemap in world_tilemaps[world]:
 			
 			tilemap.modulate.a = modulate_value
+	
+	ocean_tilemap.modulate.a = modulate_value

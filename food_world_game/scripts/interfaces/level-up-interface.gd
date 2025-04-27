@@ -10,12 +10,15 @@ var text_choose_upgrade: Label
 
 var button_health: TextureButton
 var text_health: Label
+var health_reward: int = 10
 
 var button_stamina: TextureButton
 var text_stamina: Label
+var stamina_reward: int = 10
 
 var button_power: TextureButton
 var text_power: Label
+var power_reward: int = 2
 
 var animator: AnimationPlayer
 
@@ -28,6 +31,8 @@ var frozen_subjects: Array[Node2D]
 
 var start_location_foodbuddy1: Vector2
 var start_location_foodbuddy2: Vector2
+
+var inactive_foodbuddy: FoodBuddy
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -96,6 +101,12 @@ func start(freeze_subjects: Array[Node2D]):
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
+		if subject is FoodBuddy and subject not in active_food_buddies:
+			inactive_foodbuddy = subject
+		
+		if subject is GameCharacter:
+			subject.sprite.pause()
+		
 		subject.paused = true
 	
 	frozen_subjects = freeze_subjects
@@ -142,12 +153,12 @@ func start(freeze_subjects: Array[Node2D]):
 	start_location_foodbuddy1 = foodbuddy1.global_position
 	start_location_foodbuddy2 = foodbuddy2.global_position
 	
-	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
-	foodbuddy1.global_position = player.global_position
-	foodbuddy1.global_position.x -= 32
-	
-	foodbuddy2.global_position = player.global_position
-	foodbuddy2.global_position.x += 32
+	if foodbuddy1.field_state_current != FoodBuddy.FieldState.PLAYER:
+		foodbuddy1.global_position = player.global_position
+		foodbuddy1.global_position.x -= 32
+	if foodbuddy2.field_state_current != FoodBuddy.FieldState.PLAYER:
+		foodbuddy2.global_position = player.global_position
+		foodbuddy2.global_position.x += 32
 	
 	for buddy in active_food_buddies:
 		buddy.label_e_to_interact.hide()
@@ -198,14 +209,24 @@ func start(freeze_subjects: Array[Node2D]):
 
 
 func end():
+	animator.play("RESET")
+	
 	if player.xp_current >= player.xp_max and player.level_current != 15:
 		start(frozen_subjects)
 	else:
 		# Pause all of the characters' processing while the interface is active
 		for subject in frozen_subjects:
 			subject.paused = false
-		
-		animator.play("RESET")
+			
+			if subject is Juicebox or subject is EnergyBall:
+				
+				if subject.sprite.get_frame() == subject.impact_frame:
+					subject.explode.emit(self)
+				
+				subject.sprite.play()
+			
+			if subject is GameCharacter:
+				subject.sprite.play()
 	
 	self.visible = false
 	self.process_mode = Node.PROCESS_MODE_DISABLED
@@ -242,35 +263,31 @@ func end():
 
 
 func _on_health_button_button_down() -> void:
-	player.health_max += 5
-	foodbuddy1.health_max += 5
-	foodbuddy2.health_max += 5
+	player.health_max += health_reward
+	foodbuddy1.health_max += health_reward
+	foodbuddy2.health_max += health_reward
 	
 	player.health_current = player.health_max
 	foodbuddy1.health_current = foodbuddy1.health_max
 	foodbuddy2.health_current = foodbuddy2.health_max
 	
-	InterfaceCharacterStatus.health_bar_player.max_value = player.health_max
-	InterfaceCharacterStatus.health_bar_foodbuddy1.max_value = foodbuddy1.health_max
-	InterfaceCharacterStatus.health_bar_foodbuddy2.max_value = foodbuddy2.health_max
+	InterfaceCharacterStatus.setValues(player, [foodbuddy1, foodbuddy2])
 	
 	end()
 
 
 func _on_stamina_button_button_down() -> void:
-	player.stamina_max += 5
-	
-	player.stamina_max += 5
+	player.stamina_max += stamina_reward
 	player.stamina_current = player.stamina_max
-	
 	InterfaceCharacterStatus.stamina_bar_player.max_value = player.stamina_max
 	
 	end()
 
 
 func _on_power_button_button_down() -> void:
-	player.attack_damage["Kick"] = player.attack_damage["Kick"] + 3
-	player.attack_damage["Punch"] = player.attack_damage["Punch"] + 3
+	player.attack_damage["Punch"] += power_reward
+	foodbuddy1.ability_damage["Solo"] += power_reward
+	foodbuddy2.ability_damage["Solo"] += power_reward
 	
 	end()
 

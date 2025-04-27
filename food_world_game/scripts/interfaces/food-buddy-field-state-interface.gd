@@ -111,6 +111,9 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
 		subject.paused = true
+		
+		if subject is GameCharacter:
+			subject.sprite.pause()
 	
 	# Set the UI to be visible and processing
 	self.visible = true
@@ -124,7 +127,13 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	button_buddy2_follow.disabled = false
 	button_buddy2_forage.disabled = false
 	
-	if foodbuddy1.field_state_current == FoodBuddy.FieldState.FIGHT:
+	if !foodbuddy1.alive:
+		selected_button_buddy1 = null
+		button_buddy1_fight.disabled = true
+		button_buddy1_follow.disabled = true
+		button_buddy1_forage.disabled = true
+	
+	elif foodbuddy1.field_state_current == FoodBuddy.FieldState.FIGHT:
 		selected_button_buddy1 = button_buddy1_fight
 	elif foodbuddy1.field_state_current == FoodBuddy.FieldState.FOLLOW:
 		selected_button_buddy1 = button_buddy1_follow
@@ -136,7 +145,14 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		button_buddy1_follow.disabled = true
 		button_buddy1_forage.disabled = true
 	
-	if foodbuddy2.field_state_current == FoodBuddy.FieldState.FIGHT:
+	
+	if !foodbuddy2.alive:
+		selected_button_buddy2 = null
+		button_buddy2_fight.disabled = true
+		button_buddy2_follow.disabled = true
+		button_buddy2_forage.disabled = true
+		
+	elif foodbuddy2.field_state_current == FoodBuddy.FieldState.FIGHT:
 		selected_button_buddy2 = button_buddy2_fight
 	elif foodbuddy2.field_state_current == FoodBuddy.FieldState.FOLLOW:
 		selected_button_buddy2 = button_buddy2_follow
@@ -165,11 +181,12 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 	start_location_foodbuddy1 = foodbuddy1.global_position
 	start_location_foodbuddy2 = foodbuddy2.global_position
 	
-	foodbuddy1.global_position = player.global_position
-	foodbuddy1.global_position.x -= 32
-	
-	foodbuddy2.global_position = player.global_position
-	foodbuddy2.global_position.x += 32
+	if foodbuddy1.field_state_current != FoodBuddy.FieldState.PLAYER:
+		foodbuddy1.global_position = player.global_position
+		foodbuddy1.global_position.x -= 32
+	if foodbuddy2.field_state_current != FoodBuddy.FieldState.PLAYER:
+		foodbuddy2.global_position = player.global_position
+		foodbuddy2.global_position.x += 32
 	
 	for buddy in active_food_buddies:
 		buddy.label_e_to_interact.hide()
@@ -223,6 +240,16 @@ func end():
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
 		subject.paused = false
+		
+		if subject is Juicebox or subject is EnergyBall:
+			
+			if subject.sprite.get_frame() == subject.impact_frame:
+				subject.explode.emit(self)
+			
+			subject.sprite.play()
+		
+		if subject is GameCharacter:
+			subject.sprite.play()
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:

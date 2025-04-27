@@ -35,6 +35,8 @@ enum Direction {
 var paused: bool
 var active: bool = true
 
+var impact_frame: int = 1
+
 var position_start: Vector2
 var position_end: Vector2
 var position_middle: Vector2

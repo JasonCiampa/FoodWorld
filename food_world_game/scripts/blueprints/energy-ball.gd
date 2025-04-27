@@ -35,6 +35,8 @@ enum Direction {
 var paused: bool
 var active: bool = true
 
+var impact_frame: int = 1
+
 var position_start: Vector2
 var position_end: Vector2
 var position_middle: Vector2
@@ -56,7 +58,7 @@ var deltaY_adjusted: bool = false
 
 var delta_adjustment_counter: int      # How many times the delta value has been updated
 
-var damage: int = 25
+var damage: int
 
 var target: GameCharacter
 

@@ -59,6 +59,10 @@ func _physics_process(_delta: float) -> void:
 	
 	update_dimensions()
 
+var previous_animation: String = "idle_front"
+var previous_animation_frame: int = 0
+var previous_animation_frame_progress: float = 0
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

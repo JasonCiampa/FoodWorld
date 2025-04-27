@@ -21,7 +21,7 @@ var animator: AnimationPlayer
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+signal adjust_tilemap_modulate
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -137,19 +137,7 @@ func game_over(freeze_subjects: Array[Node2D]):
 	
 	InterfaceCharacterStatus.visible = false
 	
-	# Iterate over each tilemap that could be on screen right now and disable it
-	for tilemap in player.current_tilemaps:
-		tilemap.modulate.a = 0
-	
-	# Determine if the food buddies have different tilemaps than the player
-	if player.current_tilemaps[0] != active_food_buddies[0].current_tilemaps[0] or player.current_tilemaps[0] != active_food_buddies[1].current_tilemaps[0]:
-		
-		# Iterate over each tilemap that could be on screen right now and disable it
-		for tilemap in active_food_buddies[0].current_tilemaps:
-			tilemap.modulate.a = 0
-		
-		for tilemap in active_food_buddies[1].current_tilemaps:
-			tilemap.modulate.a = 0
+	adjust_tilemap_modulate.emit(0)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -53,6 +53,10 @@ func ready():
 		"Ability 2": [10, "Instant"] 
 	}
 	
+	ability_damage = { 
+		"Solo": 20, 
+	}
+	
 	# Set Brittany's default speed and current speed
 	speed_normal = 35
 	speed_current = speed_normal

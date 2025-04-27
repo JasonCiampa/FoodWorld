@@ -72,6 +72,11 @@ var xp_drop: int = 50
 
 var RNG: RandomNumberGenerator
 
+
+var previous_animation: String = "idle_front"
+var previous_animation_frame: int = 0
+var previous_animation_frame_progress: float = 0
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

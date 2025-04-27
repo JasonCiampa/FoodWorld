@@ -462,6 +462,10 @@ func end():
 		
 		elif subject is Juicebox or subject is EnergyBall:
 			subject.paused = false
+			
+			if subject.sprite.get_frame() == subject.impact_frame:
+				subject.explode.emit(self)
+			
 			subject.sprite.play()
 			subject.animator.play()
 	

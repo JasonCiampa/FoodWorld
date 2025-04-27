@@ -241,9 +241,7 @@ func _process(delta: float) -> void:
 	else:
 		on_platform = false
 	
-	toggle_food_buddy_field_state_interface()
-	toggle_food_buddy_selection_interface()
-	toggle_brittany_berry_bot_interface()
+
 	
 	if not paused:
 		
@@ -275,9 +273,11 @@ func _process(delta: float) -> void:
 		
 		process_ability_use(delta)
 		update_movement_direction()
-		update_animation()
 		update_stamina(delta)
 		update_field_state()
+		
+		if !is_interacting:
+			update_animation()
 		
 		if !is_interacting and Input.is_action_pressed("interact"):
 			interact.emit(delta)
@@ -293,7 +293,10 @@ func _process(delta: float) -> void:
 	clicked_this_frame = false
 	
 	update_dimensions()
-
+	
+	toggle_food_buddy_field_state_interface()
+	toggle_food_buddy_selection_interface()
+	toggle_brittany_berry_bot_interface()
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
@@ -390,32 +393,43 @@ func update_animation(animation_name: String = ""):
 		sprite.speed_scale = 1
 	
 	if (field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2):
-		if equipped_buddy != null and equipped_buddy.name == "Dan":
-			
-			equipped_buddy.global_position = global_position
-			equipped_buddy.sprite.flip_h = sprite.flip_h
-			equipped_buddy.sprite.speed_scale = sprite.speed_scale
-			
-			if is_sprinting:
-				equipped_buddy.using_ability = true
-				equipped_buddy.update_animation("ability_" + new_direction_name)
-			else:
-				equipped_buddy.using_ability = false
-				equipped_buddy.update_animation(new_animation_name + "_" + new_direction_name)
-			
-			
-			if juicebox_ready:
-				new_animation_name = "juice_" + new_animation_name
+		if equipped_buddy != null:
+			if equipped_buddy.name == "Dan":
 				
-				if throwing_juicebox:
-					new_animation_name = new_animation_name + "_throw"
-			
-			
-			if equipped_buddy.sprite.animation in equipped_buddy.animation_callbacks.keys():
-				equipped_buddy.animation_callbacks.get(equipped_buddy.sprite.animation).call()
-		
-		elif (animation_player.current_animation_position > 0.3 or animation_player.current_animation != "fuse"):
-			fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
+				if level_up or is_interacting:
+					equipped_buddy.sprite.speed_scale = 1
+					equipped_buddy.sprite.flip_h = sprite.flip_h
+					equipped_buddy.sprinkle_sprite.play("nothing")
+					equipped_buddy.sprite.play("idle_front")
+					sprite.speed_scale = 1
+				
+				elif !level_up:
+					equipped_buddy.global_position = global_position
+					equipped_buddy.sprite.flip_h = sprite.flip_h
+					equipped_buddy.sprite.speed_scale = sprite.speed_scale
+					
+					if is_sprinting:
+						equipped_buddy.using_ability = true
+						equipped_buddy.update_animation("ability_" + new_direction_name)
+					else:
+						equipped_buddy.using_ability = false
+						equipped_buddy.update_animation(new_animation_name + "_" + new_direction_name)
+						equipped_buddy.sprinkle_sprite.play("nothing")
+					
+					
+					if juicebox_ready:
+						new_animation_name = "juice_" + new_animation_name
+						
+						if throwing_juicebox:
+							new_animation_name = new_animation_name + "_throw"
+					
+					
+					if equipped_buddy.sprite.animation in equipped_buddy.animation_callbacks.keys():
+						equipped_buddy.animation_callbacks.get(equipped_buddy.sprite.animation).call()
+				
+			elif (animation_player.current_animation_position > 0.3 or animation_player.current_animation != "fuse"):
+				fusion_name = "player_" + equipped_buddy.name.to_lower() + "_"
+
 	
 	elif field_state_current == FieldState.JUICE:
 		

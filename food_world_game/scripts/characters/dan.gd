@@ -58,6 +58,10 @@ func ready():
 		"Ability 2": [25, "Gradual"] 
 	}
 	
+	ability_damage = { 
+		"Solo": 10, 
+	}
+	
 	# Set Dan's default speed and current speed
 	speed_normal = 45
 	speed_sprinting = 85
@@ -203,7 +207,11 @@ func _on_sprite_animation_looped() -> void:
 				use_ability_solo.emit(self, ability_damage["Solo"])
 			
 			timer_ability_cooldown.start(1.5)
-			sprite.play("idle_" + current_direction_name)
+			if current_direction_name == "":
+				sprite.play("idle_front")
+			else:
+				sprite.play("idle_" + current_direction_name)
+			
 			current_animation_name = "idle"
 			
 			if RNG.randi_range(0, 1):

@@ -115,6 +115,10 @@ func start(freeze_subjects: Array[Node2D]):
 	# Pause all of the characters' processing while the interface is active
 	for subject in freeze_subjects:
 		subject.paused = true
+		
+		if subject is GameCharacter:
+			subject.sprite.pause()
+	
 	
 	# Store the currently frozen subjects so they can be unfrozen when selection is complete
 	frozen_subjects = freeze_subjects
@@ -130,12 +134,12 @@ func start(freeze_subjects: Array[Node2D]):
 	start_location_foodbuddy1 = active_foodbuddy1.global_position
 	start_location_foodbuddy2 = active_foodbuddy2.global_position
 	
-	# INSTEAD OF MOVING ACTUAL FOOD BUDDIES, HIDE THEM AND THEIR PROCESSING- BUT SPAWN ANIMATEDSPRITE2DS OF THOSE FOOD BUDDIES NEXT TO THE PLAYER AND MAKE EM DANCE!!
-	active_foodbuddy1.global_position = player.global_position
-	active_foodbuddy1.global_position.x -= 32
-	
-	active_foodbuddy2.global_position = player.global_position
-	active_foodbuddy2.global_position.x += 32
+	if active_foodbuddy1.field_state_current != FoodBuddy.FieldState.PLAYER:
+		active_foodbuddy1.global_position = player.global_position
+		active_foodbuddy1.global_position.x -= 32
+	if active_foodbuddy2.field_state_current != FoodBuddy.FieldState.PLAYER:
+		active_foodbuddy2.global_position = player.global_position
+		active_foodbuddy2.global_position.x += 32
 	
 	for buddy in active_food_buddies:
 		buddy.label_e_to_interact.hide()
@@ -186,6 +190,16 @@ func end():
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
 		subject.paused = false
+		
+		if subject is Juicebox or subject is EnergyBall:
+			
+			if subject.sprite.get_frame() == subject.impact_frame:
+				subject.explode.emit(self)
+			
+			subject.sprite.play()
+		
+		if subject is GameCharacter:
+			subject.sprite.play()
 	
 	# Set the UI to be invisible and not processing
 	self.visible = false

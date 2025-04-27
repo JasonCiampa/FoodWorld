@@ -43,6 +43,10 @@ func ready():
 		"Ability 2": [25, "Instant"] 
 	}
 	
+	ability_damage = { 
+		"Solo": 6.5, 
+	}
+	
 	# Set Link's default speed and current speed
 	speed_normal = 40
 	speed_current = speed_normal

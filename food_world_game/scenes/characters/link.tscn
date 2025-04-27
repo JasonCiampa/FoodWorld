@@ -28,7 +28,7 @@ size = Vector2(24, 2)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1no0i"]
 size = Vector2(26, 4)
 
-[sub_resource type="LabelSettings" id="LabelSettings_c2ju1"]
+[sub_resource type="LabelSettings" id="LabelSettings_67hdu"]
 font = ExtResource("3_dc0ob")
 font_size = 80
 outline_size = 40
@@ -51,9 +51,7 @@ polygon = PackedVector2Array(-6, 3, -12, 2, -12, 1, -12, -1, -9, -2, 9, -2, 12, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = ExtResource("2_4u0ai")
-animation = &"die_front"
-frame = 2
-frame_progress = 0.686964
+animation = &"idle_front"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -96,20 +94,6 @@ position = Vector2(0, 8)
 position = Vector2(0, -9)
 shape = SubResource("RectangleShape2D_1no0i")
 
-[node name="Press \'E\' to Interact" type="Label" parent="."]
-visible = false
-z_index = 3
-offset_left = -1000.0
-offset_top = -26.0
-offset_right = 1000.0
-offset_bottom = 80.0
-scale = Vector2(0.0564907, 0.0564907)
-pivot_offset = Vector2(1000, 0)
-text = "press 'e' to interact"
-label_settings = SubResource("LabelSettings_c2ju1")
-horizontal_alignment = 1
-autowrap_mode = 2
-
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 4.0
 target_desired_distance = 128.0
@@ -117,6 +101,21 @@ path_max_distance = 10.0
 path_postprocessing = 1
 simplify_path = true
 debug_path_custom_color = Color(0.252755, 0.104298, 1, 1)
+
+[node name="Press \'E\' to Interact" type="Label" parent="."]
+visible = false
+z_index = 3
+offset_left = -1500.0
+offset_top = -120.0
+offset_right = 1500.0
+offset_bottom = 80.0
+scale = Vector2(0.0564907, 0.0564907)
+pivot_offset = Vector2(1500, 100)
+text = "Press 'E' to Interact
+"
+label_settings = SubResource("LabelSettings_67hdu")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Navigation Timer" type="Timer" parent="."]
 one_shot = true

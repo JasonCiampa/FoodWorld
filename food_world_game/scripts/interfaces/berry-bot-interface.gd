@@ -153,7 +153,7 @@ func setValues(_player: Player, _brittany: FoodBuddy):
 
 
 
-# Enables the Food Buddy FieldState Interface and freezes the updating for the given subjects while the Interface is active
+# Enables the Berry Bot Interface and freezes the updating for the given subjects while the Interface is active
 func start(_freeze_subjects: Array[Node2D]):
 	
 	
@@ -162,15 +162,26 @@ func start(_freeze_subjects: Array[Node2D]):
 	
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
+		
 		if subject is GameCharacter:
 			subject.paused = true
 			subject.sprite.pause()
 			subject.animation_player.pause()
+			
+			if subject is Player or subject is FoodBuddy:
+				
+				# Store the actual position in the animation because the subject is alive or could be actively dying
+				subject.previous_animation_frame = subject.sprite.get_frame()
+				subject.previous_animation_frame_progress = subject.sprite.get_frame_progress()
+				
 		
 		elif subject is Juicebox or subject is EnergyBall:
 			subject.paused = true
 			subject.sprite.pause()
 			subject.animator.pause()
+		
+		elif subject is InteractableCharacter or subject is InteractableAsset:
+			subject.label_e_to_interact.hide()
 	
 	
 	# Set the UI to be visible and processing
@@ -225,7 +236,7 @@ func start(_freeze_subjects: Array[Node2D]):
 
 
 
-# Disables the Food Buddy FieldState Interface
+# Disables the Berry Bot Interface
 func end():
 	
 	# Pause all of the characters' processing while the interface is active
@@ -233,18 +244,30 @@ func end():
 		if subject is GameCharacter:
 			subject.paused = false
 			
-			if subject.alive:
-				#subject.sprite.set_frame_and_progress(subject.sprite.get_frame(), subject.sprite.get_frame_progress())
-				subject.sprite.play()
-			
-			
-			if subject is FoodBuddy:
+			if subject is Player or subject is FoodBuddy:
+				
+				# If the subject isn't alive, determine whether or not we should play their animation (if it already played or not)
+				if !subject.alive:
+					var total_frames: int = subject.sprite.sprite_frames.get_frame_count(subject.sprite.animation)
+					var current_frame: int = subject.sprite.get_frame()
+					
+					# If the death animation is complete, then set the previous frame to the end of the animation
+					if not (current_frame > 0 and current_frame < total_frames - 1):
+						continue
+				
+				subject.sprite.set_frame_and_progress(subject.previous_animation_frame, subject.previous_animation_frame_progress)
 				subject.animation_player.play("RESET")
-		
-		elif subject is Juicebox or subject is EnergyBall:
-			subject.paused = false
+			
 			subject.sprite.play()
-			subject.animator.play()
+		
+			
+		elif subject is Juicebox or subject is EnergyBall:
+			
+			if subject.sprite.get_frame() == subject.impact_frame:
+				subject.explode.emit(self)
+			
+			subject.sprite.play()
+	
 	
 	# Set the UI to be invisible and not processing
 	self.visible = false

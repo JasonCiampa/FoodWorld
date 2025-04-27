@@ -33,7 +33,7 @@ size = Vector2(9, 2)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f570y"]
 size = Vector2(10, 4)
 
-[sub_resource type="LabelSettings" id="LabelSettings_kwx2x"]
+[sub_resource type="LabelSettings" id="LabelSettings_5eavh"]
 font = ExtResource("3_5mu1x")
 font_size = 80
 outline_size = 40
@@ -95,14 +95,17 @@ shape = SubResource("RectangleShape2D_f570y")
 [node name="Press \'E\' to Interact" type="Label" parent="."]
 visible = false
 z_index = 3
-offset_left = -39.0
-offset_top = -33.0
-offset_right = 2046.0
-offset_bottom = 73.0
+offset_left = -1500.0
+offset_top = -128.993
+offset_right = 1500.0
+offset_bottom = 71.0067
 scale = Vector2(0.0564907, 0.0564907)
+pivot_offset = Vector2(1500, 100)
 text = "Press 'E' to Interact
 "
-label_settings = SubResource("LabelSettings_kwx2x")
+label_settings = SubResource("LabelSettings_5eavh")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
 [connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]
