@@ -36,6 +36,8 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
 
 [node name="Link" type="CharacterBody2D" groups=["food_buddies", "interactable-characters", "interactables"]]
+collision_layer = 0
+collision_mask = 0
 script = ExtResource("1_3g1b3")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]

@@ -84,6 +84,7 @@ var GameTileManager: TileManager
 
 var timer_fade: Timer
 var timer_process_tiles: Timer
+var timer_process_enemy_tiles: Timer
 var timer_fade_music: Timer
 var screen_fading: bool = false
 var current_building: Building
@@ -106,6 +107,7 @@ func _ready() -> void:
 	
 	timer_fade = $"Fade Timer"
 	timer_process_tiles = $"Process Tiles Timer"
+	timer_process_enemy_tiles = $"Process Enemy Tiles Timer"
 	timer_fade_music = $"Fade Music Timer"
 	
 	# Add Malick and Sally into the active Food Buddies list
@@ -186,15 +188,14 @@ func _ready() -> void:
 	InterfaceBerryBot.setValues(PLAYER, BRITTANY)
 	InterfaceBerryBot.update_character_status_UI.connect(update_character_status_UI)
 	InterfaceBerryBot.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
-
 	
-	BRITTANY.collision_values["GROUND"] = 4
-	BRITTANY.collision_values["MIDAIR"] = 5
-	BRITTANY.collision_values["PLATFORM"] = 6
+	DAN.collision_values["GROUND"] = 4
+	DAN.collision_values["MIDAIR"] = 5
+	DAN.collision_values["PLATFORM"] = 6
 	
-	DAN.collision_values["GROUND"] = 7
-	DAN.collision_values["MIDAIR"] = 8
-	DAN.collision_values["PLATFORM"] = 9
+	BRITTANY.collision_values["GROUND"] = 7
+	BRITTANY.collision_values["MIDAIR"] = 8
+	BRITTANY.collision_values["PLATFORM"] = 9
 	
 	## CREATE NEW DIALOGUE RESOURCE CODE
 	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
@@ -210,12 +211,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	#if !musicStarted and timer_fade.is_stopped():
-		#musicStarted = true
-		#MUSIC.play()
-	#else:
-		#if transitioning_songs:
-			#process_music_fade(delta)
+	if !musicStarted and timer_fade.is_stopped():
+		musicStarted = true
+		MUSIC.play()
+	else:
+		if transitioning_songs:
+			process_music_fade(delta)
 	
 	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
@@ -232,15 +233,23 @@ func _process(delta: float) -> void:
 		interactable_assets.get_or_add(interactable_asset.global_position, interactable_asset)
 	
 	
+	GameTileManager.process_nearby_tiles(PLAYER, 1)
+	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
-		GameTileManager.process_nearby_tiles(PLAYER, 4)
 		GameTileManager.process_nearby_tiles(food_buddies_active[0], 5)
 		GameTileManager.process_nearby_tiles(food_buddies_active[1], 5)
-		timer_process_tiles.start(0.38) # run this only every .38 seconds
-		
+		timer_process_tiles.start(0.6)
+	
+	if timer_process_enemy_tiles.is_stopped():
 		for enemy in enemies:
-			GameTileManager.process_nearby_tiles(enemy, 3)
+			if enemy.on_screen_notifier.is_on_screen():
+				enemy.process_mode = Node.PROCESS_MODE_INHERIT
+				GameTileManager.process_nearby_tiles(enemy, 3)
+			else:
+				enemy.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		timer_process_enemy_tiles.start(1.5) # run this only every .38 seconds
 		
 
 	
@@ -389,10 +398,8 @@ func get_target_distance(subject: GameCharacter, target: Node2D) -> float:
 	return target_distance
 
 
-
 # Determines if an attack has landed on the target and reduces the target's health if it has. Returns true if the attack landed on the target, false if not.
 func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int, attacker_hitbox: Area2D = null) -> bool:
-	
 	
 	var hitboxes: Array[Area2D]
 	
@@ -769,7 +776,11 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			PLAYER.shadow.visible = false
 			PLAYER.sprite.offset.y = -16
 			PLAYER.speed_current = PLAYER.speed_normal
-		
+		elif food_buddy_selected.name == "Link":
+			PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
+			PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
+			PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
+			
 		PLAYER.field_state_current = PLAYER.FieldState.SOLO
 		PLAYER.equipped_buddy = null
 		PLAYER.shadow.visible = true
@@ -784,8 +795,11 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 				#unequip_food_buddy_fusion()
 			#else:
 			# Revert the unselected Food Buddy to their previous FieldState because the selected Food Buddy is swapping places with it (only one Food Buddy in PLAYER FieldState at a time)
-			food_buddy_other.field_state_current = food_buddy_other.field_state_previous
-			food_buddy_other.field_state_previous = FoodBuddy.FieldState.PLAYER
+			if food_buddy_other.field_state_previous == FoodBuddy.FieldState.PLAYER:
+				food_buddy_other.field_state_current = FoodBuddy.FieldState.FOLLOW
+			else:
+				food_buddy_other.field_state_current = food_buddy_other.field_state_previous
+				food_buddy_other.field_state_previous = FoodBuddy.FieldState.PLAYER
 			
 			food_buddy_other.process_mode = Node.PROCESS_MODE_INHERIT
 			food_buddy_other.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 1)
@@ -798,7 +812,11 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 				PLAYER.sprite.offset.y = -16
 				PLAYER.speed_current = PLAYER.speed_normal
 				PLAYER.juicebox_ready = false
-			
+			elif food_buddy_selected.name == "Link":
+				PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
+				PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
+				PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
+				
 		
 		# Update the selected Food Buddy's FieldState variables
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
@@ -808,6 +826,10 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		if food_buddy_selected.name != "Dan":
 			food_buddy_selected.visible = false
 			food_buddy_selected.process_mode = Node.PROCESS_MODE_DISABLED
+		elif food_buddy_selected.name == "Link":
+			PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
+			PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
+			PLAYER.hitbox_damage = PLAYER.sausage_link_hitbox_damage
 		else:
 			food_buddy_selected.label_e_to_interact.visible = false
 			PLAYER.shadow.visible = false
@@ -928,6 +950,7 @@ func _on_player_use_ability_solo(damage: int) -> void:
 		
 		# Iterate over every enemy currently on the screen to check if the Player's attack landed on them, then stop checking if the attack landed because the Player's solo ability can only damage one enemy at a time
 		for enemy in get_enemies_on_screen():
+			
 			if process_attack(enemy, PLAYER, damage):
 				PLAYER.target = enemy
 				return
@@ -1426,9 +1449,20 @@ func _on_player_exit_building(_building: Building, _delta: float):
 			if asset is CharacterBody2D:
 				asset.velocity = Vector2(0, 0)
 		
+		if food_buddies_active[0].field_state_current == FoodBuddy.FieldState.PLAYER:
+			if food_buddies_active[0].name == "Dan":
+				food_buddies_active[0].visible = true
+		else:
+			food_buddies_active[0].visible = true
+		
+		if food_buddies_active[1].field_state_current == FoodBuddy.FieldState.PLAYER:
+			if food_buddies_active[1].name == "Dan":
+				food_buddies_active[1].visible = true
+		else:
+			food_buddies_active[1].visible = true
+		
 		PLAYER.visible = true
-		food_buddies_active[0].visible = true
-		food_buddies_active[1].visible = true
+
 		
 	else:
 		if screen_fading and modulate.a == 0:

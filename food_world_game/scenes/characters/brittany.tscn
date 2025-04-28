@@ -39,6 +39,8 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 0
 
 [node name="Brittany" type="CharacterBody2D" groups=["food_buddies", "interactable-characters", "interactables"]]
+collision_layer = 0
+collision_mask = 0
 floor_max_angle = 0.0
 script = ExtResource("1_3xxkd")
 

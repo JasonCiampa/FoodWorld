@@ -37,20 +37,20 @@ var tiles_enabled_navigation: Dictionary
 
 var next_nav_index_to_add: int = 0
 var next_nav_index_to_remove: int = 0
-var nav_tile_cap: int = 500
+var nav_tile_cap: int = 1500
 
 var bushes: Array[Vector2i]
 
 # A dictionary that maps Tile types to their designated callback functions for processing
 var tile_callbacks : Dictionary = {
-	"ground" : tile_callback_ground,
+	#"ground" : tile_callback_ground,
 	
-	"ledge_front" : tile_callback_ledge,
-	"ledge_back" : tile_callback_ledge,
+	#"ledge_front" : tile_callback_ledge,
+	#"ledge_back" : tile_callback_ledge,
+	null : func(tile: Tile, character: GameCharacter): return null,
 	
 	"environment_asset" : tile_callback_environment_asset,
 	"bush" : tile_callback_bush,
-	
 	"building" : tile_callback_building
 }
 
@@ -254,11 +254,13 @@ func execute_tile_callback(tile: Tile, character: GameCharacter) -> Tile:
 	# Update the Tile's world location if necessary
 	tile = update_tile_world_location(tile, character)
 	
-	# Determine if the updated Tile is not null and if the Tile's type has a designated callback function to execute, then execute it
-	if tile and tile_callbacks.get(tile.type) != null:
-		
-		# Call the callback function for this Tile to process it with respect to the given Character
-		tile_callbacks[tile.type].call(tile, character)
+	# Call the callback function for this Tile to process it with respect to the given Character
+	var callback = tile_callbacks.get(tile.type)
+	
+	if callback != null:
+		callback.call(tile, character)
+	
+	callback = null
 	
 	return tile
 	
@@ -295,31 +297,39 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	# Iterate over each of the tilemaps that should have their Tiles processed
 	for map_type in character.current_tilemaps.size():
 		
+		
 		# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 2)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 2)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 2)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 2)))
+		
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 3)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 3)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 3)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 3)))
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 3)))
+		
+		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 2)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 2)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 2)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 2)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 2)))
 		
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 1)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 1)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 1)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 1)))
 		
 		# Add the Tiles in the row including the Character's current Tile into the list of Tiles to be processed
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y)))
 		
 		# Add the Tiles in the row above the Character's current Tile into the list of Tiles to be processed
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - 1)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - 1)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - 1)))
+		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - 1)))
 		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - 1)))
 		
 		# Iterate (tiles_above - 1) times to add extra rows of Tiles to process above the Character
@@ -327,12 +337,20 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 			
 			# Note: Loop starts at 2 instead of 1 because one row above the Character is already processed automatically (y - 1), so the next row to be added must start at (y = 2).
 			
-			# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
-			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - count)))
-			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
-			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
-			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
-			tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - count)))
+			if count != tiles_above:
+				# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - count)))
+				#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
+				#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
+				#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - count)))
+			else:
+				# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - count)))
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
+				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - count)))
 	
 
 	

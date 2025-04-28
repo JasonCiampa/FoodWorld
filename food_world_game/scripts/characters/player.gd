@@ -4,14 +4,18 @@ extends GameCharacter
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Timers #
+
 @onready var dodge_timer: Timer = $"Timers/Dodge Timer"
 @onready var dodge_cooldown_timer: Timer = $"Timers/Dodge Cooldown Timer"
 @onready var stamina_regen_delay_timer: Timer = $"Timers/Stamina Regen Delay Timer"
 @onready var interaction_delay_timer: Timer = $"Timers/Interaction Delay Timer"
 @onready var timer: Timer = $Timers/Timer
+
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
 @onready var fuse_sprite: AnimatedSprite2D = $"Fuse Sprite"
+
+@onready var sausage_link_hitbox_damage: Area2D = $"Sausage Link Damage Hitbox"
+@onready var normal_hitbox_damage: Area2D = $"Damage Hitbox"
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -357,13 +361,28 @@ func update_animation(animation_name: String = ""):
 		sprite.play(animation_name)
 		return
 	
-	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
-	
-	if new_direction_name != null:
-		new_direction_name = new_direction_name.call()
-	
 	if using_ability:
 		new_animation_name = "ability"
+		
+		var mouse_coords: Vector2 = get_global_mouse_position()
+			
+		if mouse_coords.x >= global_position.x:
+			direction_current_horizontal = Direction.RIGHT
+			sprite.flip_h = true
+		else:
+			direction_current_horizontal = Direction.LEFT
+			sprite.flip_h = false
+		
+		if mouse_coords.y >= global_position.y:
+			direction_current_vertical = Direction.DOWN
+		else:
+			direction_current_vertical = Direction.UP
+	
+		if abs(mouse_coords.x - global_position.x) >= abs(mouse_coords.y - global_position.y):
+			direction_current_vertical = Direction.IDLE
+		else:
+			direction_current_horizontal = Direction.IDLE
+		
 	elif health_current <= 0:
 		new_animation_name = "die"
 	elif direction_current_horizontal == 0 and direction_current_vertical == 0:
@@ -371,6 +390,10 @@ func update_animation(animation_name: String = ""):
 	else:
 		new_animation_name = "moving"
 	
+	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
+	
+	if new_direction_name != null:
+		new_direction_name = new_direction_name.call()
 	
 	if new_animation_name == "" or new_animation_name == null:
 		new_animation_name = current_animation_name
@@ -449,7 +472,11 @@ func update_animation(animation_name: String = ""):
 		
 		# Only play if the ability is not already launched in a different direction
 		if using_ability:
-			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name + "_" + hand_punching)
+			if equipped_buddy != null and equipped_buddy.name == "Link":
+				sprite.play(fusion_name + new_animation_name + "_" + new_direction_name)
+			else:
+				sprite.play(fusion_name + new_animation_name + "_" + new_direction_name + "_" + hand_punching)
+			
 			sprite.set_frame_and_progress(previous_animation_frame, previous_animation_frame_progress)
 		
 		elif throwing_juicebox:
@@ -465,6 +492,7 @@ func update_animation(animation_name: String = ""):
 		
 		new_animation_name = ""
 		new_direction_name = ""
+
 
 # Starts the Player's sprint
 func sprint_start():
@@ -638,11 +666,12 @@ func update_movement_direction():
 func update_movement_velocity(delta):
 	
 	
-	if equipping_buddy or (using_ability and equipped_buddy != null and equipped_buddy.name != "Dan"):
+	if equipping_buddy or (field_state_current == FieldState.SOLO and using_ability) or (using_ability and equipped_buddy != null and equipped_buddy.name != "Dan"):
 		velocity.x = 0
 		velocity.y = 0
 		return
-	
+		
+		
 	# Determine if the Player currently has stamina
 	if stamina_current > 0:
 		
@@ -1021,7 +1050,7 @@ func _on_sprite_animation_finished() -> void:
 	
 	if "ability" in sprite.animation:
 		using_ability = false
-		print("ABILITY ENDED")
+		
 		if field_state_current == FieldState.BUDDY1 or field_state_current == FieldState.BUDDY2:
 			update_animation()
 		else:
@@ -1030,8 +1059,13 @@ func _on_sprite_animation_finished() -> void:
 
 func _on_sprite_frame_changed() -> void:
 	if "ability" in sprite.animation:
-		if sprite.get_frame() == 3:
-			use_ability_solo.emit(attack_damage["Punch"])
+		if field_state_current == FieldState.SOLO or (equipped_buddy != null and equipped_buddy.name != "Link"):
+			if sprite.get_frame() == 3:
+				use_ability_solo.emit(attack_damage["Punch"])
+			
+		elif equipped_buddy != null and equipped_buddy.name == "Link":
+			if sprite.get_frame() == 7:
+				use_ability_solo.emit(equipped_buddy.ability_damage["Ability 1"])
 
 
 func _on_sprite_animation_changed() -> void:

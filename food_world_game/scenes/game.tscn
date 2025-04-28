@@ -27,7 +27,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(644, 1276)
+position = Vector2(804, 959)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 10
@@ -88,10 +88,10 @@ offset_bottom = -149.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Link" parent="." instance=ExtResource("9_t4o2x")]
-position = Vector2(25, 750)
+position = Vector2(892, 846)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(604, 830)
+position = Vector2(815, 878)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
 position = Vector2(1024, 586)
@@ -132,6 +132,9 @@ position = Vector2(1274, 665)
 one_shot = true
 
 [node name="Process Tiles Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Process Enemy Tiles Timer" type="Timer" parent="."]
 one_shot = true
 
 [node name="Fade Music Timer" type="Timer" parent="."]

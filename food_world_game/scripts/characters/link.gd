@@ -45,6 +45,7 @@ func ready():
 	
 	ability_damage = { 
 		"Solo": 6.5, 
+		"Ability 1": 20
 	}
 	
 	# Set Link's default speed and current speed
@@ -90,3 +91,25 @@ func jump_end():
 		on_platform = true
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Throw a punch as the Player
+func use_ability1(player: Player, _delta: float):
+	if !player.using_ability:
+		if player.use_stamina(ability_damage["Ability 1"]):
+			
+			player.using_ability = true 
+			
+			player.update_animation()
+			print("The Player used the sausage whip!")
+
+
+# Throw a juicebox while on the player's back
+func use_ability2(player: Player, _delta: float):
+	if !player.using_ability:
+		if player.use_stamina(ability_damage["Ability 1"]):
+			
+			player.using_ability = true 
+			
+			player.update_animation()
+			print("The Player used the sausage whip!")
