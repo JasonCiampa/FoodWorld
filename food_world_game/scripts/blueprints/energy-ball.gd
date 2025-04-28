@@ -135,7 +135,7 @@ func throw_process(delta: float):
 	position_current = global_position
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
-	if target != null and target.hitbox_damage in hitbox_damage.get_overlapping_areas() and global_position.distance_to(Vector2(target.global_position.x, target.global_position.y - target.height / 2)) < 12.5:
+	if target != null and target.hitbox_health in hitbox_damage.get_overlapping_areas() and global_position.distance_to(Vector2(target.global_position.x, target.global_position.y - target.height / 2)) < 12.5:
 		throw_end()
 	
 	elif abs(position_current.x - position_target.x) < 10 and abs(position_current.y - position_target.y) < 10:

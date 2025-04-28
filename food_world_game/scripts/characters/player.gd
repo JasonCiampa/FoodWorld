@@ -14,9 +14,7 @@ extends GameCharacter
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
 @onready var fuse_sprite: AnimatedSprite2D = $"Fuse Sprite"
 
-@onready var sausage_link_hitbox_damage: Area2D = $"Sausage Link Damage Hitbox"
-@onready var normal_hitbox_damage: Area2D = $"Damage Hitbox"
-
+@onready var hitbox_damage_sausage_link: Area2D = $"Sausage Link Damage Hitbox"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -163,6 +161,8 @@ var previous_animation_frame: int = 0
 var previous_animation_frame_progress: float = 0
 
 var frame_counter: int = 0
+
+var hitbox_collision_boxes: Array[CollisionShape2D]
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -410,7 +410,7 @@ func update_animation(animation_name: String = ""):
 		new_animation_name = "idle"
 		new_direction_name = "front"
 	
-	if is_sprinting:
+	if is_sprinting and !using_ability:
 		sprite.speed_scale = 1.5
 	else:
 		sprite.speed_scale = 1
@@ -465,6 +465,7 @@ func update_animation(animation_name: String = ""):
 	if sprite.animation != (fusion_name + new_animation_name + "_" + new_direction_name) or paused or level_up:
 		previous_animation_frame = sprite.get_frame()
 		previous_animation_frame_progress = sprite.get_frame_progress()
+		previous_animation = sprite.animation
 		
 		if paused or level_up:
 			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name)
@@ -477,7 +478,8 @@ func update_animation(animation_name: String = ""):
 			else:
 				sprite.play(fusion_name + new_animation_name + "_" + new_direction_name + "_" + hand_punching)
 			
-			sprite.set_frame_and_progress(previous_animation_frame, previous_animation_frame_progress)
+			if "ability" in previous_animation:
+				sprite.set_frame_and_progress(previous_animation_frame, previous_animation_frame_progress)
 		
 		elif throwing_juicebox:
 			sprite.play(fusion_name + new_animation_name + "_" + new_direction_name)
@@ -615,6 +617,7 @@ func process_ability_use(delta: float) -> int:
 				
 					update_animation()
 					print("The Player threw a " + hand_punching + " punch!")
+					sprite.speed_scale = 1
 		
 		
 		elif field_state_current == FieldState.JUICE or juicebox_ready:
@@ -624,6 +627,8 @@ func process_ability_use(delta: float) -> int:
 						print("The Player threw a juicebox!")
 						throwing_juicebox = true
 						juicebox_throw_coords = get_global_mouse_position()
+						
+						sprite.speed_scale = 1
 		
 		
 		# Otherwise, determine if the Player is using their first Food Buddy's ability, then launch the correct ability
@@ -664,7 +669,6 @@ func update_movement_direction():
 
 # Updates the Player's velocity based on their actions, speed, and the direction they're currently moving in
 func update_movement_velocity(delta):
-	
 	
 	if equipping_buddy or (field_state_current == FieldState.SOLO and using_ability) or (using_ability and equipped_buddy != null and equipped_buddy.name != "Dan"):
 		velocity.x = 0

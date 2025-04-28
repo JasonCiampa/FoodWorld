@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dtdrrty6qehha"]
+[gd_scene load_steps=12 format=3 uid="uid://dtdrrty6qehha"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/food-citizen.gd" id="1_x4idu"]
 [ext_resource type="FontFile" uid="uid://dfuox7hi86nmr" path="res://Daydream.ttf" id="3_ao7gf"]
@@ -21,7 +21,11 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sorn4"]
+size = Vector2(14, 19)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7g8jp"]
+size = Vector2(20, 19)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nf6le"]
 size = Vector2(34.1, 32.185)
@@ -57,7 +61,6 @@ debug_color = Color(0, 0.619608, 1, 0.427451)
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = 1
 position = Vector2(0, -17)
 sprite_frames = SubResource("SpriteFrames_v68lu")
 animation = &"new_animation"
@@ -65,10 +68,17 @@ animation = &"new_animation"
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 position = Vector2(0, -22.6)
 
+[node name="Health Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Health Hitbox"]
+position = Vector2(0, -14.5)
+shape = SubResource("RectangleShape2D_sorn4")
+
 [node name="Damage Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
+position = Vector2(0, -1.5)
 shape = SubResource("RectangleShape2D_7g8jp")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 

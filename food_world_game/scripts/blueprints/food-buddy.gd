@@ -404,7 +404,7 @@ func follow_field_state_callback() -> void:
 		
 		generate_path()
 		
-		if target.hitbox_damage in hitbox_interaction.get_overlapping_areas():
+		if target.hitbox_interaction in hitbox_interaction.get_overlapping_areas():
 			velocity.x = 0
 			velocity.y = 0
 
@@ -500,7 +500,7 @@ func fight_field_state_callback() -> void:
 	# Determine if the Food Buddy is in range of an Enemy, then make them stop moving and launch their solo attack
 	if target is Enemy:
 		
-		if target.hitbox_damage in hitbox_damage.get_overlapping_areas():
+		if target.hitbox_health in hitbox_damage.get_overlapping_areas():
 			velocity.x = 0
 			velocity.y = 0
 			

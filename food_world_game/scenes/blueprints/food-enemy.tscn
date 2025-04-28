@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://6k636yjpnvdv"]
+[gd_scene load_steps=12 format=3 uid="uid://6k636yjpnvdv"]
 
 [ext_resource type="Script" path="res://scripts/blueprints/food-enemy.gd" id="1_usloy"]
 [ext_resource type="Texture2D" uid="uid://ckhyrlqirvbvs" path="res://images/characters/mallak.png" id="2_7oely"]
@@ -20,11 +20,14 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1qvk5"]
+size = Vector2(30, 30)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y7gd3"]
 size = Vector2(54, 60.5925)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_olkg2"]
-size = Vector2(35, 36)
+size = Vector2(33, 17)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0s8ad"]
 size = Vector2(29, 17)
@@ -63,6 +66,12 @@ scale = Vector2(1.45, 2.85)
 color = Color(0, 0, 0, 0.572549)
 polygon = PackedVector2Array(-5, 3, -8, 2, -10, 0, -9, -2, -6, -4, 5, -4, 8, -2, 9, 0, 7, 2, 5, 3)
 
+[node name="Health Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Health Hitbox"]
+position = Vector2(1, -20)
+shape = SubResource("RectangleShape2D_1qvk5")
+
 [node name="Interaction Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -14)
 
@@ -74,7 +83,7 @@ shape = SubResource("RectangleShape2D_y7gd3")
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(1.5, -2)
+position = Vector2(0.5, -8.5)
 shape = SubResource("RectangleShape2D_olkg2")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 

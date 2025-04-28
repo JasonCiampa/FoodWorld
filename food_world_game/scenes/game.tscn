@@ -91,10 +91,10 @@ scale = Vector2(0.25, 0.25)
 position = Vector2(892, 846)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(638, 959)
+position = Vector2(62, 325)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(1024, 586)
+position = Vector2(11, 347)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 position = Vector2(-123, 439)

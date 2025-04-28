@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://1r6edy1t7kho"]
+[gd_scene load_steps=13 format=3 uid="uid://1r6edy1t7kho"]
 
 [ext_resource type="Script" path="res://scripts/characters/link.gd" id="1_3g1b3"]
 [ext_resource type="SpriteFrames" uid="uid://vo80xmgqr1b" path="res://images/animations/link/link.tres" id="2_4u0ai"]
@@ -13,11 +13,14 @@ _data = {
 "RESET": SubResource("Animation_o1bqr")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pdrqn"]
+size = Vector2(25, 10)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
 size = Vector2(32, 26)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1bx7v"]
-size = Vector2(27, 12)
+size = Vector2(38, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gly5j"]
 size = Vector2(24, 6)
@@ -53,12 +56,18 @@ polygon = PackedVector2Array(-6, 3, -12, 2, -12, 1, -12, -1, -9, -2, 9, -2, 12, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = ExtResource("2_4u0ai")
-animation = &"idle_front"
+animation = &"ability_sideways"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_lun7r")
 }
+
+[node name="Health Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Health Hitbox"]
+position = Vector2(-0.5, -5)
+shape = SubResource("RectangleShape2D_pdrqn")
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -14)
@@ -71,7 +80,7 @@ shape = SubResource("RectangleShape2D_s3nq7")
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(-0.5, 9)
+position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_1bx7v")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 

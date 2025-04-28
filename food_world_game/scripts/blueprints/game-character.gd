@@ -14,6 +14,8 @@ var animation_player: AnimationPlayer
 
 # Hitboxes #
 var hitbox_damage: Area2D
+var hitbox_interaction: Area2D
+var hitbox_health: Area2D
 
 # Colliders #
 var body_collider: CollisionShape2D
@@ -164,7 +166,10 @@ func _ready() -> void:
 	sprite = $AnimatedSprite2D
 	animation_player = $AnimationPlayer
 	on_screen_notifier = $VisibleOnScreenNotifier2D
+	
 	hitbox_damage = $"Damage Hitbox"
+	hitbox_interaction = $"Interaction Hitbox"
+	hitbox_health = $"Health Hitbox"
 	
 	body_collider = $"Body Collider"
 	feet_collider = $"Feet Collider"

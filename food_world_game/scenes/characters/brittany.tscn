@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://da5ns6vxli514"]
+[gd_scene load_steps=14 format=3 uid="uid://da5ns6vxli514"]
 
 [ext_resource type="Script" path="res://scripts/characters/brittany.gd" id="1_3xxkd"]
 [ext_resource type="SpriteFrames" uid="uid://cfvbqc5deyrrc" path="res://images/animations/brittany/brittany.tres" id="2_uiaoo"]
@@ -16,8 +16,11 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
 size = Vector2(36, 49)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_shgfj"]
+size = Vector2(21, 32)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1bx7v"]
-size = Vector2(28, 44)
+size = Vector2(28, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e16x8"]
 size = Vector2(413, 310)
@@ -57,7 +60,7 @@ polygon = PackedVector2Array(-6, 4, -11, 3, -14, 1, -13, -1, -9, -2, 9, -2, 13, 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -21)
 sprite_frames = ExtResource("2_uiaoo")
-animation = &"die_front"
+animation = &"idle_front"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -71,15 +74,22 @@ position = Vector2(0, -14)
 position = Vector2(0, -7.5)
 shape = SubResource("RectangleShape2D_s3nq7")
 
+[node name="Health Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Health Hitbox"]
+position = Vector2(0.5, -22)
+shape = SubResource("RectangleShape2D_shgfj")
+
 [node name="Damage Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(0, -8)
+position = Vector2(0, -7)
 shape = SubResource("RectangleShape2D_1bx7v")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 
 [node name="Attack Hitbox" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Attack Hitbox"]
 position = Vector2(0.5, -17)

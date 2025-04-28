@@ -211,12 +211,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if !musicStarted and timer_fade.is_stopped():
-		musicStarted = true
-		MUSIC.play()
-	else:
-		if transitioning_songs:
-			process_music_fade(delta)
+	#if !musicStarted and timer_fade.is_stopped():
+		#musicStarted = true
+		#MUSIC.play()
+	#else:
+		#if transitioning_songs:
+			#process_music_fade(delta)
 	
 	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
@@ -249,7 +249,7 @@ func _process(delta: float) -> void:
 			else:
 				enemy.process_mode = Node.PROCESS_MODE_DISABLED
 		
-		timer_process_enemy_tiles.start(1.5) # run this only every .38 seconds
+		timer_process_enemy_tiles.start(0.9)
 		
 
 	
@@ -410,8 +410,9 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 		# Store a list of all hitboxes that the hitbox of the attack has overlapped with
 		hitboxes = attacker.hitbox_damage.get_overlapping_areas()
 	
+	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
-	if target.hitbox_damage in hitboxes:
+	if target.hitbox_health in hitboxes:
 		target.health_current -= damage
 		target.target = attacker
 		target.taking_damage = true
@@ -451,7 +452,7 @@ func process_player_nearby_interactables(delta):
 		return
 	
 	# Store a list of all hitboxes that are overlapping with the Player's Hitbox
-	var overlapping_hitboxes = PLAYER.hitbox_damage.get_overlapping_areas()
+	var overlapping_hitboxes = PLAYER.hitbox_interaction.get_overlapping_areas()
 	
 	if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.field_state_current == closest_interactable_to_player.FieldState.PLAYER:
 		closest_interactable_to_player = null
@@ -777,9 +778,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			PLAYER.sprite.offset.y = -16
 			PLAYER.speed_current = PLAYER.speed_normal
 		#elif food_buddy_selected.name == "Link":
-			#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
-			#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
-			#PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
+			# Do some stuff with switching hitboxes
 			
 		PLAYER.field_state_current = PLAYER.FieldState.SOLO
 		PLAYER.equipped_buddy = null
@@ -948,13 +947,18 @@ func _on_player_use_ability_solo(damage: int) -> void:
 	
 	if damage > 0:
 		
-		# Iterate over every enemy currently on the screen to check if the Player's attack landed on them, then stop checking if the attack landed because the Player's solo ability can only damage one enemy at a time
-		for enemy in get_enemies_on_screen():
-			
-			if process_attack(enemy, PLAYER, damage):
-				PLAYER.target = enemy
-				return
-
+		# Stores a local reference to the result of searching for the closest Enemy target
+		var target_closest = select_closest_target(PLAYER, get_enemies_on_screen())
+		
+		# Determines if the target exists, then set them as the Food Buddy's target and update the target distance
+		if target_closest != null and target_closest.alive:
+			PLAYER.target = target_closest
+			PLAYER.target_distance = PLAYER.global_position.distance_to(target_closest.global_position)
+			process_attack(PLAYER.target, PLAYER, damage)
+		
+		else:
+			PLAYER.target = null
+			PLAYER.target_distance = 0
 
 
 # Callback function that executes whenever the Player has triggered the use of an ability while using a Food Buddy: executes the Food Buddy's ability
@@ -1544,25 +1548,25 @@ func _on_player_throw_juicebox(destination: Vector2) -> void:
 
 
 func _on_juicebox_explode(juicebox):
-	if juicebox is Juicebox:
-		var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
+	
+	var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
+	
+	if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
+		PLAYER.health_current += juicebox.health
+		PLAYER.healing_health = true
 		
-		if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
-			PLAYER.health_current += juicebox.health
-			PLAYER.healing_health = true
+		if PLAYER.health_current > PLAYER.health_max:
+			PLAYER.health_current = PLAYER.health_max
+	
+	for food_buddy in food_buddies_active:
+		if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
+			food_buddy.health_current += juicebox.health
+			food_buddy.healing_health = true
 			
-			if PLAYER.health_current > PLAYER.health_max:
-				PLAYER.health_current = PLAYER.health_max
-		
-		for food_buddy in food_buddies_active:
-			if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
-				food_buddy.health_current += juicebox.health
-				food_buddy.healing_health = true
-				
-				if food_buddy.health_current > food_buddy.health_max:
-					food_buddy.health_current = food_buddy.health_max
-		
-		update_character_status_UI()
+			if food_buddy.health_current > food_buddy.health_max:
+				food_buddy.health_current = food_buddy.health_max
+	
+	update_character_status_UI()
 
 
 

@@ -362,10 +362,6 @@ func _on_craft_button_down() -> void:
 func _on_deposit_button_down(depositer: GameCharacter = player) -> bool:
 	text_berry_count.text = str("Berries: ", player.berries)
 	text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
-	text_juicebox_count.text = "Juice Boxes: " + str(player.juiceboxes)
-	text_juice_count.text = "Juice: " + str(player.juice)
-	text_craft_count.text = "1"
-	text_craft_cost.text = str("Cost: ", juicebox_cost)
 	
 	# Until the sauna reaches full capacity or the depositer runs out of berries, add berries to the sauna
 	if sauna_occupancy_current < sauna_occupancy_max and depositer.berries > 0:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://cufwqkidanpu1"]
+[gd_scene load_steps=26 format=3 uid="uid://cufwqkidanpu1"]
 
 [ext_resource type="Script" path="res://scripts/characters/dan.gd" id="1_nx4th"]
 [ext_resource type="SpriteFrames" uid="uid://bhq6p5a33wlnw" path="res://images/animations/dan/dan.tres" id="2_7qx7e"]
@@ -152,11 +152,13 @@ _data = {
 "rotate_right_fast": SubResource("Animation_3a6vd")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s7pgu"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
 size = Vector2(40, 36)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1bx7v"]
-size = Vector2(30, 18)
+size = Vector2(27, 12)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gly5j"]
 size = Vector2(24, 6)
@@ -193,7 +195,7 @@ polygon = PackedVector2Array(-4, 4, -7, 3, -9, 1, -10, -1, -9, -2, 9, -2, 10, -1
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -11)
 sprite_frames = ExtResource("2_7qx7e")
-animation = &"ability_back"
+animation = &"idle_front"
 offset = Vector2(0, -0.5)
 
 [node name="AnimatedSpriteSprinkles2D" type="AnimatedSprite2D" parent="."]
@@ -206,6 +208,12 @@ libraries = {
 "": SubResource("AnimationLibrary_ewn2e")
 }
 
+[node name="Health Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Health Hitbox"]
+position = Vector2(-4.9756e-05, -11)
+shape = SubResource("RectangleShape2D_s7pgu")
+
 [node name="Interaction Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -14)
 
@@ -217,7 +225,7 @@ shape = SubResource("RectangleShape2D_s3nq7")
 position = Vector2(0, -13)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Damage Hitbox"]
-position = Vector2(-1.44646e-06, 7)
+position = Vector2(0.499951, 1.99999)
 shape = SubResource("RectangleShape2D_1bx7v")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=208 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=210 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -1611,8 +1611,14 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u0j6s"]
+size = Vector2(14, 16)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vq0ap"]
-size = Vector2(16, 34)
+size = Vector2(20, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bxgtm"]
+size = Vector2(25, 40)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ubbk1"]
 size = Vector2(14, 6)
@@ -1664,6 +1670,12 @@ frame = 3
 frame_progress = 1.0
 offset = Vector2(-4.69, -2.965)
 
+[node name="Health Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Health Hitbox"]
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_u0j6s")
+
 [node name="Damage Hitbox" type="Area2D" parent="."]
 position = Vector2(0, -13)
 
@@ -1671,6 +1683,13 @@ position = Vector2(0, -13)
 position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_vq0ap")
 debug_color = Color(0.505887, 0, 0.044596, 0.42)
+
+[node name="Interaction Hitbox" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
+position = Vector2(0.5, -16)
+shape = SubResource("RectangleShape2D_bxgtm")
 
 [node name="Sausage Link Damage Hitbox" type="Area2D" parent="."]
 process_mode = 4

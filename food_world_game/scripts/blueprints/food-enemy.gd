@@ -253,7 +253,7 @@ func aggressive_field_state_callback() -> void:
 		return
 	
 	# Determine if the Enemy is in range of an Enemy, then make them stop moving and launch their solo attack
-	if target.hitbox_damage in hitbox_damage.get_overlapping_areas():
+	if target.hitbox_health in hitbox_damage.get_overlapping_areas():
 		velocity.x = 0
 		velocity.y = 0
 		

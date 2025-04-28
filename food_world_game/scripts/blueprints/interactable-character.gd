@@ -6,7 +6,6 @@ extends GameCharacter
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Hitbox #
-var hitbox_interaction: Area2D
 
 # Press 'E' To Interact Label #
 var label_e_to_interact: Label
@@ -36,7 +35,6 @@ func _ready() -> void:
 	super()
 	
 	# Store references to the InteractableCharacter's Nodes
-	hitbox_interaction = $"Interaction Hitbox"
 	label_e_to_interact = $"Press 'E' to Interact"
 
 
