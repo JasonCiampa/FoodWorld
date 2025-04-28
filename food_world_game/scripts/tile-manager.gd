@@ -47,7 +47,6 @@ var tile_callbacks : Dictionary = {
 	
 	#"ledge_front" : tile_callback_ledge,
 	#"ledge_back" : tile_callback_ledge,
-	null : func(tile: Tile, character: GameCharacter): return null,
 	
 	"environment_asset" : tile_callback_environment_asset,
 	"bush" : tile_callback_bush,
@@ -211,39 +210,44 @@ func unload_tile(tile: Tile):
 # Determine where the Character is in the world and send a signal to the game to update their location (returns TileMap to process)
 func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 	
-	# Iterate over each world that contains Tilemaps
-	for world in world_tilemaps:
-		
-		# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
-		var new_tile: Tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, character.current_tile_position)
-		
-		# Determine if the newly created Tile has data in the world of this iteration
-		if new_tile.type != "":
-			
-			character.current_tilemaps = world_tilemaps[world]
-			
-			if character.current_world == "":
-				character.current_world = world
-			
-			if character is Player and world != character.current_world:
-				print("Current World: ", character.current_world, "\nNew World: ", world)
-				character.current_world = world
-				world_changed.emit(character)
-			
-			# Unload the Tile and return from the function now that the world has been updated
-			unload_tile(tile)
-			tile = null
-			
-			return new_tile
-		
-		# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
-		else:
-			
-			# Unload the Tile and return from the function now that the world has been updated
-			unload_tile(new_tile)
-			new_tile = null
+	if tile.type == "":
 	
-	# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
+		# Iterate over each world that contains Tilemaps
+		for world in world_tilemaps:
+			
+			# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
+			var new_tile: Tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, character.current_tile_position)
+			
+			# Determine if the newly created Tile has data in the world of this iteration
+			if new_tile.type != "":
+				
+				character.current_tilemaps = world_tilemaps[world]
+				
+				if character.current_world == "":
+					character.current_world = world
+				
+				if character is Player and world != character.current_world:
+					print("Current World: ", character.current_world, "\nNew World: ", world)
+					character.current_world = world
+					world_changed.emit(character)
+				
+				# Unload the Tile and return from the function now that the world has been updated
+				unload_tile(tile)
+				tile = null
+				
+				return new_tile
+			
+			# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
+			else:
+				
+				# Unload the Tile and return from the function now that the world has been updated
+				unload_tile(new_tile)
+				new_tile = null
+		
+		# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
+		return tile
+	
+	# This tile exists and doesnt need to be updated
 	return tile
 
 
@@ -278,7 +282,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 			timer.start(0.15)
 	
 	if character is Enemy:
-		if tiles_occupied.get(Vector2i(character.navigation_agent.target_position)) != null:
+		if tiles_occupied.get(Vector2i(character.navigation_agent.target_position)) == null:
 			character.generate_path(Vector2(character.global_position.x + (character.frolic_range * character.RNG.randf_range(-1, 1)), character.global_position.y + (character.frolic_range * character.RNG.randf_range(-1, 1))))
 	# Note: tiles_above is the number of tiles that should be processed above the one that the Character is standing on
 	# 	Ex: if trying to process three tiles above the tile that the Character is standing on, tiles_above = 3
@@ -288,7 +292,7 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	character.current_tile_position = character.current_tilemaps[Tile.MapType.GROUND].local_to_map(character.global_position)
 	
 	# Create a list of Tile coordinates to process
-	var tiles_to_process: Array[Tile] = []
+	var tiles_to_process: Array[Vector2i] = []
 	
 	# Store a local reference to the x and y coordinates of the Character's current Tile position
 	var x: int = character.current_tile_position.x
@@ -297,81 +301,56 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	# Iterate over each of the tilemaps that should have their Tiles processed
 	for map_type in character.current_tilemaps.size():
 		
-		
 		# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
+		tiles_to_process.append(Vector2i(x + 1, y + 3))
+		tiles_to_process.append(Vector2i(x + 1, y + 2))
+		tiles_to_process.append(Vector2i(x + 1, y + 1))
+		tiles_to_process.append(Vector2i(x + 1, y))
+		tiles_to_process.append(Vector2i(x + 1, y - 1))
+		tiles_to_process.append(Vector2i(x, y + 3))
+		tiles_to_process.append(Vector2i(x, y + 2))
+		tiles_to_process.append(Vector2i(x, y + 1))
+		tiles_to_process.append(Vector2i(x, y))
+		tiles_to_process.append(Vector2i(x, y - 1))
+		tiles_to_process.append(Vector2i(x - 1, y + 3))
+		tiles_to_process.append(Vector2i(x - 1, y + 2))
+		tiles_to_process.append(Vector2i(x - 1, y + 1))
+		tiles_to_process.append(Vector2i(x - 1, y))
+		tiles_to_process.append(Vector2i(x - 1, y - 1))
 		
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 3)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 3)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 3)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 3)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 3)))
-		
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 2)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 2)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 2)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 2)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 2)))
-		
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y + 1)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y + 1)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y + 1)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y + 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y + 1)))
-		
-		# Add the Tiles in the row including the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y)))
-		
-		# Add the Tiles in the row above the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - 1)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - 1)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - 1)))
-		#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - 1)))
-		tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - 1)))
+
 		
 		# Iterate (tiles_above - 1) times to add extra rows of Tiles to process above the Character
 		for count in range(2, tiles_above + 1):
 			
 			# Note: Loop starts at 2 instead of 1 because one row above the Character is already processed automatically (y - 1), so the next row to be added must start at (y = 2).
 			
-			if count != tiles_above:
-				# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - count)))
-				#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
-				#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
-				#tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - count)))
-			else:
-				# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 2, y - count)))
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x + 1, y - count)))
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x, y - count)))
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 1, y - count)))
-				tiles_to_process.append(Tile.new(character.current_tilemaps[map_type], map_type, Vector2i(x - 2, y - count)))
+			# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
+			tiles_to_process.append(Vector2i(x + 1, y - count))
+			tiles_to_process.append(Vector2i(x, y - count))
+			tiles_to_process.append(Vector2i(x - 1, y - count))
 	
-
 	
-	# Process each of the Tiles using their coordinates that were stored in the list
-	for tile in range(tiles_to_process.size() - 1, -1, -1):
-		
-		# Execute the callback function associated with the type of Tile of this iteration
-		tiles_to_process[tile] = execute_tile_callback(tiles_to_process[tile], character)
-		
-		# Determine if the Tile is a default ground tile (not an alternative tile)
-		if tiles_to_process[tile].map_type == Tile.MapType.GROUND:
+		# Process each of the Tiles using their coordinates that were stored in the list
+		for tile in range(tiles_to_process.size() - 1, -1, -1):
 			
-			# Determine if the Tile is not occupied or already enabled for navigation, then enable navigation on it by switching to an alternative tile and add it to the list of tile coords enabled for navigation
-			if tiles_occupied.get(tiles_to_process[tile].coords_map) == null and tiles_enabled_navigation.get(tiles_to_process[tile].coords_map) == null:
-								
-				# Determine if the tile isn't already an alternative tile, then replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
-				if tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 0:
+			# Execute the callback function associated with the type of Tile of this iteration
+			var temp_tile: Tile = Tile.new(character.current_tilemaps[map_type], map_type, tiles_to_process[tile])
+			
+			temp_tile = execute_tile_callback(temp_tile, character)
+			
+			unload_tile(temp_tile)
+			temp_tile = null
+			
+			# Determine if the Tile is a default ground tile (not an alternative tile)
+			if map_type == Tile.MapType.GROUND:
+			
+				# Determine if the Tile is not occupied and not already enabled for navigation, then enable navigation on it by switching to an alternative tile and add it to the list of tile coords enabled for navigation
+				if tiles_occupied.get(tiles_to_process[tile]) == null:
 					
 					if tiles_enabled_navigation.get(next_nav_index_to_add) == null:
 						
-						var new_nav_tile: Tile = tiles_to_process[tile]
+						var new_nav_tile: Tile = Tile.new(character.current_tilemaps[map_type], map_type, tiles_to_process[tile])
 						
 						# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
 						new_nav_tile.tilemap.set_cell(new_nav_tile.coords_map, new_nav_tile.tilemap.get_cell_source_id(new_nav_tile.coords_map), new_nav_tile.tilemap.get_cell_atlas_coords(new_nav_tile.coords_map), 2)
@@ -405,28 +384,6 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 							#next_nav_index_to_add += 1
 						
 						new_nav_tile = null
-						
-						continue
-					
-					
-				
-				# Otherwise, the tile is already an alternative tile used to make the character appear behind it, so replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears behind it
-				elif tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 1:
-					
-					# Determine if the tile isn't already an alternative tile, then replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
-					if tiles_to_process[tile].tilemap.get_cell_alternative_tile(tiles_to_process[tile].coords_map) == 0:
-						
-						var terrain_tile: Tile = tiles_to_process[tile].get_same_cell(character.current_tilemaps[Tile.MapType.TERRAIN], Tile.MapType.TERRAIN)
-						
-						tiles_to_process[tile].tilemap.set_cell(tiles_to_process[tile].coords_map, tiles_to_process[tile].tilemap.get_cell_source_id(tiles_to_process[tile].coords_map), tiles_to_process[tile].tilemap.get_cell_atlas_coords(tiles_to_process[tile].coords_map), 3)
-						
-						# Unload the tile
-						terrain_tile.free()
-						terrain_tile = null
-		
-		# Unload the tile
-		tiles_to_process[tile].free()
-		tiles_to_process[tile] = null
 
 
 
@@ -619,16 +576,16 @@ func tile_callback_environment_asset(_tile: Tile, character: GameCharacter):
 
 
 # A callback function to be played when a Bush Tile is being processed (Bushes are not included with typical EnvironmentAssets because they need to be converted into objects, as they have their own behaviors. 1/23/25)
-func tile_callback_bush(tile: Tile, character: GameCharacter):
+func tile_callback_bush(tile: Tile, _character: GameCharacter):
 	
-	# Determine if the Character is not jumping, then adjust their collision value
-	if !character.is_jumping:
-		
-		# Set the Character to collide with the ground physics layer, enable their body collider, and disable their feet collider
-		character.set_collision_value(character.collision_values["GROUND"])
-		character.body_collider.disabled = true
-		character.feet_collider.disabled = false
-		character.z_index = 0
+	## Determine if the Character is not jumping, then adjust their collision value
+	#if !character.is_jumping:
+		#
+		## Set the Character to collide with the ground physics layer, enable their body collider, and disable their feet collider
+		#character.set_collision_value(character.collision_values["GROUND"])
+		#character.body_collider.disabled = true
+		#character.feet_collider.disabled = false
+		#character.z_index = 0
 	
 	
 	# Send a signal to the game to attempt to load the Bush Tile into the Scene Tree

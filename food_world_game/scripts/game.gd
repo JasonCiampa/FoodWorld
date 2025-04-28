@@ -233,13 +233,13 @@ func _process(delta: float) -> void:
 		interactable_assets.get_or_add(interactable_asset.global_position, interactable_asset)
 	
 	
-	GameTileManager.process_nearby_tiles(PLAYER, 1)
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
 	if timer_process_tiles.is_stopped():
+		GameTileManager.process_nearby_tiles(PLAYER, 3)
 		GameTileManager.process_nearby_tiles(food_buddies_active[0], 5)
 		GameTileManager.process_nearby_tiles(food_buddies_active[1], 5)
-		timer_process_tiles.start(0.6)
+		timer_process_tiles.start(0.4)
 	
 	if timer_process_enemy_tiles.is_stopped():
 		for enemy in enemies:
@@ -776,10 +776,10 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			PLAYER.shadow.visible = false
 			PLAYER.sprite.offset.y = -16
 			PLAYER.speed_current = PLAYER.speed_normal
-		elif food_buddy_selected.name == "Link":
-			PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
-			PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
-			PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
+		#elif food_buddy_selected.name == "Link":
+			#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
+			#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
+			#PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
 			
 		PLAYER.field_state_current = PLAYER.FieldState.SOLO
 		PLAYER.equipped_buddy = null
@@ -812,10 +812,10 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 				PLAYER.sprite.offset.y = -16
 				PLAYER.speed_current = PLAYER.speed_normal
 				PLAYER.juicebox_ready = false
-			elif food_buddy_selected.name == "Link":
-				PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
-				PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
-				PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
+			#elif food_buddy_selected.name == "Link":
+				#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
+				#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
+				#PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
 				
 		
 		# Update the selected Food Buddy's FieldState variables
@@ -826,10 +826,10 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		if food_buddy_selected.name != "Dan":
 			food_buddy_selected.visible = false
 			food_buddy_selected.process_mode = Node.PROCESS_MODE_DISABLED
-		elif food_buddy_selected.name == "Link":
-			PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
-			PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
-			PLAYER.hitbox_damage = PLAYER.sausage_link_hitbox_damage
+		#elif food_buddy_selected.name == "Link":
+			#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
+			#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
+			#PLAYER.hitbox_damage = PLAYER.sausage_link_hitbox_damage
 		else:
 			food_buddy_selected.label_e_to_interact.visible = false
 			PLAYER.shadow.visible = false
@@ -1589,7 +1589,6 @@ func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
 	add_child(energy_ball)
 	
 	energy_ball.throw_start(destination, int(BRITTANY.direction_current_horizontal))
-
 
 func _on_energy_ball_explode(energy_ball):
 	if energy_ball is EnergyBall:
