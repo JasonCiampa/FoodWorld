@@ -119,8 +119,8 @@ var stamina_use: Dictionary = {
 }
 
 # Speed #
-var speed_sprinting: int = 75
-var speed_normal_dan: int = 150
+var speed_sprinting: int = 65
+var speed_normal_dan: int = 90
 var speed_sprinting_dan: int = 250
 var speed_dodging: int = 350
 
@@ -232,22 +232,6 @@ func _process(delta: float) -> void:
 	#if Input.is_key_pressed(KEY_0):
 		#die.emit(self)
 	
-	if Input.is_action_just_pressed("scroll_down"):
-		camera.zoom.x -= 10 * delta
-		camera.zoom.y -= 10 * delta
-		
-		if camera.zoom.x < 2.5:
-			camera.zoom.x = 2.5
-			camera.zoom.y = 2.5
-		
-	elif Input.is_action_just_pressed("scroll_up"):
-		camera.zoom.x += 10 * delta
-		camera.zoom.y += 10 * delta
-		
-		if camera.zoom.x > 7:
-			camera.zoom.x = 7
-			camera.zoom.y = 7
-		
 	
 	if !is_jumping and current_altitude > 0:
 		on_platform = true
