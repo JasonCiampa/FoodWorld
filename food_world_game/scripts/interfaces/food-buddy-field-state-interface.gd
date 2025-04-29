@@ -331,10 +331,12 @@ func update_selected_state_buddy2(newly_selected_button: TextureButton, field_st
 
 func _on_buddy_1_solo_state_button_down() -> void:
 	update_selected_state_buddy1(button_buddy1_fight, FoodBuddy.FieldState.FIGHT)
+	foodbuddy1.closest_bush = Vector2(-1, -1)
 
 
 func _on_buddy_1_follow_state_button_down() -> void:
 	update_selected_state_buddy1(button_buddy1_follow, FoodBuddy.FieldState.FOLLOW)
+	foodbuddy1.closest_bush = Vector2(-1, -1)
 
 
 func _on_buddy_1_forage_state_button_down() -> void:
@@ -344,9 +346,12 @@ func _on_buddy_1_forage_state_button_down() -> void:
 
 func _on_buddy_2_solo_state_button_down() -> void:
 	update_selected_state_buddy2(button_buddy2_fight, FoodBuddy.FieldState.FIGHT)
+	foodbuddy2.closest_bush = Vector2(-1, -1)
+
 
 func _on_buddy_2_follow_state_button_down() -> void:
 	update_selected_state_buddy2(button_buddy2_follow, FoodBuddy.FieldState.FOLLOW)
+	foodbuddy2.closest_bush = Vector2(-1, -1)
 
 func _on_buddy_2_forage_state_button_down() -> void:
 	update_selected_state_buddy2(button_buddy2_forage, FoodBuddy.FieldState.FORAGE)

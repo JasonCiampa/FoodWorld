@@ -235,6 +235,8 @@ func _ready() -> void:
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
+	current_world = "center"
+	
 	timer_general.start(1)
 	update_dimensions()
 

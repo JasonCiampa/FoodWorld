@@ -14,6 +14,8 @@ signal tile_object_enter_game
 
 signal world_changed
 
+signal set_to_player_world
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -39,7 +41,7 @@ var nav_tiles: Dictionary
 
 var next_nav_index_to_add: int = 0
 var next_nav_index_to_remove: int = 0
-var nav_tile_cap: int = 500
+var nav_tile_cap: int = 1500
 
 var bushes: Array[Vector2i]
 
@@ -211,54 +213,70 @@ func unload_tile(tile: Tile):
 
 # Determine where the Character is in the world and send a signal to the game to update their location (returns TileMap to process)
 func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
+	var new_tile: Tile
 	
-	if tile.type == "":
-	
-		# Iterate over each world that contains Tilemaps
-		for world in world_tilemaps:
-			
-			# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
-			var new_tile: Tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, character.current_tile_position)
-			
-			# Determine if the newly created Tile has data in the world of this iteration
-			if new_tile.type != "":
-				
-				character.current_tilemaps = world_tilemaps[world]
-				
-				if character.current_world == "":
-					character.current_world = world
-				
-				if character is Player and world != character.current_world:
-					print("Current World: ", character.current_world, "\nNew World: ", world)
-					character.current_world = world
-					world_changed.emit(character)
-				
-				# Unload the Tile and return from the function now that the world has been updated
-				unload_tile(tile)
-				tile = null
-				
-				return new_tile
-			
-			# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
-			else:
-				
-				# Unload the Tile and return from the function now that the world has been updated
-				unload_tile(new_tile)
-				new_tile = null
+	# Iterate over each world that contains Tilemaps
+	for world in world_tilemaps:
 		
-		# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
-		return tile
+		# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
+		new_tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, character.current_tile_position)
+		
+		# Determine if the newly created Tile has data in the world of this iteration
+		if new_tile.location != "" and new_tile.location != character.current_world:
+			
+			character.current_tilemaps = world_tilemaps[new_tile.location]
+			
+			if character.current_world == "":
+				character.current_world = world
+			
+			if character is Player and world != character.current_world:
+				print("Current World: ", character.current_world, "\nNew World: ", world)
+				character.current_world = world
+				world_changed.emit(character)
+			else:
+				character.current_world = world
+			
+			# Unload the Tile and return from the function now that the world has been updated
+			unload_tile(tile)
+			tile = null
+			
+			return new_tile
+		
+		# Otherwise, the newly created Tile doesn't exist in the world of this iteration, so unload it
+		else:
+			
+			# Unload the Tile and return from the function now that the world has been updated
+			unload_tile(new_tile)
+			new_tile = null
 	
-	# This tile exists and doesnt need to be updated
-	return tile
+	var previous_world: String = character.current_world
+	
+	set_to_player_world.emit(character)
+	
+	new_tile = Tile.new(character.current_tilemaps[tile.map_type], tile.map_type, character.current_tile_position)
+	
+	if new_tile.location == "":
+		for world in world_tilemaps:
+			if world != previous_world and world != new_tile.location:
+				character.current_world = world
+		
+		
+	unload_tile(tile)
+	tile = null
+		
+	# No data was found in any TileMap in any world for this Tile, so return null because there's no point in processing an empty Tile
+	return new_tile
 
 
 
 # Process the Tile's designated callback function based on its type
 func execute_tile_callback(tile: Tile, character: GameCharacter) -> Tile:
 	
-	# Update the Tile's world location if necessary
-	tile = update_tile_world_location(tile, character)
+	if tile.location == "":
+		# Update the Tile's world location if necessary
+		tile = update_tile_world_location(tile, character)
+	
+	
 	
 	# Call the callback function for this Tile to process it with respect to the given Character
 	var callback = tile_callbacks.get(tile.type)
@@ -312,7 +330,7 @@ func process_nearby_tiles(character: GameCharacter):
 		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y - 1))
 		tiles_to_process.append(Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
 		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y - 1))
-		
+
 		
 		# Set the goal coordinates to the top left corner
 		goal_tile_coords = Vector2i(current_tile_coords.x, character.current_tile_position.y - character.tile_process_shape.y - 2)
@@ -343,6 +361,7 @@ func process_nearby_tiles(character: GameCharacter):
 			tiles_to_process.append(current_tile_coords)
 			current_tile_coords.x -= 1
 		
+		
 		# Process each of the Tiles using their coordinates that were stored in the list
 		for tile in range(tiles_to_process.size() - 1, -1, -1):
 			
@@ -354,9 +373,12 @@ func process_nearby_tiles(character: GameCharacter):
 			unload_tile(temp_tile)
 			temp_tile = null
 			
-			# Determine if the Tile is a default ground tile (not an alternative tile)
 			if map_type == Tile.MapType.GROUND:
-			
+				
+				#if character.name == "Dan":
+					#print(current_world)
+					#print(character.current_tilemaps)
+				
 				# Determine if the Tile is not occupied and not already enabled for navigation, then enable navigation on it by switching to an alternative tile and add it to the list of tile coords enabled for navigation
 				if tiles_occupied.get(tiles_to_process[tile]) == null and nav_tiles.get(tiles_to_process[tile]) == null:
 					

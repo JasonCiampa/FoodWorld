@@ -147,6 +147,7 @@ func _ready() -> void:
 	# Connect the TileManager's signal that allows a Tile's associated object to be loaded into the game
 	GameTileManager.tile_object_enter_game.connect(_on_tile_object_enter_game)
 	GameTileManager.world_changed.connect(_on_character_changed_world)
+	GameTileManager.set_to_player_world.connect(set_to_player_world)
 	bushes = GameTileManager.get_bushes()
 
 	#MALICK.current_tilemaps = world_tilemaps["center"]
@@ -861,9 +862,9 @@ func _on_player_toggle_buddy_equipped(buddy_number: int, instant_equip: bool = f
 			
 			food_buddy_other.process_nearby_tiles = true
 		
-		
 		# Update the selected Food Buddy's FieldState variables
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
+		food_buddy_selected.closest_bush = Vector2i(-1, -1)
 		food_buddy_selected.field_state_current = FoodBuddy.FieldState.PLAYER
 		food_buddy_selected.active = false
 		food_buddy_selected.process_nearby_tiles = false
@@ -1769,7 +1770,13 @@ func zoom_out_map():
 		asset.paused = true
 	
 	PLAYER.visible = true
+	
 	for foodbuddy in food_buddies_active:
+		
+		foodbuddy.previous_animation = foodbuddy.sprite.animation
+		foodbuddy.previous_animation_frame = foodbuddy.sprite.get_frame()
+		foodbuddy.previous_animation_frame_progress = foodbuddy.sprite.get_frame_progress()
+		
 		if foodbuddy.field_state_current == foodbuddy.FieldState.PLAYER:
 		
 			if foodbuddy.name == "Dan":
@@ -1790,16 +1797,15 @@ func zoom_out_map():
 func zoom_in_map():
 	map_zooming = true
 	
-	
-	
 	PLAYER.animation_player.play("zoom_in")
 	PLAYER.animation_player.queue("zoomed_in")
-	PLAYER.paused = false
+	
 	map_zoomed_in = true
 
 
 func _on_map_zoomed_in() -> void:
 	map_zooming = false
+	PLAYER.paused = false
 	InterfaceCharacterStatus.animator.play("enter_UI")
 	
 	for asset in get_all_assets_in_game():
@@ -1812,15 +1818,22 @@ func _on_map_zoomed_in() -> void:
 	for foodbuddy in food_buddies_active:
 		foodbuddy.process_mode = Node.PROCESS_MODE_INHERIT
 		
+		foodbuddy.sprite.play(foodbuddy.previous_animation)
+		foodbuddy.sprite.set_frame_and_progress(foodbuddy.previous_animation_frame, foodbuddy.previous_animation_frame)
+		
 		if foodbuddy.field_state_current == foodbuddy.FieldState.PLAYER:
 		
 			if foodbuddy.name == "Dan":
 				foodbuddy.visible = true
 			else:
 				foodbuddy.visible = false
-			
-			
 
 
 func _on_map_zoomed_out() -> void:
 	map_zooming = false
+	
+	
+func set_to_player_world(character: GameCharacter) -> void:
+	character.current_world = PLAYER.current_world
+	character.current_tilemaps = PLAYER.current_tilemaps
+	
