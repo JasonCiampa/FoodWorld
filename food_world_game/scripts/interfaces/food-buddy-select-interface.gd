@@ -190,9 +190,6 @@ func start(freeze_subjects: Array[Node2D]):
 
 func end():
 	
-	active_foodbuddy1.global_position = start_location_foodbuddy1
-	active_foodbuddy2.global_position = start_location_foodbuddy2
-	
 	# Pause all of the characters' processing while the interface is active
 	for subject in frozen_subjects:
 		subject.paused = false
@@ -223,6 +220,9 @@ func end():
 		if player.equipped_buddy == active_food_buddies[buddy]:
 			adjust_equipped_buddy.emit(buddy, true)
 	
+	active_foodbuddy1.global_position = start_location_foodbuddy1
+	active_foodbuddy2.global_position = start_location_foodbuddy2
+	
 	player.direction_current_horizontal = player.direction_previous_horizontal
 	player.direction_current_vertical = player.direction_previous_vertical
 	
@@ -233,7 +233,6 @@ func end():
 	animator.play("RESET")
 	
 	adjust_tilemap_modulate.emit(1)
-
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -280,6 +279,9 @@ func _on_active_buddy1_button_down() -> void:
 		active_foodbuddy1 = active_food_buddies[0]
 		inactive_foodbuddy = inactive_food_buddies[0]
 		
+		
+		active_foodbuddy1.sprite.play("idle_front")
+		
 		active_foodbuddy1.active = true
 		inactive_foodbuddy.active = false
 		
@@ -287,6 +289,7 @@ func _on_active_buddy1_button_down() -> void:
 		var temp_position: Vector2 = inactive_foodbuddy.global_position
 		inactive_foodbuddy.global_position = active_foodbuddy1.global_position
 		active_foodbuddy1.global_position = temp_position
+		
 		
 		active_foodbuddy1.collision_values["GROUND"] = 4
 		active_foodbuddy1.collision_values["MIDAIR"] = 5
@@ -370,6 +373,8 @@ func _on_active_buddy2_button_down() -> void:
 		
 		active_foodbuddy2 = active_food_buddies[1]
 		inactive_foodbuddy = inactive_food_buddies[0]
+		
+		active_foodbuddy2.sprite.play("idle_front")
 		
 		active_foodbuddy2.active = true
 		inactive_foodbuddy.active = false
@@ -460,6 +465,8 @@ func _on_inactive_buddy_button_button_down() -> void:
 			active_foodbuddy1 = active_food_buddies[0]
 			inactive_foodbuddy = inactive_food_buddies[0]
 			
+			active_foodbuddy1.sprite.play("idle_front")
+			
 			active_foodbuddy1.active = true
 			inactive_foodbuddy.active = false
 			
@@ -488,6 +495,8 @@ func _on_inactive_buddy_button_button_down() -> void:
 			
 			active_foodbuddy2 = active_food_buddies[1]
 			inactive_foodbuddy = inactive_food_buddies[0]
+			
+			active_foodbuddy2.sprite.play("idle_front")
 			
 			active_foodbuddy2.active = true
 			inactive_foodbuddy.active = false
@@ -532,6 +541,7 @@ func _on_inactive_buddy_button_button_down() -> void:
 		
 		else:
 			selected_active_foodbuddy.visible = true
+		
 		
 		player.update_animation()
 		

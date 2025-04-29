@@ -236,8 +236,6 @@ func start(_freeze_subjects: Array[Node2D]):
 	text_sauna_occupancy.text = str("Sauna Occupancy: ", sauna_occupancy_current)
 	text_juicebox_count.text = "Juice Boxes: " + str(player.juiceboxes)
 	text_juice_count.text = "Juice: " + str(player.juice)
-	text_craft_count.text = "1"
-	text_craft_cost.text = str("Cost: ", juicebox_cost)
 	
 	adjust_tilemap_modulate.emit(0.25)
 

@@ -82,7 +82,7 @@ func ready():
 
 # A custom process function that is personally defined for Dan. This is called in the default FoodBuddy class's '_process()' function
 func process(_delta: float):
-	print(sprite.animation)
+	
 	if sprite.animation in animation_callbacks.keys():
 		animation_callbacks.get(sprite.animation).call()
 
