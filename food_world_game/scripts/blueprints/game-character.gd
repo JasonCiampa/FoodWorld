@@ -310,7 +310,6 @@ func heal_health(delta: float):
 	if taking_damage:
 		taking_damage = false
 	
-	
 	# If the character is not currently red from taking damage, adjust their color so that they glow red briefly
 	if !is_green:
 		

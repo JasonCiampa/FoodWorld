@@ -27,6 +27,9 @@ var frozen_subjects: Array[Node2D]
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 signal adjust_tilemap_modulate
+
+signal adjust_equipped_buddy
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -212,10 +215,13 @@ func end():
 	button_active_buddy2.disabled = true
 	button_inactive_buddy.disabled = true
 	
-	for buddy in active_food_buddies:
-		buddy.sprite.play(buddy.previous_animation)
-		buddy.sprite.set_frame_and_progress(buddy.previous_animation_frame, buddy.previous_animation_frame_progress)
-		buddy.sprite.self_modulate = buddy.previous_modulate
+	for buddy in range(0, active_food_buddies.size()):
+		active_food_buddies[buddy].sprite.play(active_food_buddies[buddy].previous_animation)
+		active_food_buddies[buddy].sprite.set_frame_and_progress(active_food_buddies[buddy].previous_animation_frame, active_food_buddies[buddy].previous_animation_frame_progress)
+		active_food_buddies[buddy].sprite.self_modulate = active_food_buddies[buddy].previous_modulate
+		
+		if player.equipped_buddy == active_food_buddies[buddy]:
+			adjust_equipped_buddy.emit(buddy, true)
 	
 	player.direction_current_horizontal = player.direction_previous_horizontal
 	player.direction_current_vertical = player.direction_previous_vertical

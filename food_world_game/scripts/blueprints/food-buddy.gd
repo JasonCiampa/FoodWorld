@@ -569,5 +569,5 @@ func _on_sprite_animation_finished() -> void:
 			using_ability = false
 			sprite.play("idle_" + current_direction_name)
 			current_animation_name = "idle"
-		
+			
 		update_animation()

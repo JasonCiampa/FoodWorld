@@ -19,12 +19,12 @@
 [ext_resource type="AudioStream" uid="uid://c10u78gci7feq" path="res://music/GardenWorld.mp3" id="17_vcj23"]
 [ext_resource type="AudioStream" uid="uid://c0wrxdlcsheto" path="res://music/BatterBadlands.mp3" id="18_55mr3"]
 
+[sub_resource type="Animation" id="Animation_nutna"]
+length = 0.001
+
 [sub_resource type="Animation" id="Animation_harae"]
 resource_name = "zoom_out"
 length = 0.5
-
-[sub_resource type="Animation" id="Animation_nutna"]
-length = 0.001
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_piuyt"]
 _data = {

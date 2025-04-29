@@ -166,6 +166,22 @@ func start(freeze_subjects: Array[Node2D]):
 		foodbuddy2.global_position = player.global_position
 		foodbuddy2.global_position.x += 32
 	
+	player.previous_animation = player.sprite.animation
+	player.previous_animation_frame = player.sprite.get_frame()
+	player.previous_animation_frame_progress = player.sprite.get_frame_progress()
+	player.previous_modulate = player.sprite.self_modulate
+	player.sprite.self_modulate = Color(1, 1, 1, 1)
+	player.sprite.speed_scale = 1
+	
+	player.direction_current_horizontal = player.Direction.IDLE
+	player.direction_current_vertical = player.Direction.IDLE
+	player.level_up = true
+	
+	if "juice" in player.current_animation_name:
+		player.update_animation("idle_front")
+	else:
+		player.update_animation()
+	
 	for buddy in active_food_buddies:
 		buddy.label_e_to_interact.hide()
 		buddy.sprite.speed_scale = 1
@@ -194,22 +210,6 @@ func start(freeze_subjects: Array[Node2D]):
 			buddy.sprinkle_sprite.play("nothing")
 		elif buddy.name == "Brittany":
 			buddy.text_press_f_for_berry_bot.hide()
-	
-	player.previous_animation = player.sprite.animation
-	player.previous_animation_frame = player.sprite.get_frame()
-	player.previous_animation_frame_progress = player.sprite.get_frame_progress()
-	player.previous_modulate = player.sprite.self_modulate
-	player.sprite.self_modulate = Color(1, 1, 1, 1)
-	player.sprite.speed_scale = 1
-	
-	player.direction_current_horizontal = player.Direction.IDLE
-	player.direction_current_vertical = player.Direction.IDLE
-	player.level_up = true
-	
-	if "juice" in player.current_animation_name:
-		player.update_animation("idle_front")
-	else:
-		player.update_animation()
 	
 	
 	InterfaceCharacterStatus.setValues(player, [foodbuddy1, foodbuddy2])

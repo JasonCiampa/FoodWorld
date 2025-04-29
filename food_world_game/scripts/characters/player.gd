@@ -421,6 +421,7 @@ func update_animation(animation_name: String = ""):
 					sprite.speed_scale = 1
 				
 				elif !level_up:
+					
 					equipped_buddy.global_position = global_position
 					equipped_buddy.sprite.flip_h = sprite.flip_h
 					equipped_buddy.sprite.speed_scale = sprite.speed_scale
@@ -1032,7 +1033,6 @@ func test(delta: float):
 
 
 func _on_sprite_animation_finished() -> void:
-	
 	
 	if "juice" in sprite.animation and "throw" in sprite.animation:
 		throwing_juicebox = false

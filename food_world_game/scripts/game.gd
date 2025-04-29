@@ -187,6 +187,7 @@ func _ready() -> void:
 	
 	InterfaceFoodBuddySelection.setValues(PLAYER, food_buddies_active, food_buddies_inactive, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
 	InterfaceFoodBuddySelection.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
+	InterfaceFoodBuddySelection.adjust_equipped_buddy.connect(_on_player_toggle_buddy_equipped)
 	
 	InterfaceGameOver.setValues(PLAYER, food_buddies_active, InterfaceCharacterStatus)
 	InterfaceGameOver.adjust_tilemap_modulate.connect(adjust_tilemap_modulate)
@@ -478,6 +479,7 @@ func process_player_nearby_interactables(delta):
 	var overlapping_hitboxes = PLAYER.hitbox_interaction.get_overlapping_areas()
 	
 	if closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.field_state_current == closest_interactable_to_player.FieldState.PLAYER:
+		print(closest_interactable_to_player.name)
 		closest_interactable_to_player = null
 	
 	# Determine if the closest Interactable to the Player hasn't been stored yet, then store the current in-range Interactable as the closest (temporarily)
@@ -485,9 +487,8 @@ func process_player_nearby_interactables(delta):
 		var count: int = 0
 		
 		while closest_interactable_to_player == null:
-			closest_interactable_to_player = interactables[count]
 			
-			if closest_interactable_to_player.active and not (closest_interactable_to_player is FoodBuddy and closest_interactable_to_player.field_state_current == closest_interactable_to_player.FieldState.PLAYER):
+			if interactables[count].active and not (interactables[count] is FoodBuddy and interactables[count].field_state_current == interactables[count].FieldState.PLAYER):
 				closest_interactable_to_player = interactables[count]
 				break
 			
@@ -725,14 +726,16 @@ func _on_player_escape_menu() -> void:
 
 
 # Callback function that executes whenever the Player equips or unequips a Food Buddy: finds the buddy that corresponds to the given buddy number and sets its FieldState to PLAYER if being equipped or to the appropriate FieldState if being unequipped
-func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
+func _on_player_toggle_buddy_equipped(buddy_number: int, instant_equip: bool = false) -> void:
+	
+	PLAYER.equipping_buddy = true
 	
 	# Create variables for the two Food Buddies that will be considered in this Food Buddy equip/unequip
 	var food_buddy_selected: FoodBuddy
 	var food_buddy_other: FoodBuddy
 	
 	# Determine which Food Buddy was selected by the Player based on the emitted buddy_number and which Food Buddy wasn't, then store a local reference to each of them so we don't have to access the Food Buddies list multiple times
-	if update_food_buddy_equipped == 0 and buddy_number >= 2:
+	if !instant_equip and update_food_buddy_equipped == 0 and buddy_number >= 2:
 		food_buddy_selected = food_buddies_active[1]
 		update_food_buddy_equipped = 2
 		
@@ -752,7 +755,8 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		PLAYER.animation_player.queue("RESET")
 		return
 		
-	elif update_food_buddy_equipped == 0 and buddy_number <= 1:
+	elif !instant_equip and update_food_buddy_equipped == 0 and buddy_number <= 1:
+		
 		food_buddy_selected = food_buddies_active[0]
 		update_food_buddy_equipped = 1
 		
@@ -775,16 +779,19 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 	else:
 		if PLAYER.animation_player.current_animation == "fuse" and PLAYER.animation_player.current_animation_position < 0.3:
 			return
+		
+		if instant_equip:
+			update_food_buddy_equipped = buddy_number
+			PLAYER.equipping_buddy = false
+		
+		if update_food_buddy_equipped == 1:
+			food_buddy_selected = food_buddies_active[0]
+			food_buddy_other = food_buddies_active[1]
 		else:
-			if update_food_buddy_equipped == 1:
-				food_buddy_selected = food_buddies_active[0]
-				food_buddy_other = food_buddies_active[1]
-			else:
-				food_buddy_selected = food_buddies_active[1]
-				food_buddy_other = food_buddies_active[0]
-			
-			update_food_buddy_equipped = 0
-	
+			food_buddy_selected = food_buddies_active[1]
+			food_buddy_other = food_buddies_active[0]
+		
+		update_food_buddy_equipped = 0
 	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
 	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
@@ -806,7 +813,6 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			PLAYER.shadow.visible = false
 			PLAYER.sprite.offset.y = -16
 			PLAYER.speed_current = PLAYER.speed_normal
-		
 		
 		#elif food_buddy_selected.name == "Link":
 			# Do some stuff with switching hitboxes
@@ -871,10 +877,14 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 			PLAYER.speed_current = PLAYER.speed_normal_dan
 		
 		PLAYER.equipped_buddy = food_buddy_selected
+		
+		if PLAYER.equipped_buddy == closest_interactable_to_player:
+			closest_interactable_to_player = null
 	
 	PLAYER.is_interacting = false
 	PLAYER.update_animation()
 	PLAYER.is_interacting = true
+	
 	InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 
 
