@@ -237,6 +237,7 @@ func _on_sprite_animation_looped() -> void:
 
 
 func ability_sideways_animation() -> void:
+	#print("Dan using ability sideways")
 	
 	# If sprite is facing/moving right, put trail on the left
 	if sprite.flip_h:
@@ -250,6 +251,8 @@ func ability_sideways_animation() -> void:
 
 
 func moving_sideways_animation() -> void:
+	#print("Dan moving sideways")
+	
 	# If sprite is facing/moving right, put trail on the left
 	if sprite.flip_h:
 		animation_player.play("rotate_right")
@@ -264,3 +267,8 @@ func _on_sprite_animation_changed() -> void:
 		if "moving_sideways" != sprite.animation and "ability_sideways" != sprite.animation:
 			animation_player.play("RESET")
 			sprinkle_sprite.play("nothing")
+
+
+func _on_animation_player_animation_changed(old_name: StringName, new_name: StringName) -> void:
+	print("Old: ", old_name)
+	print("New: ", new_name)

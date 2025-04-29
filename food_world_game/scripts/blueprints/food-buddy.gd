@@ -158,7 +158,7 @@ func update_movement_direction():
 
 
 func update_animation(animation_name: String = ""):
-	
+		
 	if level_up:
 		return
 	
@@ -170,7 +170,6 @@ func update_animation(animation_name: String = ""):
 	
 	if field_state_current == FieldState.PLAYER:
 		return
-	
 	
 	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
 	
@@ -185,7 +184,6 @@ func update_animation(animation_name: String = ""):
 		new_animation_name = "idle"
 	else:
 		new_animation_name = "moving"
-	
 	
 	if new_animation_name == "" or new_animation_name == null:
 		new_animation_name = current_animation_name

@@ -119,9 +119,9 @@ var stamina_use: Dictionary = {
 }
 
 # Speed #
-var speed_sprinting: int = 65
-var speed_normal_dan: int = 90
-var speed_sprinting_dan: int = 250
+var speed_sprinting: int = 75
+var speed_normal_dan: int = 65
+var speed_sprinting_dan: int = 90
 var speed_dodging: int = 350
 
 # Sprinting #
@@ -238,7 +238,7 @@ func _process(delta: float) -> void:
 	else:
 		on_platform = false
 	
-
+	
 	
 	if not paused:
 		
@@ -267,7 +267,6 @@ func _process(delta: float) -> void:
 			for game_timer in timers:
 				game_timer.paused = false
 		
-		
 		process_ability_use(delta)
 		update_movement_direction()
 		update_stamina(delta)
@@ -291,9 +290,11 @@ func _process(delta: float) -> void:
 	
 	update_dimensions()
 	
-	toggle_food_buddy_field_state_interface()
-	toggle_food_buddy_selection_interface()
-	toggle_brittany_berry_bot_interface()
+	if not equipping_buddy:
+	
+		toggle_food_buddy_field_state_interface()
+		toggle_food_buddy_selection_interface()
+		toggle_brittany_berry_bot_interface()
 	# DEBUG #
 	if timer.time_left == 0:
 		timer.start()
@@ -439,7 +440,6 @@ func update_animation(animation_name: String = ""):
 						if throwing_juicebox:
 							new_animation_name = new_animation_name + "_throw"
 					
-					
 					if equipped_buddy.sprite.animation in equipped_buddy.animation_callbacks.keys():
 						equipped_buddy.animation_callbacks.get(equipped_buddy.sprite.animation).call()
 				
@@ -487,8 +487,6 @@ func update_animation(animation_name: String = ""):
 		
 		new_animation_name = ""
 		new_direction_name = ""
-		
-		update_movement_direction()
 
 
 # Starts the Player's sprint

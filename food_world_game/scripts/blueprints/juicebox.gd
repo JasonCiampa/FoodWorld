@@ -9,6 +9,9 @@ var animator: AnimationPlayer
 var sprite: AnimatedSprite2D
 var hitbox_heal: Area2D
 
+var time_alive: float
+var max_time_alive: float = 3
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -80,6 +83,11 @@ func _process(delta: float) -> void:
 		animator.pause()
 		return
 	else:
+		time_alive += delta
+		
+		if time_alive > max_time_alive:
+			throw_end()
+		
 		sprite.play()
 		animator.play()
 	

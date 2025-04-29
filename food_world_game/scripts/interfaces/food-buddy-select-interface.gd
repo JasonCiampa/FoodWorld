@@ -268,11 +268,52 @@ func _on_active_buddy1_button_down() -> void:
 		var temp: FoodBuddy = active_foodbuddy1
 		
 		# Update the active and inactive food buddy lists
-		active_food_buddies[0] = inactive_foodbuddy
+		active_food_buddies[0] = inactive_food_buddies[0]
 		inactive_food_buddies[0] = temp
 		
-		active_food_buddies[0].active = true
-		inactive_food_buddies[0].active = false
+		active_foodbuddy1 = active_food_buddies[0]
+		inactive_foodbuddy = inactive_food_buddies[0]
+		
+		active_foodbuddy1.active = true
+		inactive_foodbuddy.active = false
+		
+		# Update the locations of the Food Buddies in-game
+		var temp_position: Vector2 = inactive_foodbuddy.global_position
+		inactive_foodbuddy.global_position = active_foodbuddy1.global_position
+		active_foodbuddy1.global_position = temp_position
+		
+		active_foodbuddy1.collision_values["GROUND"] = 4
+		active_foodbuddy1.collision_values["MIDAIR"] = 5
+		active_foodbuddy1.collision_values["PLATFORM"] = 6
+		
+		active_foodbuddy1.process_mode = Node.PROCESS_MODE_INHERIT
+		inactive_foodbuddy.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+			player.equipped_buddy = active_foodbuddy1
+			player.equipped_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
+			player.equipped_buddy.global_position = player.global_position
+			player.equipped_buddy.process_nearby_tiles = true
+			player.equipped_buddy.timer_process_tiles.start(player.equipped_buddy.time_between_tile_updates)
+			
+			if player.equipped_buddy.name != "Dan":
+				player.equipped_buddy.visible = false
+				player.sprite.offset.y = -16
+				player.speed_current = player.speed_normal
+			else:
+				player.equipped_buddy.label_e_to_interact.visible = false
+				player.shadow.visible = false
+				player.sprite.offset.y = -39
+				player.speed_current = player.speed_normal_dan
+			
+			
+			inactive_foodbuddy.field_state_current = inactive_foodbuddy.field_state_previous
+			if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+				inactive_foodbuddy.field_state_current = FoodBuddy.FieldState.FOLLOW
+		else:
+			active_foodbuddy1.visible = true
+			
+		player.update_animation()
 		
 		# Update the values of this interface
 		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
@@ -282,17 +323,6 @@ func _on_active_buddy1_button_down() -> void:
 		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
 		InterfaceFoodBuddyFieldState.setValues(player, active_food_buddies)
 		
-		# Update the locations of the Food Buddies in-game
-		var temp_position: Vector2 = inactive_food_buddies[0].global_position
-		inactive_food_buddies[0].global_position = active_food_buddies[0].global_position
-		active_food_buddies[0].global_position = temp_position
-		
-		active_food_buddies[0].collision_values["GROUND"] = 4
-		active_food_buddies[0].collision_values["MIDAIR"] = 5
-		active_food_buddies[0].collision_values["PLATFORM"] = 6
-		
-		active_food_buddies[0].process_mode = Node.PROCESS_MODE_INHERIT
-		inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
 		
 		# Clear variables
 		temp = null
@@ -329,11 +359,54 @@ func _on_active_buddy2_button_down() -> void:
 		var temp: FoodBuddy = active_foodbuddy2
 		
 		# Update the active and inactive food buddy lists
-		active_food_buddies[1] = inactive_foodbuddy
+		active_food_buddies[1] = inactive_food_buddies[0]
 		inactive_food_buddies[0] = temp
 		
-		active_food_buddies[1].active = true
-		inactive_food_buddies[0].active = false
+		active_foodbuddy2 = active_food_buddies[1]
+		inactive_foodbuddy = inactive_food_buddies[0]
+		
+		active_foodbuddy2.active = true
+		inactive_foodbuddy.active = false
+		
+		# Update the locations of the Food Buddies in-game
+		
+		var temp_position: Vector2 = inactive_foodbuddy.global_position
+		inactive_foodbuddy.global_position = active_foodbuddy2.global_position
+		active_foodbuddy2.global_position = temp_position
+		
+		active_foodbuddy2.collision_values["GROUND"] = 7
+		active_foodbuddy2.collision_values["MIDAIR"] = 8
+		active_foodbuddy2.collision_values["PLATFORM"] = 9
+		
+		active_foodbuddy2.process_mode = Node.PROCESS_MODE_INHERIT
+		inactive_foodbuddy.process_mode = Node.PROCESS_MODE_DISABLED
+		
+		if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+			player.equipped_buddy = active_foodbuddy2
+			player.equipped_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
+			player.equipped_buddy.global_position = player.global_position
+			player.equipped_buddy.process_nearby_tiles = true
+			player.equipped_buddy.timer_process_tiles.start(player.equipped_buddy.time_between_tile_updates)
+			
+			if player.equipped_buddy.name != "Dan":
+				player.equipped_buddy.visible = false
+				player.sprite.offset.y = -16
+				player.speed_current = player.speed_normal
+			else:
+				player.equipped_buddy.label_e_to_interact.visible = false
+				player.shadow.visible = false
+				player.sprite.offset.y = -39
+				player.speed_current = player.speed_normal_dan
+			
+			
+			inactive_foodbuddy.field_state_current = inactive_foodbuddy.field_state_previous
+			if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+				inactive_foodbuddy.field_state_current = FoodBuddy.FieldState.FOLLOW
+			
+		else:
+			active_foodbuddy2.visible = true
+		
+		player.update_animation()
 		
 		# Update the values of this interface
 		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)
@@ -342,18 +415,6 @@ func _on_active_buddy2_button_down() -> void:
 		InterfaceCharacterStatus.setValues(player, active_food_buddies)
 		InterfaceLevelUp.setValues(player, active_food_buddies, InterfaceCharacterStatus)
 		InterfaceFoodBuddyFieldState.setValues(player, active_food_buddies)
-		
-		# Update the locations of the Food Buddies in-game
-		var temp_position: Vector2 = inactive_food_buddies[0].global_position
-		inactive_food_buddies[0].global_position = active_food_buddies[1].global_position
-		active_food_buddies[1].global_position = temp_position
-		
-		active_food_buddies[1].collision_values["GROUND"] = 7
-		active_food_buddies[1].collision_values["MIDAIR"] = 8
-		active_food_buddies[1].collision_values["PLATFORM"] = 9
-		
-		active_food_buddies[1].process_mode = Node.PROCESS_MODE_INHERIT
-		inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
 		
 		# Clear variables
 		temp = null
@@ -387,36 +448,86 @@ func _on_inactive_buddy_button_button_down() -> void:
 		if selected_active_foodbuddy == active_foodbuddy1:
 			temp = active_foodbuddy1
 			
-			active_food_buddies[0] = inactive_foodbuddy
+			active_food_buddies[0] = inactive_food_buddies[0]
 			inactive_food_buddies[0] = temp
 			
-			active_food_buddies[0].active = true
-			inactive_food_buddies[0].active = false
+			active_foodbuddy1 = active_food_buddies[0]
+			inactive_foodbuddy = inactive_food_buddies[0]
+			
+			active_foodbuddy1.active = true
+			inactive_foodbuddy.active = false
 			
 			# Update the locations of the Food Buddies in-game
-			temp_position = inactive_food_buddies[0].global_position
-			inactive_food_buddies[0].global_position = active_food_buddies[0].global_position
-			active_food_buddies[0].global_position = temp_position
+			temp_position = inactive_foodbuddy.global_position
+			inactive_foodbuddy.global_position = active_foodbuddy1.global_position
+			active_foodbuddy1.global_position = temp_position
 			
 			active_food_buddies[0].process_mode = Node.PROCESS_MODE_INHERIT
 			inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
+			
+			active_foodbuddy1.collision_values["GROUND"] = 4
+			active_foodbuddy1.collision_values["MIDAIR"] = 5
+			active_foodbuddy1.collision_values["PLATFORM"] = 6
+			
+			active_foodbuddy1.process_mode = Node.PROCESS_MODE_INHERIT
+			inactive_foodbuddy.process_mode = Node.PROCESS_MODE_DISABLED
+			
+			selected_active_foodbuddy = active_foodbuddy1
 		
 		else:
 			temp = active_foodbuddy2
 			
-			active_food_buddies[1] = inactive_foodbuddy
+			active_food_buddies[1] = inactive_food_buddies[0]
 			inactive_food_buddies[0] = temp
 			
-			active_food_buddies[1].active = true
-			inactive_food_buddies[0].active = false
+			active_foodbuddy2 = active_food_buddies[1]
+			inactive_foodbuddy = inactive_food_buddies[0]
+			
+			active_foodbuddy2.active = true
+			inactive_foodbuddy.active = false
 			
 			# Update the locations of the Food Buddies in-game
-			temp_position = inactive_food_buddies[0].global_position
-			inactive_food_buddies[0].global_position = active_food_buddies[1].global_position
-			active_food_buddies[1].global_position = temp_position
+			temp_position = inactive_foodbuddy.global_position
+			inactive_foodbuddy.global_position = active_foodbuddy2.global_position
+			active_foodbuddy2.global_position = temp_position
 			
-			active_food_buddies[1].process_mode = Node.PROCESS_MODE_INHERIT
+			active_food_buddies[0].process_mode = Node.PROCESS_MODE_INHERIT
 			inactive_food_buddies[0].process_mode = Node.PROCESS_MODE_DISABLED
+			
+			active_foodbuddy2.collision_values["GROUND"] = 7
+			active_foodbuddy2.collision_values["MIDAIR"] = 8
+			active_foodbuddy2.collision_values["PLATFORM"] = 9
+			
+			active_foodbuddy2.process_mode = Node.PROCESS_MODE_INHERIT
+			inactive_foodbuddy.process_mode = Node.PROCESS_MODE_DISABLED
+			
+			selected_active_foodbuddy = active_foodbuddy2
+			
+		if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+			player.equipped_buddy = selected_active_foodbuddy
+			player.equipped_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
+			player.equipped_buddy.global_position = player.global_position
+			player.equipped_buddy.process_nearby_tiles = true
+			player.equipped_buddy.timer_process_tiles.start(player.equipped_buddy.time_between_tile_updates)
+			
+			if player.equipped_buddy.name != "Dan":
+				player.equipped_buddy.visible = false
+				player.sprite.offset.y = -16
+				player.speed_current = player.speed_normal
+			else:
+				player.equipped_buddy.label_e_to_interact.visible = false
+				player.shadow.visible = false
+				player.sprite.offset.y = -39
+				player.speed_current = player.speed_normal_dan
+			
+			inactive_foodbuddy.field_state_current = inactive_foodbuddy.field_state_previous
+			if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
+				inactive_foodbuddy.field_state_current = FoodBuddy.FieldState.FOLLOW
+		
+		else:
+			selected_active_foodbuddy.visible = true
+		
+		player.update_animation()
 		
 		# Update the values of this interface
 		setValues(player, active_food_buddies, inactive_food_buddies, InterfaceCharacterStatus, InterfaceLevelUp, InterfaceFoodBuddyFieldState)

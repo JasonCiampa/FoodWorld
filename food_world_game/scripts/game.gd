@@ -48,6 +48,8 @@ var map_zooming: bool = false
 
 var update_food_buddy_equipped: int = 0
 
+var level_up_pending: bool = false
+
 # Node Groups #
 var enemies: Array[Node]
 var food_citizens: Array[Node]
@@ -102,6 +104,7 @@ var empty_song: AudioStreamPlayer
 var transitioning_songs: bool = false
 var music_fade_in_duration: float = 3.5
 var music_fade_out_duration: float = 2
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -222,6 +225,11 @@ func _process(delta: float) -> void:
 	#else:
 		#if transitioning_songs:
 			#process_music_fade(delta)
+	
+	if level_up_pending:
+		if !PLAYER.equipping_buddy:
+			InterfaceLevelUp.start(get_all_assets_in_game())
+			level_up_pending = false
 	
 	
 	if !map_zooming and Input.is_action_just_pressed("toggle_map"):
@@ -446,7 +454,10 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 				PLAYER.xp_current += target.xp_drop
 				
 				if PLAYER.xp_current >= PLAYER.xp_max:
-					InterfaceLevelUp.start(get_all_assets_in_game())
+					if !PLAYER.equipping_buddy:
+						InterfaceLevelUp.start(get_all_assets_in_game())
+					else:
+						level_up_pending = true
 			
 		InterfaceCharacterStatus.setValues(PLAYER, food_buddies_active)
 		return true
@@ -777,8 +788,12 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 	
 	# Determine if the Player already had the Food Buddy equipped, then revert the Food Buddy back to its previous FieldState since the Player is trying to unequip it
 	if food_buddy_selected.field_state_current == FoodBuddy.FieldState.PLAYER:
-		food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
-		food_buddy_selected.field_state_previous = FoodBuddy.FieldState.PLAYER
+		if food_buddy_selected.field_state_previous == FoodBuddy.FieldState.PLAYER:
+			food_buddy_selected.field_state_current = FoodBuddy.FieldState.FOLLOW
+		else:
+			food_buddy_selected.field_state_current = food_buddy_selected.field_state_previous
+			food_buddy_selected.field_state_previous = FoodBuddy.FieldState.PLAYER
+		
 		food_buddy_selected.process_mode = Node.PROCESS_MODE_INHERIT
 		food_buddy_selected.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 1)
 		food_buddy_selected.visible = true
@@ -1524,6 +1539,7 @@ func _on_player_exit_building(_building: Building, _delta: float):
 				occupant.process_mode = Node.PROCESS_MODE_DISABLED
 				occupant.paused = true
 			
+			current_building.process_mode = Node.PROCESS_MODE_INHERIT
 			current_building = null
 			
 			for asset in get_all_assets_in_game():
