@@ -187,6 +187,9 @@ func _ready() -> void:
 	
 	radius_range = 35
 	
+	tile_process_shape = Vector2i(3, 3)
+	time_between_tile_updates = 0.4
+	
 	self.name = "Player"
 	body_collider.disabled = true
 	feet_collider.disabled = false

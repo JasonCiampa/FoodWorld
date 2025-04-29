@@ -33,11 +33,13 @@ var world_tilemaps: Dictionary
 var tilemaps_active: Array[TileMapLayer]
 
 var tiles_occupied: Dictionary
-var tiles_enabled_navigation: Dictionary
+var nav_tile_locations: Dictionary
+var nav_tiles: Dictionary
+
 
 var next_nav_index_to_add: int = 0
 var next_nav_index_to_remove: int = 0
-var nav_tile_cap: int = 1500
+var nav_tile_cap: int = 500
 
 var bushes: Array[Vector2i]
 
@@ -117,7 +119,7 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			if environment_tile.width != null and environment_tile.width > 1:
 				
 				# Iterate for each tile wide the Tile is
-				for col in range(environment_tile.width + 1):
+				for col in range(environment_tile.width):
 					
 					# Iterate for each tile tall the Tile is
 					for row in range(environment_tile.height):
@@ -272,7 +274,7 @@ func execute_tile_callback(tile: Tile, character: GameCharacter) -> Tile:
 
 
 # Process the tiles nearby a given Character on the given Tilemap(s)
-func process_nearby_tiles(character: GameCharacter, tiles_above: int):
+func process_nearby_tiles(character: GameCharacter):
 	
 	if character.current_tilemaps == null:
 		return
@@ -294,43 +296,49 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 	# Create a list of Tile coordinates to process
 	var tiles_to_process: Array[Vector2i] = []
 	
-	# Store a local reference to the x and y coordinates of the Character's current Tile position
-	var x: int = character.current_tile_position.x
-	var y: int = character.current_tile_position.y
+	# Set the current tile coords to the bottom left corner
+	var current_tile_coords: Vector2i = Vector2i(character.current_tile_position.x - character.tile_process_shape.x, character.current_tile_position.y + character.tile_process_shape.y)
+	var goal_tile_coords: Vector2i
 	
 	# Iterate over each of the tilemaps that should have their Tiles processed
 	for map_type in character.current_tilemaps.size():
 		
-		# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
-		tiles_to_process.append(Vector2i(x + 1, y + 3))
-		tiles_to_process.append(Vector2i(x + 1, y + 2))
-		tiles_to_process.append(Vector2i(x + 1, y + 1))
-		tiles_to_process.append(Vector2i(x + 1, y))
-		tiles_to_process.append(Vector2i(x + 1, y - 1))
-		tiles_to_process.append(Vector2i(x, y + 3))
-		tiles_to_process.append(Vector2i(x, y + 2))
-		tiles_to_process.append(Vector2i(x, y + 1))
-		tiles_to_process.append(Vector2i(x, y))
-		tiles_to_process.append(Vector2i(x, y - 1))
-		tiles_to_process.append(Vector2i(x - 1, y + 3))
-		tiles_to_process.append(Vector2i(x - 1, y + 2))
-		tiles_to_process.append(Vector2i(x - 1, y + 1))
-		tiles_to_process.append(Vector2i(x - 1, y))
-		tiles_to_process.append(Vector2i(x - 1, y - 1))
+		tiles_to_process.append(character.current_tile_position)
+		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x, character.current_tile_position.y + 1))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y + 1))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y + 1))
 		
-
+		# Set the goal coordinates to the top left corner
+		goal_tile_coords = Vector2i(current_tile_coords.x, character.current_tile_position.y - character.tile_process_shape.y - 2)
 		
-		# Iterate (tiles_above - 1) times to add extra rows of Tiles to process above the Character
-		for count in range(2, tiles_above + 1):
-			
-			# Note: Loop starts at 2 instead of 1 because one row above the Character is already processed automatically (y - 1), so the next row to be added must start at (y = 2).
-			
-			# Add the Tiles 'count' row(s) above the Character's current Tile into the list of Tiles to be processed
-			tiles_to_process.append(Vector2i(x + 1, y - count))
-			tiles_to_process.append(Vector2i(x, y - count))
-			tiles_to_process.append(Vector2i(x - 1, y - count))
-	
-	
+		while current_tile_coords != goal_tile_coords:
+			# Add the Tiles in the row beneath the Character's current Tile into the list of Tiles to be processed
+			tiles_to_process.append(current_tile_coords)
+			current_tile_coords.y -= 1
+		
+		# Set the goal coordinates to the top right corner
+		goal_tile_coords = Vector2i(character.current_tile_position.x + character.tile_process_shape.x, current_tile_coords.y)
+		
+		while current_tile_coords != goal_tile_coords:
+			tiles_to_process.append(current_tile_coords)
+			current_tile_coords.x += 1
+		
+		# Set the goal coordinates to the bottom right corner
+		goal_tile_coords = Vector2i(current_tile_coords.x, character.current_tile_position.y + character.tile_process_shape.y)
+		
+		while current_tile_coords != goal_tile_coords:
+			tiles_to_process.append(current_tile_coords)
+			current_tile_coords.y += 1
+		
+		# Set the goal coordinates to the bottom left corner to complete the ring
+		goal_tile_coords = Vector2i(character.current_tile_position.x - character.tile_process_shape.x, current_tile_coords.y)
+		
+		while current_tile_coords != goal_tile_coords:
+			tiles_to_process.append(current_tile_coords)
+			current_tile_coords.x -= 1
+		
 		# Process each of the Tiles using their coordinates that were stored in the list
 		for tile in range(tiles_to_process.size() - 1, -1, -1):
 			
@@ -346,30 +354,32 @@ func process_nearby_tiles(character: GameCharacter, tiles_above: int):
 			if map_type == Tile.MapType.GROUND:
 			
 				# Determine if the Tile is not occupied and not already enabled for navigation, then enable navigation on it by switching to an alternative tile and add it to the list of tile coords enabled for navigation
-				if tiles_occupied.get(tiles_to_process[tile]) == null:
+				if tiles_occupied.get(tiles_to_process[tile]) == null and nav_tiles.get(tiles_to_process[tile]) == null:
 					
-					if tiles_enabled_navigation.get(next_nav_index_to_add) == null:
+					if nav_tile_locations.get(next_nav_index_to_add) == null:
 						
 						var new_nav_tile: Tile = Tile.new(character.current_tilemaps[map_type], map_type, tiles_to_process[tile])
 						
 						# Replace the tile with an alternative tile that has navigation enabled and is arranged such that the character appears in front of it
 						new_nav_tile.tilemap.set_cell(new_nav_tile.coords_map, new_nav_tile.tilemap.get_cell_source_id(new_nav_tile.coords_map), new_nav_tile.tilemap.get_cell_atlas_coords(new_nav_tile.coords_map), 2)
 						
-						tiles_enabled_navigation.get_or_add(next_nav_index_to_add, new_nav_tile)
-						
+						nav_tile_locations.get_or_add(next_nav_index_to_add, new_nav_tile)
+						nav_tiles.get_or_add(tiles_to_process[tile], next_nav_index_to_add)
 						next_nav_index_to_add += 1
 						
 						if next_nav_index_to_add % nav_tile_cap == 0:
+							print("LOOPING AROUND TO REMOVE EARLIEST ADDED TILES")
 							next_nav_index_to_add = 0
 						
-						if tiles_enabled_navigation.size() == nav_tile_cap:
+						if nav_tile_locations.size() == nav_tile_cap:
 							
 							# Create the reference to the cell and it set it back to a normal cell without path-finding (non-alternative)
-							var tile_to_remove: Tile = tiles_enabled_navigation.get(next_nav_index_to_remove)
+							var tile_to_remove: Tile = nav_tile_locations.get(next_nav_index_to_remove)
 							tile_to_remove.tilemap.set_cell(tile_to_remove.coords_map, 0, tile_to_remove.tilemap.get_cell_atlas_coords(tile_to_remove.coords_map))
 							
 							# Erase the cell from the dictionary so it is ready to be overwritten
-							tiles_enabled_navigation.erase(next_nav_index_to_remove)
+							nav_tile_locations.erase(next_nav_index_to_remove)
+							nav_tiles.erase(tile_to_remove.coords_map)
 							
 							# Increment the cell and see if we need to loop around to start removing older cells at the beginning
 							next_nav_index_to_remove += 1

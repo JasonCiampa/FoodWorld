@@ -53,6 +53,7 @@ func ready():
 	speed_current = speed_normal
 	
 	radius_range = 35
+	tile_process_shape = Vector2i(3, 5)
 	
 	self.name = "Link"
 	

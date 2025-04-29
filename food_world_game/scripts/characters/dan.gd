@@ -69,6 +69,8 @@ func ready():
 	
 	radius_range = 50
 	
+	tile_process_shape = Vector2i(3, 10)
+	
 	self.name = "Dan"
 	
 	field_state_current = FieldState.FOLLOW

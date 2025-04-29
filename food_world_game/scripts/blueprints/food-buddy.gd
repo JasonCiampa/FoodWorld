@@ -232,6 +232,8 @@ func _ready() -> void:
 	
 	update_movement_direction()
 	
+	time_between_tile_updates = randf_range(0.65, 0.7)
+	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	

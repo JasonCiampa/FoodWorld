@@ -235,21 +235,21 @@ func _process(delta: float) -> void:
 	
 	
 	# Process the Tiles that are nearby the Player, Malick, and Sally on the ground, terrain, and environment tilemaps
-	if timer_process_tiles.is_stopped():
-		GameTileManager.process_nearby_tiles(PLAYER, 3)
-		GameTileManager.process_nearby_tiles(food_buddies_active[0], 5)
-		GameTileManager.process_nearby_tiles(food_buddies_active[1], 5)
-		timer_process_tiles.start(0.4)
-	
-	if timer_process_enemy_tiles.is_stopped():
-		for enemy in enemies:
-			if enemy.on_screen_notifier.is_on_screen():
-				enemy.process_mode = Node.PROCESS_MODE_INHERIT
-				GameTileManager.process_nearby_tiles(enemy, 3)
-			else:
-				enemy.process_mode = Node.PROCESS_MODE_DISABLED
-		
-		timer_process_enemy_tiles.start(0.9)
+	#if timer_process_tiles.is_stopped():
+		#GameTileManager.process_nearby_tiles(PLAYER, 3)
+		#GameTileManager.process_nearby_tiles(food_buddies_active[0], 5)
+		#GameTileManager.process_nearby_tiles(food_buddies_active[1], 5)
+		#timer_process_tiles.start(0.4)
+	#
+	#if timer_process_enemy_tiles.is_stopped():
+		#for enemy in enemies:
+			#if enemy.on_screen_notifier.is_on_screen():
+				#enemy.process_mode = Node.PROCESS_MODE_INHERIT
+				#GameTileManager.process_nearby_tiles(enemy, 3)
+			#else:
+				#enemy.process_mode = Node.PROCESS_MODE_DISABLED
+		#
+		#timer_process_enemy_tiles.start(0.9)
 		
 
 	
@@ -1615,6 +1615,7 @@ func connect_character_to_game(character: Node2D):
 
 
 func load_enemy(enemy: Enemy):
+	enemy.process_tiles.connect(process_tiles)
 	enemy.use_ability.connect(_on_enemy_use_ability)
 	enemy.die.connect(_on_character_die)
 	enemy.killed_target.connect(_on_enemy_killed_target)
@@ -1624,11 +1625,13 @@ func load_enemy(enemy: Enemy):
 	add_child(enemy)
 
 func load_food_citizen(foodcitizen: FoodCitizen):
+	foodcitizen.process_tiles.connect(process_tiles)
 	foodcitizen.target_player.connect(_on_character_target_player)
 	foodcitizen.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
 	add_child(foodcitizen)
 
 func load_food_buddy(foodbuddy: FoodBuddy):
+	foodbuddy.process_tiles.connect(process_tiles)
 	foodbuddy.deposit_berries.connect(_on_food_buddy_deposit_berries)
 	foodbuddy.find_nearest_bush.connect(_on_food_buddy_find_nearest_bush)
 	foodbuddy.forage_bush.connect(_on_food_buddy_forage_bush)
@@ -1694,3 +1697,7 @@ func adjust_tilemap_modulate(modulate_value: float):
 			tilemap.modulate.a = modulate_value
 	
 	ocean_tilemap.modulate.a = modulate_value
+
+
+func process_tiles(character: GameCharacter):
+	GameTileManager.process_nearby_tiles(character)

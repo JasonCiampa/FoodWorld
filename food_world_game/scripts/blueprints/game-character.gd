@@ -27,6 +27,16 @@ var feet_sensor: Area2D
 # Shadow #
 var shadow: Polygon2D
 
+# Timers #
+var timer_process_tiles: Timer
+
+
+var time_between_tile_updates: float = randf_range(0.2, 3)
+
+# x = number of tiles out to the sides from player origin point (1 = 1 tile out on left and right, 2 = 2 tiles out on left and right (5 in total))
+# y = number of tiles out up and downward from player origin point going down or 2 above player origin point going up
+var tile_process_shape: Vector2i = Vector2i(2, 2)
+	
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -43,6 +53,8 @@ signal update_altitude
 
 signal fall_starting
 signal fall_ending
+
+signal process_tiles
 
 signal die
 
@@ -178,6 +190,7 @@ func _ready() -> void:
 	
 	feet_sensor = $"Feet Sensor"
 	
+	timer_process_tiles = $"Tile Process Timer"
 	
 	# Placing all names of signals here with a random function call so that the debugger stops yelling at me for "never explicitly using" the signal within its class.
 	target_player.is_null()
@@ -199,6 +212,8 @@ func _ready() -> void:
 	
 	# Update the Character's center point based on their global position and their width and height based on the current sprite frame
 	update_dimensions()
+	
+	timer_process_tiles.start(time_between_tile_updates)
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -566,3 +581,8 @@ func physics_process(_delta: float) -> void:
 	pass
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+func _on_tile_process_timer_timeout() -> void:
+	process_tiles.emit(self)
+	timer_process_tiles.start(time_between_tile_updates)

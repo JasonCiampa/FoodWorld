@@ -285,8 +285,12 @@ one_shot = true
 [node name="Forage Cooldown Timer" type="Timer" parent="."]
 one_shot = true
 
+[node name="Tile Process Timer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_sprite_animation_changed"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_sprite_animation_finished"]
 [connection signal="animation_looped" from="AnimatedSprite2D" to="." method="_on_sprite_animation_looped"]
 [connection signal="body_entered" from="Feet Sensor" to="." method="_on_feet_sensor_body_entered"]
 [connection signal="body_exited" from="Feet Sensor" to="." method="_on_feet_sensor_body_exited"]
+[connection signal="timeout" from="Tile Process Timer" to="." method="_on_tile_process_timer_timeout"]

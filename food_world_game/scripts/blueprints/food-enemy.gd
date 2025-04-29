@@ -181,7 +181,7 @@ func _physics_process(delta: float) -> void:
 
 # A custom ready function that each Enemy subclass should personally define. This is called in the default FoodBuddy class's '_ready()' function
 func ready():
-	pass
+	time_between_tile_updates = randf_range(0.75, 0.8)
 
 
 
@@ -280,5 +280,16 @@ func use_ability1():
 
 
 
+func _on_tile_process_timer_timeout() -> void:
+	process_tiles.emit(self)
+	timer_process_tiles.start(time_between_tile_updates)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+func _on_enemy_screen_entered() -> void:
+	process_mode = PROCESS_MODE_INHERIT
+
+
+func _on_enemy_screen_exited() -> void:
+	process_mode = PROCESS_MODE_DISABLED

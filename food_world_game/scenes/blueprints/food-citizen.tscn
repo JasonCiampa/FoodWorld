@@ -126,3 +126,8 @@ one_shot = true
 [node name="Feet Shape" type="CollisionShape2D" parent="Feet Sensor"]
 position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_dpkqp")
+
+[node name="Tile Process Timer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="Tile Process Timer" to="." method="_on_tile_process_timer_timeout"]

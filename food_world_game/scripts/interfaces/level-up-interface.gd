@@ -229,7 +229,7 @@ func end():
 			if subject is Juicebox or subject is EnergyBall:
 				
 				if subject.sprite.get_frame() == subject.impact_frame:
-					subject.explode.emit(self)
+					subject.explode.emit(subject)
 				
 				subject.sprite.play()
 			
