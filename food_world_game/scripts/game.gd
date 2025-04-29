@@ -220,12 +220,12 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	#if !musicStarted and timer_fade.is_stopped():
-		#musicStarted = true
-		#MUSIC.play()
-	#else:
-		#if transitioning_songs:
-			#process_music_fade(delta)
+	if !musicStarted and timer_fade.is_stopped():
+		musicStarted = true
+		MUSIC.play()
+	else:
+		if transitioning_songs:
+			process_music_fade(delta)
 	
 	if level_up_pending:
 		if !PLAYER.equipping_buddy:
