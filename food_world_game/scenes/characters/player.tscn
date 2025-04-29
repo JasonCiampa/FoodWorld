@@ -1,4 +1,4 @@
-[gd_scene load_steps=210 format=3 uid="uid://cu2ipprwef1jv"]
+[gd_scene load_steps=214 format=3 uid="uid://cu2ipprwef1jv"]
 
 [ext_resource type="Script" path="res://scripts/characters/player.gd" id="1_2axk5"]
 [ext_resource type="Texture2D" uid="uid://bhgsi0xut3xrj" path="res://images/player_spritesheet.png" id="2_08uiw"]
@@ -36,6 +36,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector2(1e-05, 1e-05)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D/Camera2D:zoom")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(3.5, 3.5)]
+}
 
 [sub_resource type="Animation" id="Animation_uqkj3"]
 resource_name = "dodge"
@@ -68,6 +80,70 @@ length = 0.25
 resource_name = "stop_sprinting"
 length = 0.25
 
+[sub_resource type="Animation" id="Animation_842if"]
+resource_name = "zoom_out"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.65, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(3.5, 3.5), Vector2(3.7, 3.7), Vector2(0.35, 0.35), Vector2(0.4, 0.4)]
+}
+
+[sub_resource type="Animation" id="Animation_854ww"]
+resource_name = "zoom_in"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.65, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0.4, 0.4), Vector2(0.35, 0.35), Vector2(3.7, 3.7), Vector2(3.5, 3.5)]
+}
+
+[sub_resource type="Animation" id="Animation_s72gb"]
+resource_name = "zoomed_in"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(3.5, 3.5)]
+}
+
+[sub_resource type="Animation" id="Animation_dw7li"]
+resource_name = "zoomed_out"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D/Camera2D:zoom")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.4, 0.4)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_uh8r5"]
 _data = {
 "RESET": SubResource("Animation_as0pd"),
@@ -75,7 +151,11 @@ _data = {
 "dodge_sprinting": SubResource("Animation_53r6h"),
 "fuse": SubResource("Animation_fm2qe"),
 "start_sprinting": SubResource("Animation_s5i67"),
-"stop_sprinting": SubResource("Animation_v26ce")
+"stop_sprinting": SubResource("Animation_v26ce"),
+"zoom_in": SubResource("Animation_854ww"),
+"zoom_out": SubResource("Animation_842if"),
+"zoomed_in": SubResource("Animation_s72gb"),
+"zoomed_out": SubResource("Animation_dw7li")
 }
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tqkua"]

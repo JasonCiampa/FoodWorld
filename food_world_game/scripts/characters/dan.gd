@@ -69,7 +69,7 @@ func ready():
 	
 	radius_range = 50
 	
-	tile_process_shape = Vector2i(3, 10)
+	tile_process_shape = Vector2i(3, 4)
 	
 	self.name = "Dan"
 	

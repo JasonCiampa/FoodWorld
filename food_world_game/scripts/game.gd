@@ -23,6 +23,8 @@ var food_citizen = load("res://scenes/blueprints/food-citizen.tscn").instantiate
 @onready var BatterBadlandsSong: AudioStreamPlayer = $BatterBadlands
 @onready var GardenSong: AudioStreamPlayer = $GardenWorld
 
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -40,6 +42,9 @@ var test_cases_complete: bool = false
 @onready var scene_tree = get_tree()
 
 @onready var ocean_tilemap: TileMapLayer = $"World Map/Ocean/Water"
+
+var map_zoomed_in: bool = true
+var map_zooming: bool = false
 
 var update_food_buddy_equipped: int = 0
 
@@ -217,6 +222,13 @@ func _process(delta: float) -> void:
 	#else:
 		#if transitioning_songs:
 			#process_music_fade(delta)
+	
+	
+	if !map_zooming and Input.is_action_just_pressed("toggle_map"):
+		if map_zoomed_in:
+			zoom_out_map()
+		else:
+			zoom_in_map()
 	
 	
 	if !PLAYER.paused and update_food_buddy_equipped != 0:
@@ -771,12 +783,16 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected.global_position = Vector2(PLAYER.global_position.x, PLAYER.global_position.y - 1)
 		food_buddy_selected.visible = true
 		food_buddy_selected.active = true
+		food_buddy_selected.process_nearby_tiles = true
+		food_buddy_selected.timer_process_tiles.start(food_buddy_selected.time_between_tile_updates)
 		
 		if food_buddy_selected.name == "Dan":
 			food_buddy_selected.label_e_to_interact.visible = true
 			PLAYER.shadow.visible = false
 			PLAYER.sprite.offset.y = -16
 			PLAYER.speed_current = PLAYER.speed_normal
+		
+		
 		#elif food_buddy_selected.name == "Link":
 			# Do some stuff with switching hitboxes
 			
@@ -811,6 +827,9 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 				PLAYER.sprite.offset.y = -16
 				PLAYER.speed_current = PLAYER.speed_normal
 				PLAYER.juicebox_ready = false
+			
+			food_buddy_other.process_nearby_tiles = true
+				
 			#elif food_buddy_selected.name == "Link":
 				#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
 				#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
@@ -821,6 +840,7 @@ func _on_player_toggle_buddy_equipped(buddy_number: int) -> void:
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
 		food_buddy_selected.field_state_current = FoodBuddy.FieldState.PLAYER
 		food_buddy_selected.active = false
+		food_buddy_selected.process_nearby_tiles = false
 		
 		if food_buddy_selected.name != "Dan":
 			food_buddy_selected.visible = false
@@ -1342,13 +1362,13 @@ func fade_screen(final_opacity: float, delta: float):
 					occupant.paused = false
 			else:
 				for asset in get_all_assets_in_game():
-					if asset is GameCharacter:
+					if asset is GameCharacter and not asset is Enemy:
 						if !asset.in_building:
 							asset.paused = false
 							asset.process_mode = Node.PROCESS_MODE_INHERIT
 					else:
 						asset.paused = false
-						asset.process_mode = Node.PROCESS_MODE_INHERIT
+						#asset.process_mode = Node.PROCESS_MODE_INHERIT
 				
 			
 			PLAYER.paused = false
@@ -1387,6 +1407,8 @@ func _on_player_enter_building(building: Building, _delta: float):
 			PLAYER.global_position = PLAYER.global_position - current_building.player_offset
 			PLAYER.in_building = true
 			
+			food_buddies_active[0].closest_bush = Vector2i(-1, -1)
+			food_buddies_active[1].closest_bush = Vector2i(-1, -1)
 			
 			if food_buddies_active[0].field_state_current != FoodBuddy.FieldState.PLAYER:
 				food_buddies_active[0].global_position = PLAYER.global_position - current_building.foodbuddy1_offset
@@ -1701,3 +1723,70 @@ func adjust_tilemap_modulate(modulate_value: float):
 
 func process_tiles(character: GameCharacter):
 	GameTileManager.process_nearby_tiles(character)
+
+func zoom_out_map():
+	map_zooming = true
+	
+	for asset in get_all_assets_in_game():
+		if not (asset is GameCharacter and asset.on_screen_notifier.is_on_screen()):
+			asset.visible = false
+		
+		asset.process_mode = Node.PROCESS_MODE_DISABLED
+		asset.paused = true
+	
+	PLAYER.visible = true
+	for foodbuddy in food_buddies_active:
+		if foodbuddy.field_state_current == foodbuddy.FieldState.PLAYER:
+		
+			if foodbuddy.name == "Dan":
+				foodbuddy.visible = true
+		else:
+			foodbuddy.visible = true
+			
+	PLAYER.process_mode = Node.PROCESS_MODE_INHERIT
+	PLAYER.velocity.x = 0
+	PLAYER.velocity.y = 0
+	PLAYER.animation_player.play("zoom_out")
+	PLAYER.animation_player.queue("zoomed_out")
+	InterfaceCharacterStatus.animator.play("exit_UI")
+	PLAYER.paused = true
+	PLAYER.update_animation()
+	map_zoomed_in = false
+
+func zoom_in_map():
+	map_zooming = true
+	
+	
+	
+	PLAYER.animation_player.play("zoom_in")
+	PLAYER.animation_player.queue("zoomed_in")
+	PLAYER.paused = false
+	map_zoomed_in = true
+
+
+func _on_map_zoomed_in() -> void:
+	map_zooming = false
+	InterfaceCharacterStatus.animator.play("enter_UI")
+	
+	for asset in get_all_assets_in_game():
+		if asset is GameCharacter and asset.on_screen_notifier.is_on_screen():
+			asset.process_mode = Node.PROCESS_MODE_INHERIT
+		
+		asset.paused = false
+		asset.visible = true
+	
+	for foodbuddy in food_buddies_active:
+		foodbuddy.process_mode = Node.PROCESS_MODE_INHERIT
+		
+		if foodbuddy.field_state_current == foodbuddy.FieldState.PLAYER:
+		
+			if foodbuddy.name == "Dan":
+				foodbuddy.visible = true
+			else:
+				foodbuddy.visible = false
+			
+			
+
+
+func _on_map_zoomed_out() -> void:
+	map_zooming = false

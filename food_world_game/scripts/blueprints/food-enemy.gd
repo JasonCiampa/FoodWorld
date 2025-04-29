@@ -187,7 +187,7 @@ func ready():
 
 # A custom process function that each Enemy subclass should personally define. This is called in the default FoodBuddy class's '_process()' function
 func process(_delta: float):
-	pass
+	print(name, " is processing!")
 
 
 
@@ -288,7 +288,8 @@ func _on_tile_process_timer_timeout() -> void:
 
 
 func _on_enemy_screen_entered() -> void:
-	process_mode = PROCESS_MODE_INHERIT
+	if !paused:
+		process_mode = PROCESS_MODE_INHERIT
 
 
 func _on_enemy_screen_exited() -> void:

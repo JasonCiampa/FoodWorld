@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://do46o8a68s06o"]
+[gd_scene load_steps=20 format=3 uid="uid://do46o8a68s06o"]
 
 [ext_resource type="Script" path="res://scripts/interfaces/character-status-interface.gd" id="1_kijuv"]
 [ext_resource type="Texture2D" uid="uid://d3n5svd8hvnhh" path="res://images/ui/png/health-bar-player.png" id="2_5fvqm"]
@@ -28,6 +28,60 @@ font_size = 72
 outline_size = 25
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="Animation" id="Animation_ip0mg"]
+resource_name = "enter_UI"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(1.1, 1.1), Vector2(0.9, 0.9), Vector2(1.05, 1.05), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_rlkkx"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jvigk"]
+resource_name = "exit_UI"
+length = 0.35
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.12, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 1.1), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7evw0"]
+_data = {
+"RESET": SubResource("Animation_rlkkx"),
+"enter_UI": SubResource("Animation_ip0mg"),
+"exit_UI": SubResource("Animation_jvigk")
+}
+
 [node name="Character Status" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -35,6 +89,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(0, -132.46)
 script = ExtResource("1_kijuv")
 
 [node name="Player Status" type="Control" parent="."]
@@ -532,3 +587,8 @@ size_flags_vertical = 0
 text = "100/100"
 label_settings = SubResource("LabelSettings_xg02t")
 horizontal_alignment = 1
+
+[node name="Animator" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_7evw0")
+}

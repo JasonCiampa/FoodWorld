@@ -35,6 +35,9 @@ signal use_ability_buddy_fusion
 
 signal throw_juicebox
 
+signal map_zoomed_out
+signal map_zoomed_in
+
 signal interact
 signal escape_menu
 
@@ -117,8 +120,8 @@ var stamina_use: Dictionary = {
 
 # Speed #
 var speed_sprinting: int = 75
-var speed_normal_dan: int = 60
-var speed_sprinting_dan: int = 85
+var speed_normal_dan: int = 150
+var speed_sprinting_dan: int = 250
 var speed_dodging: int = 350
 
 # Sprinting #
@@ -188,7 +191,7 @@ func _ready() -> void:
 	radius_range = 35
 	
 	tile_process_shape = Vector2i(3, 3)
-	time_between_tile_updates = 0.4
+	time_between_tile_updates = randf_range(0.65, 0.7)
 	
 	self.name = "Player"
 	body_collider.disabled = true
@@ -201,6 +204,9 @@ func _ready() -> void:
 	timers.append(stamina_regen_delay_timer)
 	timers.append(timer)
 	timers.append(interaction_delay_timer)
+	timers.append(timer_process_tiles)
+	
+	timer_process_tiles.start(time_between_tile_updates)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -497,6 +503,8 @@ func update_animation(animation_name: String = ""):
 		
 		new_animation_name = ""
 		new_direction_name = ""
+		
+		update_movement_direction()
 
 
 # Starts the Player's sprint
@@ -712,7 +720,11 @@ func update_movement_velocity(delta):
 	
 	# Otherwise, the Player doesn't have any stamina, so prevent them from dodging and sprinting (don't prevent jumping because the Player could be in the middle of one)
 	else:
-		speed_current = speed_normal
+		if equipped_buddy != null and equipped_buddy.name == "Dan":
+			speed_current = speed_normal_dan
+		else:
+			speed_current = speed_normal
+		
 		is_sprinting = false
 		is_dodging = false
 	
@@ -1089,3 +1101,9 @@ func _on_animation_player_animation_changed(old_name: StringName, new_name: Stri
 	if old_name == "fuse" and new_name == "RESET":
 		equipping_buddy = false
 		is_interacting = false
+	
+	elif old_name == "zoom_out":
+		map_zoomed_out.emit()
+	
+	elif old_name == "zoom_in":
+		map_zoomed_in.emit()

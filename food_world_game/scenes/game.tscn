@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cihoalh5h5cik"]
+[gd_scene load_steps=22 format=3 uid="uid://cihoalh5h5cik"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_in6cb"]
 [ext_resource type="PackedScene" uid="uid://cu2ipprwef1jv" path="res://scenes/characters/player.tscn" id="1_ksjva"]
@@ -19,6 +19,19 @@
 [ext_resource type="AudioStream" uid="uid://c10u78gci7feq" path="res://music/GardenWorld.mp3" id="17_vcj23"]
 [ext_resource type="AudioStream" uid="uid://c0wrxdlcsheto" path="res://music/BatterBadlands.mp3" id="18_55mr3"]
 
+[sub_resource type="Animation" id="Animation_harae"]
+resource_name = "zoom_out"
+length = 0.5
+
+[sub_resource type="Animation" id="Animation_nutna"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_piuyt"]
+_data = {
+"RESET": SubResource("Animation_nutna"),
+"zoom_out": SubResource("Animation_harae")
+}
+
 [node name="Game" type="Node2D"]
 z_index = -1
 y_sort_enabled = true
@@ -27,7 +40,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(643, 1149)
+position = Vector2(793, 1386)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 10
@@ -91,10 +104,10 @@ scale = Vector2(0.25, 0.25)
 position = Vector2(892, 846)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(605, 907)
+position = Vector2(739, 1171)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
-position = Vector2(863, 857)
+position = Vector2(873, 1135)
 
 [node name="Enemy" parent="." instance=ExtResource("2_2d8m7")]
 process_mode = 4
@@ -164,12 +177,16 @@ stream = ExtResource("18_55mr3")
 volume_db = -8.0
 parameters/looping = true
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-volume_db = -0.885
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_piuyt")
+}
 
 [connection signal="die" from="Player" to="." method="_on_player_die"]
 [connection signal="escape_menu" from="Player" to="." method="_on_player_escape_menu"]
 [connection signal="interact" from="Player" to="." method="_on_player_interact"]
+[connection signal="map_zoomed_in" from="Player" to="." method="_on_map_zoomed_in"]
+[connection signal="map_zoomed_out" from="Player" to="." method="_on_map_zoomed_out"]
 [connection signal="process_tiles" from="Player" to="." method="process_tiles"]
 [connection signal="throw_juicebox" from="Player" to="." method="_on_player_throw_juicebox"]
 [connection signal="toggle_berry_bot_interface" from="Player" to="." method="_on_player_toggle_berry_bot_interface"]

@@ -83,6 +83,7 @@ var dialogue_texture: Resource
 var current_world: String = ""
 
 var active: bool = true
+var process_nearby_tiles: bool = true
 
 var in_building: bool = false
 
@@ -584,5 +585,6 @@ func physics_process(_delta: float) -> void:
 
 
 func _on_tile_process_timer_timeout() -> void:
-	process_tiles.emit(self)
-	timer_process_tiles.start(time_between_tile_updates)
+	if process_nearby_tiles:
+		process_tiles.emit(self)
+		timer_process_tiles.start(time_between_tile_updates)

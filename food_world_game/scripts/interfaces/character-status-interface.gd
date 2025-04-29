@@ -31,6 +31,8 @@ var active_food_buddies: Array[FoodBuddy]
 var foodbuddy1: FoodBuddy
 var foodbuddy2: FoodBuddy
 
+var animator: AnimationPlayer
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -73,7 +75,9 @@ func _ready() -> void:
 	text_health_current_foodbuddy2 = $"FoodBuddy2 Status/Health Count Text Container/Health Count Text"
 	text_name_foodbuddy2 = $"FoodBuddy2 Status/Name Text Container/Name Text"
 	text_fieldstate_foodbuddy2 = $"FoodBuddy2 Status/Field State Text Container/Field State Text"
-
+	
+	animator = $"Animator"
+	
 	health_bar_player.min_value = 0
 	stamina_bar_player.min_value = 0
 	xp_bar_player.min_value = 0

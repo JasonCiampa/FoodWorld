@@ -119,7 +119,7 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			if environment_tile.width != null and environment_tile.width > 1:
 				
 				# Iterate for each tile wide the Tile is
-				for col in range(environment_tile.width):
+				for col in range(environment_tile.width + 1):
 					
 					# Iterate for each tile tall the Tile is
 					for row in range(environment_tile.height):
@@ -309,6 +309,10 @@ func process_nearby_tiles(character: GameCharacter):
 		tiles_to_process.append(Vector2i(character.current_tile_position.x, character.current_tile_position.y + 1))
 		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y + 1))
 		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y + 1))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y - 1))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x, character.current_tile_position.y - 2))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y - 2))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y - 3))
 		
 		# Set the goal coordinates to the top left corner
 		goal_tile_coords = Vector2i(current_tile_coords.x, character.current_tile_position.y - character.tile_process_shape.y - 2)
@@ -368,7 +372,7 @@ func process_nearby_tiles(character: GameCharacter):
 						next_nav_index_to_add += 1
 						
 						if next_nav_index_to_add % nav_tile_cap == 0:
-							print("LOOPING AROUND TO REMOVE EARLIEST ADDED TILES")
+							
 							next_nav_index_to_add = 0
 						
 						if nav_tile_locations.size() == nav_tile_cap:

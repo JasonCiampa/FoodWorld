@@ -232,7 +232,7 @@ func _ready() -> void:
 	
 	update_movement_direction()
 	
-	time_between_tile_updates = randf_range(0.65, 0.7)
+	time_between_tile_updates = randf_range(0.7, 0.75)
 	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
@@ -414,6 +414,18 @@ func follow_field_state_callback() -> void:
 
 # A callback function that should execute repeatedly while the Food Buddy is in the FORAGE FieldState
 func forage_field_state_callback() -> void:
+	
+	if in_building:
+		target_player.emit(self)
+		target_distance = global_position.distance_to(target.global_position)
+		
+		if target.current_altitude != 0 or target_distance <= max(target.radius_range, radius_range):
+			velocity.x = 0
+			velocity.y = 0
+		else:
+			generate_path()
+		
+		return
 	
 	using_ability = false
 	speed_current = speed_normal

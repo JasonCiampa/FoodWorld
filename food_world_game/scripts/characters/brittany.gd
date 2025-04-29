@@ -62,7 +62,7 @@ func ready():
 	speed_current = speed_normal
 	
 	radius_range = 65
-	tile_process_shape = Vector2i(3, 5)
+	tile_process_shape = Vector2i(3, 4)
 	
 	self.name = "Brittany"
 	
