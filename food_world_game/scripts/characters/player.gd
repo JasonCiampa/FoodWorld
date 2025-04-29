@@ -14,7 +14,7 @@ extends GameCharacter
 @onready var camera: Camera2D = $AnimatedSprite2D/Camera2D
 @onready var fuse_sprite: AnimatedSprite2D = $"Fuse Sprite"
 
-@onready var hitbox_damage_sausage_link: Area2D = $"Sausage Link Damage Hitbox"
+@onready var hitbox_damage_sausage_whip: Area2D = $"Damage Hitbox Sausage Whip"
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -275,6 +275,7 @@ func _process(delta: float) -> void:
 		if !is_interacting:
 			update_animation()
 		
+		
 		if !is_interacting and Input.is_action_pressed("interact"):
 			interact.emit(delta)
 	else:
@@ -359,23 +360,22 @@ func update_animation(animation_name: String = ""):
 		new_animation_name = "ability"
 		
 		var mouse_coords: Vector2 = get_global_mouse_position()
-			
-		if mouse_coords.x >= global_position.x:
-			direction_current_horizontal = Direction.RIGHT
-			sprite.flip_h = true
-		else:
-			direction_current_horizontal = Direction.LEFT
-			sprite.flip_h = false
 		
-		if mouse_coords.y >= global_position.y:
-			direction_current_vertical = Direction.DOWN
-		else:
-			direction_current_vertical = Direction.UP
-	
 		if abs(mouse_coords.x - global_position.x) >= abs(mouse_coords.y - global_position.y):
 			direction_current_vertical = Direction.IDLE
+			
+			if mouse_coords.x >= global_position.x:
+				direction_current_horizontal = Direction.RIGHT
+			else:
+				direction_current_horizontal = Direction.LEFT
+			
 		else:
 			direction_current_horizontal = Direction.IDLE
+		
+			if mouse_coords.y >= global_position.y:
+				direction_current_vertical = Direction.DOWN
+			else:
+				direction_current_vertical = Direction.UP
 		
 	elif health_current <= 0:
 		new_animation_name = "die"
@@ -649,15 +649,68 @@ func update_movement_direction():
 	direction_previous_horizontal = direction_current_horizontal
 	direction_previous_vertical = direction_current_vertical
 	
-	# Update the current horizontal and vertical direction being inputted by the user
-	direction_current_horizontal = Input.get_axis("move_left", "move_right")
-	direction_current_vertical = Input.get_axis("move_up", "move_down")
+	if using_ability:
+		
+		var mouse_coords: Vector2 = get_global_mouse_position()
+		
+		if abs(mouse_coords.x - global_position.x) >= abs(mouse_coords.y - global_position.y):
+			direction_current_vertical = Direction.IDLE
+			
+			if mouse_coords.x >= global_position.x:
+				direction_current_horizontal = Direction.RIGHT
+			else:
+				direction_current_horizontal = Direction.LEFT
+			
+		else:
+			direction_current_horizontal = Direction.IDLE
+		
+			if mouse_coords.y >= global_position.y:
+				direction_current_vertical = Direction.DOWN
+			else:
+				direction_current_vertical = Direction.UP
+	
+	else:
+		# Update the current horizontal and vertical direction being inputted by the user
+		direction_current_horizontal = Input.get_axis("move_left", "move_right")
+		direction_current_vertical = Input.get_axis("move_up", "move_down")
 	
 	# Determine whether the Player is facing left or right, then flip the sprite horizontally based on the direction the Player is facing
 	if direction_current_horizontal == Direction.RIGHT:
 		sprite.flip_h = true
+		current_damage_hitbox.scale.x = -1
+		
+		if direction_current_vertical == Direction.UP:
+			current_damage_hitbox.rotation_degrees = -90
+		elif direction_current_vertical == Direction.DOWN:
+			current_damage_hitbox.rotation_degrees = 90
+		else:
+			current_damage_hitbox.rotation_degrees = 0
+	
+		return
+	
 	elif direction_current_horizontal == Direction.LEFT:
 		sprite.flip_h = false
+		current_damage_hitbox.scale.x = 1
+		
+		if direction_current_vertical == Direction.UP:
+			current_damage_hitbox.rotation_degrees = 90
+		elif direction_current_vertical == Direction.DOWN:
+			current_damage_hitbox.rotation_degrees = -90
+		else:
+			current_damage_hitbox.rotation_degrees = 0
+	
+	else:
+		if sprite.flip_h == false:
+			if direction_current_vertical == Direction.UP:
+				current_damage_hitbox.rotation_degrees = 90
+			elif direction_current_vertical == Direction.DOWN:
+				current_damage_hitbox.rotation_degrees = -90
+		else:
+			if direction_current_vertical == Direction.UP:
+				current_damage_hitbox.rotation_degrees = -90
+			elif direction_current_vertical == Direction.DOWN:
+				current_damage_hitbox.rotation_degrees = 90
+
 
 
 

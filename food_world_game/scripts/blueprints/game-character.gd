@@ -17,6 +17,8 @@ var hitbox_damage: Area2D
 var hitbox_interaction: Area2D
 var hitbox_health: Area2D
 
+var current_damage_hitbox: Area2D
+
 # Colliders #
 var body_collider: CollisionShape2D
 var feet_collider: CollisionShape2D
@@ -31,7 +33,7 @@ var shadow: Polygon2D
 var timer_process_tiles: Timer
 
 
-var time_between_tile_updates: float = randf_range(0.2, 3)
+var time_between_tile_updates: float = randf_range(0.8, 1)
 
 # x = number of tiles out to the sides from player origin point (1 = 1 tile out on left and right, 2 = 2 tiles out on left and right (5 in total))
 # y = number of tiles out up and downward from player origin point going down or 2 above player origin point going up
@@ -192,6 +194,8 @@ func _ready() -> void:
 	feet_sensor = $"Feet Sensor"
 	
 	timer_process_tiles = $"Tile Process Timer"
+	
+	current_damage_hitbox = hitbox_damage
 	
 	# Placing all names of signals here with a random function call so that the debugger stops yelling at me for "never explicitly using" the signal within its class.
 	target_player.is_null()

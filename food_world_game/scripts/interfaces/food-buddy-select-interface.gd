@@ -217,8 +217,8 @@ func end():
 		active_food_buddies[buddy].sprite.set_frame_and_progress(active_food_buddies[buddy].previous_animation_frame, active_food_buddies[buddy].previous_animation_frame_progress)
 		active_food_buddies[buddy].sprite.self_modulate = active_food_buddies[buddy].previous_modulate
 		
-		if player.equipped_buddy == active_food_buddies[buddy]:
-			adjust_equipped_buddy.emit(buddy, true)
+		#if player.equipped_buddy == active_food_buddies[buddy]:
+			#adjust_equipped_buddy.emit(buddy, true)
 	
 	active_foodbuddy1.global_position = start_location_foodbuddy1
 	active_foodbuddy2.global_position = start_location_foodbuddy2
@@ -300,6 +300,7 @@ func _on_active_buddy1_button_down() -> void:
 		
 		if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
 			player.equipped_buddy = active_foodbuddy1
+			adjust_equipped_buddy.emit(1, true)
 			player.equipped_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
 			player.equipped_buddy.global_position = player.global_position
 			player.equipped_buddy.process_nearby_tiles = true
@@ -394,6 +395,7 @@ func _on_active_buddy2_button_down() -> void:
 		
 		if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
 			player.equipped_buddy = active_foodbuddy2
+			adjust_equipped_buddy.emit(2, true)
 			player.equipped_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
 			player.equipped_buddy.global_position = player.global_position
 			player.equipped_buddy.process_nearby_tiles = true
@@ -520,6 +522,12 @@ func _on_inactive_buddy_button_button_down() -> void:
 			
 		if inactive_foodbuddy.field_state_current == FoodBuddy.FieldState.PLAYER:
 			player.equipped_buddy = selected_active_foodbuddy
+			
+			if selected_active_foodbuddy == active_foodbuddy1:
+				adjust_equipped_buddy.emit(1, true)
+			else:
+				adjust_equipped_buddy.emit(2, true)
+			
 			player.equipped_buddy.field_state_current = FoodBuddy.FieldState.PLAYER
 			player.equipped_buddy.global_position = player.global_position
 			player.equipped_buddy.process_nearby_tiles = true

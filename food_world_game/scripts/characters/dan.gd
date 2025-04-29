@@ -139,7 +139,7 @@ func fight_field_state_callback() -> void:
 			generate_path()
 			speed_current = speed_sprinting
 		
-		if target.hitbox_health in hitbox_damage.get_overlapping_areas():
+		if target.hitbox_health in current_damage_hitbox.get_overlapping_areas():
 			generate_path(-target.global_position)
 	
 	# Otherwise, move the Food Buddy towards the Player while they look for a new target.
@@ -203,7 +203,7 @@ func use_ability2(player: Player, _delta: float):
 func _on_sprite_animation_looped() -> void:
 	
 	if !paused and !level_up and target != null:
-		if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_health in hitbox_damage.get_overlapping_areas():
+		if "ability" in sprite.animation and timer_ability_cooldown.is_stopped() and target.hitbox_health in current_damage_hitbox.get_overlapping_areas():
 			
 			if target is Enemy:
 				use_ability_solo.emit(self, ability_damage["Solo"])

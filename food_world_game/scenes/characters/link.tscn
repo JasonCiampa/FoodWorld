@@ -17,7 +17,7 @@ _data = {
 size = Vector2(25, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s3nq7"]
-size = Vector2(32, 26)
+size = Vector2(37, 26)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1bx7v"]
 size = Vector2(38, 14)
@@ -73,7 +73,7 @@ shape = SubResource("RectangleShape2D_pdrqn")
 position = Vector2(0, -14)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]
-position = Vector2(0, 4)
+position = Vector2(0.5, 4)
 shape = SubResource("RectangleShape2D_s3nq7")
 
 [node name="Damage Hitbox" type="Area2D" parent="."]

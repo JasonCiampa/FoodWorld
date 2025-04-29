@@ -429,7 +429,7 @@ func process_attack(target: GameCharacter, attacker: GameCharacter, damage: int,
 		hitboxes = attacker_hitbox.get_overlapping_areas()
 	else:
 		# Store a list of all hitboxes that the hitbox of the attack has overlapped with
-		hitboxes = attacker.hitbox_damage.get_overlapping_areas()
+		hitboxes = attacker.current_damage_hitbox.get_overlapping_areas()
 	
 	
 	# Determine if the target's hitbox is in the list of hitboxes that the attack's hitbox overlapped with, then reduce their health
@@ -813,9 +813,12 @@ func _on_player_toggle_buddy_equipped(buddy_number: int, instant_equip: bool = f
 			PLAYER.shadow.visible = false
 			PLAYER.sprite.offset.y = -16
 			PLAYER.speed_current = PLAYER.speed_normal
+			PLAYER.time_between_tile_updates = randf_range(0.65, 0.7)
 		
-		#elif food_buddy_selected.name == "Link":
-			# Do some stuff with switching hitboxes
+		elif food_buddy_selected.name == "Link":
+			PLAYER.current_damage_hitbox.process_mode = Node.PROCESS_MODE_DISABLED
+			PLAYER.current_damage_hitbox = PLAYER.hitbox_damage
+			PLAYER.current_damage_hitbox.process_mode = Node.PROCESS_MODE_INHERIT
 			
 		PLAYER.field_state_current = PLAYER.FieldState.SOLO
 		PLAYER.equipped_buddy = null
@@ -847,15 +850,17 @@ func _on_player_toggle_buddy_equipped(buddy_number: int, instant_equip: bool = f
 				PLAYER.shadow.visible = false
 				PLAYER.sprite.offset.y = -16
 				PLAYER.speed_current = PLAYER.speed_normal
+				PLAYER.time_between_tile_updates = randf_range(0.65, 0.7)
 				PLAYER.juicebox_ready = false
 			
+			elif food_buddy_selected.name == "Link":
+				PLAYER.current_damage_hitbox.process_mode = Node.PROCESS_MODE_DISABLED
+				PLAYER.current_damage_hitbox = PLAYER.hitbox_damage
+				PLAYER.current_damage_hitbox.process_mode = Node.PROCESS_MODE_INHERIT
+				
+			
 			food_buddy_other.process_nearby_tiles = true
-				
-			#elif food_buddy_selected.name == "Link":
-				#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
-				#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
-				#PLAYER.hitbox_damage = PLAYER.normal_hitbox_damage
-				
+		
 		
 		# Update the selected Food Buddy's FieldState variables
 		food_buddy_selected.field_state_previous = food_buddy_selected.field_state_current
@@ -866,15 +871,18 @@ func _on_player_toggle_buddy_equipped(buddy_number: int, instant_equip: bool = f
 		if food_buddy_selected.name != "Dan":
 			food_buddy_selected.visible = false
 			food_buddy_selected.process_mode = Node.PROCESS_MODE_DISABLED
-		#elif food_buddy_selected.name == "Link":
-			#PLAYER.hitbox_damage.process_mode = Node.PROCESS_MODE_DISABLED
-			#PLAYER.sausage_link_hitbox_damage.process_mode = Node.PROCESS_MODE_INHERIT
-			#PLAYER.hitbox_damage = PLAYER.sausage_link_hitbox_damage
 		else:
 			food_buddy_selected.label_e_to_interact.visible = false
 			PLAYER.shadow.visible = false
 			PLAYER.sprite.offset.y = -39
 			PLAYER.speed_current = PLAYER.speed_normal_dan
+			PLAYER.time_between_tile_updates = randf_range(0.35, 0.4)
+		
+		if food_buddy_selected.name == "Link":
+			PLAYER.current_damage_hitbox.process_mode = Node.PROCESS_MODE_DISABLED
+			PLAYER.current_damage_hitbox = PLAYER.hitbox_damage_sausage_whip
+			PLAYER.current_damage_hitbox.process_mode = Node.PROCESS_MODE_INHERIT
+
 		
 		PLAYER.equipped_buddy = food_buddy_selected
 		
@@ -1429,7 +1437,7 @@ func _on_player_enter_building(building: Building, _delta: float):
 		
 		if screen_fading and modulate.a == 0:
 			
-			PLAYER.global_position = PLAYER.global_position - current_building.player_offset
+			PLAYER.global_position = current_building.global_position - current_building.player_offset
 			PLAYER.in_building = true
 			
 			food_buddies_active[0].closest_bush = Vector2i(-1, -1)
@@ -1518,7 +1526,7 @@ func _on_player_exit_building(_building: Building, _delta: float):
 	else:
 		if screen_fading and modulate.a == 0:
 			
-			PLAYER.global_position = PLAYER.global_position + current_building.player_offset
+			PLAYER.global_position = current_building.global_position + current_building.player_offset
 			PLAYER.in_building = false
 			
 			if food_buddies_active[0].field_state_current != FoodBuddy.FieldState.PLAYER:
@@ -1599,7 +1607,7 @@ func _on_juicebox_explode(juicebox):
 	
 	var hitboxes = juicebox.hitbox_heal.get_overlapping_areas()
 	
-	if PLAYER.hitbox_damage in hitboxes and PLAYER.alive:
+	if PLAYER.hitbox_interaction in hitboxes and PLAYER.alive:
 		PLAYER.health_current += juicebox.health
 		PLAYER.healing_health = true
 		
@@ -1607,7 +1615,7 @@ func _on_juicebox_explode(juicebox):
 			PLAYER.health_current = PLAYER.health_max
 	
 	for food_buddy in food_buddies_active:
-		if food_buddy.hitbox_damage in hitboxes and food_buddy.alive:
+		if food_buddy.hitbox_interaction in hitboxes and food_buddy.alive:
 			food_buddy.health_current += juicebox.health
 			food_buddy.healing_health = true
 			

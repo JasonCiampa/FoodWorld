@@ -68,6 +68,7 @@ libraries = {
 }
 
 [node name="Interaction Hitbox" type="Area2D" parent="."]
+visible = false
 position = Vector2(0, -14)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Hitbox"]

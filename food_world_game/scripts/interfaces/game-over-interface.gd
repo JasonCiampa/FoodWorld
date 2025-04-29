@@ -114,7 +114,7 @@ func game_over(freeze_subjects: Array[Node2D]):
 		player.shadow.visible = false
 		player.on_screen_notifier.position.y += 24
 		player.sprite.offset.y = -16
-		player.hitbox_damage.position.y += 24
+		player.current_damage_hitbox.position.y += 24
 		player.body_collider.position.y += 24
 		player.feet_collider.position.y += 24
 		player.feet_sensor.position.y += 24

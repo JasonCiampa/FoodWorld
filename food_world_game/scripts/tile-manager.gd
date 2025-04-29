@@ -310,9 +310,9 @@ func process_nearby_tiles(character: GameCharacter):
 		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y + 1))
 		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y + 1))
 		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y - 1))
-		tiles_to_process.append(Vector2i(character.current_tile_position.x, character.current_tile_position.y - 2))
-		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y - 2))
-		tiles_to_process.append(Vector2i(character.current_tile_position.x - 1, character.current_tile_position.y - 3))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x, character.current_tile_position.y - 1))
+		tiles_to_process.append(Vector2i(character.current_tile_position.x + 1, character.current_tile_position.y - 1))
+		
 		
 		# Set the goal coordinates to the top left corner
 		goal_tile_coords = Vector2i(current_tile_coords.x, character.current_tile_position.y - character.tile_process_shape.y - 2)
