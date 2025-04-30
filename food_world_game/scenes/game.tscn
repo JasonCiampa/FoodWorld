@@ -99,7 +99,7 @@ offset_bottom = -149.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(-1190, 421)
+position = Vector2(-12, 339)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
 position = Vector2(23, 400)

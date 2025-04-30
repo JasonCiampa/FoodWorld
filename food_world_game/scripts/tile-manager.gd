@@ -121,13 +121,14 @@ func _init(_world_tilemaps: Dictionary) -> void:
 			if environment_tile.width != null and environment_tile.width > 1:
 				
 				# Iterate for each tile wide the Tile is
-				for col in range(environment_tile.width + 1):
+				for col in range(environment_tile.width + 2):
 					
 					# Iterate for each tile tall the Tile is
 					for row in range(environment_tile.height):
 						
 						# Append the coordinates of this sub-Tile into the list of Tiles not to process for path-finding
-						tiles_occupied.get_or_add(Vector2i(tiles_used_environment[coords].x - int(environment_tile.width / 2) + col, tiles_used_environment[coords].y - int(environment_tile.height / 2) + row + 1), true)
+						#tiles_occupied.get_or_add(Vector2i(tiles_used_environment[coords].x - int(environment_tile.width / 2) + col, tiles_used_environment[coords].y - int(environment_tile.height / 2) + row + 1), true)
+						tiles_occupied.get_or_add(Vector2i(tiles_used_environment[coords].x - (int(environment_tile.width / 2) + 1) + col, tiles_used_environment[coords].y - int(environment_tile.height / 2) + row + 1), true)
 			else:
 				
 				# Append the coordinates of this single Tile into the list of Tiles not to process for path-finding

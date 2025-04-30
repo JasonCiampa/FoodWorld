@@ -81,7 +81,7 @@ func _on_sprite_animation_finished() -> void:
 	if !paused:
 		if "ability" in sprite.animation:
 			
-			timer_ability_cooldown.start(2.5)
+			timer_ability_cooldown.start(1.5)
 			using_ability = false
 			
 			if current_direction_name != "":

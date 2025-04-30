@@ -283,7 +283,7 @@ func _ready() -> void:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
 	
 	timer_fade.start(music_fade_in_duration)
-	timer_fade_music.start(music_fade_in_duration)
+	timer_fade_music.start(music_fade_in_duration + 0.1)
 	MUSIC.play()
 	MUSIC.volume_db = -16
 	modulate.a = 0
@@ -1919,7 +1919,8 @@ func _on_fade_music_timer_timeout() -> void:
 
 
 func _on_fade_timer_timeout() -> void:
-	modulate.a = 1
+	if !musicStarted:
+		modulate.a = 1
 
 func _on_enemy_set_frolic_point(enemy: Enemy):
 	var desired_frolic_point: Vector2i = Vector2i(int(global_position.x + (enemy.frolic_range * randf_range(-1, 1))), int(global_position.y + (enemy.frolic_range * randf_range(-1, 1))))
