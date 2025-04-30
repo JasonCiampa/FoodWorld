@@ -129,14 +129,14 @@ func _ready() -> void:
 	
 	empty_song = AudioStreamPlayer.new()
 	
-	test_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
-	load_enemy(test_enemy)
-	test_enemy.global_position = Vector2(-1135, 280)
+	for count in range (0, 60, 20):
+		test_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
+		load_enemy(test_enemy)
+		test_enemy.global_position = Vector2(-1135 - count, 280)
 	
 	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
 	#FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	#food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
-	
 	
 	world_tilemaps = {
 		"center" : [$"World Map/World Center/Ground", $"World Map/World Center/Terrain", $"World Map/World Center/Environment", $"World Map/World Center/Building Interiors", $"World Map/World Center/Building Exteriors"],
@@ -1637,36 +1637,32 @@ func _on_juicebox_explode(juicebox):
 
 
 
-func _on_character_fire_projectile(projectile: Projectile):
-	pass
-
-func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
+func _on_character_fire_projectile(file_path: String, destination: Vector2, damage: int, throw_speed: int, character: GameCharacter):
+	var projectile: Projectile
 	
-	var energy_ball: EnergyBall
+	projectile = load(file_path).instantiate()
+	projectile.damage = damage
+	projectile.character_fired_from = character
 	
-	energy_ball = load("res://scenes/blueprints/energy-ball.tscn").instantiate()
-	energy_ball.damage = BRITTANY.ability_damage["Solo"]
-	
-	if BRITTANY.current_direction_name == "sideways" and !BRITTANY.sprite.flip_h:
-		energy_ball.global_position = Vector2(BRITTANY.global_position.x - 25, BRITTANY.global_position.y - 15)
-	elif BRITTANY.current_direction_name == "sideways" and BRITTANY.sprite.flip_h:
-		energy_ball.global_position = Vector2(BRITTANY.global_position.x + 25, BRITTANY.global_position.y - 15)
+	if character.current_direction_name == "sideways" and !character.sprite.flip_h:
+		projectile.global_position = Vector2(character.global_position.x - 25, character.global_position.y - 15)
+	elif character.current_direction_name == "sideways" and character.sprite.flip_h:
+		projectile.global_position = Vector2(character.global_position.x + 25, character.global_position.y - 15)
 	else:
-		energy_ball.global_position = Vector2(BRITTANY.global_position.x, BRITTANY.global_position.y - 15)
+		projectile.global_position = Vector2(character.global_position.x, character.global_position.y - 15)
 	
-	energy_ball.explode.connect(_on_energy_ball_explode)
-	if not BRITTANY.target is Enemy:
-		energy_ball.target = null
-	else:
-		energy_ball.target = BRITTANY.target
+	projectile.explode.connect(_on_projectile_explode)
 	
-	add_child(energy_ball)
+	projectile.target = character.target
+	projectile.throw_speed = throw_speed
 	
-	energy_ball.throw_start(destination, int(BRITTANY.direction_current_horizontal))
+	add_child(projectile)
+	
+	projectile.throw_start(destination, int(character.direction_current_horizontal))
 
-func _on_energy_ball_explode(energy_ball):
-	if energy_ball is EnergyBall:
-		process_attack(BRITTANY.target, BRITTANY, energy_ball.damage, energy_ball.hitbox_damage)
+
+func _on_projectile_explode(projectile: Projectile):
+	process_attack(projectile.target, projectile.character_fired_from, projectile.damage, projectile.hitbox_damage)
 
 
 func update_character_status_UI():
@@ -1692,6 +1688,7 @@ func load_enemy(enemy: Enemy):
 	enemy.target_closest_food_buddy.connect(_on_character_target_closest_food_buddy)
 	enemy.target_player.connect(_on_character_target_player)
 	enemy.update_altitude.connect(_on_character_update_altitude)
+	enemy.fire_projectile.connect(_on_character_fire_projectile)
 	add_child(enemy)
 
 func load_food_citizen(foodcitizen: FoodCitizen):

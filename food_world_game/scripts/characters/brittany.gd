@@ -11,7 +11,7 @@ var hitbox_attack: Area2D
 
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-signal fire_energy_ball
+signal fire_projectile
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ func process(_delta: float):
 	
 	if !using_ability and "ability" in sprite.animation and sprite.get_frame() == 5:
 		using_ability = true
-		fire_energy_ball.emit(Vector2(target.global_position.x, target.global_position.y - target.height / 2))
+		fire_projectile.emit("res://scenes/blueprints/energy-ball.tscn", Vector2(target.global_position.x, target.global_position.y - target.height / 2), 25, self)
 
 
 

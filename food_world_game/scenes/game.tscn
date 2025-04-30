@@ -38,7 +38,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-1135, 324)
+position = Vector2(-1111, 382)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 10
@@ -172,7 +172,7 @@ libraries = {
 [connection signal="deposit_berries" from="Brittany" to="." method="_on_food_buddy_deposit_berries"]
 [connection signal="die" from="Brittany" to="." method="_on_food_buddy_die"]
 [connection signal="find_nearest_bush" from="Brittany" to="." method="_on_food_buddy_find_nearest_bush"]
-[connection signal="fire_energy_ball" from="Brittany" to="." method="_on_brittany_fire_energy_ball"]
+[connection signal="fire_projectile" from="Brittany" to="." method="_on_character_fire_projectile"]
 [connection signal="forage_bush" from="Brittany" to="." method="_on_food_buddy_forage_bush"]
 [connection signal="killed_target" from="Brittany" to="." method="_on_character_killed_target"]
 [connection signal="process_tiles" from="Brittany" to="." method="process_tiles"]

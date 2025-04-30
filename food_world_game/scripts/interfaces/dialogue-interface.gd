@@ -414,7 +414,7 @@ func start(dialogue_characters: Array[Node2D], freeze_subjects: Array[Node2D], c
 			if subject is FoodBuddy:
 				subject.animation_player.pause()
 		
-		elif subject is Juicebox or subject is EnergyBall:
+		elif subject is Juicebox or subject is Projectile:
 			subject.paused = true
 			subject.sprite.pause()
 			subject.animator.pause()
@@ -460,7 +460,7 @@ func end():
 			if subject is FoodBuddy:
 				subject.animation_player.play("RESET")
 		
-		elif subject is Juicebox or subject is EnergyBall:
+		elif subject is Juicebox or subject is Projectile:
 			subject.paused = false
 			
 			if subject.sprite.get_frame() == subject.impact_frame:

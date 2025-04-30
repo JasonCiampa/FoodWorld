@@ -177,7 +177,7 @@ func start(_freeze_subjects: Array[Node2D]):
 				subject.previous_animation_frame_progress = subject.sprite.get_frame_progress()
 				
 		
-		elif subject is Juicebox or subject is EnergyBall:
+		elif subject is Juicebox or subject is Projectile:
 			subject.paused = true
 			subject.sprite.pause()
 			subject.animator.pause()
@@ -266,7 +266,7 @@ func end():
 			subject.sprite.play()
 		
 			
-		elif subject is Juicebox or subject is EnergyBall:
+		elif subject is Juicebox or subject is Projectile:
 			
 			if subject.sprite.get_frame() == subject.impact_frame:
 				subject.explode.emit(self)

@@ -1,4 +1,4 @@
-class_name EnergyBall
+class_name Projectile
 
 extends Node2D
 
@@ -8,6 +8,9 @@ extends Node2D
 var animator: AnimationPlayer
 var sprite: AnimatedSprite2D
 var hitbox_damage: Area2D
+
+var time_alive: float
+var max_time_alive: float = 2
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -44,10 +47,13 @@ var position_middle: Vector2
 var position_current: Vector2
 var position_target: Vector2
 
+var character_fired_from: GameCharacter
+var target: GameCharacter
+
 var deltaX: float
 var deltaY: float
 
-var throw_speed: float = 2
+var throw_speed: float = 50
 var throw_direction_vertical: Direction
 var throw_direction_horizontal: Direction
 
@@ -60,7 +66,6 @@ var delta_adjustment_counter: int      # How many times the delta value has been
 
 var damage: int
 
-var target: GameCharacter
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -82,10 +87,15 @@ func _process(delta: float) -> void:
 		animator.pause()
 		return
 	else:
+		time_alive += delta
+		
+		if time_alive > max_time_alive:
+			throw_end()
+		
 		sprite.play()
 		animator.play()
 	
-	# If the juicebox is in midair, process its trajectory
+	# If the projectile is in midair, process its trajectory
 	if in_air:
 		throw_process(delta)
 
@@ -175,12 +185,11 @@ func physics_process(_delta: float) -> void:
 
 
 func _on_sprite_animation_finished() -> void:
-	
 	if "explosion" == sprite.animation:
 		queue_free()
 
 #
 func _on_sprite_frame_changed() -> void:
 	if "explosion" == sprite.animation:
-		if sprite.get_frame() == 1:
+		if sprite.get_frame() == impact_frame:
 			explode.emit(self)

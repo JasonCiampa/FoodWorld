@@ -194,7 +194,7 @@ func end():
 	for subject in frozen_subjects:
 		subject.paused = false
 		
-		if subject is Juicebox or subject is EnergyBall:
+		if subject is Juicebox or subject is Projectile:
 			
 			if subject.sprite.get_frame() == subject.impact_frame:
 				subject.explode.emit(self)

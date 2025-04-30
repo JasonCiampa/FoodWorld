@@ -22,6 +22,7 @@ var timer_frolic_cooldown: Timer
 # SIGNALS #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 signal use_ability
+signal fire_projectile
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -92,6 +93,8 @@ var animation_directions: Dictionary = {}
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super()
+	
+	fire_projectile.is_null()
 	
 	navigation_agent = $"NavigationAgent2D"
 	
@@ -261,7 +264,7 @@ func update_animation(animation_name: String = ""):
 
 # A custom ready function that each Enemy subclass should personally define. This is called in the default FoodBuddy class's '_ready()' function
 func ready():
-	time_between_tile_updates = randf_range(0.75, 0.8)
+	time_between_tile_updates = randf_range(0.65, 0.7)
 
 
 
@@ -353,11 +356,11 @@ func aggressive_field_state_callback() -> void:
 
 # Ability Functions #
 
-# A custom function to execute the Enemy's ability 1 that each Enemy subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
-func use_ability1():
-	# THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
-	print(name + "'s Ability 1 has been triggered!")
-	pass
+## A custom function to execute the Enemy's ability 1 that each Enemy subclass should personally define. This is called in the game.gd's "_on_player_use_ability_buddy()" callback function.
+#func use_ability1():
+	## THIS CODE SHOULD BE MANUALLY WRITTEN FOR EACH FOOD BUDDY BECAUSE EVERY ABILITY WILL HAVE A DIFFERENT EXECUTION
+	#print(name + "'s Ability 1 has been triggered!")
+	#pass
 
 
 
