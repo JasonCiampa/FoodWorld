@@ -120,8 +120,7 @@ func _ready() -> void:
 	update_movement_direction()
 	sprite.play("idle_front")
 	
-	# Call the custom ready function that subclasses may have defined manually
-	ready()
+	process_mode = PROCESS_MODE_DISABLED
 	
 	update_dimensions()
 	
@@ -133,6 +132,9 @@ func _ready() -> void:
 	
 	#timer_process_tiles.timeout.connect(_on_tile_process_timer_timeout)
 	time_between_tile_updates = randf_range(0.65, 0.7)
+	
+	# Call the custom ready function that subclasses may have defined manually
+	ready()
 
 
 

@@ -272,4 +272,5 @@ func _on_sprite_animation_changed() -> void:
 
 
 func _on_animation_player_animation_changed(old_name: StringName, new_name: StringName) -> void:
-	pass
+	print("Old: ", old_name)
+	print("New: ", new_name)

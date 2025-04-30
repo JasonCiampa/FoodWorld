@@ -1,7 +1,6 @@
-[gd_resource type="SpriteFrames" load_steps=36 format=3 uid="uid://bhq6p5a33wlnw"]
+[gd_resource type="SpriteFrames" load_steps=31 format=3 uid="uid://bhq6p5a33wlnw"]
 
 [ext_resource type="Texture2D" uid="uid://d0wahmtfvvuqu" path="res://images/animations/dan/ability/ability_spritesheet.png" id="1_tig2j"]
-[ext_resource type="Texture2D" uid="uid://bdfvmu2pr1ujo" path="res://images/animations/peppermint/ability/peppermint_ability_back.png" id="2_yl1ky"]
 [ext_resource type="Texture2D" uid="uid://dxq2crrt70cbs" path="res://images/animations/dan/die/die_front.png" id="3_c1jlp"]
 [ext_resource type="Texture2D" uid="uid://7f8frwon1l34" path="res://images/animations/dan/moving/moving_spritesheet.png" id="3_oid77"]
 [ext_resource type="Texture2D" uid="uid://dkwmgvy3hoe1q" path="res://images/animations/dan/idle/idle_spritesheet.png" id="6_i4hy5"]
@@ -17,22 +16,6 @@ region = Rect2(102, 0, 32, 73)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ht5x2"]
 atlas = ExtResource("1_tig2j")
 region = Rect2(184, 0, 32, 73)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3jyj4"]
-atlas = ExtResource("2_yl1ky")
-region = Rect2(0, 0, 98, 98)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xht8g"]
-atlas = ExtResource("2_yl1ky")
-region = Rect2(98, 0, 98, 98)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_udr4g"]
-atlas = ExtResource("2_yl1ky")
-region = Rect2(196, 0, 98, 98)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n4e6k"]
-atlas = ExtResource("2_yl1ky")
-region = Rect2(294, 0, 98, 98)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_00ldi"]
 atlas = ExtResource("1_tig2j")
@@ -137,18 +120,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ht5x2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3jyj4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xht8g")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_udr4g")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_n4e6k")
 }],
 "loop": true,
 "name": &"ability_back",

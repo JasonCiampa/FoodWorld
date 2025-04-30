@@ -110,14 +110,38 @@ var foods_in_world: Dictionary = {
 	"center" = {
 		"enemies" = [],
 		"citizens" = [],
+		"locations_open" = [
+			Vector2i(-25, 64), Vector2i(4, 70), Vector2i(-34, 23), Vector2i(-57, 37), Vector2i(-80, 49),
+			Vector2i(-67, 66), Vector2i(-4, 90), Vector2i(28, 84), Vector2i(71, 70), Vector2i(49, 53),
+			Vector2i(-23, 22), Vector2i(-104, -2), Vector2i(-75, -28), Vector2i(-36, -24), Vector2i(59, -19),
+			Vector2i(48, -1), Vector2i(40, 65), Vector2i(31, -85), Vector2i(61, -90), Vector2i(85, -45)
+		],
+		"locations_occupied" = []
 	},
 	"sweets" = {
 		"enemies" = [],
 		"citizens" = [],
+		"locations_open" = [
+			Vector2i(100, 83), Vector2i(128, 98), Vector2i(164, 93), Vector2i(202, 98), Vector2i(114, 66),
+			Vector2i(161, 51), Vector2i(179, 26), Vector2i(154, 31), Vector2i(96, 18), Vector2i(103, -21),
+			Vector2i(141, -42), Vector2i(182, -15), Vector2i(172, -94), Vector2i(213, -17), Vector2i(463, 67),
+			Vector2i(443, 60), Vector2i(419, 77), Vector2i(389, 86), Vector2i(333, 72), Vector2i(298, 52),
+			Vector2i(362, 33), Vector2i(398, 25), Vector2i(447, 16), Vector2i(430, 1), Vector2i(457, -20),
+			Vector2i(366, -19), Vector2i(305, -15), Vector2i(260, -40), Vector2i(285, -64), Vector2i(288, -104),
+			Vector2i(328, -86), Vector2i(371, -92), Vector2i(350, -116), Vector2i(328, -57), Vector2i(372, -53)
+		],
+		"locations_occupied" = []
 	},
 	"garden" = {
 		"enemies" = [],
 		"citizens" = [],
+		"locations_open" = [
+			Vector2i(-293, -7), Vector2i(-249, -45), Vector2i(-219, -10), Vector2i(-190, -19), Vector2i(-169, 9),
+			Vector2i(-197, 28), Vector2i(-241, 22), Vector2i(-130, 27), Vector2i(-157, 45), Vector2i(-232, 48),
+			Vector2i(-189, 81), Vector2i(-146, 89), Vector2i(-179, -69), Vector2i(-162, -87), Vector2i(-132, -65),
+			Vector2i(-73, -107), Vector2i(-94, -117), Vector2i(-138, -107), Vector2i(-110, -104), Vector2i(-128, 2)
+		],
+		"locations_occupied" = []
 	},
 }
 
@@ -129,11 +153,21 @@ var max_citizens_per_world: int = 10
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-func load_multiple_enemies(spawn_locations: Array[Vector2], file_path: String):
-	for count in range(0, max_enemies_per_world):
-		template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+func load_multiple_enemies(world: String, number_to_spawn: int, file_path: String):
+	
+	var open_locations: Array = foods_in_world[world]["locations_open"]
+	var occupied_locations: Array = foods_in_world[world]["locations_occupied"]
+	
+	open_locations.shuffle()
+	
+	for location in range(number_to_spawn - 1, -1, -1):
+		template_enemy = load(file_path).instantiate()
 		load_enemy(template_enemy)
-		template_enemy.global_position = Vector2(-1100, 270)
+		template_enemy.global_position = world_tilemaps["center"][0].map_to_local(open_locations[location])
+		
+		occupied_locations.append(open_locations[location])
+		open_locations.remove_at(location)
+		
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -153,55 +187,25 @@ func _ready() -> void:
 	
 	empty_song = AudioStreamPlayer.new()
 	
-	template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-	load_enemy(template_enemy)
-	template_enemy.global_position = Vector2(-1100, 270)
-	
-	template_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
-	load_enemy(template_enemy)
-	template_enemy.global_position = Vector2(-1000, 270)
-	
-	#
-	#for count in range(0, max_enemies_per_world):
-		#
-		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-		#load_enemy(template_enemy)
-		#template_enemy.global_position = Vector2(-1100, 270)
-		#
-		#foods_in_world["center"]["enemies"].append(template_enemy)
-		#
-		#template_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
-		#load_enemy(template_enemy)
-		#template_enemy.global_position = Vector2(-1000, 270)
-		#
-		#foods_in_world["center"]["enemies"].append(template_enemy)
-	#
-	#for count in range(0, max_enemies_per_world):
-		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-		#load_enemy(template_enemy)
-		#template_enemy.global_position = Vector2(-1100, 270)
-		#foods_in_world["sweets"]["enemies"].append(template_enemy)
-	#
-	#for count in range(0, max_enemies_per_world):
-		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-		#load_enemy(template_enemy)
-		#template_enemy.global_position = Vector2(-1100, 270)
-		#foods_in_world["sweets"]["enemies"].append(template_enemy)
-	
-	#for count in range (0, 120, 40):
-		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-		#load_enemy(template_enemy)
-		#template_enemy.global_position = Vector2(-1135 - count, 280)
-	
-	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
-	#FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
-	#food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
-	
 	world_tilemaps = {
 		"center" : [$"World Map/World Center/Ground", $"World Map/World Center/Terrain", $"World Map/World Center/Environment", $"World Map/World Center/Building Interiors", $"World Map/World Center/Building Exteriors"],
 		"sweets" : [$"World Map/Sweets World/Ground", $"World Map/Sweets World/Terrain", $"World Map/Sweets World/Environment", $"World Map/Sweets World/Building Interiors", $"World Map/Sweets World/Building Exteriors"],
 		"garden" : [$"World Map/Garden World/Ground", $"World Map/Garden World/Terrain", $"World Map/Garden World/Environment", $"World Map/Garden World/Building Interiors", $"World Map/Garden World/Building Exteriors"],
 	}
+	
+	load_multiple_enemies("center", 10, "res://scenes/characters/peppermint.tscn")
+	load_multiple_enemies("center", 10, "res://scenes/characters/carrot.tscn")
+	
+	load_multiple_enemies("sweets", 25, "res://scenes/characters/peppermint.tscn")
+	load_multiple_enemies("sweets", 10, "res://scenes/characters/carrot.tscn")
+	
+	load_multiple_enemies("garden", 5, "res://scenes/characters/peppermint.tscn")
+	load_multiple_enemies("garden", 15, "res://scenes/characters/carrot.tscn")
+	
+	
+	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
+	#FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
+	#food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
 	
 	# Create the instance of the Game's Tile Manager and pass it all of the tilemaps in the game
 	GameTileManager = load("res://scripts/tile-manager.gd").new(world_tilemaps)
@@ -1918,9 +1922,9 @@ func _on_fade_timer_timeout() -> void:
 	modulate.a = 1
 
 func _on_enemy_set_frolic_point(enemy: Enemy):
-	var desired_frolic_point: Vector2i = Vector2i(global_position.x + (enemy.frolic_range * randf_range(-1, 1)), global_position.y + (enemy.frolic_range * randf_range(-1, 1)))
+	var desired_frolic_point: Vector2i = Vector2i(int(global_position.x + (enemy.frolic_range * randf_range(-1, 1))), int(global_position.y + (enemy.frolic_range * randf_range(-1, 1))))
 	
 	while GameTileManager.tiles_occupied.get(desired_frolic_point) != null:
-		desired_frolic_point = Vector2i(global_position.x + (enemy.frolic_range * randf_range(-1, 1)), global_position.y + (enemy.frolic_range * randf_range(-1, 1)))
+		desired_frolic_point = Vector2i(int(global_position.x + (enemy.frolic_range * randf_range(-1, 1))), int(global_position.y + (enemy.frolic_range * randf_range(-1, 1))))
 	
 	enemy.frolic_point = desired_frolic_point

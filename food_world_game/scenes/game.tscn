@@ -38,7 +38,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-1111, 382)
+position = Vector2(-39, 387)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 10
