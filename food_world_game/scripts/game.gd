@@ -129,7 +129,7 @@ func _ready() -> void:
 	
 	empty_song = AudioStreamPlayer.new()
 	
-	for count in range (0, 60, 20):
+	for count in range (0, 120, 40):
 		test_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
 		load_enemy(test_enemy)
 		test_enemy.global_position = Vector2(-1135 - count, 280)

@@ -18,6 +18,8 @@ extends Enemy
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+var carrot_damage: int = 20
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -44,6 +46,7 @@ func aggressive_field_state_callback() -> void:
 		if timer_ability_cooldown.is_stopped():
 			using_ability = true
 			target_distance = global_position.distance_to(target.global_position)
+		else:
 			generate_path()
 		
 		if target.global_position.distance_to(global_position) <= max(target.radius_range, radius_range):
@@ -93,4 +96,4 @@ func _on_sprite_animation_finished() -> void:
 
 func _on_sprite_frame_changed() -> void:
 	if "ability" in sprite.animation and sprite.get_frame() == 1:
-		fire_projectile.emit("res://scenes/blueprints/carrot-projectile.tscn", Vector2(target.global_position.x, target.global_position.y - 8), 15, 5, self)
+		fire_projectile.emit("res://scenes/blueprints/carrot-projectile.tscn", Vector2(target.global_position.x, target.global_position.y - 8), carrot_damage, 5, self)

@@ -126,6 +126,8 @@ func _ready() -> void:
 	collision_values["GROUND"] = 10
 	collision_values["MIDAIR"] = 11
 	collision_values["PLATFORM"] = 12
+	
+	set_collision_layer_value(10, true)
 
 
 

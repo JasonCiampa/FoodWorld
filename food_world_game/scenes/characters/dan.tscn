@@ -201,7 +201,7 @@ offset = Vector2(0, -0.5)
 [node name="AnimatedSpriteSprinkles2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-15, -6)
 sprite_frames = SubResource("SpriteFrames_dr573")
-animation = &"sprinkle_trail_left"
+animation = &"nothing"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
