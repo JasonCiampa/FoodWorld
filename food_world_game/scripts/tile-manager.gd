@@ -219,7 +219,7 @@ func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 	for world in world_tilemaps:
 		
 		# Create a new Tile with the same type of Tilemap and the same coordinates as the given Tile in the world of this iteration
-		new_tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, character.current_tile_position)
+		new_tile = Tile.new(world_tilemaps[world][tile.map_type], tile.map_type, tile.coords_map)
 		
 		# Determine if the newly created Tile has data in the world of this iteration
 		if new_tile.location != "" and new_tile.location != character.current_world:
@@ -229,10 +229,10 @@ func update_tile_world_location(tile: Tile, character: GameCharacter) -> Tile:
 			if character.current_world == "":
 				character.current_world = world
 			
-			if character is Player and world != character.current_world:
-				print("Current World: ", character.current_world, "\nNew World: ", world)
-				character.current_world = world
-				world_changed.emit(character)
+			if character is Player:
+				if world != character.current_world:
+					character.current_world = world
+					world_changed.emit(character)
 			else:
 				character.current_world = world
 			

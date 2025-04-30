@@ -39,7 +39,7 @@ script = ExtResource("1_in6cb")
 [node name="World Map" parent="." instance=ExtResource("2_q5di4")]
 
 [node name="Player" parent="." instance=ExtResource("1_ksjva")]
-position = Vector2(-1102, 432)
+position = Vector2(-1942, 523)
 
 [node name="Character Status" parent="Player" instance=ExtResource("9_6pngf")]
 z_index = 10
@@ -100,7 +100,7 @@ offset_bottom = -149.0
 scale = Vector2(0.25, 0.25)
 
 [node name="Dan" parent="." instance=ExtResource("10_14ky5")]
-position = Vector2(-1009, 437)
+position = Vector2(-1634, 534)
 
 [node name="Brittany" parent="." instance=ExtResource("11_8vviu")]
 position = Vector2(23, 400)
@@ -296,3 +296,5 @@ libraries = {
 [connection signal="update_altitude" from="Link" to="." method="_on_character_update_altitude"]
 [connection signal="update_recently_foraged_bushes" from="Link" to="." method="_on_food_buddy_update_recently_foraged_bushes"]
 [connection signal="use_ability_solo" from="Link" to="." method="_on_food_buddy_use_ability_solo"]
+[connection signal="timeout" from="Fade Timer" to="." method="_on_fade_timer_timeout"]
+[connection signal="timeout" from="Fade Music Timer" to="." method="_on_fade_music_timer_timeout"]

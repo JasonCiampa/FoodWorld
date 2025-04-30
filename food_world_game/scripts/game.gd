@@ -215,16 +215,22 @@ func _ready() -> void:
 	#for character_name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
 	
-	
-	timer_fade.start(0.1)
+	timer_fade.start(music_fade_in_duration)
+	timer_fade_music.start(music_fade_in_duration)
+	MUSIC.play()
+	MUSIC.volume_db = -16
+	modulate.a = 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if !musicStarted and timer_fade.is_stopped():
-		musicStarted = true
-		MUSIC.play()
+	if !musicStarted:
+		if !timer_fade.is_stopped():
+			modulate.a = lerp(modulate.a, float(2), delta * (music_fade_in_duration - timer_fade.time_left) / music_fade_in_duration)
+			MUSIC.volume_db = lerp(MUSIC.volume_db, float(-5), delta * (music_fade_in_duration - timer_fade.time_left) / music_fade_in_duration)
+		
 	else:
+		
 		if transitioning_songs:
 			process_music_fade(delta)
 	
@@ -1702,7 +1708,6 @@ func load_food_buddy(foodbuddy: FoodBuddy):
 	add_child(foodbuddy)
 
 func _on_character_changed_world(character: GameCharacter):
-	
 	transition_music(character.current_world)
 
 func transition_music(character_world: String):
@@ -1837,3 +1842,13 @@ func set_to_player_world(character: GameCharacter) -> void:
 	character.current_world = PLAYER.current_world
 	character.current_tilemaps = PLAYER.current_tilemaps
 	
+
+
+func _on_fade_music_timer_timeout() -> void:
+	if !musicStarted:
+		musicStarted = true
+		MUSIC.volume_db = -8
+
+
+func _on_fade_timer_timeout() -> void:
+	modulate.a = 1
