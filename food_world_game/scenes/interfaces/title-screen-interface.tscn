@@ -264,6 +264,8 @@ parameters/looping = true
 [node name="Fade Timer" type="Timer" parent="."]
 one_shot = true
 
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+
 [connection signal="button_down" from="Play Button Container/Play Button" to="." method="_on_play_button_button_down"]
 [connection signal="button_down" from="Quit Button Container/Quit Button" to="." method="_on_quit_button_button_down"]
 [connection signal="timeout" from="Fade Timer" to="." method="_on_fade_timer_timeout"]
