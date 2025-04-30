@@ -15,6 +15,7 @@ var frolic_cooldown_rate: float = 2.5
 var timer_navigation: Timer
 var timer_ability_cooldown: Timer
 var timer_frolic_cooldown: Timer
+var frolic_point: Vector2i
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -23,6 +24,7 @@ var timer_frolic_cooldown: Timer
 
 signal use_ability
 signal fire_projectile
+signal set_frolic_point
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -323,13 +325,13 @@ func passive_field_state_callback() -> void:
 			timer_frolic_cooldown.start(2.5)
 		else:
 			generate_path(navigation_agent.target_position)
-		
 	
 	else:
 		
 		if timer_frolic_cooldown.time_left <= 0.1:
 			
-			generate_path(Vector2(global_position.x + (frolic_range * RNG.randf_range(-1, 1)), global_position.y + (frolic_range * RNG.randf_range(-1, 1))))
+			set_frolic_point.emit(self)
+			generate_path(frolic_point)
 			timer_frolic_cooldown.stop()
 		else:
 			velocity.x = 0

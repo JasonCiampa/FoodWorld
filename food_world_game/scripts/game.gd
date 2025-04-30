@@ -104,12 +104,36 @@ var transitioning_songs: bool = false
 var music_fade_in_duration: float = 3.5
 var music_fade_out_duration: float = 2
 
-var test_enemy: Enemy
+var template_enemy: Enemy
+
+var foods_in_world: Dictionary = {
+	"center" = {
+		"enemies" = [],
+		"citizens" = [],
+	},
+	"sweets" = {
+		"enemies" = [],
+		"citizens" = [],
+	},
+	"garden" = {
+		"enemies" = [],
+		"citizens" = [],
+	},
+}
+
+var max_enemies_per_world: int = 10
+var max_citizens_per_world: int = 10
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+func load_multiple_enemies(spawn_locations: Array[Vector2], file_path: String):
+	for count in range(0, max_enemies_per_world):
+		template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+		load_enemy(template_enemy)
+		template_enemy.global_position = Vector2(-1100, 270)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -129,18 +153,45 @@ func _ready() -> void:
 	
 	empty_song = AudioStreamPlayer.new()
 	
-	test_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-	load_enemy(test_enemy)
-	test_enemy.global_position = Vector2(-1100, 270)
+	template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+	load_enemy(template_enemy)
+	template_enemy.global_position = Vector2(-1100, 270)
 	
-	test_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
-	load_enemy(test_enemy)
-	test_enemy.global_position = Vector2(-1000, 270)
+	template_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
+	load_enemy(template_enemy)
+	template_enemy.global_position = Vector2(-1000, 270)
+	
+	#
+	#for count in range(0, max_enemies_per_world):
+		#
+		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+		#load_enemy(template_enemy)
+		#template_enemy.global_position = Vector2(-1100, 270)
+		#
+		#foods_in_world["center"]["enemies"].append(template_enemy)
+		#
+		#template_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
+		#load_enemy(template_enemy)
+		#template_enemy.global_position = Vector2(-1000, 270)
+		#
+		#foods_in_world["center"]["enemies"].append(template_enemy)
+	#
+	#for count in range(0, max_enemies_per_world):
+		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+		#load_enemy(template_enemy)
+		#template_enemy.global_position = Vector2(-1100, 270)
+		#foods_in_world["sweets"]["enemies"].append(template_enemy)
+	#
+	#for count in range(0, max_enemies_per_world):
+		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+		#load_enemy(template_enemy)
+		#template_enemy.global_position = Vector2(-1100, 270)
+		#foods_in_world["sweets"]["enemies"].append(template_enemy)
 	
 	#for count in range (0, 120, 40):
-		#test_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
-		#load_enemy(test_enemy)
-		#test_enemy.global_position = Vector2(-1135 - count, 280)
+		#template_enemy = load("res://scenes/characters/peppermint.tscn").instantiate()
+		#load_enemy(template_enemy)
+		#template_enemy.global_position = Vector2(-1135 - count, 280)
 	
 	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
 	#FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
@@ -1697,6 +1748,7 @@ func load_enemy(enemy: Enemy):
 	enemy.target_player.connect(_on_character_target_player)
 	enemy.update_altitude.connect(_on_character_update_altitude)
 	enemy.fire_projectile.connect(_on_character_fire_projectile)
+	enemy.set_frolic_point.connect(_on_enemy_set_frolic_point)
 	add_child(enemy)
 
 func load_food_citizen(foodcitizen: FoodCitizen):
@@ -1864,3 +1916,11 @@ func _on_fade_music_timer_timeout() -> void:
 
 func _on_fade_timer_timeout() -> void:
 	modulate.a = 1
+
+func _on_enemy_set_frolic_point(enemy: Enemy):
+	var desired_frolic_point: Vector2i = Vector2i(global_position.x + (enemy.frolic_range * randf_range(-1, 1)), global_position.y + (enemy.frolic_range * randf_range(-1, 1)))
+	
+	while GameTileManager.tiles_occupied.get(desired_frolic_point) != null:
+		desired_frolic_point = Vector2i(global_position.x + (enemy.frolic_range * randf_range(-1, 1)), global_position.y + (enemy.frolic_range * randf_range(-1, 1)))
+	
+	enemy.frolic_point = desired_frolic_point
