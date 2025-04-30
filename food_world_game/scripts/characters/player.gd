@@ -139,8 +139,8 @@ var field_state_previous: FieldState = FieldState.SOLO
 var field_state_current: FieldState = FieldState.SOLO
 
 # Juice #
-var juiceboxes: int = 1
-var juice: int = 5000
+var juiceboxes: int = 0
+var juice: int = 0
 var juicebox_ready: bool = false
 
 var juicebox_throw_coords

@@ -1,6 +1,6 @@
 # Food World
 
-Food World will be a 2D top-down, open-world video game that takes place in what seems to be a world of food. All of the characters and areas in the game will be food-based, aside from the human character that the user will play as. Food World will present itself with a colorful and cartoony artstyle, a playful and humorous tone, a creative and detailed story, and entertaining and engaging gameplay. 
+Food World will be a 2D top-down, open-world video game that takes place in what seems to be a world of food. All of the characters and areas in the game will be food-based, aside from the human character that the user will play as. Food World will present itself with a colorful and cartoony artstyle, a playful and humorous tone, a creative and detailed story, and entertaining and engaging gameplay. This repository holds all of the data for the demo of the game.
 
 
 # Project Organization
@@ -13,8 +13,8 @@ scripts: a folder that contains all code files, many of which (but not all) are 
 # How To Run The Game
 In this repository, you can find two files that will run the game.
 
-If you are on Windows, download and run the FoodWorld.exe file.
-If you are on Mac, unzip the FoodWorldGame.zip file, download and the file contents, and run the executable.
+If you are on Windows, download and run the Food World Demo (Windows).exe file.
+If you are on Mac, unzip the Food World Demo (Mac).zip file, download the file contents, and run the executable.
 
 
 # Viewing the Code

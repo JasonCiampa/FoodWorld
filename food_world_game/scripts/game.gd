@@ -308,7 +308,7 @@ func _process(delta: float) -> void:
 			level_up_pending = false
 	
 	
-	if !map_zooming and Input.is_action_just_pressed("toggle_map"):
+	if !map_zooming and !PLAYER.in_building and Input.is_action_just_pressed("toggle_map"):
 		if map_zoomed_in:
 			zoom_out_map()
 		else:
