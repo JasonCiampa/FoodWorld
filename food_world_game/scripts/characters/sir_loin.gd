@@ -1,6 +1,4 @@
-class_name FoodCitizen
-
-extends InteractableCharacter
+extends FoodCitizen
 
 
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -20,50 +18,13 @@ extends InteractableCharacter
 
 # VARIABLES #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-var previous_animation: String = "idle_front"
-var previous_animation_frame: int = 0
-var previous_animation_frame_progress: float = 0
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # GODOT FUNCTIONS #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	super()
-	
-	self.name = "Citizen"
-	
-	sprite.play("idle_front")
-	
-	# Call the custom ready function that subclasses may have defined manually
-	ready()
-	
-	update_dimensions()
-
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	
-	if not paused:
-		
-		# Call the custom process function that subclasses may have defined manually
-		process(delta)
-
-
-
-# Called every frame. Updates the Enemy's physics
-func _physics_process(_delta: float) -> void:
-	
-	if not paused:
-		
-		#target_player.emit(self)
-		#get_target_distance.emit(self, target)
-		move_and_slide()
-	
-	update_dimensions()
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,7 +39,7 @@ func _physics_process(_delta: float) -> void:
 
 # A custom ready function that each Food Citizen subclass should personally define. This is called in the default Food Citizen class's '_ready()' function
 func ready():
-	pass
+	name = "SirLoin"
 
 
 
@@ -92,28 +53,4 @@ func process(_delta: float):
 func physics_process(_delta: float) -> void:
 	pass
 
-
-
-# A custom function to execute the Food Citizen's logic for when the Player interacts with them
-func interact_with_player(player: Player, characters_in_range: Array[Node2D], _delta: float) -> Array[Node2D]:
-	
-	# Create a list that will store all of the Characters that should be involved in the conversation that is about to start
-	var characters_to_involve: Array[Node2D] = [player, self]
-	
-	# Iterate over each Character that is in-range, and if they're a Food Buddy then add them as a Character to involve in the conversation
-	for character in characters_in_range:
-		if character is FoodBuddy:
-			characters_to_involve.append(character)
-	
-	# Return the list of Characters that should be involved in the conversation
-	return characters_to_involve
-
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-func _on_citizen_screen_entered() -> void:
-	if !paused:
-		process_mode = PROCESS_MODE_INHERIT
-
-
-func _on_citizen_screen_exited() -> void:
-	process_mode = PROCESS_MODE_DISABLED

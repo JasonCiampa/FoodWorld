@@ -76,7 +76,8 @@ var script_directions: Dictionary = {
 
 
 var play_parser: Dictionary = {
-	"player_level" : play_parse_player_level
+	"player_level" : play_parse_player_level,
+	"conversation_played" : play_parse_conversation_played,
 }
 
 var game_direction: String
@@ -487,33 +488,6 @@ func end():
 
 
 
-# PLAY PARSER #
-
-# Parses the play instruction with this format: 'PLAY: player_level=|>=|1'
-func play_parse_player_level(condition: String):
-	
-	var operator: String = condition.get_slice("|", 0)
-	var value: String = condition.get_slice("|", 1)
-	
-	if operator == ">":
-		return player.level_current > int(value)
-	
-	elif operator == ">=":
-		return player.level_current >= int(value)
-	
-	elif operator == "<":
-		return player.level_current < int(value)
-	
-	elif operator == "<=":
-		return player.level_current <= int(value)
-	
-	elif operator == "==":
-		return player.level_current == int(value)
-	
-	elif operator == "!=":
-		return player.level_current != int(value)
-
-
 # Adjust the current line in the Dialogue forwards, flag the line to be displayed, and store the current direction of Dialogue
 func _on_next_button_down() -> void:
 	
@@ -680,3 +654,52 @@ func _on_animator_current_animation_changed(animation_name: String) -> void:
 			button_next.disabled = false
 		
 		button_exit.disabled = false
+
+
+
+
+# PLAY PARSER #
+
+# Parses the play instruction with this format: 'PLAY: player_level=|>=|1'
+func play_parse_player_level(condition: String):
+	
+	var operator: String = condition.get_slice("|", 0)
+	var value: String = condition.get_slice("|", 1)
+	
+	if operator == ">":
+		return player.level_current > int(value)
+	
+	elif operator == ">=":
+		return player.level_current >= int(value)
+	
+	elif operator == "<":
+		return player.level_current < int(value)
+	
+	elif operator == "<=":
+		return player.level_current <= int(value)
+	
+	elif operator == "==":
+		return player.level_current == int(value)
+	
+	elif operator == "!=":
+		return player.level_current != int(value)
+
+
+# Parses the play instruction with this format: 'PLAY: conversation_played=|conversation_name|true'  <-- determines if the conversation has been played (false would determine if the conversation hasn't been played)
+func play_parse_conversation_played(condition: String):
+	var conversation_name: String = condition.get_slice("|", 0)
+	var check_if_played: String = condition.get_slice("|", 1)
+	
+	if conversations_played.get(conversation_name) != null:
+		
+		# The conversation has been played before
+		if check_if_played:
+			return true
+		else:
+			return false
+		
+	# The conversation hasn't been played before
+	if check_if_played:
+		return false
+	else:
+		return true

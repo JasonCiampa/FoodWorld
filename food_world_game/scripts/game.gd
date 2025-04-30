@@ -12,6 +12,7 @@ extends Node2D
 @onready var BRITTANY: FoodBuddy = $Brittany
 
 
+
 #@onready var FUSION_MALICK_SALLY: FoodBuddyFusion = load("res://scenes/fusions/malick-sally.tscn").instantiate()
 
 @onready var MUSIC: AudioStreamPlayer = $WorldCenter
@@ -277,7 +278,7 @@ func _ready() -> void:
 	## CREATE NEW DIALOGUE RESOURCE CODE
 	#InterfaceDialogue.current_dialogue = load("res://resources/dialogue/dialogue.tres")
 	#
-	#var temp = ["Brittany-Link-Player", "Brittany-Player", "Dan-Link-Player", "Dan-Player", "Link-Player"]
+	#var temp = ["Player-SirLoin", "Brittany-Dan-Link-Player-SirLoin"]
 	#
 	#for character_name in temp:
 		#InterfaceDialogue.current_dialogue.create_and_save_resource(character_name)
@@ -1921,6 +1922,7 @@ func _on_fade_music_timer_timeout() -> void:
 func _on_fade_timer_timeout() -> void:
 	if !musicStarted:
 		modulate.a = 1
+		#InterfaceDialogue.start([PLAYER], get_all_assets_in_game(), "Introduction")
 
 func _on_enemy_set_frolic_point(enemy: Enemy):
 	var desired_frolic_point: Vector2i = Vector2i(int(global_position.x + (enemy.frolic_range * randf_range(-1, 1))), int(global_position.y + (enemy.frolic_range * randf_range(-1, 1))))

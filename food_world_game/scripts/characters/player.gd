@@ -722,7 +722,6 @@ func update_movement_velocity(delta):
 		velocity.y = 0
 		return
 		
-		
 	# Determine if the Player currently has stamina
 	if stamina_current > 0:
 		

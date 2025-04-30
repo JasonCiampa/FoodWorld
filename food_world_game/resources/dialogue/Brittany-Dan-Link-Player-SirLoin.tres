@@ -1,0 +1,130 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cillc022oqrsf"]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_rwoan"]
+
+[resource]
+script = ExtResource("1_rwoan")
+conversations = {
+"Food Buddies": {
+"Brittany": {
+5: "Hi, nice to meet ya!",
+7: "Ha! It might be easier to answer what this robot doesn't do!",
+8: "It's main purpose is to provide me with more mobility than I have as just a berry.",
+9: "But it's also got a sauna built into it for other little berries!",
+11: "The sauna is for berries to relax in. It's one of the most natural ways for them to release their juice after a long day.",
+12: "I always patrol around and let any berries inside that want to have a steam!",
+34: "Sounds good!"
+},
+"DIALOGUE": {},
+"Dan": {
+23: "Yo, what's up? I'm Dan.",
+31: "Cool, call me when you need me. See y'all later."
+},
+"GAME": {},
+"Link": {
+20: "Sausage Link- at your service sir! It's an honor to meet you, sir human, sir!",
+21: "Anything you need, sir- I'm your guy, sir!",
+22: "I'm privileged to have the fortune of traveling alongside you, sir!",
+26: "We have instructions from SirLoin to scout out any and all signs of rotten food activity and handle conflicts we may encounter, sir!",
+35: "Sir yes sir, understood sir, I won't let you down sir!"
+},
+"PLAY": {
+1: "conversation_played=|Rotten Foods|true"
+},
+"PLAY_WHEN": {
+2: "now"
+},
+"Player": {
+6: "Hey, that's a cool robot. What does it do?",
+10: "There's a sauna in there?! What for?",
+14: "Huh? How so? Isn't it basically just berry sweat?",
+18: "Ah, okay, I think I get it. Sounds good to me!",
+24: "Hey guys, nice to meet you.",
+25: "So... what exactly are we all doing together?",
+38: "Gotcha. Lots of information all at once. Not sure I'll remember all that.",
+40: "You end up in my head?!",
+42: "O...kay...",
+43: "Well... I guess this is my life now."
+},
+"SirLoin": {
+3: "Human, allow me to introduce you to your teammates.",
+4: "This is Brittany. She's a blue berry controlling a robot.",
+13: "Most importantly, the juice that these berries produce will solve all of our problems, human!",
+15: "Yes, the berries think of it as nothing more than sweat, but to other foods, berry juice is a luxury!",
+16: "It's packed with incredible nutrients and has extraordinary healing capabilities.",
+17: "That juice would be enough for you to survive on without having to eat anybody, human. ",
+19: "Great. Let me also introduce you to Link the sausage link and Dan the donut, two of our best soldiers.",
+27: "Exactly as he said. You'll operate out in the field looking for rotten foods.",
+28: "I'll send you out three at a time, so there will always be one of your team resting.",
+29: "Dan- you'll be on the bench first. Rest up and prepare for action, and be ready to report back at the human's command.",
+30: "Human- you can always press 'tab' to call in a member of your team.",
+32: "Brittany- Link- you two will accompany the human first. Follow their command and welcome them to Food World!",
+33: "Human- you can always press 'Q' to instruct your team members on how to behave in the field.",
+36: "Human- you should know that you can individually equip either of your active team members to \"fuse\" your abilities.",
+37: "Press '1' to fuse or unfuse your abilities with your first team mate, and press '2' to do the same but with your second team mate.",
+39: "Well if you remember anything at all, let it be that you can press 'ESC' to summon me in your head. Once there, I can remind you how to do things.",
+41: "Yes. Somehow."
+}
+}
+}
+conversation_current = {
+"Brittany": {
+5: "Hi, nice to meet ya!",
+7: "Ha! It might be easier to answer what this robot doesn't do!",
+8: "It's main purpose is to provide me with more mobility than I have as just a berry.",
+9: "But it's also got a sauna built into it for other little berries!",
+11: "The sauna is for berries to relax in. It's one of the most natural ways for them to release their juice after a long day.",
+12: "I always patrol around and let any berries inside that want to have a steam!",
+34: "Sounds good!"
+},
+"DIALOGUE": {},
+"Dan": {
+23: "Yo, what's up? I'm Dan.",
+31: "Cool, call me when you need me. See y'all later."
+},
+"GAME": {},
+"Link": {
+20: "Sausage Link- at your service sir! It's an honor to meet you, sir human, sir!",
+21: "Anything you need, sir- I'm your guy, sir!",
+22: "I'm privileged to have the fortune of traveling alongside you, sir!",
+26: "We have instructions from SirLoin to scout out any and all signs of rotten food activity and handle conflicts we may encounter, sir!",
+35: "Sir yes sir, understood sir, I won't let you down sir!"
+},
+"PLAY": {
+1: "conversation_played=|Rotten Foods|true"
+},
+"PLAY_WHEN": {
+2: "now"
+},
+"Player": {
+6: "Hey, that's a cool robot. What does it do?",
+10: "There's a sauna in there?! What for?",
+14: "Huh? How so? Isn't it basically just berry sweat?",
+18: "Ah, okay, I think I get it. Sounds good to me!",
+24: "Hey guys, nice to meet you.",
+25: "So... what exactly are we all doing together?",
+38: "Gotcha. Lots of information all at once. Not sure I'll remember all that.",
+40: "You end up in my head?!",
+42: "O...kay...",
+43: "Well... I guess this is my life now."
+},
+"SirLoin": {
+3: "Human, allow me to introduce you to your teammates.",
+4: "This is Brittany. She's a blue berry controlling a robot.",
+13: "Most importantly, the juice that these berries produce will solve all of our problems, human!",
+15: "Yes, the berries think of it as nothing more than sweat, but to other foods, berry juice is a luxury!",
+16: "It's packed with incredible nutrients and has extraordinary healing capabilities.",
+17: "That juice would be enough for you to survive on without having to eat anybody, human. ",
+19: "Great. Let me also introduce you to Link the sausage link and Dan the donut, two of our best soldiers.",
+27: "Exactly as he said. You'll operate out in the field looking for rotten foods.",
+28: "I'll send you out three at a time, so there will always be one of your team resting.",
+29: "Dan- you'll be on the bench first. Rest up and prepare for action, and be ready to report back at the human's command.",
+30: "Human- you can always press 'tab' to call in a member of your team.",
+32: "Brittany- Link- you two will accompany the human first. Follow their command and welcome them to Food World!",
+33: "Human- you can always press 'Q' to instruct your team members on how to behave in the field.",
+36: "Human- you should know that you can individually equip either of your active team members to \"fuse\" your abilities.",
+37: "Press '1' to fuse or unfuse your abilities with your first team mate, and press '2' to do the same but with your second team mate.",
+39: "Well if you remember anything at all, let it be that you can press 'ESC' to summon me in your head. Once there, I can remind you how to do things.",
+41: "Yes. Somehow."
+}
+}

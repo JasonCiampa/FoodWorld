@@ -1,0 +1,148 @@
+﻿Player-SirLoin
+
+
+Rotten Foods
+1. PLAY: conversation_played=|Fighting|true
+2. PLAY_WHEN: now
+
+
+3. SirLoin: Wow, you really killed it out there. Literally!
+4. SirLoin: You don't even look like you broke a sweat.
+
+
+1. Player: Well it's not like I was fighting a martial arts warrior.
+
+
+2. SirLoin: Even so, you've shown that you have some real strength!
+
+
+3. Player: Thanks. Now what's the plan?
+4. Player: Do we figure out a way to get me out of here?
+
+
+5. SirLoin: I don't think we'll be able to do that anytime soon, that might be a years-long task if it's even possible.
+
+
+6. Player: Well we've gotta at least try! I'm the only human in a world of food- there's no way I can stick around.
+
+
+7. SirLoin: We can work on an exit plan for you. In the meantime, we need to find a way to prevent you from starving without eating food.
+8. SirLoin: Fortunately for you, human, I'm seeing a plan forming here.
+
+
+9. Player: Yeah? What is it?
+
+
+10. SirLoin: Join my army!
+
+
+11. Player: What?! Your first ever request of me was that I fight to the death.
+12. Player: And now your second is for me to join a military force?!
+
+
+13. SirLoin: I know, I know, but hear me out. The situation here in Food World is complex.
+14. SirLoin: I alone am the sole ruler of the Food World, and I maintain stability for our civilization.
+15. SirLoin:  Despite support from most of the population, there is significant opposition to my rule-  particularly from one group.
+16. SirLoin: They call themselves the rotten foods, and they're no joke.
+17. SirLoin: They are incredibly secretive- so much so that my team and I have almost no information on them.
+18. SirLoin: What we do know is that they're very aggressive. Every known encounter with them has been violent.
+
+
+19. Player: Woah, that's not good. How do you expect me to be able to help with that?
+
+
+20. SirLoin: Well, you've already started! Being a human here will bring you all sorts of attention- mostly negative.
+21. SirLoin: And as we speak, word is spreading throughout the whole world about your victory in the coliseum.
+22. SirLoin: I think we can use your newfound fame, your vile humanness, and your promising fighting ability to lure out rotten foods.
+23. SirLoin: I don't think they'd be able to resist you!
+
+
+24. Player: I guess that makes sense, but I'm not gonna let myself be used as a piece of bait!
+
+
+25. SirLoin: Of course not! As part of my army, I'll ensure that you have a team to travel with who can help keep you safe.
+26. SirLoin: Your team is actually the crux of the whole plan. Let me introduce you to them!
+Fighting
+1. PLAY: conversation_played=|Introduction|true
+2. PLAY_WHEN: now
+
+
+3. SirLoin: Alright, human, let's see what you're made of.
+4. SirLoin: Fighting is simple. Here in Food World, we left-click and right-click to punch. It's classy. 
+5. SirLoin: Move around using WASD, and hold shift to run a little faster.
+6. SirLoin: Don't run out of energy on me- it's bad for viewer retention. Make sure you use your stamina wisely.
+7. SirLoin: And needless to say, don't die. Or at least I wouldn't recommend it. To each their own.
+8. SirLoin: If you are looking to live, keep an eye on your health. The coliseum's a confined arena, so be careful not to get trapped.
+9. SirLoin: That's all I've got. Now fight to the death!!!
+Introduction
+1. PLAY_WHEN: now
+
+
+2. SirLoin: A human?! Disgusting!!
+3. SirLoin: I've never seen one before, but my, you're even more hideous than they warned.
+
+
+4. Player: Nothing like a warm welcome.
+5. Player: What is this place? How did I get here?
+6. Player: And... uh...
+7. Player: Are you steak?
+
+
+8. SirLoin: If you're thinking of eating me, then no.
+9. SirLoin: Otherwise, yes, my name is SirLoin.
+10. SirLoin: And this is Food World, the civilization that I command.
+11. SirLoin: You came here from the sky, you're a drop-in.
+
+
+12. Player: From the sky? What do you mean I'm a drop-in?
+
+
+13. SirLoin: Yes, you're the thirteenth this week.
+14. SirLoin: Usually there's more, but we haven't been seeing as many foods dropping in the past few months.
+15. SirLoin: Without new foods often enough, the business has hit a bit of a lull.
+16. SirLoin: But wait- you? A nasty human? You'd be perfect!
+
+
+17. Player: What would my nastiness be perfect for?
+
+
+18. SirLoin: A gladiator-style fight to the death against other drop-ins in our staple coliseum, of course!
+19. SirLoin: The other fighters would get so riled up just at the sight of you!
+
+
+20. Player: Huh?! Are you crazy?! No wonder business isn't booming. 
+21. Player: I'll pass. Get me out of here!!
+
+
+22. SirLoin: No can do, human.
+23. SirLoin: We don't know where you drop-ins come from or how you get here- we just know you fall from the sky.
+24. SirLoin: So unless you can fly back up,  it seems like you're stuck here!
+
+
+25. Player: Ugh, this sucks.
+26. Player: That doesn't mean I'm going to fight to the death though!!
+
+
+27. SirLoin: If it's not now, I'm sure you'll find yourself in a situation where you must.
+28. SirLoin: A human? In a world of food? The ol' history books say you guys used to chow down on us.
+29. SirLoin: Not many foods are gonna be just waiting around for that to happen.
+30. SirLoin: They'll try to take you out before you get a chance to take them out!
+
+
+31. Player: What?! That's crazy! I'm not gonna try to eat anybody.
+
+
+32. SirLoin: Maybe not now, but you'll get hungry eventually and be forced to so that you don't starve.
+
+
+33. Player: Hmm...
+34. Player: I guess you've got a point. Damn, what am I supposed to do?
+
+
+35. SirLoin: Fight in my coliseum! If you survive, I'm sure we can figure out how to get you situated in Food World without eating anybody.
+
+
+36. Player: Alright fine, I guess I don't really have much of a choice then.
+
+
+37. SirLoin: Guess not! Come on, use your keys to follow me into the coliseum.

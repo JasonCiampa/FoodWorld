@@ -1,0 +1,166 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/dialogue_resource.gd" id="1_boif3"]
+
+[resource]
+script = ExtResource("1_boif3")
+conversations = {
+"Fighting": {
+"DIALOGUE": {},
+"GAME": {},
+"PLAY": {
+1: "conversation_played=|Introduction|true"
+},
+"PLAY_WHEN": {
+2: "now"
+},
+"Player": {},
+"SirLoin": {
+3: "Alright, human, let's see what you're made of.",
+4: "Fighting is simple. Here in Food World, we left-click and right-click to punch. It's classy. ",
+5: "Move around using WASD, and hold shift to run a little faster.",
+6: "Don't run out of energy on me- it's bad for viewer retention. Make sure you use your stamina wisely.",
+7: "And needless to say, don't die. Or at least I wouldn't recommend it. To each their own.",
+8: "If you are looking to live, keep an eye on your health. The coliseum's a confined arena, so be careful not to get trapped.",
+9: "That's all I've got. Now fight to the death!!!"
+}
+},
+"Introduction": {
+"DIALOGUE": {},
+"GAME": {},
+"PLAY": {},
+"PLAY_WHEN": {
+1: "now"
+},
+"Player": {
+4: "Nothing like a warm welcome.",
+5: "What is this place? How did I get here?",
+6: "And... uh...",
+7: "Are you steak?",
+12: "From the sky? What do you mean I'm a drop-in?",
+17: "What would my nastiness be perfect for?",
+20: "Huh?! Are you crazy?! No wonder business isn't booming. ",
+21: "I'll pass. Get me out of here!!",
+25: "Ugh, this sucks.",
+26: "That doesn't mean I'm going to fight to the death though!!",
+31: "What?! That's crazy! I'm not gonna try to eat anybody.",
+33: "Hmm...",
+34: "I guess you've got a point. Damn, what am I supposed to do?",
+36: "Alright fine, I guess I don't really have much of a choice then."
+},
+"SirLoin": {
+2: "A human?! Disgusting!!",
+3: "I've never seen one before, but my, you're even more hideous than they warned.",
+8: "If you're thinking of eating me, then no.",
+9: "Otherwise, yes, my name is SirLoin.",
+10: "And this is Food World, the civilization that I command.",
+11: "You came here from the sky, you're a drop-in.",
+13: "Yes, you're the thirteenth this week.",
+14: "Usually there's more, but we haven't been seeing as many foods dropping in the past few months.",
+15: "Without new foods often enough, the business has hit a bit of a lull.",
+16: "But wait- you? A nasty human? You'd be perfect!",
+18: "A gladiator-style fight to the death against other drop-ins in our staple coliseum, of course!",
+19: "The other fighters would get so riled up just at the sight of you!",
+22: "No can do, human.",
+23: "We don't know where you drop-ins come from or how you get here- we just know you fall from the sky.",
+24: "So unless you can fly back up,  it seems like you're stuck here!",
+27: "If it's not now, I'm sure you'll find yourself in a situation where you must.",
+28: "A human? In a world of food? The ol' history books say you guys used to chow down on us.",
+29: "Not many foods are gonna be just waiting around for that to happen.",
+30: "They'll try to take you out before you get a chance to take them out!",
+32: "Maybe not now, but you'll get hungry eventually and be forced to so that you don't starve.",
+35: "Fight in my coliseum! If you survive, I'm sure we can figure out how to get you situated in Food World without eating anybody.",
+37: "Guess not! Come on, use your keys to follow me into the coliseum."
+}
+},
+"Rotten Foods": {
+"DIALOGUE": {},
+"GAME": {},
+"PLAY": {
+1: "conversation_played=|Fighting|true"
+},
+"PLAY_WHEN": {
+2: "now"
+},
+"Player": {
+1: "Well it's not like I was fighting a martial arts warrior.",
+3: "Thanks. Now what's the plan?",
+4: "Do we figure out a way to get me out of here?",
+6: "Well we've gotta at least try! I'm the only human in a world of food- there's no way I can stick around.",
+9: "Yeah? What is it?",
+11: "What?! Your first ever request of me was that I fight to the death.",
+12: "And now your second is for me to join a military force?!",
+19: "Woah, that's not good. How do you expect me to be able to help with that?",
+24: "I guess that makes sense, but I'm not gonna let myself be used as a piece of bait!"
+},
+"SirLoin": {
+2: "Even so, you've shown that you have some real strength!",
+3: "Wow, you really killed it out there. Literally!",
+4: "You don't even look like you broke a sweat.",
+5: "I don't think we'll be able to do that anytime soon, that might be a years-long task if it's even possible.",
+7: "We can work on an exit plan for you. In the meantime, we need to find a way to prevent you from starving without eating food.",
+8: "Fortunately for you, human, I'm seeing a plan forming here.",
+10: "Join my army!",
+13: "I know, I know, but hear me out. The situation here in Food World is complex.",
+14: "I alone am the sole ruler of the Food World, and I maintain stability for our civilization.",
+15: " Despite support from most of the population, there is significant opposition to my rule-  particularly from one group.",
+16: "They call themselves the rotten foods, and they're no joke.",
+17: "They are incredibly secretive- so much so that my team and I have almost no information on them.",
+18: "What we do know is that they're very aggressive. Every known encounter with them has been violent.",
+20: "Well, you've already started! Being a human here will bring you all sorts of attention- mostly negative.",
+21: "And as we speak, word is spreading throughout the whole world about your victory in the coliseum.",
+22: "I think we can use your newfound fame, your vile humanness, and your promising fighting ability to lure out rotten foods.",
+23: "I don't think they'd be able to resist you!",
+25: "Of course not! As part of my army, I'll ensure that you have a team to travel with who can help keep you safe.",
+26: "Your team is actually the crux of the whole plan. Let me introduce you to them!"
+}
+}
+}
+conversation_current = {
+"DIALOGUE": {},
+"GAME": {},
+"PLAY": {},
+"PLAY_WHEN": {
+1: "now"
+},
+"Player": {
+4: "Nothing like a warm welcome.",
+5: "What is this place? How did I get here?",
+6: "And... uh...",
+7: "Are you steak?",
+12: "From the sky? What do you mean I'm a drop-in?",
+17: "What would my nastiness be perfect for?",
+20: "Huh?! Are you crazy?! No wonder business isn't booming. ",
+21: "I'll pass. Get me out of here!!",
+25: "Ugh, this sucks.",
+26: "That doesn't mean I'm going to fight to the death though!!",
+31: "What?! That's crazy! I'm not gonna try to eat anybody.",
+33: "Hmm...",
+34: "I guess you've got a point. Damn, what am I supposed to do?",
+36: "Alright fine, I guess I don't really have much of a choice then."
+},
+"SirLoin": {
+2: "A human?! Disgusting!!",
+3: "I've never seen one before, but my, you're even more hideous than they warned.",
+8: "If you're thinking of eating me, then no.",
+9: "Otherwise, yes, my name is SirLoin.",
+10: "And this is Food World, the civilization that I command.",
+11: "You came here from the sky, you're a drop-in.",
+13: "Yes, you're the thirteenth this week.",
+14: "Usually there's more, but we haven't been seeing as many foods dropping in the past few months.",
+15: "Without new foods often enough, the business has hit a bit of a lull.",
+16: "But wait- you? A nasty human? You'd be perfect!",
+18: "A gladiator-style fight to the death against other drop-ins in our staple coliseum, of course!",
+19: "The other fighters would get so riled up just at the sight of you!",
+22: "No can do, human.",
+23: "We don't know where you drop-ins come from or how you get here- we just know you fall from the sky.",
+24: "So unless you can fly back up,  it seems like you're stuck here!",
+27: "If it's not now, I'm sure you'll find yourself in a situation where you must.",
+28: "A human? In a world of food? The ol' history books say you guys used to chow down on us.",
+29: "Not many foods are gonna be just waiting around for that to happen.",
+30: "They'll try to take you out before you get a chance to take them out!",
+32: "Maybe not now, but you'll get hungry eventually and be forced to so that you don't starve.",
+35: "Fight in my coliseum! If you survive, I'm sure we can figure out how to get you situated in Food World without eating anybody.",
+37: "Guess not! Come on, use your keys to follow me into the coliseum."
+}
+}

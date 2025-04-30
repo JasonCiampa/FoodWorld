@@ -1,0 +1,98 @@
+﻿Brittany-Dan-Link-Player-SirLoin
+
+
+Food Buddies
+1. PLAY: conversation_played=|Rotten Foods|true
+2. PLAY_WHEN: now
+
+
+3. SirLoin: Human, allow me to introduce you to your teammates.
+4. SirLoin: This is Brittany. She's a blue berry controlling a robot.
+
+
+5. Brittany: Hi, nice to meet ya!
+
+
+6. Player: Hey, that's a cool robot. What does it do?
+
+
+7. Brittany: Ha! It might be easier to answer what this robot doesn't do!
+8. Brittany: It's main purpose is to provide me with more mobility than I have as just a berry.
+9. Brittany: But it's also got a sauna built into it for other little berries!
+
+
+10. Player: There's a sauna in there?! What for?
+
+
+11. Brittany: The sauna is for berries to relax in. It's one of the most natural ways for them to release their juice after a long day.
+12. Brittany: I always patrol around and let any berries inside that want to have a steam!
+
+
+13. SirLoin: Most importantly, the juice that these berries produce will solve all of our problems, human!
+
+
+14. Player: Huh? How so? Isn't it basically just berry sweat?
+
+
+15. SirLoin: Yes, the berries think of it as nothing more than sweat, but to other foods, berry juice is a luxury!
+16. SirLoin: It's packed with incredible nutrients and has extraordinary healing capabilities.
+17. SirLoin: That juice would be enough for you to survive on without having to eat anybody, human. 
+
+
+18. Player: Ah, okay, I think I get it. Sounds good to me!
+
+
+19. SirLoin: Great. Let me also introduce you to Link the sausage link and Dan the donut, two of our best soldiers.
+
+
+20. Link: Sausage Link- at your service sir! It's an honor to meet you, sir human, sir!
+21. Link: Anything you need, sir- I'm your guy, sir!
+22. Link: I'm privileged to have the fortune of traveling alongside you, sir!
+
+
+23. Dan: Yo, what's up? I'm Dan.
+
+
+24. Player: Hey guys, nice to meet you.
+25. Player: So... what exactly are we all doing together?
+
+
+26. Link: We have instructions from SirLoin to scout out any and all signs of rotten food activity and handle conflicts we may encounter, sir!
+
+
+27. SirLoin: Exactly as he said. You'll operate out in the field looking for rotten foods.
+28. SirLoin: I'll send you out three at a time, so there will always be one of your team resting.
+29. SirLoin: Dan- you'll be on the bench first. Rest up and prepare for action, and be ready to report back at the human's command.
+30. SirLoin: Human- you can always press 'tab' to call in a member of your team.
+
+
+31. Dan: Cool, call me when you need me. See y'all later.
+
+
+32. SirLoin: Brittany- Link- you two will accompany the human first. Follow their command and welcome them to Food World!
+33. SirLoin: Human- you can always press 'Q' to instruct your team members on how to behave in the field.
+
+
+34. Brittany: Sounds good!
+35. Link: Sir yes sir, understood sir, I won't let you down sir!
+
+
+36. SirLoin: Human- you should know that you can individually equip either of your active team members to "fuse" your abilities.
+37. SirLoin: Press '1' to fuse or unfuse your abilities with your first team mate, and press '2' to do the same but with your second team mate.
+
+
+38. Player: Gotcha. Lots of information all at once. Not sure I'll remember all that.
+
+
+39. SirLoin: Well if you remember anything at all, let it be that you can press 'ESC' to summon me in your head. Once there, I can remind you how to do things.
+
+
+40. Player: You end up in my head?!
+
+
+41. SirLoin: Yes. Somehow.
+
+
+42. Player: O...kay...
+43. Player: Well... I guess this is my life now.
+44. Player: Might as well start exploring.
