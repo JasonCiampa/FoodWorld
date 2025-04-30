@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfd54h7jx3hp4"
-path="res://.godot/imported/trail_spritesheet.png-775ed043a6aa36132f7516696cadbea9.ctex"
+uid="uid://ldkm12n6eurb"
+path="res://.godot/imported/peppermint_ability_front.png-24fe68d3063f0e6131c71e3a1db3a2ae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/animations/peppermint/ability/trail_spritesheet.png"
-dest_files=["res://.godot/imported/trail_spritesheet.png-775ed043a6aa36132f7516696cadbea9.ctex"]
+source_file="res://images/animations/peppermint/ability/peppermint_ability_front.png"
+dest_files=["res://.godot/imported/peppermint_ability_front.png-24fe68d3063f0e6131c71e3a1db3a2ae.ctex"]
 
 [params]
 

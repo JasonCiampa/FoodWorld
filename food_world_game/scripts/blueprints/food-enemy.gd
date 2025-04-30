@@ -128,6 +128,9 @@ func _ready() -> void:
 	collision_values["PLATFORM"] = 12
 	
 	set_collision_layer_value(10, true)
+	
+	#timer_process_tiles.timeout.connect(_on_tile_process_timer_timeout)
+	time_between_tile_updates = randf_range(0.65, 0.7)
 
 
 
@@ -158,10 +161,15 @@ func _process(delta: float) -> void:
 	
 	if target_distance < 100 and field_state_current == FieldState.PASSIVE:
 		field_state_current = FieldState.AGGRESSIVE
+
 		
 	elif target_distance > 200 and field_state_current == FieldState.AGGRESSIVE:
 		if target.name != "Brittany":
 			field_state_current = FieldState.PASSIVE
+			using_ability = false
+			velocity.x = 0
+			velocity.y = 0
+			update_animation()
 	
 	if not paused:
 		
@@ -172,6 +180,7 @@ func _process(delta: float) -> void:
 		
 		if healing_health:
 			heal_health(delta)
+		
 		# Call the custom "update()" function that Enemy subclasses will define individually
 		process(delta)
 
@@ -266,7 +275,7 @@ func update_animation(animation_name: String = ""):
 
 # A custom ready function that each Enemy subclass should personally define. This is called in the default FoodBuddy class's '_ready()' function
 func ready():
-	time_between_tile_updates = randf_range(0.65, 0.7)
+	pass
 
 
 

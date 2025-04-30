@@ -108,6 +108,9 @@ func start(freeze_subjects: Array[Node2D]):
 		
 		if subject is GameCharacter:
 			subject.sprite.pause()
+			subject.previous_animation_frame = subject.sprite.get_frame()
+			subject.previous_animation_frame_progress = subject.sprite.get_frame_progress()
+			subject.animation_player.pause()
 		
 		elif subject is InteractableAsset or subject is InteractableCharacter:
 			subject.label_e_to_interact.hide()
@@ -234,6 +237,9 @@ func end():
 				subject.sprite.play()
 			
 			if subject is GameCharacter:
+				subject.sprite.set_frame_and_progress(subject.previous_animation_frame, subject.previous_animation_frame_progress)
+				if subject.animation_player.current_animation != "":
+					subject.animation_player.play()
 				subject.sprite.play()
 	
 	self.visible = false

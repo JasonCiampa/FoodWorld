@@ -78,7 +78,7 @@ func process(_delta: float):
 	
 	if !using_ability and "ability" in sprite.animation and sprite.get_frame() == 5:
 		using_ability = true
-		fire_projectile.emit("res://scenes/blueprints/energy-ball.tscn", Vector2(target.global_position.x, target.global_position.y - target.height / 2), 50, 25, self)
+		fire_projectile.emit("res://scenes/blueprints/energy-ball.tscn", Vector2(target.global_position.x, target.global_position.y - target.height / 2), 25, 5, self)
 
 
 

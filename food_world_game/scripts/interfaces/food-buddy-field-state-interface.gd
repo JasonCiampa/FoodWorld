@@ -114,6 +114,9 @@ func start(_freeze_subjects: Array[Node2D], food_buddies_active: Array[FoodBuddy
 		
 		if subject is GameCharacter:
 			subject.sprite.pause()
+			subject.previous_animation_frame = subject.sprite.get_frame()
+			subject.previous_animation_frame_progress = subject.sprite.get_frame_progress()
+			subject.animation_player.pause()
 		
 		elif subject is InteractableAsset or subject is InteractableCharacter:
 			subject.label_e_to_interact.hide()
@@ -252,7 +255,21 @@ func end():
 			subject.sprite.play()
 		
 		if subject is GameCharacter:
+			
+			# If the subject isn't alive, determine whether or not we should play their animation (if it already played or not)
+			if !subject.alive:
+				var total_frames: int = subject.sprite.sprite_frames.get_frame_count(subject.sprite.animation)
+				var current_frame: int = subject.sprite.get_frame()
+				
+				# If the death animation is complete, then set the previous frame to the end of the animation
+				if not (current_frame > 0 and current_frame < total_frames - 1):
+					continue
+			
 			subject.sprite.play()
+			subject.sprite.set_frame_and_progress(subject.previous_animation_frame, subject.previous_animation_frame_progress)
+			
+			if subject.animation_player.current_animation != "":
+				subject.animation_player.play()
 	
 	# Iterate over each tilemap that could be on screen right now and disable it
 	for tilemap in player.current_tilemaps:

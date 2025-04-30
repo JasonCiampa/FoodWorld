@@ -170,12 +170,12 @@ func start(_freeze_subjects: Array[Node2D]):
 			subject.sprite.pause()
 			subject.animation_player.pause()
 			
-			if subject is Player or subject is FoodBuddy:
+			if subject is Player or subject is FoodBuddy or subject is Enemy:
 				
 				# Store the actual position in the animation because the subject is alive or could be actively dying
 				subject.previous_animation_frame = subject.sprite.get_frame()
 				subject.previous_animation_frame_progress = subject.sprite.get_frame_progress()
-				
+				subject.animation_player.pause()
 		
 		elif subject is Juicebox or subject is Projectile:
 			subject.paused = true
@@ -249,7 +249,7 @@ func end():
 		if subject is GameCharacter:
 			subject.paused = false
 			
-			if subject is Player or subject is FoodBuddy:
+			if subject is GameCharacter:
 				
 				# If the subject isn't alive, determine whether or not we should play their animation (if it already played or not)
 				if !subject.alive:
@@ -261,7 +261,8 @@ func end():
 						continue
 				
 				subject.sprite.set_frame_and_progress(subject.previous_animation_frame, subject.previous_animation_frame_progress)
-				subject.animation_player.play("RESET")
+				if subject.animation_player.current_animation != "":
+					subject.animation_player.play()
 			
 			subject.sprite.play()
 		
