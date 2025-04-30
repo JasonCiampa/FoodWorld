@@ -4,7 +4,6 @@ extends Node2D
 # NODES #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @onready var PLAYER: Player = $Player
-@onready var ENEMY: Enemy = $Enemy
 
 #@onready var MALICK: FoodBuddy = $Malick
 #@onready var SALLY: FoodBuddy = $Sally
@@ -105,6 +104,8 @@ var transitioning_songs: bool = false
 var music_fade_in_duration: float = 3.5
 var music_fade_out_duration: float = 2
 
+var test_enemy: Enemy
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -127,8 +128,11 @@ func _ready() -> void:
 	food_buddies_inactive[0].active = false
 	
 	empty_song = AudioStreamPlayer.new()
-
-	#
+	
+	test_enemy = load("res://scenes/characters/carrot.tscn").instantiate()
+	load_enemy(test_enemy)
+	test_enemy.global_position = Vector2(-1135, 280)
+	
 	## Set Malick and Sally as the Food Buddies to fuse, and store the fusion in the list of inactive fusions
 	#FUSION_MALICK_SALLY.set_food_buddies(MALICK, SALLY)
 	#food_buddy_fusions_inactive.append(FUSION_MALICK_SALLY)
@@ -1632,6 +1636,9 @@ func _on_juicebox_explode(juicebox):
 	update_character_status_UI()
 
 
+
+func _on_character_fire_projectile(projectile: Projectile):
+	pass
 
 func _on_brittany_fire_energy_ball(destination: Vector2) -> void:
 	

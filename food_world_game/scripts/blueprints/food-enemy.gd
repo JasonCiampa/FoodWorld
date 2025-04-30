@@ -72,10 +72,17 @@ var xp_drop: int = 50
 
 var RNG: RandomNumberGenerator
 
+var using_ability: bool = false
 
 var previous_animation: String = "idle_front"
 var previous_animation_frame: int = 0
 var previous_animation_frame_progress: float = 0
+
+var current_animation_name: String
+var current_direction_name: String
+var new_animation_name: String
+var new_direction_name
+var animation_directions: Dictionary = {}
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -105,6 +112,9 @@ func _ready() -> void:
 	
 	self.name = "Enemy"
 	
+	update_movement_direction()
+	sprite.play("idle_front")
+	
 	# Call the custom ready function that subclasses may have defined manually
 	ready()
 	
@@ -118,6 +128,17 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	if target != null and animation_directions.size() == 0:
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.IDLE), func(): return "")
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.UP), func(): return "back")
+		animation_directions.get_or_add(Vector2(Direction.IDLE, Direction.DOWN), func(): return "front")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.IDLE), func(): return "sideways")
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.UP), func(): return ("back" if velocity.y < velocity.x else "sideways"))
+		animation_directions.get_or_add(Vector2(Direction.LEFT, Direction.DOWN), func(): return ("front" if abs(velocity.y) > abs(velocity.x) else "sideways"))# if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.IDLE), func(): return ("sideways"))
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.UP), func(): return ("back" if abs(velocity.y) > abs(velocity.x) else "sideways"))#if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
+		animation_directions.get_or_add(Vector2(Direction.RIGHT, Direction.DOWN), func(): return ("front" if velocity.y > velocity.x else "sideways")) #if (abs(target.global_position.y - global_position.y) > abs(target.global_position.x - global_position.x)) else "sideways")
 	
 	if !is_jumping and current_altitude > 0:
 		on_platform = true
@@ -138,6 +159,9 @@ func _process(delta: float) -> void:
 			field_state_current = FieldState.PASSIVE
 	
 	if not paused:
+		
+		update_movement_direction()
+		
 		if taking_damage:
 			take_damage(delta)
 		
@@ -172,6 +196,62 @@ func _physics_process(delta: float) -> void:
 
 
 # MY FUNCTIONS #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Updates the variables that keep track of previous and current movement direction
+func update_movement_direction():
+	
+	# Store the current horizontal and vertical directions as the previous directions.
+	direction_previous_horizontal = direction_current_horizontal
+	direction_previous_vertical = direction_current_vertical
+	
+	direction_current_horizontal = sign(velocity.x)
+	direction_current_vertical = sign(velocity.y)
+	
+	# Determine whether the Food Buddy is facing left or right, then flip the sprite horizontally based on the direction the Food Buddy is facing
+	if direction_current_horizontal == Direction.RIGHT:
+		sprite.flip_h = true
+	elif direction_current_horizontal == Direction.LEFT:
+		sprite.flip_h = false
+
+
+func update_animation(animation_name: String = ""):
+	
+	if paused:
+		sprite.play("idle_front")
+		return
+	
+	if animation_name != "":
+		sprite.play(animation_name)
+		return
+	
+	new_direction_name = animation_directions.get(Vector2(direction_current_horizontal, direction_current_vertical))
+	
+	if new_direction_name != null:
+		new_direction_name = new_direction_name.call()
+	
+	if health_current <= 0:
+		new_animation_name = "die"
+	elif using_ability:
+		new_animation_name = "ability"
+	elif velocity.x == 0 and velocity.y == 0:
+		new_animation_name = "idle"
+	else:
+		new_animation_name = "moving"
+	
+	if new_animation_name == "" or new_animation_name == null:
+		new_animation_name = current_animation_name
+	
+	if new_direction_name == "" or new_direction_name == null:
+		if current_direction_name != "":
+			new_direction_name = current_direction_name
+		else:
+			new_direction_name = "front"
+	
+	# If the animation has changed, play the new animation
+	if sprite.animation != (new_animation_name + "_" + new_direction_name):
+		sprite.play(new_animation_name + "_" + new_direction_name) # --> idle_front
+		current_animation_name = new_animation_name
+		current_direction_name = new_direction_name
 
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -295,3 +375,26 @@ func _on_enemy_screen_entered() -> void:
 
 func _on_enemy_screen_exited() -> void:
 	process_mode = PROCESS_MODE_DISABLED
+
+
+func _on_sprite_animation_looped() -> void:
+	if !paused:
+		update_animation()
+
+func _on_sprite_animation_finished() -> void:
+	
+	if !paused:
+		if "ability" in sprite.animation:
+			
+			use_ability.emit(self, ability_damage["Ability1"])
+			timer_ability_cooldown.start(0.5)
+			using_ability = false
+			
+			if current_direction_name != null:
+				sprite.play("idle_" + current_direction_name)
+			else:
+				sprite.play("idle_front")
+			
+			current_animation_name = "idle"
+			
+		update_animation()

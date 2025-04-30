@@ -199,9 +199,6 @@ func update_animation(animation_name: String = ""):
 		sprite.play(new_animation_name + "_" + new_direction_name) # --> idle_front
 		current_animation_name = new_animation_name
 		current_direction_name = new_direction_name
-	
-	if paused or level_up:
-		sprite.play("idle_front")
 
 func velocity_checks():
 	pass
